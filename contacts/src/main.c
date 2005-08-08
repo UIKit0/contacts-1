@@ -8,7 +8,7 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#define XML_FILE "../contacts.glade"
+#define XML_FILE "../data/contacts.glade" /* FIXME: pull in via PKGDATADIR */
 
 static GladeXML *xml;
 static EBook *book;
