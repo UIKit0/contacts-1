@@ -1,0 +1,19 @@
+2005-08-08  mallum,,,  <mallum@openedhand.com>
+
+	* contacts/ChangeLog:
+	* contacts/Makefile.am:
+	* contacts/autogen.sh:
+	* contacts/configure.ac:
+	* contacts/data/Makefile.am:
+	* contacts/data/contacts.glade:
+	* contacts/old/contacts.glade.bak:
+	* contacts/old/contacts.gladep:
+	* contacts/old/contacts.gladep.bak:
+	* contacts/src/Makefile.am:
+	* contacts/src/main.c:
+	Get rid of extra uneeded contacts dir.
+
+2005-08-08  mallum  <mallum@openedhand.com>
+
+	* src/Makefile:
+	Remove. Add required autotool files ( NEWS, README ... ).

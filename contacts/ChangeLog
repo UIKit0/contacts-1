@@ -1,4 +1,0 @@
-2005-08-08  mallum  <mallum@openedhand.com>
-
-	* src/Makefile:
-	Remove. Add required autotool files ( NEWS, README ... ).
