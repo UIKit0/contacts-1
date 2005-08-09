@@ -373,6 +373,24 @@ contact_selected_sensitive (gboolean sensitive)
 	gtk_widget_set_sensitive (widget, sensitive);
 }
 
+static EContact *
+get_current_contact ()
+{
+	GtkWidget *widget;
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	EContact *contact;
+
+	/* Get the currently selected contact */
+	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gtk_tree_selection_get_selected (selection, &model, &iter);
+	gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
+	
+	return contact;
+}
+
 static void
 contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
 		    gpointer user_data)
@@ -409,7 +427,8 @@ load_contact_photo (EContact *contact)
 				image = GTK_IMAGE (gtk_image_new_from_pixbuf
 						   (pixbuf));
 			}
-		}
+		} else
+			gdk_pixbuf_loader_close (loader, NULL);
 		g_object_unref (loader);
 		e_contact_photo_free (photo);
 	}
@@ -523,6 +542,60 @@ free_change_data (GtkEntry *entry, gpointer data)
 		g_free (data);
 }
 
+void
+change_photo ()
+{
+	GtkWidget *widget;
+	GtkWidget *filechooser;
+	gint result;
+	
+	/* Get a filename */
+	/* TODO: Filter image type */
+	widget = glade_xml_get_widget (xml, "main_window");
+	filechooser = gtk_file_chooser_dialog_new ("Open image",
+						   GTK_WINDOW (widget),
+						   GTK_FILE_CHOOSER_ACTION_OPEN,
+						   GTK_STOCK_CANCEL,
+						   GTK_RESPONSE_CANCEL,
+						   GTK_STOCK_OPEN,
+						   GTK_RESPONSE_ACCEPT,
+						   "No image",
+						   GTK_RESPONSE_DELETE_EVENT,
+						   NULL);
+
+	/* If a file was selected, get the image and set the contact to that
+	 * image.
+	 */	
+	result = gtk_dialog_run (GTK_DIALOG (filechooser));
+	if (result == GTK_RESPONSE_ACCEPT) {
+		gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER 
+							  (filechooser));
+		if (filename) {
+			EContact *contact = get_current_contact ();
+
+			if (contact) {
+				EContactPhoto new_photo;
+				
+				if (g_file_get_contents (filename, 
+							 &new_photo.data,
+							 &new_photo.length,
+							 NULL))
+					e_contact_set (contact, E_CONTACT_PHOTO,
+						       &new_photo);
+			}
+			g_free (filename);
+		}
+	} else if (result == GTK_RESPONSE_DELETE_EVENT) {
+		EContact *contact = get_current_contact ();
+		
+		if (contact) {
+			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
+		}
+	}
+	
+	gtk_widget_destroy (filechooser);
+}
+
 /* This function adds a GtkLabel and GtkEntry derived from field_id for a
  * particular contact to a GtkTable of 2 columns, with the specified row.
  * Returns TRUE on success, FALSE on failure.
@@ -608,19 +681,11 @@ new_contact ()
 void
 edit_contact ()
 {
-	GtkWidget *widget;
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
 	EContact *contact;
 
+	/* Disable the edit/delete buttons and get the contact to edit */
 	contact_selected_sensitive (FALSE);
-	
-	/* Get the contact to edit */
-	widget = glade_xml_get_widget (xml, "contacts_treeview");
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
-	gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
+	contact = get_current_contact ();
 	
 	do_edit (contact);
 }
