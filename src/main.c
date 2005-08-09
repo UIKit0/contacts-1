@@ -250,7 +250,7 @@ fill_treeview (GtkListStore * model)
 	GList *c;
 
 	/* Create query */
-	query = e_book_query_field_exists (E_CONTACT_FILE_AS);
+	query = e_book_query_field_exists (E_CONTACT_FULL_NAME);
 
 	/* Retrieve contacts */
 	free_object_list (cards);
@@ -282,7 +282,7 @@ fill_treeview (GtkListStore * model)
 			/* Add contact to list */
 			file_as =
 			    e_contact_get_const (contact,
-						 E_CONTACT_FILE_AS);
+						 E_CONTACT_FULL_NAME);
 			gtk_list_store_append (model, &iter);
 			gtk_list_store_set (model, &iter, NAME, file_as,
 					    ECONTACT, contact, -1);
@@ -386,7 +386,7 @@ contact_selected (GtkTreeSelection * selection)
 		gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
 
 		/* Retrieve contact name */
-		string = e_contact_get_const (contact, E_CONTACT_FILE_AS);
+		string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		if (string) {
 			gchar *name_markup = g_strdup_printf
 			    ("<span><big><b>%s</b></big></span>", string);
@@ -461,6 +461,79 @@ contact_selected (GtkTreeSelection * selection)
 	}
 }
 
+typedef struct {
+	EContact *contact;
+	EContactField field_id;
+} EContactChangeData;
+
+static void
+text_entry_changed (GtkEntry *entry, gpointer data)
+{
+	const gchar *string;
+	EContactChangeData *d = (EContactChangeData *)data;
+	
+	string = gtk_entry_get_text (entry);
+	e_contact_set (d->contact, d->field_id, (gpointer)string);
+}
+
+static GtkWidget *
+static_field_edit_box (EContact *contact, EContactField field_id, GCallback cb)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	const gchar *string;
+	EContactChangeData *data;
+	
+	string = e_contact_get_const (contact, field_id);
+	if (!string)
+		return NULL;
+	
+	/* Create widgets */
+	hbox = gtk_hbox_new (FALSE, 3);
+	label = gtk_label_new (e_contact_field_name (field_id));
+	entry = gtk_entry_new ();
+	gtk_entry_set_text (GTK_ENTRY (entry), string);
+	
+	/* Add to container */
+	gtk_container_add_with_properties (GTK_CONTAINER (hbox), label,
+					   "expand", FALSE,
+					   "fill", TRUE,
+					   NULL);
+	gtk_container_add_with_properties (GTK_CONTAINER (hbox), entry,
+					   "expand", FALSE,
+					   "fill", TRUE,
+					   NULL);
+	
+	/* Connect signal */
+	data = g_new (EContactChangeData, 1);
+	data->contact = contact;
+	data->field_id = field_id;
+	g_signal_connect (G_OBJECT (entry), "changed", cb, data);
+	
+	gtk_widget_show (label);
+	gtk_widget_show (entry);
+	gtk_widget_show (hbox);
+	return hbox;
+}
+
+static void
+do_edit (EContact *contact)
+{
+	GtkWidget *widget;
+	GtkContainer *edit_vbox;
+	
+	edit_vbox = GTK_CONTAINER (glade_xml_get_widget (xml, "edit_vbox"));
+	/* Fill edit pane */
+	widget = static_field_edit_box (contact, E_CONTACT_FULL_NAME,
+					G_CALLBACK (text_entry_changed));
+	gtk_container_add (edit_vbox, widget);
+	
+	/* Display edit pane */
+	widget = glade_xml_get_widget (xml, "main_notebook");
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
+}
+
 void
 new_contact ()
 {
@@ -470,21 +543,43 @@ void
 edit_contact ()
 {
 	GtkWidget *widget;
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	EContact *contact;
 
 	contact_selected_sensitive (FALSE);
-	/* Fill the edit pane */
+	
+	/* Get the contact to edit */
+	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gtk_tree_selection_get_selected (selection, &model, &iter);
+	gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
+	
+	do_edit (contact);
+}
 
-	/* Display edit pane */
-	widget = glade_xml_get_widget (xml, "main_notebook");
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
+static void
+remove_edit_components (GtkWidget *widget, gpointer data)
+{
+	if (strcmp (gtk_widget_get_name (widget), "close_hbuttonbox") != 0) {
+		GtkWidget *edit_vbox;
+		edit_vbox = glade_xml_get_widget (xml, "edit_vbox");
+		gtk_container_remove (GTK_CONTAINER (edit_vbox), widget);
+	}
 }
 
 void
 edit_done ()
 {
 	GtkWidget *widget;
-	/* All changed are instant-apply, so just switch back to main view */
-
+	
+	/* All changed are instant-apply, so just remove the edit components
+	 * and switch back to main view.
+	 */
+	widget = glade_xml_get_widget (xml, "edit_vbox");
+	gtk_container_foreach (GTK_CONTAINER (widget),
+			       (GtkCallback)remove_edit_components, NULL);
 	widget = glade_xml_get_widget (xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	contact_selected_sensitive (TRUE);
