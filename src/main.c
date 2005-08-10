@@ -11,10 +11,8 @@
 #define XML_FILE PKGDATADIR "/contacts.glade"
 
 static GladeXML *xml;
-static EBook *book;
-static GList *cards;
-static GtkComboBox *groups_combobox;
-static gint groups_size;
+GList *contacts_groups;
+GHashTable *contacts_table;
 
 /* List of always-available fields that are one line */
 static EContactField base_fields1[] = {
@@ -37,6 +35,11 @@ typedef enum {
 	ECONTACT,
 	LAST
 } COLUMNS;
+
+typedef struct {
+	EContact *contact;
+	GtkTreeIter iter;
+} EContactListHash;
 
 /* The following functions taken from
  * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
@@ -162,6 +165,20 @@ kozo_utf8_strcasestrip (const char *str)
 /******************************************************************************/
 
 static void
+free_econtact_list_hash (EContactListHash *hash)
+{
+	GtkListStore *model;
+	
+	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
+				(GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+				 (GTK_TREE_VIEW (glade_xml_get_widget
+						(xml, "contacts_treeview"))))));
+	gtk_list_store_remove (model, &hash->iter);
+	g_object_unref (hash->contact);
+	g_free (hash);
+}
+
+static void
 free_object_list (GList * list)
 {
 	if (list) {
@@ -175,8 +192,8 @@ void
 quit ()
 {
 	/* Unload the addressbook and quit */
-	free_object_list (cards);
-	g_object_unref (book);
+	/* TODO: Is it necessary to do this before quit? */
+/*	g_object_unref (book);*/
 	gtk_main_quit ();
 }
 
@@ -184,9 +201,10 @@ static gboolean
 is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 {
 	gboolean result = FALSE;
-	gchar *group = gtk_combo_box_get_active_text (groups_combobox);
+	gchar *group;
 	GList *groups, *g;
 	EContact *contact;
+	GtkComboBox *groups_combobox;
 	const gchar *search_string = gtk_entry_get_text (GTK_ENTRY
 							 (glade_xml_get_widget
 							  (xml,
@@ -194,6 +212,11 @@ is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 
 	/* Check if the contact is in the currently selected group. */
 	gtk_tree_model_get (model, iter, ECONTACT, &contact, -1);
+	if (!E_IS_CONTACT (contact))
+		return FALSE;
+	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
+					 (xml, "groups_combobox"));
+	group = gtk_combo_box_get_active_text (groups_combobox);
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	if (gtk_combo_box_get_active (groups_combobox) > 0) {
 		for (g = groups; g; g = g->next) {
@@ -203,10 +226,11 @@ is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 		}
 		if (groups)
 			g_list_free (groups);
-		if (!result)
-			return FALSE;
 	} else
 		result = TRUE;
+	g_free (group);
+	if (!result)
+		return FALSE;
 
 	/* Search for any occurrence of the string in the search box in the 
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
@@ -259,75 +283,94 @@ update_treeview ()
 }
 
 static void
-fill_treeview (GtkListStore * model)
+contacts_changed (EBookView *book_view, const GList *contacts)
 {
-	EBookQuery *query;
-	gboolean status;
+	GList *c;
+	
+	for (c = (GList *)contacts; c; c = c->next) {
+		EContact *contact = E_CONTACT (c->data);
+		EContactListHash *hash;
+		
+		hash = g_hash_table_lookup (contacts_table, 
+					    e_contact_get_const
+					    	(contact, E_CONTACT_UID));
+		if (hash) {
+			GtkListStore *model = GTK_LIST_STORE 
+				(gtk_tree_model_filter_get_model 
+				 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+				  (GTK_TREE_VIEW (glade_xml_get_widget
+						(xml, "contacts_treeview"))))));
+			gtk_list_store_set (model, &hash->iter,
+				NAME,
+				e_contact_get (contact, E_CONTACT_FULL_NAME),
+				ECONTACT,
+				g_object_ref (contact),
+				-1);
+		}
+	}
+}
+
+static void
+contacts_added (EBookView *book_view, const GList *contacts)
+{
+	GtkComboBox *groups_combobox;
+	GtkListStore *model;
 	GList *c;
 
-	/* Create query */
-	query = e_book_query_field_exists (E_CONTACT_FULL_NAME);
+	/* Get TreeView model and combo box to add contacts/groups */
+	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
+				(GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+				 (GTK_TREE_VIEW (glade_xml_get_widget
+						(xml, "contacts_treeview"))))));
+	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
+					 (xml, "groups_combobox"));
 
-	/* Retrieve contacts */
-	/* TODO: Use e_book_get_book_view */
-	free_object_list (cards);
-	status = e_book_get_contacts (book, query, &cards, NULL);
+	/* Iterate over new contacts and add them to the list */
+	for (c = (GList *)contacts; c; c = c->next) {
+		GtkTreeIter iter;
+		GList *contact_groups;
+		const gchar *name;
+		EContact *contact = E_CONTACT (c->data);
+		EContactListHash *hash;
+		
+		if (!E_IS_CONTACT (contact))
+			continue;
 
-	/* Free query structure */
-	e_book_query_unref (query);
+		/* Add contact to list */
+		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+		gtk_list_store_insert_with_values (model, &iter, 0,
+						   NAME,
+						   name,
+						   ECONTACT,
+						   g_object_ref (contact),
+						   -1);
+		hash = g_new (EContactListHash, 1);
+		hash->contact = contact;
+		hash->iter = iter;
+		g_hash_table_insert (contacts_table, e_contact_get_const 
+				     (contact, E_CONTACT_UID), hash);
 
-	if (status == FALSE) {
-		g_warning ("Error '%d' retrieving contacts", status);
-		return;
-	} else {
-		gint i;
-		GList *groups = NULL;
-
-		/* Clear current contacts list and group list */
-		for (i = 0; i < groups_size; i++)
-			gtk_combo_box_remove_text (groups_combobox, 1);
-		gtk_list_store_clear (model);
-
-		/* Iterate over results and add them to the list */
-		for (c = cards; c; c = c->next) {
-			GtkTreeIter iter;
-			const gchar *file_as;
-			GList *contact_groups;
-			EContact *contact = E_CONTACT (c->data);
-
-			/* Add contact to list */
-			file_as =
-			    e_contact_get_const (contact,
-						 E_CONTACT_FULL_NAME);
-			gtk_list_store_append (model, &iter);
-			gtk_list_store_set (model, &iter, NAME, file_as,
-					    ECONTACT, contact, -1);
-
-			/* Check for groups and add them to group list */
-			contact_groups =
-			    e_contact_get (contact,
-					   E_CONTACT_CATEGORY_LIST);
-			if (contact_groups) {
-				GList *group;
-				for (group = contact_groups; group;
-				     group = group->next) {
-					if (!g_list_find_custom
-					    (groups, group->data,
-					     (GCompareFunc) strcmp)) {
-						gtk_combo_box_append_text
-						    (groups_combobox,
-						     group->data);
-						groups =
-						    g_list_prepend (groups,
-								    group->
-								    data);
-					}
+		/* Check for groups and add them to group list */
+		contact_groups =
+		    e_contact_get (contact,
+				   E_CONTACT_CATEGORY_LIST);
+		if (contact_groups) {
+			GList *group;
+			for (group = contact_groups; group;
+			     group = group->next) {
+				if (!g_list_find_custom (contacts_groups, 
+							 group->data,
+							 (GCompareFunc) strcmp))
+				{
+					gtk_combo_box_append_text
+					    (groups_combobox, group->data);
+					contacts_groups = g_list_prepend 
+							     (contacts_groups,
+							      group->data);
 				}
-				g_list_free (contact_groups);
 			}
+			g_list_free (contact_groups);
 		}
-		g_list_foreach (groups, (GFunc) g_free, NULL);
-		g_list_free (groups);
 	}
 }
 
@@ -410,26 +453,25 @@ load_contact_photo (EContact *contact)
 	EContactPhoto *photo;
 	
 	/* Retrieve contact picture and resize */
-	/* TODO: Am I leaking memory here? */
 	photo = e_contact_get (contact, E_CONTACT_PHOTO);
 	if (photo) {
 		GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
-		g_signal_connect (G_OBJECT (loader),
-				  "size-prepared",
-				  G_CALLBACK (contact_photo_size),
-				  NULL);
-		if ((gdk_pixbuf_loader_write
-		     (loader, photo->data, photo->length, NULL))
-		    && (gdk_pixbuf_loader_close (loader, NULL))) {
+		if (loader) {
+			g_signal_connect (G_OBJECT (loader),
+					  "size-prepared",
+					  G_CALLBACK (contact_photo_size),
+					  NULL);
+			gdk_pixbuf_loader_write
+				     (loader, photo->data, photo->length, NULL);
+			gdk_pixbuf_loader_close (loader, NULL);
 			GdkPixbuf *pixbuf =
 			    gdk_pixbuf_loader_get_pixbuf (loader);
 			if (pixbuf) {
 				image = GTK_IMAGE (gtk_image_new_from_pixbuf
-						   (pixbuf));
+						   (g_object_ref (pixbuf)));
 			}
-		} else
-			gdk_pixbuf_loader_close (loader, NULL);
-		g_object_unref (loader);
+			g_object_unref (loader);
+		}
 		e_contact_photo_free (photo);
 	}
 	return image ? image : GTK_IMAGE (gtk_image_new_from_icon_name 
@@ -449,6 +491,8 @@ contact_selected (GtkTreeSelection * selection)
 	/* Get the currently selected contact and update the contact summary */
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
+		if (!E_IS_CONTACT (contact))
+			return;
 
 		/* Retrieve contact name */
 		string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
@@ -568,8 +612,8 @@ change_photo ()
 	 */	
 	result = gtk_dialog_run (GTK_DIALOG (filechooser));
 	if (result == GTK_RESPONSE_ACCEPT) {
-		gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER 
-							  (filechooser));
+		gchar *filename = gtk_file_chooser_get_filename 
+					(GTK_FILE_CHOOSER (filechooser));
 		if (filename) {
 			EContact *contact = get_current_contact ();
 
@@ -646,6 +690,13 @@ do_edit (EContact *contact)
 	GtkWidget *widget;
 	guint i, row;
 	
+	/* Display edit pane */
+	/* ODD: Doing this after adding the widgets will cause the first view
+	 * not to work... But only when using a viewport
+	 */
+	widget = glade_xml_get_widget (xml, "main_notebook");
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
+	
 	/* Display contact photo */
 	widget = glade_xml_get_widget (xml, "edit_photo_button");
 	gtk_button_set_image (GTK_BUTTON (widget), 
@@ -664,10 +715,6 @@ do_edit (EContact *contact)
 	
 	/* Custom fields */
 	/* ... */
-	
-	/* Display edit pane */
-	widget = glade_xml_get_widget (xml, "main_notebook");
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
 	
 	widget = glade_xml_get_widget (xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
@@ -701,6 +748,11 @@ edit_done ()
 {
 	GtkWidget *widget;
 	
+	/* TODO: This is temporary - why aren't we receiving contacts_changed
+	 * signal from EBookView?
+	 */
+	 contacts_changed (NULL, g_list_prepend (NULL, get_current_contact ()));
+	 
 	/* All changed are instant-apply, so just remove the edit components
 	 * and switch back to main view.
 	 */
@@ -722,6 +774,7 @@ delete_contact ()
 int
 main (int argc, char **argv)
 {
+	GtkComboBox *groups_combobox;
 	GtkVBox *contacts_vbox;
 	GtkTreeView *contacts_treeview;
 	GtkTreeSelection *selection;
@@ -730,12 +783,13 @@ main (int argc, char **argv)
 	gchar *book_path;
 	GtkCellRenderer *renderer;
 	gboolean status;
+	EBook *book;
+	EBookQuery *query;
+	EBookView *book_view;
 
 	/* Standard initialisation for gtk and glade */
 	gtk_init (&argc, &argv);
 	glade_init ();
-
-	cards = NULL;
 
 	/* Set critical errors to close application */
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
@@ -749,33 +803,6 @@ main (int argc, char **argv)
 	/* Hook up signals defined in interface xml */
 	glade_xml_signal_autoconnect (xml);
 
-	/* Load the system addressbook */
-	book_path = g_strdup_printf
-	    ("file://%s/.evolution/addressbook/local/system/",
-	     g_get_home_dir ());
-	book = e_book_new_from_uri (book_path, NULL);
-	g_free (book_path);
-	if (!book)
-		g_critical ("Could not load system addressbook");
-	status = e_book_open (book, FALSE, NULL);
-	if (status == FALSE)
-		g_critical ("Error '%d' opening ebook", status);
-
-	/* Create the groups combobox */
-	groups_combobox = GTK_COMBO_BOX (gtk_combo_box_new_text ());
-	/* Add virtual group 'All' */
-	gtk_combo_box_append_text (groups_combobox, "All");
-	gtk_combo_box_set_active (groups_combobox, 0);
-	groups_size = 0;
-	/* Pack groups combobox into contacts_vbox */
-	contacts_vbox =
-	    GTK_VBOX (glade_xml_get_widget (xml, "contacts_vbox"));
-	gtk_box_pack_start (GTK_BOX (contacts_vbox),
-			    GTK_WIDGET (groups_combobox), FALSE, TRUE, 6);
-	gtk_widget_show (GTK_WIDGET (groups_combobox));
-	g_signal_connect (G_OBJECT (groups_combobox), "changed",
-			  G_CALLBACK (update_treeview), NULL);
-
 	/* Add the column to the GtkTreeView */
 	contacts_treeview =
 	    GTK_TREE_VIEW (glade_xml_get_widget
@@ -785,9 +812,8 @@ main (int argc, char **argv)
 						     (contacts_treeview),
 						     -1, NULL, renderer,
 						     "text", NAME, NULL);
-	/* Create model and fill model */
-	model = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
-	fill_treeview (model);
+	/* Create model and filter (for groups) */
+	model = gtk_list_store_new (2, G_TYPE_STRING, E_TYPE_CONTACT);
 	filter =
 	    GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new
 				   (GTK_TREE_MODEL (model), NULL));
@@ -802,13 +828,41 @@ main (int argc, char **argv)
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
 					      GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
 					      GTK_SORT_ASCENDING);
-
 	g_object_unref (model);
+
+	/* Select 'All' in the groups combobox */
+	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
+					 (xml, "groups_combobox"));
+	gtk_combo_box_set_active (groups_combobox, 0);
+	contacts_groups = NULL;
 
 	/* Connect signal for selection changed event */
 	selection = gtk_tree_view_get_selection (contacts_treeview);
 	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (contact_selected), NULL);
+	
+	/* Load the system addressbook */
+	contacts_table = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, 
+						(GDestroyNotify)
+						 free_econtact_list_hash);
+	book = e_book_new_system_addressbook (NULL);
+	if (!book)
+		g_critical ("Could not load system addressbook");
+	if (!e_book_open (book, FALSE, NULL))
+		g_critical ("Error '%d' opening ebook", status);
+	/* Create an EBookView */
+	query = e_book_query_any_field_contains ("");
+	e_book_get_book_view (book, query, NULL, -1, &book_view, NULL);
+	e_book_query_unref (query);
+	/* Connect signals */
+	g_signal_connect (book_view, "contacts_added",
+			  G_CALLBACK (contacts_added), NULL);
+	g_signal_connect (book_view, "contacts_changed",
+			  G_CALLBACK (contacts_changed), NULL);
+/*	g_signal_connect (view, "contacts_removed", G_CALLBACK (contacts_removed), NULL);
+	g_signal_connect (view, "sequence_complete", G_CALLBACK (sequence_complete), NULL);*/
+	/* Start */
+	e_book_view_start (book_view);
 
 	gtk_main ();
 

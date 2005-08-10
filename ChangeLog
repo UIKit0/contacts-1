@@ -1,16 +1,53 @@
+2005-08-10  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	Put edit_table in GtkViewport
+	
+	* src/main.c: (kozo_utf8_strcasestrip), (free_econtact_list_hash),
+	(free_object_list), (quit), (is_row_visible), (sort_treeview_func),
+	(update_treeview), (contact_selected_sensitive),
+	(get_current_contact), (contact_photo_size), (load_contact_photo),
+	(contact_selected), (text_entry_changed), (free_change_data),
+	(change_photo), (static_field_contact_edit_add), (do_edit),
+	(new_contact), (edit_contact), (remove_edit_components_cb),
+	(edit_done), (delete_contact), (main):
+	Use EBookView to get contacts and listen for changes.
+
 2005-08-10  Ross Burton  <ross@burtonini.com>
 
-	* data/Makefile.am:
-	Don't need to EXTRA_DIST the glade.
+        * data/Makefile.am:
+        Don't need to EXTRA_DIST the glade.
 
-	* src/Makefile.am:
-	Pass $(pkgdatadir) to CC.
+        * src/Makefile.am:
+        Pass $(pkgdatadir) to CC.
 
-	* src/main.c:
-	Use PKGDATADIR
+        * src/main.c:
+        Use PKGDATADIR
 
-	* src/Makefile:
-	Really remove.
+        * src/Makefile:
+        Really remove.
+
+2005-08-09  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade: Two widgets had 'Have focus'
+
+2005-08-09  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/main.c: (contact_selected_sensitive), (load_contact_photo),
+	(text_entry_changed), (free_change_data),
+	(static_field_contact_edit_add), (do_edit), (new_contact):
+
+2005-08-09  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/main.c: (kozo_utf8_strcasestrip), (free_object_list),
+	(update_treeview), (fill_treeview), (set_label),
+	(contact_selected_sensitive), (load_contact_photo),
+	(contact_selected), (text_entry_changed), (free_change_data),
+	(static_field_contact_edit_add), (do_edit), (new_contact),
+	(edit_contact), (remove_edit_components_cb), (edit_done),
+	(delete_contact):
 
 2005-08-08  mallum,,,  <mallum@openedhand.com>
 
