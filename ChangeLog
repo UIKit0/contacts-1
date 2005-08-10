@@ -1,3 +1,17 @@
+2005-08-10  Ross Burton  <ross@burtonini.com>
+
+	* data/Makefile.am:
+	Don't need to EXTRA_DIST the glade.
+
+	* src/Makefile.am:
+	Pass $(pkgdatadir) to CC.
+
+	* src/main.c:
+	Use PKGDATADIR
+
+	* src/Makefile:
+	Really remove.
+
 2005-08-08  mallum,,,  <mallum@openedhand.com>
 
 	* contacts/ChangeLog:
