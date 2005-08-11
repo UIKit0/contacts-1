@@ -186,6 +186,23 @@ quit ()
 	gtk_main_quit ();
 }
 
+static void
+free_list_hash (gpointer data)
+{
+	EContactListHash *hash = (EContactListHash *)data;
+	
+	if (hash) {
+		GtkListStore *model = GTK_LIST_STORE 
+			(gtk_tree_model_filter_get_model 
+			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+			  (GTK_TREE_VIEW (glade_xml_get_widget
+					(xml, "contacts_treeview"))))));
+		gtk_list_store_remove (model, &hash->iter);
+		g_object_unref (hash->contact);
+		g_free (hash);
+	}
+}
+
 static gboolean
 is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 {
@@ -574,6 +591,17 @@ contacts_changed (EBookView *book_view, const GList *contacts)
 }
 
 static void
+contacts_removed (EBookView *book_view, const GList *ids)
+{
+	GList *i;
+	
+	for (i = (GList *)ids; i; i = i->next) {
+		const gchar *uid = (const gchar *)i->data;
+		g_hash_table_remove (contacts_table, uid);
+	}
+}
+
+static void
 contact_selected (GtkTreeSelection * selection)
 {
 	GtkWidget *widget;
@@ -889,7 +917,7 @@ main (int argc, char **argv)
 	
 	/* Load the system addressbook */
 	contacts_table = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, 
-						(GDestroyNotify)g_free);
+						(GDestroyNotify)free_list_hash);
 	book = e_book_new_system_addressbook (NULL);
 	if (!book)
 		g_critical ("Could not load system addressbook");
@@ -904,6 +932,8 @@ main (int argc, char **argv)
 			  G_CALLBACK (contacts_added), NULL);
 	g_signal_connect (G_OBJECT (book_view), "contacts_changed",
 			  G_CALLBACK (contacts_changed), NULL);
+	g_signal_connect (G_OBJECT (book_view), "contacts_removed",
+			  G_CALLBACK (contacts_removed), NULL);
 	/* TODO: Handle contacts_removed signal */
 	/* Start */
 	e_book_view_start (book_view);

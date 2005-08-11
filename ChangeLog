@@ -1,3 +1,18 @@
+2005-08-11  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/main.c: (quit), (contacts_changed), (main):
+	Respond to the 'contacts_removed' signal.
+
+2005-08-11  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/main.c: (kozo_utf8_strcasestrip), (is_row_visible),
+	(contact_selected), (change_photo), (text_entry_changed),
+	(free_change_data), (static_field_contact_edit_add), (do_edit),
+	(new_contact), (edit_contact), (remove_edit_components_cb),
+	(edit_done), (delete_contact), (main):
+	Big changes, contacts now responds to the 'contacts_changed' signal
+	correctly.
+
 2005-08-10  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
