@@ -11,8 +11,10 @@
 #define XML_FILE PKGDATADIR "/contacts.glade"
 
 static GladeXML *xml;
-GList *contacts_groups;
-GHashTable *contacts_table;
+static GList *contacts_groups;
+static GHashTable *contacts_table;
+static EBook *book;
+static EBookView *book_view;
 
 /* List of always-available fields that are one line */
 static EContactField base_fields1[] = {
@@ -32,7 +34,7 @@ static EContactField base_fieldsn[] = {
 
 typedef enum {
 	NAME,
-	ECONTACT,
+	UID,
 	LAST
 } COLUMNS;
 
@@ -165,20 +167,6 @@ kozo_utf8_strcasestrip (const char *str)
 /******************************************************************************/
 
 static void
-free_econtact_list_hash (EContactListHash *hash)
-{
-	GtkListStore *model;
-	
-	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
-				(GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-				 (GTK_TREE_VIEW (glade_xml_get_widget
-						(xml, "contacts_treeview"))))));
-	gtk_list_store_remove (model, &hash->iter);
-	g_object_unref (hash->contact);
-	g_free (hash);
-}
-
-static void
 free_object_list (GList * list)
 {
 	if (list) {
@@ -192,8 +180,9 @@ void
 quit ()
 {
 	/* Unload the addressbook and quit */
-	/* TODO: Is it necessary to do this before quit? */
-/*	g_object_unref (book);*/
+	e_book_view_stop (book_view);
+	g_object_unref (book_view);
+	g_object_unref (book);
 	gtk_main_quit ();
 }
 
@@ -203,7 +192,8 @@ is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 	gboolean result = FALSE;
 	gchar *group;
 	GList *groups, *g;
-	EContact *contact;
+	const gchar *uid;
+	EContactListHash *hash;
 	GtkComboBox *groups_combobox;
 	const gchar *search_string = gtk_entry_get_text (GTK_ENTRY
 							 (glade_xml_get_widget
@@ -211,13 +201,14 @@ is_row_visible (GtkTreeModel * model, GtkTreeIter * iter, gpointer data)
 							   "search_entry")));
 
 	/* Check if the contact is in the currently selected group. */
-	gtk_tree_model_get (model, iter, ECONTACT, &contact, -1);
-	if (!E_IS_CONTACT (contact))
-		return FALSE;
+	gtk_tree_model_get (model, iter, UID, &uid, -1);
+	if (!uid) return FALSE;
+	hash = g_hash_table_lookup (contacts_table, uid);
+	if (!hash || !hash->contact) return FALSE;
 	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
 					 (xml, "groups_combobox"));
 	group = gtk_combo_box_get_active_text (groups_combobox);
-	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
+	groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
 	if (gtk_combo_box_get_active (groups_combobox) > 0) {
 		for (g = groups; g; g = g->next) {
 			if (strcmp (group, g->data) == 0)
@@ -282,96 +273,45 @@ update_treeview ()
 	gtk_tree_model_filter_refilter (model);
 }
 
-static void
-contacts_changed (EBookView *book_view, const GList *contacts)
+static EContact *
+get_contact_from_selection (GtkTreeSelection *selection)
 {
-	GList *c;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
 	
-	for (c = (GList *)contacts; c; c = c->next) {
-		EContact *contact = E_CONTACT (c->data);
-		EContactListHash *hash;
+	if (!selection || !GTK_IS_TREE_SELECTION (selection))
+		return NULL;
 		
-		hash = g_hash_table_lookup (contacts_table, 
-					    e_contact_get_const
-					    	(contact, E_CONTACT_UID));
-		if (hash) {
-			GtkListStore *model = GTK_LIST_STORE 
-				(gtk_tree_model_filter_get_model 
-				 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-				  (GTK_TREE_VIEW (glade_xml_get_widget
-						(xml, "contacts_treeview"))))));
-			gtk_list_store_set (model, &hash->iter,
-				NAME,
-				e_contact_get (contact, E_CONTACT_FULL_NAME),
-				ECONTACT,
-				g_object_ref (contact),
-				-1);
+	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		const gchar *uid;
+		EContactListHash *hash;
+		gtk_tree_model_get (model, &iter, UID, &uid, -1);
+		if (uid) {
+			hash = g_hash_table_lookup (contacts_table, uid);
+			if (hash)
+				return hash->contact;
 		}
 	}
+	return NULL;
 }
 
-static void
-contacts_added (EBookView *book_view, const GList *contacts)
+static EContact *
+get_current_contact ()
 {
-	GtkComboBox *groups_combobox;
-	GtkListStore *model;
-	GList *c;
+	GtkWidget *widget;
+	GtkTreeSelection *selection;
+	EContact *contact;
 
-	/* Get TreeView model and combo box to add contacts/groups */
-	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
-				(GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-				 (GTK_TREE_VIEW (glade_xml_get_widget
-						(xml, "contacts_treeview"))))));
-	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
-					 (xml, "groups_combobox"));
-
-	/* Iterate over new contacts and add them to the list */
-	for (c = (GList *)contacts; c; c = c->next) {
-		GtkTreeIter iter;
-		GList *contact_groups;
-		const gchar *name;
-		EContact *contact = E_CONTACT (c->data);
-		EContactListHash *hash;
+	/* Get the currently selected contact */
+	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	
+	if (!selection || !GTK_IS_TREE_SELECTION (selection))
+		return NULL;
 		
-		if (!E_IS_CONTACT (contact))
-			continue;
-
-		/* Add contact to list */
-		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-		gtk_list_store_insert_with_values (model, &iter, 0,
-						   NAME,
-						   name,
-						   ECONTACT,
-						   g_object_ref (contact),
-						   -1);
-		hash = g_new (EContactListHash, 1);
-		hash->contact = contact;
-		hash->iter = iter;
-		g_hash_table_insert (contacts_table, e_contact_get_const 
-				     (contact, E_CONTACT_UID), hash);
-
-		/* Check for groups and add them to group list */
-		contact_groups =
-		    e_contact_get (contact,
-				   E_CONTACT_CATEGORY_LIST);
-		if (contact_groups) {
-			GList *group;
-			for (group = contact_groups; group;
-			     group = group->next) {
-				if (!g_list_find_custom (contacts_groups, 
-							 group->data,
-							 (GCompareFunc) strcmp))
-				{
-					gtk_combo_box_append_text
-					    (groups_combobox, group->data);
-					contacts_groups = g_list_prepend 
-							     (contacts_groups,
-							      group->data);
-				}
-			}
-			g_list_free (contact_groups);
-		}
-	}
+	contact = get_contact_from_selection (selection);
+	
+	return contact;
 }
 
 /* Shows GtkLabel widgets label_name and name and sets the text of name to
@@ -398,7 +338,6 @@ set_label (const gchar * label_name, const gchar * name,
 	}
 }
 
-
 /* Helper method to set edit/delete sensitive/insensitive */
 static void
 contact_selected_sensitive (gboolean sensitive)
@@ -414,24 +353,6 @@ contact_selected_sensitive (gboolean sensitive)
 	gtk_widget_set_sensitive (widget, sensitive);
 	widget = glade_xml_get_widget (xml, "delete_button");
 	gtk_widget_set_sensitive (widget, sensitive);
-}
-
-static EContact *
-get_current_contact ()
-{
-	GtkWidget *widget;
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	EContact *contact;
-
-	/* Get the currently selected contact */
-	widget = glade_xml_get_widget (xml, "contacts_treeview");
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	gtk_tree_selection_get_selected (selection, &model, &iter);
-	gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
-	
-	return contact;
 }
 
 static void
@@ -479,82 +400,189 @@ load_contact_photo (EContact *contact)
 }
 
 static void
+display_contact_summary (EContact *contact)
+{
+	GtkWidget *widget;
+	const gchar *string;
+	GtkImage *photo;
+
+	if (!E_IS_CONTACT (contact))
+		return;
+
+	/* Retrieve contact name */
+	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+	if (string) {
+		gchar *name_markup = g_strdup_printf
+		    ("<span><big><b>%s</b></big></span>", string);
+		widget = glade_xml_get_widget (xml, "summary_name_label");
+		gtk_label_set_markup (GTK_LABEL (widget), name_markup);
+		g_free (name_markup);
+	}
+
+	/* Retrieve contact picture and resize */
+	widget = glade_xml_get_widget (xml, "photo_image");
+	photo = load_contact_photo (contact);
+	if ((gtk_image_get_storage_type (photo) == GTK_IMAGE_EMPTY) ||
+	    (gtk_image_get_storage_type (photo) == GTK_IMAGE_PIXBUF))
+		gtk_image_set_from_pixbuf (GTK_IMAGE (widget),
+					  gtk_image_get_pixbuf (photo));
+	else if (gtk_image_get_storage_type 
+		 (photo) == GTK_IMAGE_ICON_NAME) {
+		const gchar *icon_name;
+		GtkIconSize size;
+		gtk_image_get_icon_name (photo, &icon_name, &size);
+		gtk_image_set_from_icon_name (GTK_IMAGE (widget), icon_name,
+					      size);
+	}
+	gtk_widget_destroy (GTK_WIDGET (photo));
+
+	/* Retrieve contact business phone number */
+	string = e_contact_get_const (contact, E_CONTACT_PHONE_BUSINESS);
+	set_label ("bphone_title_label", "bphone_label", string);
+
+	/* Retrieve contact home phone number */
+	string = e_contact_get_const (contact, E_CONTACT_PHONE_HOME);
+	set_label ("hphone_title_label", "hphone_label", string);
+
+	/* Retrieve contact mobile phone number */
+	string = e_contact_get_const (contact, E_CONTACT_PHONE_MOBILE);
+	set_label ("mobile_title_label", "mobile_label", string);
+
+	/* Retrieve contact e-mail address */
+	string = e_contact_get_const (contact, E_CONTACT_EMAIL_1);
+	set_label ("email_title_label", "email_label", string);
+
+	/* Retrieve contact address */
+	string = e_contact_get_const (contact, E_CONTACT_ADDRESS_LABEL_HOME);
+	set_label ("address_title_label", "address_label", string);
+
+	widget = glade_xml_get_widget (xml, "summary_vbox");
+	gtk_widget_show (widget);
+	contact_selected_sensitive (TRUE);
+}
+
+static void
+contacts_added (EBookView *book_view, const GList *contacts)
+{
+	GtkComboBox *groups_combobox;
+	GtkListStore *model;
+	GtkTreeModelFilter *filter;
+	GList *c;
+
+	/* Get TreeView model and combo box to add contacts/groups */
+	filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+				 	(GTK_TREE_VIEW (glade_xml_get_widget
+						(xml, "contacts_treeview"))));
+	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model (filter));
+	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
+					 (xml, "groups_combobox"));
+
+	/* Iterate over new contacts and add them to the list */
+	for (c = (GList *)contacts; c; c = c->next) {
+		GList *contact_groups;
+		const gchar *name, *uid;
+		EContact *contact = E_CONTACT (c->data);
+		EContactListHash *hash;
+		
+		if (!E_IS_CONTACT (contact))
+			continue;
+
+		/* Add contact to list */
+		hash = g_new (EContactListHash, 1);
+		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+		uid = e_contact_get_const (contact, E_CONTACT_UID);
+		gtk_list_store_insert_with_values (model, &hash->iter, 0,
+						   NAME, name,
+						   UID, uid,
+						   -1);
+		hash->contact = g_object_ref (contact);
+		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
+
+		/* Check for groups and add them to group list */
+		contact_groups =
+		    e_contact_get (contact,
+				   E_CONTACT_CATEGORY_LIST);
+		if (contact_groups) {
+			GList *group;
+			for (group = contact_groups; group;
+			     group = group->next) {
+				if (!g_list_find_custom (contacts_groups, 
+							 group->data,
+							 (GCompareFunc) strcmp))
+				{
+					gtk_combo_box_append_text
+					    (groups_combobox, group->data);
+					contacts_groups = g_list_prepend 
+							     (contacts_groups,
+							      group->data);
+				}
+			}
+			g_list_free (contact_groups);
+		}
+	}
+	
+	/* Update view */
+	gtk_tree_model_filter_refilter (filter);
+}
+
+static void
+contacts_changed (EBookView *book_view, const GList *contacts)
+{
+	GList *c;
+	EContact *current_contact = g_object_ref (get_current_contact ());
+
+	/* Loop through changed contacts */	
+	for (c = (GList *)contacts; c; c = c->next) {
+		EContact *contact = E_CONTACT (c->data);
+		EContactListHash *hash;
+		const gchar *uid;
+
+		/* Lookup if contact exists in internal list (it should) */
+		uid = e_contact_get_const (contact, E_CONTACT_UID);
+		hash = g_hash_table_lookup (contacts_table, uid);
+		if (!hash) continue;
+
+		/* Replace contact */
+		g_object_unref (hash->contact);
+		hash->contact = g_object_ref (contact);
+		/* TODO: Surely I shouldn't have to do this? */
+		g_hash_table_steal (contacts_table, uid);
+		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
+
+		/* Update list with possibly new name */
+		GtkListStore *model = GTK_LIST_STORE 
+			(gtk_tree_model_filter_get_model 
+			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+			  (GTK_TREE_VIEW (glade_xml_get_widget
+					(xml, "contacts_treeview"))))));
+		gtk_list_store_set (model, &hash->iter,
+			NAME,
+			e_contact_get (contact, E_CONTACT_FULL_NAME),
+			-1);
+
+		/* If contact is currently selected, update display */
+		if (current_contact) {
+			if (strcmp (e_contact_get_const
+					(contact, E_CONTACT_UID),
+				    e_contact_get_const
+					(current_contact, E_CONTACT_UID)) == 0)
+				display_contact_summary (contact);
+		}
+	}
+	
+	g_object_unref (current_contact);
+}
+
+static void
 contact_selected (GtkTreeSelection * selection)
 {
-	GtkTreeModel *model;
-	GtkTreeIter iter;
 	GtkWidget *widget;
-	GtkImage *photo;
-	const gchar *string;
 	EContact *contact;
 
 	/* Get the currently selected contact and update the contact summary */
-	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		gtk_tree_model_get (model, &iter, ECONTACT, &contact, -1);
-		if (!E_IS_CONTACT (contact))
-			return;
-
-		/* Retrieve contact name */
-		string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-		if (string) {
-			gchar *name_markup = g_strdup_printf
-			    ("<span><big><b>%s</b></big></span>", string);
-			widget =
-			    glade_xml_get_widget (xml,
-						  "summary_name_label");
-			gtk_label_set_markup (GTK_LABEL (widget),
-					      name_markup);
-			g_free (name_markup);
-		}
-
-		/* Retrieve contact picture and resize */
-		widget = glade_xml_get_widget (xml, "photo_image");
-		photo = load_contact_photo (contact);
-		if ((gtk_image_get_storage_type (photo) == GTK_IMAGE_EMPTY) ||
-		    (gtk_image_get_storage_type (photo) == GTK_IMAGE_PIXBUF))
-			gtk_image_set_from_pixbuf (GTK_IMAGE (widget),
-						  gtk_image_get_pixbuf (photo));
-		else if (gtk_image_get_storage_type 
-			 (photo) == GTK_IMAGE_ICON_NAME) {
-			const gchar *icon_name;
-			GtkIconSize size;
-			gtk_image_get_icon_name (photo, &icon_name, 
-						 &size);
-			gtk_image_set_from_icon_name (GTK_IMAGE (widget),
-						      icon_name,
-						      size);
-		}
-		gtk_widget_destroy (GTK_WIDGET (photo));
-
-		/* Retrieve contact business phone number */
-		string =
-		    e_contact_get_const (contact,
-					 E_CONTACT_PHONE_BUSINESS);
-		set_label ("bphone_title_label", "bphone_label", string);
-
-		/* Retrieve contact home phone number */
-		string =
-		    e_contact_get_const (contact, E_CONTACT_PHONE_HOME);
-		set_label ("hphone_title_label", "hphone_label", string);
-
-		/* Retrieve contact mobile phone number */
-		string =
-		    e_contact_get_const (contact, E_CONTACT_PHONE_MOBILE);
-		set_label ("mobile_title_label", "mobile_label", string);
-
-		/* Retrieve contact e-mail address */
-		string = e_contact_get_const (contact, E_CONTACT_EMAIL_1);
-		set_label ("email_title_label", "email_label", string);
-
-		/* Retrieve contact address */
-		string =
-		    e_contact_get_const (contact,
-					 E_CONTACT_ADDRESS_LABEL_HOME);
-		set_label ("address_title_label", "address_label", string);
-
-		widget = glade_xml_get_widget (xml, "summary_vbox");
-		gtk_widget_show (widget);
-		contact_selected_sensitive (TRUE);
+	contact = get_contact_from_selection (selection);
+	if (contact) {
+		display_contact_summary (contact);
 	} else {
 		contact_selected_sensitive (FALSE);
 		widget = glade_xml_get_widget (xml, "summary_vbox");
@@ -562,39 +590,15 @@ contact_selected (GtkTreeSelection * selection)
 	}
 }
 
-typedef struct {
-	EContact *contact;
-	EContactField field_id;
-} EContactChangeData;
-
-static void
-text_entry_changed (GtkEntry *entry, gpointer data)
-{
-	gchar *string;
-	EContactChangeData *d = (EContactChangeData *)data;
-	
-	string = (gchar *)gtk_entry_get_text (entry);
-	if (g_utf8_strlen (string, -1) == 0)
-		string = NULL;
-	e_contact_set (d->contact, d->field_id, (gpointer)string);
-}
-
-static void
-free_change_data (GtkEntry *entry, gpointer data)
-{
-	if (data)
-		g_free (data);
-}
-
 void
 change_photo ()
 {
 	GtkWidget *widget;
 	GtkWidget *filechooser;
+	GtkFileFilter *filter;
 	gint result;
 	
 	/* Get a filename */
-	/* TODO: Filter image type */
 	widget = glade_xml_get_widget (xml, "main_window");
 	filechooser = gtk_file_chooser_dialog_new ("Open image",
 						   GTK_WINDOW (widget),
@@ -606,11 +610,22 @@ change_photo ()
 						   "No image",
 						   GTK_RESPONSE_DELETE_EVENT,
 						   NULL);
+	/* Set filter by supported EContactPhoto image types */
+	filter = gtk_file_filter_new ();
+	/* mime types taken from e-contact.c */
+	gtk_file_filter_add_mime_type (filter, "image/gif");
+	gtk_file_filter_add_mime_type (filter, "image/jpeg");
+	gtk_file_filter_add_mime_type (filter, "image/png");
+	gtk_file_filter_add_mime_type (filter, "image/tiff");
+	gtk_file_filter_add_mime_type (filter, "image/ief");
+	gtk_file_filter_add_mime_type (filter, "image/cgm");
+	gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (filechooser), filter);
 
 	/* If a file was selected, get the image and set the contact to that
 	 * image.
 	 */	
 	result = gtk_dialog_run (GTK_DIALOG (filechooser));
+	widget = glade_xml_get_widget (xml, "edit_photo_button");
 	if (result == GTK_RESPONSE_ACCEPT) {
 		gchar *filename = gtk_file_chooser_get_filename 
 					(GTK_FILE_CHOOSER (filechooser));
@@ -623,21 +638,55 @@ change_photo ()
 				if (g_file_get_contents (filename, 
 							 &new_photo.data,
 							 &new_photo.length,
-							 NULL))
+							 NULL)) {
 					e_contact_set (contact, E_CONTACT_PHOTO,
 						       &new_photo);
+					/* Re-display contact photo */
+					gtk_button_set_image (
+					   GTK_BUTTON (widget), 
+					   GTK_WIDGET
+						(load_contact_photo (contact)));
+				}
 			}
 			g_free (filename);
 		}
 	} else if (result == GTK_RESPONSE_DELETE_EVENT) {
 		EContact *contact = get_current_contact ();
 		
-		if (contact) {
+		if (contact && E_IS_CONTACT (contact)) {
 			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
+			/* Re-display contact photo */
+			gtk_button_set_image (GTK_BUTTON (widget), 
+				     GTK_WIDGET (load_contact_photo (contact)));
 		}
 	}
 	
 	gtk_widget_destroy (filechooser);
+}
+
+typedef struct {
+	EContact *contact;
+	EContactField field_id;
+} EContactChangeData;
+
+static void
+text_entry_changed (GtkEntry *entry, gpointer data)
+{
+	if (data) {
+		EContactChangeData *d = (EContactChangeData *)data;
+		gchar *string;
+		string = (gchar *)gtk_entry_get_text (entry);
+		if (g_utf8_strlen (string, -1) == 0)
+			string = NULL;
+		e_contact_set (d->contact, d->field_id, (gpointer)string);
+	}
+}
+
+static void
+free_change_data (GtkEntry *entry, gpointer data)
+{
+	if (data)
+		g_free (data);
 }
 
 /* This function adds a GtkLabel and GtkEntry derived from field_id for a
@@ -674,8 +723,8 @@ static_field_contact_edit_add (EContact *contact, EContactField field_id,
 	data->contact = contact;
 	data->field_id = field_id;
 	g_signal_connect (G_OBJECT (entry), "changed", cb, data);
-	g_signal_connect (G_OBJECT (entry), "destroy", G_CALLBACK 
-			  (free_change_data), data);
+	g_signal_connect (G_OBJECT (entry), "destroy", 
+			  G_CALLBACK (free_change_data), data);
 	
 	/* Display widgets */
 	gtk_widget_show (label);
@@ -747,12 +796,13 @@ void
 edit_done ()
 {
 	GtkWidget *widget;
+	EContact *contact;
 	
-	/* TODO: This is temporary - why aren't we receiving contacts_changed
-	 * signal from EBookView?
-	 */
-	 contacts_changed (NULL, g_list_prepend (NULL, get_current_contact ()));
-	 
+	/* Commit changes */
+	contact = get_current_contact ();
+	if (contact)
+		e_book_commit_contact(book, contact, NULL);
+
 	/* All changed are instant-apply, so just remove the edit components
 	 * and switch back to main view.
 	 */
@@ -775,17 +825,13 @@ int
 main (int argc, char **argv)
 {
 	GtkComboBox *groups_combobox;
-	GtkVBox *contacts_vbox;
 	GtkTreeView *contacts_treeview;
 	GtkTreeSelection *selection;
 	GtkListStore *model;
 	GtkTreeModelFilter *filter;
-	gchar *book_path;
 	GtkCellRenderer *renderer;
 	gboolean status;
-	EBook *book;
 	EBookQuery *query;
-	EBookView *book_view;
 
 	/* Standard initialisation for gtk and glade */
 	gtk_init (&argc, &argv);
@@ -813,7 +859,7 @@ main (int argc, char **argv)
 						     -1, NULL, renderer,
 						     "text", NAME, NULL);
 	/* Create model and filter (for groups) */
-	model = gtk_list_store_new (2, G_TYPE_STRING, E_TYPE_CONTACT);
+	model = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 	filter =
 	    GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new
 				   (GTK_TREE_MODEL (model), NULL));
@@ -843,24 +889,22 @@ main (int argc, char **argv)
 	
 	/* Load the system addressbook */
 	contacts_table = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, 
-						(GDestroyNotify)
-						 free_econtact_list_hash);
+						(GDestroyNotify)g_free);
 	book = e_book_new_system_addressbook (NULL);
 	if (!book)
 		g_critical ("Could not load system addressbook");
-	if (!e_book_open (book, FALSE, NULL))
+	if (!(status = e_book_open (book, FALSE, NULL)))
 		g_critical ("Error '%d' opening ebook", status);
 	/* Create an EBookView */
 	query = e_book_query_any_field_contains ("");
 	e_book_get_book_view (book, query, NULL, -1, &book_view, NULL);
 	e_book_query_unref (query);
 	/* Connect signals */
-	g_signal_connect (book_view, "contacts_added",
+	g_signal_connect (G_OBJECT (book_view), "contacts_added",
 			  G_CALLBACK (contacts_added), NULL);
-	g_signal_connect (book_view, "contacts_changed",
+	g_signal_connect (G_OBJECT (book_view), "contacts_changed",
 			  G_CALLBACK (contacts_changed), NULL);
-/*	g_signal_connect (view, "contacts_removed", G_CALLBACK (contacts_removed), NULL);
-	g_signal_connect (view, "sequence_complete", G_CALLBACK (sequence_complete), NULL);*/
+	/* TODO: Handle contacts_removed signal */
 	/* Start */
 	e_book_view_start (book_view);
 
