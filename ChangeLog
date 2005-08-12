@@ -1,6 +1,18 @@
 2005-08-12  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
+	o Pass main_window in cut/copy/paste
+	o Add an about dialog
+	o Change spacing on name label, so as not to be on sizer
+	
+	* src/main.c: (delete_contact), (copy), (cut), (paste), (about),
+	(main):
+	o Add cut/copy/paste
+	o Add about dialog
+
+2005-08-12  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
 	Remove signals on photo and close button on edit panel, fix some
 	spacings.
 	

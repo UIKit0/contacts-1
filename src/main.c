@@ -903,6 +903,60 @@ delete_contact ()
 	gtk_widget_destroy (dialog);
 }
 
+void
+copy (GtkWindow *main_window)
+{
+	GtkWidget *widget = gtk_window_get_focus (main_window);
+
+	if (widget) {
+		if (GTK_IS_EDITABLE (widget))
+			gtk_editable_copy_clipboard (GTK_EDITABLE (widget));
+		else if (GTK_IS_LABEL (widget)) {
+			gint start, end;
+			if (gtk_label_get_selection_bounds (GTK_LABEL (widget),
+							    &start, &end)) {
+				const gchar *text =
+					gtk_label_get_text (GTK_LABEL (widget));
+				gchar *start_text =
+					g_utf8_offset_to_pointer (text, start);
+				gchar *copy_text =
+					g_strndup (start_text, end-start);
+				gtk_clipboard_set_text (
+				    gtk_clipboard_get (GDK_SELECTION_CLIPBOARD),
+				    copy_text, end-start);
+				g_free (copy_text);
+			}
+		}
+	}
+}
+
+void
+cut (GtkWindow *main_window)
+{
+	GtkWidget *widget = gtk_window_get_focus (main_window);
+	
+	if (widget && GTK_IS_EDITABLE (widget))
+		gtk_editable_cut_clipboard (GTK_EDITABLE (widget));
+	else
+		copy (main_window);
+}
+
+void
+paste (GtkWindow *main_window)
+{
+	GtkWidget *widget = gtk_window_get_focus (main_window);
+
+	if (widget && GTK_IS_EDITABLE (widget))
+		gtk_editable_paste_clipboard (GTK_EDITABLE (widget));
+}
+
+void
+about ()
+{
+	GtkWidget *widget = glade_xml_get_widget (xml, "aboutdialog");
+	gtk_widget_show (widget);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -923,7 +977,7 @@ main (int argc, char **argv)
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	/* Load up main_window from interface xml, quit if xml file not found */
-	xml = glade_xml_new (XML_FILE, "main_window", NULL);
+	xml = glade_xml_new (XML_FILE, NULL, NULL);
 	if (!xml)
 		g_critical ("Could not find interface XML file '%s'",
 			    XML_FILE);
@@ -988,7 +1042,6 @@ main (int argc, char **argv)
 			  G_CALLBACK (contacts_changed), NULL);
 	g_signal_connect (G_OBJECT (book_view), "contacts_removed",
 			  G_CALLBACK (contacts_removed), NULL);
-	/* TODO: Handle contacts_removed signal */
 	/* Start */
 	e_book_view_start (book_view);
 
