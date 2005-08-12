@@ -802,6 +802,7 @@
 
 		      <child>
 			<widget class="GtkTable" id="edit_table">
+			  <property name="border_width">6</property>
 			  <property name="visible">True</property>
 			  <property name="n_rows">1</property>
 			  <property name="n_columns">2</property>
@@ -836,7 +837,6 @@
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
-			      <signal name="clicked" handler="change_photo" last_modification_time="Tue, 09 Aug 2005 15:03:23 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
@@ -865,7 +865,7 @@
 	      <property name="spacing">0</property>
 
 	      <child>
-		<widget class="GtkButton" id="button1">
+		<widget class="GtkButton" id="edit_done_button">
 		  <property name="visible">True</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
@@ -873,7 +873,6 @@
 		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
-		  <signal name="clicked" handler="edit_done" last_modification_time="Mon, 08 Aug 2005 15:38:39 GMT"/>
 		</widget>
 	      </child>
 	    </widget>

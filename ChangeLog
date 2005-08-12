@@ -1,3 +1,20 @@
+2005-08-12  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	Remove signals on photo and close button on edit panel, fix some
+	spacings.
+	
+	* src/main.c: (is_row_visible), (sort_treeview_func),
+	(load_contact_photo), (display_contact_summary), (contacts_added),
+	(contacts_changed), (contacts_removed), (contact_selected),
+	(change_photo), (text_entry_changed), (free_change_data),
+	(static_field_contact_edit_add), (do_edit), (new_contact),
+	(edit_contact):
+	o Add new_contact and delete_contact, fix do_edit to not use
+	  get_current_contact.
+	o When a search results in one contact, select it - Also works when
+	  other applications add contacts.
+
 2005-08-11  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/main.c: (quit), (contacts_changed), (main):
