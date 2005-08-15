@@ -1,3 +1,19 @@
+2005-08-15  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/Makefile.am:
+	* src/callbacks-ebook.c:
+	* src/callbacks-ebook.h:
+	* src/callbacks-ui.c:
+	* src/callbacks-ui.h:
+	* src/defs.h:
+	* src/globals.h:
+	* src/main.c:
+	* src/utils.c:
+	* src/utils.h:
+	o Split source into multiple files
+	o Add TYPE support (unfinished)
+
 2005-08-12  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
