@@ -21,19 +21,33 @@ GHashTable *contacts_table;
 EBook *book;
 EBookView *book_view;
 
-/* List of always-available fields that are one line */
+typedef struct {
+	const gchar *vcard_field;
+	EContactField econtact_field; /* >0, gets used for pretty name */
+	const gchar *pretty_name; /* Otherwise this will be used */
+} ContactsField;
+
+/* List of always-available fields (ADR is special-cased) */
+static ContactsField required_fields[] = {
+	{ "FN", E_CONTACT_FULL_NAME, NULL },
+	{ "TEL", 0, "Phone" },
+	{ "EMAIL", 0, "Email" },
+	{ NULL }
+};
+
+/* List of supported fields */
+/* TODO: Revise this list */
+static ContactsField suported_fields[] = {
+	{ "URL", E_CONTACT_HOMEPAGE_URL, NULL },
+	{ NULL }
+};
+
 static EContactField base_fields1[] = {
 	E_CONTACT_FULL_NAME,
 	E_CONTACT_PHONE_BUSINESS,
 	E_CONTACT_PHONE_HOME,
 	E_CONTACT_PHONE_MOBILE,
 	E_CONTACT_EMAIL_1,
-	E_CONTACT_FIELD_LAST
-};
-/* List of always-available fields that span multiple lines (addresses) */
-static EContactField base_fieldsn[] = {
-	E_CONTACT_ADDRESS_LABEL_HOME,
-	E_CONTACT_ADDRESS_LABEL_WORK,
 	E_CONTACT_FIELD_LAST
 };
 
@@ -191,7 +205,7 @@ static_field_contact_edit_add (EContact *contact, EContactField field_id,
 	type_string = string ? get_string_from_types (contact, field_id) : NULL;
 	if (type_string) {
 		label_markup = g_strdup_printf (
-			"<span><b>%s</b> <small>(%s)</small><b>:</b></span>",
+			"<span><b>%s:</b>\n<small>(%s)</small></span>",
 			e_contact_pretty_name (field_id),
 			type_string);
 		g_free (type_string);
@@ -205,6 +219,7 @@ static_field_contact_edit_add (EContact *contact, EContactField field_id,
 	label = gtk_label_new (NULL);
 	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
 	gtk_label_set_markup (GTK_LABEL (label), label_markup);
+	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
 	g_free (label_markup);
 	entry = gtk_entry_new ();
 	gtk_entry_set_text (GTK_ENTRY (entry), string ? string : "");
@@ -236,7 +251,7 @@ do_edit (EContact *contact)
 {
 	GtkWidget *widget;
 	guint i, row;
-	GList *attributes, *c;
+	GList *attributes, *c, *edit_widgets;
 	
 	/* Testing */
 	attributes = e_vcard_get_attributes (&contact->parent);
@@ -264,7 +279,7 @@ do_edit (EContact *contact)
 	
 	/* Display edit pane */
 	/* ODD: Doing this after adding the widgets will cause the first view
-	 * not to work... But only when using a viewport
+	 * not to work... But only when using a viewport (Gtk bug?)
 	 */
 	widget = glade_xml_get_widget (xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
@@ -277,7 +292,19 @@ do_edit (EContact *contact)
 			  G_CALLBACK (change_photo), contact);
 	
 	/* Fill edit pane */
-	/* Always-available fields */
+/*	for (c = attributes; c; c = c->next) {
+		EVCardAttribute *a = (EVCardAttribute*)c->data;
+		GList *params = e_vcard_attribute_get_params (a);
+		GList *values = e_vcard_attribute_get_values (a);*/
+		
+		/* Required fields */
+
+		/* Address field */
+
+		/* Custom/Supported fields */
+/*	}*/
+
+	/* Required fields */
 	widget = glade_xml_get_widget (xml, "edit_table");
 	for (i = 0, row = 0; base_fields1[i] != E_CONTACT_FIELD_LAST; i++) {
 		if (static_field_contact_edit_add (contact, base_fields1[i],
@@ -287,7 +314,10 @@ do_edit (EContact *contact)
 			row++;
 	}
 	
-	/* Custom fields */
+	/* Address field */
+	/* ... */
+	
+	/* Custom/Supported fields */
 	/* ... */
 	
 	widget = glade_xml_get_widget (xml, "main_window");
