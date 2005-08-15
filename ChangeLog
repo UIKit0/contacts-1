@@ -1,5 +1,23 @@
 2005-08-15  Chris Lord,,,  <chris@openedhand.com>
 
+	* src/callbacks-ui.c: (contact_selected):
+	* src/callbacks-ui.h:
+	* src/defs.h:
+	* src/main.c: (change_photo), (free_change_data),
+	(contacts_get_type_string), (do_edit):
+	Use EVCard for all editing instead of EContact - Allows usage of the
+	TYPE field to add semi-custom fields (unfinished)
+
+2005-08-15  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/Makefile.am:
+	Forgot to commit in last update (needed for file split)
+	
+	* src/main.c: (static_field_contact_edit_add), (do_edit):
+	Begin on change EContact->EVCard to ease usage of TYPE field
+
+2005-08-15  Chris Lord,,,  <chris@openedhand.com>
+
 	* data/contacts.glade:
 	* src/Makefile.am:
 	* src/callbacks-ebook.c:

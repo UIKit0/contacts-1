@@ -17,8 +17,6 @@ void display_contact_summary (EContact *contact);
 
 void contact_selected (GtkTreeSelection * selection);
 
-void text_entry_changed (GtkEntry *entry, gpointer data);
-
 void new_contact ();
 
 void edit_contact ();

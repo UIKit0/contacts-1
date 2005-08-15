@@ -229,19 +229,6 @@ contact_selected (GtkTreeSelection * selection)
 }
 
 void
-text_entry_changed (GtkEntry *entry, gpointer data)
-{
-	if (data) {
-		EContactChangeData *d = (EContactChangeData *)data;
-		gchar *string;
-		string = (gchar *)gtk_entry_get_text (entry);
-		if (g_utf8_strlen (string, -1) == 0)
-			string = NULL;
-		e_contact_set (d->contact, d->field_id, (gpointer)string);
-	}
-}
-
-void
 new_contact ()
 {
 	EContact *contact = e_contact_new ();

@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
 	EContact *contact;
-	EContactField field_id;
+	EVCardAttribute *attr;
 } EContactChangeData;
 
 #define NO_IMAGE 1

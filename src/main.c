@@ -21,34 +21,25 @@ GHashTable *contacts_table;
 EBook *book;
 EBookView *book_view;
 
+#define REQUIRED 0
+#define SUPPORTED 1
+
 typedef struct {
 	const gchar *vcard_field;
 	EContactField econtact_field; /* >0, gets used for pretty name */
-	const gchar *pretty_name; /* Otherwise this will be used */
+	const gchar *pretty_name; /* Always takes priority over above */
+	guint priority;
 } ContactsField;
 
-/* List of always-available fields (ADR is special-cased) */
-static ContactsField required_fields[] = {
-	{ "FN", E_CONTACT_FULL_NAME, NULL },
-	{ "TEL", 0, "Phone" },
-	{ "EMAIL", 0, "Email" },
-	{ NULL }
-};
-
-/* List of supported fields */
-/* TODO: Revise this list */
-static ContactsField suported_fields[] = {
-	{ "URL", E_CONTACT_HOMEPAGE_URL, NULL },
-	{ NULL }
-};
-
-static EContactField base_fields1[] = {
-	E_CONTACT_FULL_NAME,
-	E_CONTACT_PHONE_BUSINESS,
-	E_CONTACT_PHONE_HOME,
-	E_CONTACT_PHONE_MOBILE,
-	E_CONTACT_EMAIL_1,
-	E_CONTACT_FIELD_LAST
+/* List of always-available fields (ADR will have to be special-cased) */
+/* TODO: Revise 'supported' fields */
+static ContactsField contacts_fields[] = {
+	{ "FN", E_CONTACT_FULL_NAME, NULL, REQUIRED },
+	{ "TEL", 0, "Phone", REQUIRED },
+	{ "EMAIL", 0, "Email", REQUIRED },
+/*	{ "ADR", 0, "Address", REQUIRED },*/
+	{ "URL", E_CONTACT_HOMEPAGE_URL, NULL, SUPPORTED },
+	{ NULL, 0, NULL, 0 }
 };
 
 static void
@@ -66,6 +57,30 @@ free_list_hash (gpointer data)
 		g_object_unref (hash->contact);
 		g_free (hash);
 	}
+}
+
+static ContactsField *
+contacts_get_contacts_field (const gchar *vcard_field)
+{
+	int i;
+	
+	for (i = 0; contacts_fields[i].vcard_field != NULL; i++) {
+		if (strcmp (contacts_fields[i].vcard_field, vcard_field) == 0)
+			return &contacts_fields[i];
+	}
+	
+	return NULL;
+}
+
+static const gchar *
+contacts_get_contacts_field_pretty_name (ContactsField *field)
+{
+	if (field->pretty_name) {
+		return field->pretty_name;
+	} else if (field->econtact_field > 0) {
+		return e_contact_pretty_name (field->econtact_field);
+	} else
+		return NULL;
 }
 
 void
@@ -144,28 +159,35 @@ free_change_data (GtkEntry *entry, gpointer data)
 		g_free (data);
 }
 
+static void
+contacts_single_value_changed (GtkEntry *entry, gpointer data)
+{
+	EContactChangeData *d = (EContactChangeData *)data;
+	gchar *string;
+	string = (gchar *)gtk_entry_get_text (entry);
+		
+	/* Remove old value and add new one */
+/*	if (g_utf8_strlen (string, -1) > 0) {*/
+		e_vcard_attribute_remove_values (d->attr);
+		e_vcard_attribute_add_value (d->attr, string);
+/*	}*/
+}
+
 static gchar *
-get_string_from_types (EContact *contact, EContactField field_id)
+contacts_get_type_string (GList *params)
 {
 	gchar *type_string;
-	GList *attributes, *n, *names = NULL;
+	GList *n, *names = NULL;
 
-	attributes = e_contact_get_attributes (contact, field_id);
-	if (!attributes) return NULL;
+	if (!params) return NULL;
 
-	for (; attributes; attributes = attributes->next) {
-		EVCardAttribute *attr =	(EVCardAttribute *)attributes->data;
-		GList *params = e_vcard_attribute_get_params (attr);
-		for (; params; params = params->next) {
-			EVCardAttributeParam *p =
-					(EVCardAttributeParam *)params->data;
-			GList *pvs = e_vcard_attribute_param_get_values (p);
-			if (strcmp ("TYPE",
-				    e_vcard_attribute_param_get_name (p)) != 0)
-				break;
-			for (; pvs; pvs = pvs->next)
-				names = g_list_append (names, pvs->data);
-		}
+	for (; params; params = params->next) {
+		EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
+		GList *pvs = e_vcard_attribute_param_get_values (p);
+		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) != 0)
+			continue;
+		for (; pvs; pvs = pvs->next)
+			names = g_list_append (names, pvs->data);
 	}
 	
 	if (!names)
@@ -189,68 +211,72 @@ get_string_from_types (EContact *contact, EContactField field_id)
  * Returns TRUE on success, FALSE on failure.
  */
 static gboolean
-static_field_contact_edit_add (EContact *contact, EContactField field_id, 
-			       GtkTable *table, guint row, GCallback edit_cb,
-			       GCallback type_edit_cb)
-{
-	GtkWidget *label;
-	GtkWidget *entry;
-	const gchar *string;
-	gchar *type_string, *label_markup;
-	EContactChangeData *data;
-	
-	string = e_contact_get_const (contact, field_id);
-	
-	/* Create label/button text */
-	type_string = string ? get_string_from_types (contact, field_id) : NULL;
-	if (type_string) {
-		label_markup = g_strdup_printf (
-			"<span><b>%s:</b>\n<small>(%s)</small></span>",
-			e_contact_pretty_name (field_id),
-			type_string);
-		g_free (type_string);
-	}
-	else {
-		label_markup = g_strdup_printf (
-			"<span><b>%s:</b></span>", e_contact_pretty_name (field_id));
-	}
-	
-	/* Create widgets */
-	label = gtk_label_new (NULL);
-	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
-	gtk_label_set_markup (GTK_LABEL (label), label_markup);
-	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
-	g_free (label_markup);
-	entry = gtk_entry_new ();
-	gtk_entry_set_text (GTK_ENTRY (entry), string ? string : "");
-	
-	/* Set alignment and add to container */
-	gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
-	gtk_table_attach (table, label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 
-			  0, 0);
-	gtk_table_attach (table, entry, 1, 2, row, row+1, GTK_FILL | GTK_EXPAND,
-			  GTK_FILL, 0, 0);
-	
-	/* Connect signal */
-	data = g_new (EContactChangeData, 1);
-	data->contact = contact;
-	data->field_id = field_id;
-	g_signal_connect (G_OBJECT (entry), "changed", edit_cb, data);
-	g_signal_connect (G_OBJECT (entry), "destroy", 
-			  G_CALLBACK (free_change_data), data);
-	
-	/* Display widgets */
-	gtk_widget_show (label);
-	gtk_widget_show (entry);
-	
-	return TRUE;
+contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
+			  const gchar *name, GtkTable *table, guint row)
+{	
+	/* Single-valued widget */
+	if (e_vcard_attribute_is_single_valued (attr)) {
+		GtkWidget *label;
+		GtkWidget *entry;
+		const gchar *string;
+		gchar *type_string, *label_markup;
+		EContactChangeData *data;
+
+		string = e_vcard_attribute_get_value (attr);
+
+		/* Create label/button text */
+		type_string = string ? contacts_get_type_string
+				(e_vcard_attribute_get_params (attr)) : NULL;
+		if (type_string) {
+			label_markup = g_strdup_printf (
+				"<span><b>%s:</b>\n<small>(%s)</small></span>",
+				name, type_string);
+			g_free (type_string);
+		}
+		else {
+			label_markup = g_strdup_printf (
+				"<span><b>%s:</b></span>", name);
+		}
+
+		/* Create widgets */
+		label = gtk_label_new (NULL);
+		gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+		gtk_label_set_markup (GTK_LABEL (label), label_markup);
+		gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
+		g_free (label_markup);
+		entry = gtk_entry_new ();
+		gtk_entry_set_text (GTK_ENTRY (entry), string ? string : "");
+		
+		/* Set alignment and add to container */
+		gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
+		gtk_table_attach (table, label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 
+				  0, 0);
+		gtk_table_attach (table, entry, 1, 2, row, row+1, GTK_FILL | GTK_EXPAND,
+				  GTK_FILL, 0, 0);
+		
+		/* Connect signal */
+		data = g_new (EContactChangeData, 1);
+		data->contact = contact;
+		data->attr = attr;
+		g_signal_connect (G_OBJECT (entry), "changed", G_CALLBACK
+				  (contacts_single_value_changed), data);
+		g_signal_connect (G_OBJECT (entry), "destroy", 
+				  G_CALLBACK (free_change_data), data);
+		
+		/* Display widgets */
+		gtk_widget_show (label);
+		gtk_widget_show (entry);
+		
+		return TRUE;
+	} else
+		return FALSE;
 }
 
 void
 do_edit (EContact *contact)
 {
 	GtkWidget *widget;
-	guint i, row;
+	guint row;
 	GList *attributes, *c, *edit_widgets;
 	
 	/* Testing */
@@ -292,34 +318,28 @@ do_edit (EContact *contact)
 			  G_CALLBACK (change_photo), contact);
 	
 	/* Fill edit pane */
-/*	for (c = attributes; c; c = c->next) {
-		EVCardAttribute *a = (EVCardAttribute*)c->data;
-		GList *params = e_vcard_attribute_get_params (a);
-		GList *values = e_vcard_attribute_get_values (a);*/
-		
-		/* Required fields */
-
-		/* Address field */
-
-		/* Custom/Supported fields */
-/*	}*/
-
-	/* Required fields */
+	attributes = e_vcard_get_attributes (&contact->parent);
 	widget = glade_xml_get_widget (xml, "edit_table");
-	for (i = 0, row = 0; base_fields1[i] != E_CONTACT_FIELD_LAST; i++) {
-		if (static_field_contact_edit_add (contact, base_fields1[i],
-						   GTK_TABLE (widget), row, 
-						   G_CALLBACK 
-						   (text_entry_changed), NULL))
-			row++;
+	for (c = attributes, row = 0; c; c = c->next) {
+		EVCardAttribute *a = (EVCardAttribute*)c->data;
+		const gchar *name = e_vcard_attribute_get_name (a);
+		const gchar *pretty_name;
+		ContactsField *field = contacts_get_contacts_field (name);
+		
+		if (field) {
+			pretty_name = contacts_get_contacts_field_pretty_name (
+									field);
+			if (contacts_edit_widget_new
+					(contact, a, pretty_name,
+					GTK_TABLE (widget), row))
+				row++;
+		}
+		
+		/* Special case ADR field */
+		/*...*/
+
 	}
-	
-	/* Address field */
-	/* ... */
-	
-	/* Custom/Supported fields */
-	/* ... */
-	
+
 	widget = glade_xml_get_widget (xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
 	
