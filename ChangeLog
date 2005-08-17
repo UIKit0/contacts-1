@@ -1,3 +1,13 @@
+2005-08-17  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/main.c: (free_list_hash), (contacts_get_contacts_field),
+	(free_change_data), (contacts_get_type_string),
+	(contacts_edit_widget_new), (contacts_widgets_list_sort),
+	(contacts_widgets_list_find), (do_edit):
+	o Add priority to field display order
+	o Add support for more fields
+	o Add editing support for fields that may span multiple lines
+
 2005-08-15  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/callbacks-ui.c: (contact_selected):
