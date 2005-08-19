@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -243,4 +244,67 @@ load_contact_photo (EContact *contact)
 	}
 	return image ? image : GTK_IMAGE (gtk_image_new_from_icon_name 
 					("stock_person", GTK_ICON_SIZE_DIALOG));
+}
+
+/* This removes any vCard attributes that are just "", or have no associated
+ * value. Evolution tends to add empty fields like this a lot, as does
+ * contacts to show required fields.
+ * TODO: This really doesn't need to be recursive.
+ */
+void
+contacts_clean_contact (EContact *contact)
+{
+	GList *attributes, *c;
+
+	attributes = e_vcard_get_attributes (&contact->parent);
+	for (c = attributes; c; c = c->next) {
+		EVCardAttribute *a = (EVCardAttribute*)c->data;
+		GList *values = e_vcard_attribute_get_values (a);
+		gboolean remove = TRUE;
+		for (; values; values = values->next) {
+			if (g_utf8_strlen ((const gchar *)values->data, -1) > 0)
+				remove = FALSE;
+		}
+		if (remove) {
+			e_vcard_remove_attribute (&contact->parent, a);
+			contacts_clean_contact (contact);
+			break;
+		}
+	}
+}
+
+gchar *
+contacts_string_list_as_string (GList *list, const gchar *separator)
+{
+	gchar *old_string, *new_string;
+	GList *c;
+	
+	if (!list) return NULL;
+	
+	new_string = g_strdup (list->data);
+	for (c = list->next; c; c = c->next) {
+		old_string = new_string;
+		new_string = g_strdup_printf ("%s%s%s", new_string, separator,
+					      (const gchar *)c->data);
+		g_free (old_string);
+	}
+	
+	return new_string;
+}
+
+GList *
+contacts_get_string_list_from_types (GList *params)
+{
+	GList *list = NULL;
+
+	for (; params; params = params->next) {
+		EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
+		GList *pvs = e_vcard_attribute_param_get_values (p);
+		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) != 0)
+			continue;
+		for (; pvs; pvs = pvs->next)
+			list = g_list_append (list, pvs->data);
+	}
+	
+	return list;
 }

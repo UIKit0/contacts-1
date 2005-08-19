@@ -21,3 +21,10 @@ EContact *get_current_contact ();
 void contact_selected_sensitive (gboolean sensitive);
 
 GtkImage *load_contact_photo (EContact *contact);
+
+void contacts_clean_contact (EContact *contact);
+
+gchar *contacts_string_list_as_string (GList *list,
+					      const gchar *separator);
+
+GList *contacts_get_string_list_from_types (GList *params);

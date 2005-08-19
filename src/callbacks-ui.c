@@ -345,7 +345,8 @@ edit_done (GtkWidget *button, EContact *contact)
 {
 	GtkWidget *widget;
 	
-	/* Commit changes */
+	/* Clean contact and commit changes */
+	contacts_clean_contact (contact);
 	if (contact)
 		e_book_commit_contact(book, contact, NULL);
 

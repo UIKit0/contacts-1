@@ -1,3 +1,25 @@
+2005-08-19  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	o Edit the edit pane for adding/removing fields and groups
+	o Make group(/type?) editing dialog
+	
+	* src/callbacks-ui.c: (edit_done):
+	* src/main.c: (change_photo), (contacts_widget_free_data),
+	(contacts_widget_free_list), (contacts_multiple_choice_chooser),
+	(contacts_entry_changed_cb), (contacts_buffer_changed_cb),
+	(contacts_edit_focus_out_cb), (contacts_add_focus_events),
+	(contacts_get_text), (contacts_adr_changed_cb),
+	(contacts_label_widget_new), (contacts_edit_widget_new),
+	(contacts_widgets_list_sort_cb), (contacts_widgets_list_find_cb),
+	(do_edit):
+	* src/utils.c: (load_contact_photo):
+	* src/utils.h:
+	o Add ADR field editing (needs tidying)
+	o Turn edit labels into buttons for type editing
+	o Change edit button relief on entry focus
+	o Display group information under contact photo
+
 2005-08-17  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/main.c: (free_list_hash), (contacts_get_contacts_field),
