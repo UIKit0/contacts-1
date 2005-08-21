@@ -7,4 +7,3 @@ extern GladeXML *xml;
 extern GList *contacts_groups;
 extern GHashTable *contacts_table;
 extern EBook *book;
-extern EBookView *book_view;

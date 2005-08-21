@@ -13,7 +13,7 @@
  * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
  */
  /*****************************************************************************/
-char *
+G_INLINE_FUNC char *
 e_util_unicode_get_utf8 (const char *text, gunichar * out)
 {
 	*out = g_utf8_get_char (text);
@@ -22,7 +22,7 @@ e_util_unicode_get_utf8 (const char *text, gunichar * out)
 	    g_utf8_next_char (text);
 }
 
-gunichar
+static gunichar
 stripped_char (gunichar ch)
 {
 	GUnicodeType utype;
@@ -132,17 +132,6 @@ kozo_utf8_strcasestrip (const char *str)
 
 /******************************************************************************/
 
-void
-free_object_list (GList * list)
-{
-	if (list) {
-		g_list_foreach (list, (GFunc) g_object_unref, NULL);
-		g_list_free (list);
-		list = NULL;
-	}
-}
-
-
 EContact *
 get_contact_from_selection (GtkTreeSelection *selection)
 {
@@ -155,7 +144,7 @@ get_contact_from_selection (GtkTreeSelection *selection)
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		const gchar *uid;
 		EContactListHash *hash;
-		gtk_tree_model_get (model, &iter, UID, &uid, -1);
+		gtk_tree_model_get (model, &iter, CONTACT_UID_COL, &uid, -1);
 		if (uid) {
 			hash = g_hash_table_lookup (contacts_table, uid);
 			if (hash)
@@ -215,7 +204,7 @@ contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
 }
 
 GtkImage *
-load_contact_photo (EContact *contact)
+contacts_load_photo (EContact *contact)
 {
 	GtkImage *image = NULL;
 	EContactPhoto *photo;
@@ -307,4 +296,90 @@ contacts_get_string_list_from_types (GList *params)
 	}
 	
 	return list;
+}
+
+void
+contacts_choose_photo (GtkWidget *button, EContact *contact)
+{
+	GtkWidget *widget;
+	GtkWidget *filechooser;
+	GtkFileFilter *filter;
+	gint result;
+	
+	/* Get a filename */
+	widget = glade_xml_get_widget (xml, "main_window");
+	filechooser = gtk_file_chooser_dialog_new ("Open image",
+						   GTK_WINDOW (widget),
+						   GTK_FILE_CHOOSER_ACTION_OPEN,
+						   GTK_STOCK_CANCEL,
+						   GTK_RESPONSE_CANCEL,
+						   GTK_STOCK_OPEN,
+						   GTK_RESPONSE_ACCEPT,
+						   "No image",
+						   NO_IMAGE,
+						   NULL);
+	/* Set filter by supported EContactPhoto image types */
+	filter = gtk_file_filter_new ();
+	/* mime types taken from e-contact.c */
+	gtk_file_filter_add_mime_type (filter, "image/gif");
+	gtk_file_filter_add_mime_type (filter, "image/jpeg");
+	gtk_file_filter_add_mime_type (filter, "image/png");
+	gtk_file_filter_add_mime_type (filter, "image/tiff");
+	gtk_file_filter_add_mime_type (filter, "image/ief");
+	gtk_file_filter_add_mime_type (filter, "image/cgm");
+	gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (filechooser), filter);
+
+	/* If a file was selected, get the image and set the contact to that
+	 * image.
+	 */	
+	result = gtk_dialog_run (GTK_DIALOG (filechooser));
+	if (result == GTK_RESPONSE_ACCEPT) {
+		gchar *filename = gtk_file_chooser_get_filename 
+					(GTK_FILE_CHOOSER (filechooser));
+		if (filename) {
+			if (contact) {
+				EContactPhoto new_photo;
+				
+				if (g_file_get_contents (filename, 
+							 &new_photo.data,
+							 &new_photo.length,
+							 NULL)) {
+					e_contact_set (contact, E_CONTACT_PHOTO,
+						       &new_photo);
+					/* Re-display contact photo */
+					gtk_button_set_image (
+					   GTK_BUTTON (button), 
+					   GTK_WIDGET
+						(contacts_load_photo (contact)));
+				}
+			}
+			g_free (filename);
+		}
+	} else if (result == NO_IMAGE) {
+		if (contact && E_IS_CONTACT (contact)) {
+			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
+			/* Re-display contact photo */
+			gtk_button_set_image (GTK_BUTTON (button), 
+				     GTK_WIDGET (contacts_load_photo (contact)));
+		}
+	}
+	
+	gtk_widget_destroy (filechooser);
+}
+
+void
+contacts_free_list_hash (gpointer data)
+{
+	EContactListHash *hash = (EContactListHash *)data;
+	
+	if (hash) {
+		GtkListStore *model = GTK_LIST_STORE 
+			(gtk_tree_model_filter_get_model 
+			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+			  (GTK_TREE_VIEW (glade_xml_get_widget
+					(xml, "contacts_treeview"))))));
+		gtk_list_store_remove (model, &hash->iter);
+		g_object_unref (hash->contact);
+		g_free (hash);
+	}
 }

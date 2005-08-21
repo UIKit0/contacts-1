@@ -5,13 +5,13 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "callbacks-ui.h"
 #include "globals.h"
 #include "defs.h"
 #include "utils.h"
+#include "main.h"
 
 void
-contacts_added (EBookView *book_view, const GList *contacts)
+contacts_added_cb (EBookView *book_view, const GList *contacts)
 {
 	GtkComboBox *groups_combobox;
 	GtkListStore *model;
@@ -41,8 +41,8 @@ contacts_added (EBookView *book_view, const GList *contacts)
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		gtk_list_store_insert_with_values (model, &hash->iter, 0,
-						   NAME, name,
-						   UID, uid,
+						   CONTACT_NAME_COL, name,
+						   CONTACT_UID_COL, uid,
 						   -1);
 		hash->contact = g_object_ref (contact);
 		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
@@ -71,11 +71,11 @@ contacts_added (EBookView *book_view, const GList *contacts)
 	}
 	
 	/* Update view */
-	update_treeview ();
+	contacts_update_treeview ();
 }
 
 void
-contacts_changed (EBookView *book_view, const GList *contacts)
+contacts_changed_cb (EBookView *book_view, const GList *contacts)
 {
 	GList *c;
 	EContact *current_contact = get_current_contact ();
@@ -106,7 +106,7 @@ contacts_changed (EBookView *book_view, const GList *contacts)
 			  (GTK_TREE_VIEW (glade_xml_get_widget
 					(xml, "contacts_treeview"))))));
 		gtk_list_store_set (model, &hash->iter,
-			NAME,
+			CONTACT_NAME_COL,
 			e_contact_get (contact, E_CONTACT_FULL_NAME),
 			-1);
 
@@ -116,18 +116,18 @@ contacts_changed (EBookView *book_view, const GList *contacts)
 					(contact, E_CONTACT_UID),
 				    e_contact_get_const
 					(current_contact, E_CONTACT_UID)) == 0)
-				display_contact_summary (contact);
+				contacts_display_summary (contact);
 		}
 	}
 	
 	if (current_contact) g_object_unref (current_contact);
 
 	/* Update view */
-	update_treeview ();
+	contacts_update_treeview ();
 }
 
 void
-contacts_removed (EBookView *book_view, const GList *ids)
+contacts_removed_cb (EBookView *book_view, const GList *ids)
 {
 	GList *i;
 	
@@ -137,6 +137,6 @@ contacts_removed (EBookView *book_view, const GList *ids)
 	}
 
 	/* Update view */
-	update_treeview ();
+	contacts_update_treeview ();
 }
 

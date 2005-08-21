@@ -3,32 +3,26 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 
-void quit ();
+void contacts_update_treeview ();
 
-gboolean is_row_visible (GtkTreeModel * model, GtkTreeIter * iter,
-			 gpointer data);
+void contacts_selection_cb (GtkTreeSelection * selection);
 
-gint sort_treeview_func (GtkTreeModel * model, GtkTreeIter * a, GtkTreeIter * b,
-			 gpointer user_data);
+void contacts_new_cb ();
 
-void update_treeview ();
+void contacts_edit_cb ();
 
-void display_contact_summary (EContact *contact);
+void contacts_delete_cb ();
 
-void contact_selected (GtkTreeSelection * selection);
+void contacts_copy_cb (GtkWindow *main_window);
 
-void new_contact ();
+void contacts_cut_cb (GtkWindow *main_window);
 
-void edit_contact ();
+void contacts_paste_cb (GtkWindow *main_window);
 
-void delete_contact ();
+void contacts_about_cb ();
 
-void copy (GtkWindow *main_window);
+gboolean contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
+				     gpointer data);
 
-void cut (GtkWindow *main_window);
-
-void paste (GtkWindow *main_window);
-
-void about ();
-
-void edit_done (GtkWidget *button, EContact *contact);
+gint contacts_sort_treeview_cb (GtkTreeModel * model, GtkTreeIter * a,
+				GtkTreeIter * b, gpointer user_data);

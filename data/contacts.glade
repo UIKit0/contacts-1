@@ -18,7 +18,7 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <signal name="destroy" handler="quit" last_modification_time="Thu, 04 Aug 2005 21:12:41 GMT"/>
+  <signal name="destroy" handler="contacts_main_quit" last_modification_time="Fri, 19 Aug 2005 16:23:23 GMT"/>
 
   <child>
     <widget class="GtkNotebook" id="main_notebook">
@@ -53,7 +53,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-new</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="new_contact" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_new_cb" last_modification_time="Fri, 19 Aug 2005 17:20:58 GMT"/>
 			</widget>
 		      </child>
 
@@ -63,7 +63,7 @@
 			  <property name="sensitive">False</property>
 			  <property name="label">gtk-edit</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="edit_contact" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_edit_cb" last_modification_time="Fri, 19 Aug 2005 17:21:06 GMT"/>
 			</widget>
 		      </child>
 
@@ -73,7 +73,7 @@
 			  <property name="sensitive">False</property>
 			  <property name="label">gtk-delete</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="delete_contact" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_delete_cb" last_modification_time="Fri, 19 Aug 2005 17:21:26 GMT"/>
 			</widget>
 		      </child>
 
@@ -88,7 +88,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-quit</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="quit" last_modification_time="Thu, 04 Aug 2005 17:04:21 GMT"/>
+			  <signal name="activate" handler="contacts_main_quit" last_modification_time="Fri, 19 Aug 2005 16:23:31 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
@@ -110,7 +110,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-cut</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="cut" object="main_window" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_cut_cb" object="main_window" last_modification_time="Fri, 19 Aug 2005 17:59:55 GMT"/>
 			</widget>
 		      </child>
 
@@ -119,7 +119,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-copy</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="copy" object="main_window" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_copy_cb" object="main_window" last_modification_time="Fri, 19 Aug 2005 18:00:03 GMT"/>
 			</widget>
 		      </child>
 
@@ -128,7 +128,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-paste</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="paste" object="main_window" last_modification_time="Mon, 08 Aug 2005 15:54:17 GMT"/>
+			  <signal name="activate" handler="contacts_paste_cb" object="main_window" last_modification_time="Fri, 19 Aug 2005 18:00:11 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
@@ -150,7 +150,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-about</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="about" last_modification_time="Fri, 12 Aug 2005 15:34:44 GMT"/>
+			  <signal name="activate" handler="contacts_about_cb" object="aboutdialog" last_modification_time="Fri, 19 Aug 2005 18:05:13 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
@@ -220,7 +220,7 @@
 			  <property name="has_frame">True</property>
 			  <property name="invisible_char">*</property>
 			  <property name="activates_default">False</property>
-			  <signal name="changed" handler="update_treeview" last_modification_time="Fri, 05 Aug 2005 10:14:34 GMT"/>
+			  <signal name="changed" handler="contacts_update_treeview" last_modification_time="Fri, 19 Aug 2005 17:23:17 GMT"/>
 			  <accelerator key="S" modifiers="GDK_MOD1_MASK" signal="grab_focus"/>
 			</widget>
 			<packing>
@@ -244,7 +244,7 @@
 		      <property name="items" translatable="yes">All</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">False</property>
-		      <signal name="changed" handler="update_treeview" last_modification_time="Wed, 10 Aug 2005 10:01:41 GMT"/>
+		      <signal name="changed" handler="contacts_update_treeview" last_modification_time="Fri, 19 Aug 2005 17:26:24 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -690,7 +690,7 @@
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="new_contact" last_modification_time="Mon, 08 Aug 2005 16:16:07 GMT"/>
+			  <signal name="clicked" handler="contacts_new_cb" last_modification_time="Fri, 19 Aug 2005 17:20:32 GMT"/>
 			</widget>
 		      </child>
 
@@ -704,7 +704,7 @@
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="edit_contact" last_modification_time="Mon, 08 Aug 2005 16:16:19 GMT"/>
+			  <signal name="clicked" handler="contacts_edit_cb" last_modification_time="Fri, 19 Aug 2005 17:20:40 GMT"/>
 			</widget>
 		      </child>
 
@@ -718,7 +718,7 @@
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="delete_contact" last_modification_time="Mon, 08 Aug 2005 16:16:27 GMT"/>
+			  <signal name="clicked" handler="contacts_delete_cb" last_modification_time="Fri, 19 Aug 2005 17:20:48 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
@@ -884,10 +884,72 @@
 		  <property name="visible">True</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label">gtk-add</property>
-		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
+
+		  <child>
+		    <widget class="GtkAlignment" id="alignment1">
+		      <property name="visible">True</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xscale">0</property>
+		      <property name="yscale">0</property>
+		      <property name="top_padding">0</property>
+		      <property name="bottom_padding">0</property>
+		      <property name="left_padding">0</property>
+		      <property name="right_padding">0</property>
+
+		      <child>
+			<widget class="GtkHBox" id="hbox6">
+			  <property name="visible">True</property>
+			  <property name="homogeneous">False</property>
+			  <property name="spacing">2</property>
+
+			  <child>
+			    <widget class="GtkImage" id="image1">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-add</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label3">
+			      <property name="visible">True</property>
+			      <property name="label">_Add field</property>
+			      <property name="use_underline">True</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">-1</property>
+			      <property name="single_line_mode">False</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
 		</widget>
 	      </child>
 
@@ -896,10 +958,72 @@
 		  <property name="visible">True</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label">gtk-remove</property>
-		  <property name="use_stock">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
+
+		  <child>
+		    <widget class="GtkAlignment" id="alignment2">
+		      <property name="visible">True</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xscale">0</property>
+		      <property name="yscale">0</property>
+		      <property name="top_padding">0</property>
+		      <property name="bottom_padding">0</property>
+		      <property name="left_padding">0</property>
+		      <property name="right_padding">0</property>
+
+		      <child>
+			<widget class="GtkHBox" id="hbox7">
+			  <property name="visible">True</property>
+			  <property name="homogeneous">False</property>
+			  <property name="spacing">2</property>
+
+			  <child>
+			    <widget class="GtkImage" id="image2">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-remove</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label4">
+			      <property name="visible">True</property>
+			      <property name="label">_Remove field</property>
+			      <property name="use_underline">True</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">-1</property>
+			      <property name="single_line_mode">False</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
 		</widget>
 	      </child>
 

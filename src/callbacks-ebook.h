@@ -1,6 +1,9 @@
 
-void contacts_added (EBookView *book_view, const GList *contacts);
+#include <glib.h>
+#include <libebook/e-book.h>
 
-void contacts_changed (EBookView *book_view, const GList *contacts);
+void contacts_added_cb (EBookView *book_view, const GList *contacts);
 
-void contacts_removed (EBookView *book_view, const GList *ids);
+void contacts_changed_cb (EBookView *book_view, const GList *contacts);
+
+void contacts_removed_cb (EBookView *book_view, const GList *ids);
