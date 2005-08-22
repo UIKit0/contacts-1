@@ -2,6 +2,9 @@
 #include <libebook/e-book.h>
 #include <gtk/gtk.h>
 
+#ifndef DEFS_H
+#define DEFS_H
+
 enum {
 	ADR_POBOX = 0,
 	ADR_EXT,	/* Multiple line */
@@ -24,8 +27,17 @@ enum {
 };
 
 typedef struct {
+	EBook *book;
+	EContact *contact;
+	GHashTable *contacts_table;
+	GList *contacts_groups;
+	GladeXML *xml;
+} ContactsData;
+
+typedef struct {
 	EContact *contact;
 	GtkTreeIter iter;
+	GladeXML *xml;
 } EContactListHash;
 
 typedef struct {
@@ -34,3 +46,5 @@ typedef struct {
 } EContactChangeData;
 
 #define NO_IMAGE 1
+
+#endif

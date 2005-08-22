@@ -5,7 +5,6 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "globals.h"
 #include "defs.h"
 #include "utils.h"
 #include "callbacks-ui.h"
@@ -13,52 +12,52 @@
 #include "main.h"
 
 void
-contacts_selection_cb (GtkTreeSelection * selection)
+contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 {
 	GtkWidget *widget;
 	EContact *contact;
 
 	/* Get the currently selected contact and update the contact summary */
-	contact = get_contact_from_selection (selection);
+	contact = contacts_contact_from_selection (selection,
+						   data->contacts_table);
 	if (contact) {
-		contacts_display_summary (contact);
+		contacts_display_summary (contact, data->xml);
 	} else {
-		contact_selected_sensitive (FALSE);
-		widget = glade_xml_get_widget (xml, "summary_vbox");
+		contact_selected_sensitive (data->xml, FALSE);
+		widget = glade_xml_get_widget (data->xml, "summary_vbox");
 		gtk_widget_hide (widget);
 	}
 }
 
 void
-contacts_new_cb ()
+contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
-	EContact *contact = e_contact_new ();
+	data->contact = e_contact_new ();
 	
-	if (e_book_add_contact (book, contact, NULL)) {
-		contacts_edit_pane_show (contact);
+	if (e_book_add_contact (data->book, data->contact, NULL)) {
+		contacts_edit_pane_show (data);
 	}
 }
 
 void
-contacts_edit_cb ()
+contacts_edit_cb (GtkWidget *source, ContactsData *data)
 {
-	EContact *contact;
-
 	/* Disable the edit/delete buttons and get the contact to edit */
-	contact_selected_sensitive (FALSE);
-	contact = get_current_contact ();
+	contact_selected_sensitive (data->xml, FALSE);
+	data->contact = contacts_get_selected_contact (data->xml,
+						       data->contacts_table);
 	
-	contacts_edit_pane_show (contact);
+	contacts_edit_pane_show (data);
 }
 
 void
-contacts_delete_cb ()
+contacts_delete_cb (GtkWidget *source, ContactsData *data)
 {
 	GtkWidget *dialog, *main_window;
 	EContact *contact;
 	gint result;
 	
-	main_window = glade_xml_get_widget (xml, "main_window");
+	main_window = glade_xml_get_widget (data->xml, "main_window");
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_YES_NO,
@@ -67,9 +66,10 @@ contacts_delete_cb ()
 	result = gtk_dialog_run (GTK_DIALOG (dialog));
 	switch (result) {
 		case GTK_RESPONSE_YES:
-			contact = get_current_contact ();
+			contact = contacts_get_selected_contact (data->xml,
+							data->contacts_table);
 			if (contact) {
-				e_book_remove_contact (book,
+				e_book_remove_contact (data->book,
 					e_contact_get_const
 						(contact, E_CONTACT_UID), NULL);
 			}
@@ -135,7 +135,7 @@ contacts_about_cb (GtkWidget *dialog)
 
 gboolean
 contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
-			    gpointer data)
+			    GHashTable *contacts_table)
 {
 	gboolean result = FALSE;
 	gchar *group;
@@ -144,12 +144,14 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	EContactListHash *hash;
 	GtkComboBox *groups_combobox;
 	const gchar *search_string;
+	GladeXML *xml;
 
 	/* Check if the contact is in the currently selected group. */
 	gtk_tree_model_get (model, iter, CONTACT_UID_COL, &uid, -1);
 	if (!uid) return FALSE;
 	hash = g_hash_table_lookup (contacts_table, uid);
 	if (!hash || !hash->contact) return FALSE;
+	xml = hash->xml;
 	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
 					 (xml, "groups_combobox"));
 	group = gtk_combo_box_get_active_text (groups_combobox);

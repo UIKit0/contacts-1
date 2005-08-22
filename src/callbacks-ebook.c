@@ -5,23 +5,26 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "globals.h"
 #include "defs.h"
 #include "utils.h"
 #include "main.h"
 
 void
-contacts_added_cb (EBookView *book_view, const GList *contacts)
+contacts_added_cb (EBookView *book_view, const GList *contacts,
+		   ContactsData *data)
 {
 	GtkComboBox *groups_combobox;
 	GtkListStore *model;
 	GtkTreeModelFilter *filter;
 	GList *c;
+	GladeXML *xml = data->xml;
+	GtkWidget *widget;
+	GHashTable *contacts_table = data->contacts_table;
 
 	/* Get TreeView model and combo box to add contacts/groups */
+	widget = glade_xml_get_widget (xml, "contacts_treeview");
 	filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-				 	(GTK_TREE_VIEW (glade_xml_get_widget
-						(xml, "contacts_treeview"))));
+				 	(GTK_TREE_VIEW (widget)));
 	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model (filter));
 	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
 					 (xml, "groups_combobox"));
@@ -45,6 +48,7 @@ contacts_added_cb (EBookView *book_view, const GList *contacts)
 						   CONTACT_UID_COL, uid,
 						   -1);
 		hash->contact = g_object_ref (contact);
+		hash->xml = xml;
 		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
 
 		/* Check for groups and add them to group list */
@@ -55,15 +59,14 @@ contacts_added_cb (EBookView *book_view, const GList *contacts)
 			GList *group;
 			for (group = contact_groups; group;
 			     group = group->next) {
-				if (!g_list_find_custom (contacts_groups, 
+				if (!g_list_find_custom (data->contacts_groups, 
 							 group->data,
 							 (GCompareFunc) strcmp))
 				{
 					gtk_combo_box_append_text
 					    (groups_combobox, group->data);
-					contacts_groups = g_list_prepend 
-							     (contacts_groups,
-							      group->data);
+					data->contacts_groups = g_list_prepend 
+					   (data->contacts_groups, group->data);
 				}
 			}
 			g_list_free (contact_groups);
@@ -71,15 +74,24 @@ contacts_added_cb (EBookView *book_view, const GList *contacts)
 	}
 	
 	/* Update view */
-	contacts_update_treeview ();
+	contacts_update_treeview (widget);
 }
 
 void
-contacts_changed_cb (EBookView *book_view, const GList *contacts)
+contacts_changed_cb (EBookView *book_view, const GList *contacts,
+		     ContactsData *data)
 {
 	GList *c;
-	EContact *current_contact = get_current_contact ();
+	GtkWidget *widget;
+	GtkListStore *model;
+	EContact *current_contact = contacts_get_selected_contact (data->xml,
+							data->contacts_table);
 	if (current_contact) g_object_ref (current_contact);
+
+	widget = glade_xml_get_widget (data->xml, "contacts_treeview");
+	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
+		 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
+		  (GTK_TREE_VIEW (widget)))));
 
 	/* Loop through changed contacts */	
 	for (c = (GList *)contacts; c; c = c->next) {
@@ -89,22 +101,18 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts)
 
 		/* Lookup if contact exists in internal list (it should) */
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
-		hash = g_hash_table_lookup (contacts_table, uid);
+		hash = g_hash_table_lookup (data->contacts_table, uid);
 		if (!hash) continue;
 
 		/* TODO: There's some funniness going on here... */
 		/* Replace contact */
 /*		g_object_unref (hash->contact);*/
 		hash->contact = g_object_ref (contact);
-		g_hash_table_steal (contacts_table, uid);
-		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
+		hash->xml = data->xml;
+		g_hash_table_steal (data->contacts_table, uid);
+		g_hash_table_insert (data->contacts_table, (gchar *)uid, hash);
 
 		/* Update list with possibly new name */
-		GtkListStore *model = GTK_LIST_STORE 
-			(gtk_tree_model_filter_get_model 
-			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-			  (GTK_TREE_VIEW (glade_xml_get_widget
-					(xml, "contacts_treeview"))))));
 		gtk_list_store_set (model, &hash->iter,
 			CONTACT_NAME_COL,
 			e_contact_get (contact, E_CONTACT_FULL_NAME),
@@ -116,27 +124,28 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts)
 					(contact, E_CONTACT_UID),
 				    e_contact_get_const
 					(current_contact, E_CONTACT_UID)) == 0)
-				contacts_display_summary (contact);
+				contacts_display_summary (contact, data->xml);
 		}
 	}
 	
 	if (current_contact) g_object_unref (current_contact);
 
 	/* Update view */
-	contacts_update_treeview ();
+	contacts_update_treeview (widget);
 }
 
 void
-contacts_removed_cb (EBookView *book_view, const GList *ids)
+contacts_removed_cb (EBookView *book_view, const GList *ids, ContactsData *data)
 {
 	GList *i;
 	
 	for (i = (GList *)ids; i; i = i->next) {
 		const gchar *uid = (const gchar *)i->data;
-		g_hash_table_remove (contacts_table, uid);
+		g_hash_table_remove (data->contacts_table, uid);
 	}
 
 	/* Update view */
-	contacts_update_treeview ();
+	contacts_update_treeview (glade_xml_get_widget (data->xml,
+							"contacts_treeview"));
 }
 

@@ -1,3 +1,22 @@
+2005-08-22  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb):
+	* src/callbacks-ebook.h:
+	* src/callbacks-ui.c: (contacts_delete_cb),
+	(contacts_is_row_visible_cb):
+	* src/callbacks-ui.h:
+	* src/defs.h:
+	* src/main.c: (contacts_display_summary), (main):
+	* src/main.h:
+	* src/utils.c: (contacts_contact_from_selection),
+	(contacts_get_selected_contact), (contacts_choose_photo),
+	(contacts_free_list_hash):
+	* src/utils.h:
+	o Remove all globals
+	o Namespace all functions
+
 2005-08-21  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

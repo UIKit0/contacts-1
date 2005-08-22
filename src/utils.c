@@ -6,7 +6,6 @@
 #include <libebook/e-book.h>
 
 #include "utils.h"
-#include "globals.h"
 #include "defs.h"
 
 /* The following functions taken from
@@ -133,7 +132,8 @@ kozo_utf8_strcasestrip (const char *str)
 /******************************************************************************/
 
 EContact *
-get_contact_from_selection (GtkTreeSelection *selection)
+contacts_contact_from_selection (GtkTreeSelection *selection,
+				 GHashTable *contacts_table)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -155,7 +155,7 @@ get_contact_from_selection (GtkTreeSelection *selection)
 }
 
 EContact *
-get_current_contact ()
+contacts_get_selected_contact (GladeXML *xml, GHashTable *contacts_table)
 {
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
@@ -168,14 +168,14 @@ get_current_contact ()
 	if (!selection || !GTK_IS_TREE_SELECTION (selection))
 		return NULL;
 		
-	contact = get_contact_from_selection (selection);
+	contact = contacts_contact_from_selection (selection, contacts_table);
 	
 	return contact;
 }
 
 /* Helper method to set edit/delete sensitive/insensitive */
 void
-contact_selected_sensitive (gboolean sensitive)
+contact_selected_sensitive (GladeXML *xml, gboolean sensitive)
 {
 	GtkWidget *widget;
 
@@ -305,6 +305,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 	GtkWidget *filechooser;
 	GtkFileFilter *filter;
 	gint result;
+	GladeXML *xml = glade_get_widget_tree (button);
 	
 	/* Get a filename */
 	widget = glade_xml_get_widget (xml, "main_window");
@@ -377,7 +378,7 @@ contacts_free_list_hash (gpointer data)
 			(gtk_tree_model_filter_get_model 
 			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
 			  (GTK_TREE_VIEW (glade_xml_get_widget
-					(xml, "contacts_treeview"))))));
+					(hash->xml, "contacts_treeview"))))));
 		gtk_list_store_remove (model, &hash->iter);
 		g_object_unref (hash->contact);
 		g_free (hash);

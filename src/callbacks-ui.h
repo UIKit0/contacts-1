@@ -2,10 +2,11 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include "defs.h"
 
 void contacts_update_treeview ();
 
-void contacts_selection_cb (GtkTreeSelection * selection);
+void contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data);
 
 void contacts_new_cb ();
 
@@ -22,7 +23,7 @@ void contacts_paste_cb (GtkWindow *main_window);
 void contacts_about_cb ();
 
 gboolean contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
-				     gpointer data);
+				     GHashTable *contacts_table);
 
 gint contacts_sort_treeview_cb (GtkTreeModel * model, GtkTreeIter * a,
 				GtkTreeIter * b, gpointer user_data);

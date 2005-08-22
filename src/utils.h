@@ -10,11 +10,13 @@ const char *kozo_utf8_strstrcasestrip (const char *haystack,
 
 gunichar *kozo_utf8_strcasestrip (const char *str);
 
-EContact *get_contact_from_selection (GtkTreeSelection *selection);
+EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
+					   GHashTable *contacts_table);
 
-EContact *get_current_contact ();
+EContact *contacts_get_selected_contact (GladeXML *xml,
+					 GHashTable *contacts_table);
 
-void contact_selected_sensitive (gboolean sensitive);
+void contact_selected_sensitive (GladeXML *xml, gboolean sensitive);
 
 GtkImage *contacts_load_photo (EContact *contact);
 
