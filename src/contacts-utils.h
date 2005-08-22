@@ -2,6 +2,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include <glade/glade.h>
 
 char *e_util_unicode_get_utf8 (const char *text, gunichar * out);
 

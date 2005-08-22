@@ -1,7 +1,7 @@
 
 #include <glib.h>
 #include <libebook/e-book.h>
-#include "defs.h"
+#include "contacts-defs.h"
 
 void contacts_added_cb (EBookView *book_view, const GList *contacts,
 			ContactsData *data);

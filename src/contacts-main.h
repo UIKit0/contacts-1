@@ -1,5 +1,7 @@
 
 #include <libebook/e-book.h>
+#include <gtk/gtk.h>
+#include <glade/glade.h>
 
 void contacts_main_quit ();
 

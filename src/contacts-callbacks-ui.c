@@ -5,11 +5,11 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "defs.h"
-#include "utils.h"
-#include "callbacks-ui.h"
+#include "contacts-defs.h"
+#include "contacts-utils.h"
+#include "contacts-callbacks-ui.h"
 #include "contacts-edit-pane.h"
-#include "main.h"
+#include "contacts-main.h"
 
 void
 contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)

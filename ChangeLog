@@ -1,5 +1,23 @@
 2005-08-22  Chris Lord,,,  <chris@openedhand.com>
 
+	* old/Makefile:
+	* src/Makefile.am:
+	* src/contacts-callbacks-ebook.c:
+	* src/contacts-callbacks-ebook.h:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c:
+	* src/contacts-edit-pane.h:
+	* src/contacts-main.c:
+	* src/contacts-main.h:
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+	o Finish refactoring
+	o ADR editing regression (due to lost source)
+
+2005-08-22  Chris Lord,,,  <chris@openedhand.com>
+
 	* data/contacts.glade:
 	* src/callbacks-ebook.c: (contacts_added_cb),
 	(contacts_changed_cb):

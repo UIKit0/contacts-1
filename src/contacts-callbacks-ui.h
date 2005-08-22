@@ -2,7 +2,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
-#include "defs.h"
+#include "contacts-defs.h"
 
 void contacts_update_treeview ();
 

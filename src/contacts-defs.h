@@ -45,6 +45,16 @@ typedef struct {
 	EVCardAttribute *attr;
 } EContactChangeData;
 
+typedef struct {
+	const gchar *vcard_field;
+	EContactField econtact_field; /* >0, gets used for pretty name */
+	const gchar *pretty_name; /* Always takes priority over above */
+	gboolean multi_line;
+	guint priority;
+} ContactsField;
+
+#define REQUIRED 100	/* Contacts with priority < REQUIRED have to be shown */
+
 #define NO_IMAGE 1
 
 #endif

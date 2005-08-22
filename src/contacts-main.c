@@ -8,10 +8,10 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "defs.h"
-#include "utils.h"
-#include "callbacks-ui.h"
-#include "callbacks-ebook.h"
+#include "contacts-defs.h"
+#include "contacts-utils.h"
+#include "contacts-callbacks-ui.h"
+#include "contacts-callbacks-ebook.h"
 
 #define XML_FILE PKGDATADIR "/contacts.glade"
 

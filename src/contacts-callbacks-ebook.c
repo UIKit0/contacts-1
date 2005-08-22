@@ -5,9 +5,9 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "defs.h"
-#include "utils.h"
-#include "main.h"
+#include "contacts-defs.h"
+#include "contacts-utils.h"
+#include "contacts-main.h"
 
 void
 contacts_added_cb (EBookView *book_view, const GList *contacts,

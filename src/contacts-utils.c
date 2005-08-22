@@ -5,8 +5,8 @@
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
-#include "utils.h"
-#include "defs.h"
+#include "contacts-utils.h"
+#include "contacts-defs.h"
 
 /* The following functions taken from
  * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
