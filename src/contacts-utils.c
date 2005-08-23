@@ -301,16 +301,19 @@ contacts_get_string_list_from_types (GList *params)
 void
 contacts_choose_photo (GtkWidget *button, EContact *contact)
 {
-	GtkWidget *widget;
-	GtkWidget *filechooser;
+	GtkWidget *filechooser, *photo;
 	GtkFileFilter *filter;
 	gint result;
-	GladeXML *xml = glade_get_widget_tree (button);
 	
 	/* Get a filename */
-	widget = glade_xml_get_widget (xml, "main_window");
+	/* Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
+	 * can return NULL and this would probably throw a critical Gtk error.
+	 */
 	filechooser = gtk_file_chooser_dialog_new ("Open image",
-						   GTK_WINDOW (widget),
+						   (GtkWindow *)
+						   gtk_widget_get_ancestor (
+						   	button,
+						   	GTK_TYPE_WINDOW),
 						   GTK_FILE_CHOOSER_ACTION_OPEN,
 						   GTK_STOCK_CANCEL,
 						   GTK_RESPONSE_CANCEL,
@@ -348,10 +351,16 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 					e_contact_set (contact, E_CONTACT_PHOTO,
 						       &new_photo);
 					/* Re-display contact photo */
-					gtk_button_set_image (
-					   GTK_BUTTON (button), 
-					   GTK_WIDGET
-						(contacts_load_photo (contact)));
+					gtk_container_foreach (
+						GTK_CONTAINER (button),
+						(GtkCallback)gtk_widget_destroy,
+						NULL);
+					photo = GTK_WIDGET
+						(contacts_load_photo (contact));
+					gtk_container_add (
+						GTK_CONTAINER (button),
+						photo);
+					gtk_widget_show (photo);
 				}
 			}
 			g_free (filename);
@@ -360,8 +369,11 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 		if (contact && E_IS_CONTACT (contact)) {
 			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
 			/* Re-display contact photo */
-			gtk_button_set_image (GTK_BUTTON (button), 
-				     GTK_WIDGET (contacts_load_photo (contact)));
+			gtk_container_foreach (GTK_CONTAINER (button),
+				(GtkCallback)gtk_widget_destroy, NULL);
+			photo = GTK_WIDGET (contacts_load_photo (contact));
+			gtk_container_add (GTK_CONTAINER (button), photo);
+			gtk_widget_show (photo);
 		}
 	}
 	

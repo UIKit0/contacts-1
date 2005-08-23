@@ -202,6 +202,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		adr_table = gtk_table_new (1, 2, FALSE);
 		gtk_table_set_col_spacings (GTK_TABLE (adr_table), 6);
 		gtk_table_set_row_spacings (GTK_TABLE (adr_table), 6);
+		gtk_container_set_border_width (GTK_CONTAINER (adr_table), 6);
 		
 		/* Set widget that contains attribute data */		
 		data->widget = adr_table;
@@ -371,7 +372,7 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 void
 contacts_edit_pane_show (ContactsData *data)
 {
-	GtkWidget *widget;
+	GtkWidget *button, *widget;
 	guint row, i;
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
@@ -408,12 +409,14 @@ contacts_edit_pane_show (ContactsData *data)
 	widget = glade_xml_get_widget (xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
 	
-	/* Display contact photo */
-	widget = glade_xml_get_widget (xml, "edit_photo_button");
-	gtk_button_set_image (GTK_BUTTON (widget), 
-			      GTK_WIDGET (contacts_load_photo (contact)));
-	g_signal_connect (G_OBJECT (widget), "clicked",
+	/* Create contact photo button */
+	button = gtk_button_new ();
+	widget = GTK_WIDGET (contacts_load_photo (contact));
+	gtk_container_add (GTK_CONTAINER (button), widget);
+	gtk_widget_show (widget);
+	g_signal_connect (G_OBJECT (button), "clicked",
 			  G_CALLBACK (contacts_choose_photo), contact);
+	gtk_widget_show (button);
 	
 	/* Create edit pane widgets */
 	attributes = e_vcard_get_attributes (&contact->parent);
@@ -479,19 +482,22 @@ contacts_edit_pane_show (ContactsData *data)
 	widget = glade_xml_get_widget (xml, "edit_table");
 	g_list_sort (label_widgets, (GCompareFunc)contacts_widgets_list_sort);
 	g_list_sort (edit_widgets, (GCompareFunc)contacts_widgets_list_sort);
+	i = 2;
 	for (c = label_widgets, d = edit_widgets, row = 0; (c) && (d);
 	     c = c->next, d = d->next, row++) {
+	     	if (row == 3) i = 3;
 		gtk_table_attach (GTK_TABLE (widget), GTK_WIDGET (c->data),
 				  0, 1, row, row+1,
 				  GTK_FILL, GTK_FILL, 0, 0);
 		gtk_table_attach (GTK_TABLE (widget), GTK_WIDGET (d->data),
-				  1, 2, row, row+1,
+				  1, i, row, row+1,
 				  GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
 		gtk_widget_show (c->data);
 		gtk_widget_show (d->data);
 	}
 	g_list_free (label_widgets);
 	g_list_free (edit_widgets);
+	gtk_table_attach (GTK_TABLE (widget), button, 2, 3, 0, 3, 0, 0, 0, 0);
 
 	widget = glade_xml_get_widget (xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
