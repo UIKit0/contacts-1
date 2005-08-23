@@ -384,3 +384,29 @@ contacts_free_list_hash (gpointer data)
 		g_free (hash);
 	}
 }
+
+GList *
+contacts_entries_get_values (GtkWidget *widget, GList *list) {
+	if (GTK_IS_ENTRY (widget)) {
+		return g_list_append (list, g_strdup (
+				gtk_entry_get_text (GTK_ENTRY (widget))));
+	} else if (GTK_IS_TEXT_VIEW (widget)) {
+		GtkTextIter start, end;
+		GtkTextBuffer *buffer =
+			gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
+		gtk_text_buffer_get_start_iter (buffer, &start);
+		gtk_text_buffer_get_end_iter (buffer, &end);
+		return g_list_append (list, 
+			gtk_text_buffer_get_text (buffer, &start, &end, FALSE));
+	} else if (GTK_IS_CONTAINER (widget)) {
+		GList *c, *children =
+			gtk_container_get_children (GTK_CONTAINER (widget));
+		for (c = children; c; c = c->next) {
+			list = contacts_entries_get_values (
+				GTK_WIDGET (c->data), list);
+		}
+		g_list_free (children);
+	}
+	
+	return list;
+}

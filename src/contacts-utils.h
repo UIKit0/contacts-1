@@ -31,3 +31,5 @@ GList *contacts_get_string_list_from_types (GList *params);
 void contacts_choose_photo (GtkWidget *button, EContact *contact);
 
 void contacts_free_list_hash (gpointer data);
+
+GList *contacts_entries_get_values (GtkWidget *widget, GList *list);

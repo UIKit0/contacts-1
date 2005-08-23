@@ -43,6 +43,7 @@ typedef struct {
 typedef struct {
 	EContact *contact;
 	EVCardAttribute *attr;
+	GtkWidget *widget; /* The widget containing the data */
 } EContactChangeData;
 
 typedef struct {
