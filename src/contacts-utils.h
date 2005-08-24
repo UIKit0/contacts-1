@@ -26,7 +26,7 @@ void contacts_clean_contact (EContact *contact);
 gchar *contacts_string_list_as_string (GList *list,
 					      const gchar *separator);
 
-GList *contacts_get_string_list_from_types (GList *params);
+GList *contacts_get_types (GList *params);
 
 void contacts_choose_photo (GtkWidget *button, EContact *contact);
 

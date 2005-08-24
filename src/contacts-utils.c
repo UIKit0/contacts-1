@@ -236,8 +236,9 @@ contacts_load_photo (EContact *contact)
 }
 
 /* This removes any vCard attributes that are just "", or have no associated
- * value. Evolution tends to add empty fields like this a lot, as does
- * contacts to show required fields.
+ * value. Evolution tends to add empty fields like this a lot - as does
+ * contacts, to show required fields (but it removes them after editing, via
+ * this function).
  * TODO: This really doesn't need to be recursive.
  */
 void
@@ -282,17 +283,14 @@ contacts_string_list_as_string (GList *list, const gchar *separator)
 }
 
 GList *
-contacts_get_string_list_from_types (GList *params)
+contacts_get_types (GList *params)
 {
 	GList *list = NULL;
 
 	for (; params; params = params->next) {
 		EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
-		GList *pvs = e_vcard_attribute_param_get_values (p);
-		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) != 0)
-			continue;
-		for (; pvs; pvs = pvs->next)
-			list = g_list_append (list, pvs->data);
+		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) == 0)
+			list = g_list_append (list, p);
 	}
 	
 	return list;
@@ -397,11 +395,16 @@ contacts_free_list_hash (gpointer data)
 	}
 }
 
+/* Helper method to harvest user-input from GtkContainer's */
 GList *
 contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	if (GTK_IS_ENTRY (widget)) {
 		return g_list_append (list, g_strdup (
 				gtk_entry_get_text (GTK_ENTRY (widget))));
+	} else if (GTK_IS_COMBO_BOX (widget)) {
+		return g_list_append (list, g_strdup (
+			gtk_entry_get_text (
+				GTK_ENTRY (GTK_BIN (widget)->child))));
 	} else if (GTK_IS_TEXT_VIEW (widget)) {
 		GtkTextIter start, end;
 		GtkTextBuffer *buffer =

@@ -47,6 +47,11 @@ typedef struct {
 } EContactChangeData;
 
 typedef struct {
+	const gchar *attr_name;
+	EVCardAttributeParam *param;
+} EContactTypeChangeData;
+
+typedef struct {
 	const gchar *vcard_field;
 	EContactField econtact_field; /* >0, gets used for pretty name */
 	const gchar *pretty_name; /* Always takes priority over above */

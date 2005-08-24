@@ -1,3 +1,23 @@
+2005-08-24  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c: (contacts_get_field_types),
+	(contacts_get_structured_field_name),
+	(contacts_get_structured_field_size),
+	(contacts_get_contacts_field),
+	(contacts_get_contacts_field_pretty_name),
+	(contacts_remove_edit_widgets_cb), (contacts_edit_pane_hide),
+	(contacts_type_entry_changed), (contacts_entry_changed),
+	(contacts_type_edit_widget_new), (contacts_label_widget_new),
+	(contacts_edit_widget_new), (contacts_widgets_list_sort),
+	(contacts_widgets_list_find), (contacts_edit_pane_show):
+	* src/contacts-utils.c: (contacts_load_photo),
+	(contacts_string_list_as_string):
+	* src/contacts-utils.h:
+	o Fix edit-pane layout oddities, somewhat
+	o Add TYPE parameter editing, including custom types (conforms to
+	  spec)
+
 2005-08-23  Chris Lord,,,  <chris@openedhand.com>
 
 	reviewed by: <delete if not using a buddy>
