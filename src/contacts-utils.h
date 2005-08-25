@@ -33,3 +33,8 @@ void contacts_choose_photo (GtkWidget *button, EContact *contact);
 void contacts_free_list_hash (gpointer data);
 
 GList *contacts_entries_get_values (GtkWidget *widget, GList *list);
+
+gboolean contacts_chooser (GladeXML *xml, const gchar *title,
+			   const gchar *label_markup, GList *choices,
+			   GList *chosen, gboolean allow_custom,
+			   GList **results);

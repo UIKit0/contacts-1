@@ -425,3 +425,89 @@ contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	
 	return list;
 }
+
+gboolean
+contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
+		  GList *choices, GList *chosen, gboolean allow_custom,
+		  GList **results)
+{
+	GList *c, *d;
+	GtkWidget *label_widget;
+	gboolean multiple_choice = chosen ? TRUE : FALSE;
+	GtkWidget *dialog = glade_xml_get_widget (xml, "chooser_dialog");
+	GtkTreeView *tree = GTK_TREE_VIEW (glade_xml_get_widget
+						(xml, "chooser_treeview"));
+	GtkTreeModel *model = gtk_tree_view_get_model (tree);
+	GtkWidget *add_custom = glade_xml_get_widget (xml, "chooser_add_hbox");
+	gint dialog_code;
+	
+	if (allow_custom)
+		gtk_widget_show (add_custom);
+	else
+		gtk_widget_hide (add_custom);
+	
+	label_widget = glade_xml_get_widget (xml, "chooser_label");
+	if (label_markup) {
+		gtk_label_set_markup (GTK_LABEL (label_widget), label_markup);
+		gtk_widget_show (label_widget);
+	} else {
+		gtk_widget_hide (label_widget);
+	}
+	
+	gtk_list_store_clear (GTK_LIST_STORE (model));
+	for (c = choices, d = chosen; c; c = c->next) {
+		GtkTreeIter iter;
+		gtk_list_store_append (GTK_LIST_STORE (model), &iter);
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+				    CHOOSER_NAME_COL,
+				    (const gchar *)c->data, -1);
+		if (multiple_choice) {
+			if (d) {
+				gboolean *chosen = (gboolean *)d->data;
+				gtk_list_store_set (GTK_LIST_STORE (model),
+						    &iter, CHOOSER_TICK_COL,
+						    *chosen, -1);
+				d = d->next;
+			} else {
+				gtk_list_store_set (GTK_LIST_STORE (model),
+						    &iter, CHOOSER_TICK_COL,
+						    FALSE, -1);
+			}
+		}
+	}
+	if (multiple_choice)
+		gtk_tree_view_column_set_visible (gtk_tree_view_get_column (
+			tree, CHOOSER_TICK_COL), TRUE);
+	else
+		gtk_tree_view_column_set_visible (gtk_tree_view_get_column (
+			tree, CHOOSER_TICK_COL), FALSE);
+	
+	gtk_window_set_title (GTK_WINDOW (dialog), title);
+	
+	dialog_code = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_hide (dialog);
+	if (dialog_code == GTK_RESPONSE_OK) {
+		if (multiple_choice) {
+		} else {
+			gchar *selection_name;
+			GtkTreeSelection *selection =
+				gtk_tree_view_get_selection (tree);
+			GtkTreeIter iter;
+			
+			if (!selection)
+				return FALSE;
+				
+			gtk_tree_selection_get_selected (
+				selection, NULL, &iter);
+			
+			gtk_tree_model_get (model, &iter, CHOOSER_NAME_COL,
+					    &selection_name, -1);
+			
+			*results = g_list_append (NULL, selection_name);
+			
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}

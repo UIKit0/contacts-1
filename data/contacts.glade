@@ -1020,7 +1020,7 @@
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
 </widget>
 
-<widget class="GtkDialog" id="types_edit_dialog">
+<widget class="GtkDialog" id="chooser_dialog">
   <property name="title" translatable="yes">Edit Types</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -1047,15 +1047,28 @@
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="types_edit_done_button">
+	    <widget class="GtkButton" id="chooser_cancel_button">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="label">gtk-close</property>
+	      <property name="label">gtk-cancel</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
-	      <property name="response_id">-7</property>
+	      <property name="response_id">-6</property>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="chooser_ok_button">
+	      <property name="visible">True</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-ok</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <property name="response_id">-5</property>
 	    </widget>
 	  </child>
 	</widget>
@@ -1075,9 +1088,9 @@
 	  <property name="spacing">0</property>
 
 	  <child>
-	    <widget class="GtkLabel" id="types_edit_label">
+	    <widget class="GtkLabel" id="chooser_label">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">&lt;span&gt;&lt;b&gt;Edit types&lt;/b&gt;&lt;/span&gt;</property>
+	      <property name="label" translatable="yes">&lt;span&gt;&lt;b&gt;Make a choice:&lt;/b&gt;&lt;/span&gt;</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1100,7 +1113,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkHBox" id="hbox5">
+	    <widget class="GtkHBox" id="chooser_add_hbox">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>
@@ -1160,10 +1173,10 @@
 	      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 	      <child>
-		<widget class="GtkTreeView" id="types_treeview">
+		<widget class="GtkTreeView" id="chooser_treeview">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="headers_visible">True</property>
+		  <property name="headers_visible">False</property>
 		  <property name="rules_hint">False</property>
 		  <property name="reorderable">False</property>
 		  <property name="enable_search">True</property>

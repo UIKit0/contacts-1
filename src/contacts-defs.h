@@ -22,8 +22,8 @@ enum {
 };
 
 enum {
-	TYPE_CHOSEN_COL = 0,
-	TYPE_NAME_COL
+	CHOOSER_TICK_COL = 0,
+	CHOOSER_NAME_COL
 };
 
 typedef struct {

@@ -129,6 +129,22 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	contact_selected_sensitive (xml, TRUE);
 }
 
+static void
+chooser_toggle_cb (GtkCellRendererToggle * cell,
+		   gchar * path_string, gpointer user_data)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL (user_data);
+
+	gtk_tree_model_get_iter_from_string (model, &iter, path_string);
+	if (gtk_cell_renderer_toggle_get_active (cell))
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+				    CHOOSER_TICK_COL, FALSE, -1);
+	else
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+				    CHOOSER_TICK_COL, TRUE, -1);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -219,24 +235,26 @@ main (int argc, char **argv)
 	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (contacts_selection_cb), contacts_data);
 	
-	/* Add the columns to the groups/type chooser list */
+	/* Create model/view for groups/type chooser list */
 	contacts_treeview = GTK_TREE_VIEW (glade_xml_get_widget (
-						xml, "types_treeview"));
+						xml, "chooser_treeview"));
+	model = gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
 	renderer = gtk_cell_renderer_toggle_new ();
 	g_object_set (renderer, "activatable", TRUE, NULL);
-/*	g_signal_connect (renderer, "toggled",
-			  (GCallback) contacts_type_chooser_toggle_cb, NULL);*/
+	g_signal_connect (renderer, "toggled",
+			  (GCallback) chooser_toggle_cb, model);
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
 						     (contacts_treeview), -1,
 						     NULL, renderer, "active",
-						     TYPE_CHOSEN_COL, NULL);
+						     CHOOSER_TICK_COL, NULL);
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
 						     (contacts_treeview), -1,
 						     NULL, renderer, "text",
-						     TYPE_NAME_COL, NULL);
-	/* Create model for groups/type chooser list */
-	model = gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
+						     CHOOSER_NAME_COL, NULL);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (contacts_treeview),
+				 GTK_TREE_MODEL (model));
+	g_object_unref (model);
 
 	/* Select 'All' in the groups combobox */
 	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 

@@ -1,3 +1,16 @@
+2005-08-25  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c: (contacts_get_contacts_field),
+	(contacts_field_pretty_name), (contacts_widgets_list_find),
+	(contacts_edit_pane_show):
+	* src/contacts-main.c: (contacts_display_summary), (main):
+	* src/contacts-utils.c: (contacts_entries_get_values):
+	* src/contacts-utils.h:
+	o Add new 'chooser' dialog (unfinished)
+	o Begin work on field addition (unfinished)
+
 2005-08-24  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-defs.h:
