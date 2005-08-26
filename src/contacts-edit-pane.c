@@ -601,6 +601,42 @@ contacts_append_to_edit_table (GtkTable *table,
 	}
 }
 
+typedef struct {
+	EVCardAttribute *attr;
+	GList *contacts_groups;
+} ContactsGroupChangeData;
+
+static void
+contacts_change_groups_cb (GtkWidget *button, ContactsGroupChangeData *data)
+{
+	GList *g, *bools = NULL;
+	GList *results = NULL;
+	GList *values = e_vcard_attribute_get_values (data->attr);
+	GladeXML *xml = glade_get_widget_tree (
+			    gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW));
+	
+	for (g = data->contacts_groups; g; g = g->next) {
+		if (g_list_find_custom (values, g->data, (GCompareFunc)strcmp))
+			bools = g_list_append (bools, GINT_TO_POINTER (TRUE));
+		else
+			bools = g_list_append (bools, GINT_TO_POINTER (FALSE));
+	}
+	
+	if (contacts_chooser (xml, "Change groups", "<span><b>Choose groups"
+		"</b></span>", data->contacts_groups, bools, TRUE, &results)) {
+		gchar *new_groups = results ?
+			contacts_string_list_as_string (results, ", ") :
+			g_strdup ("None");
+		gtk_button_set_label (GTK_BUTTON (button), new_groups);
+		g_free (new_groups);
+		e_vcard_attribute_remove_values (data->attr);
+		for (g = results; g; g = g->next) {
+			e_vcard_attribute_add_value (data->attr, g->data);
+		}
+		g_list_free (results);
+	}
+}
+
 static void
 contacts_add_field_cb (GtkWidget *button, EContact *contact)
 {
@@ -703,12 +739,15 @@ void
 contacts_edit_pane_show (ContactsData *data)
 {
 	GtkWidget *button, *widget, *glabel, *gbutton;
+	EVCardAttribute *groups_attr = NULL;
+	ContactsGroupChangeData *gdata;
 	guint row, i;
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
 	GladeXML *xml = data->xml;
 	
-	/* Testing */
+#ifdef DEBUG
+	/* Prints out all contact data */
 	attributes = e_vcard_get_attributes (&contact->parent);
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
@@ -730,7 +769,7 @@ contacts_edit_pane_show (ContactsData *data)
 			}
 		}
 	}
-	/* Testing */
+#endif
 	
 	/* Display edit pane */
 	/* ODD: Doing this after adding the widgets will cause the first view
@@ -787,7 +826,14 @@ contacts_edit_pane_show (ContactsData *data)
 				contacts_string_list_as_string (values, ", ");
 			gtk_button_set_label (GTK_BUTTON (gbutton), types);
 			g_free (types);
+			
+			groups_attr = a;
 		}
+	}
+	
+	if (!groups_attr) {
+		groups_attr = e_vcard_attribute_new (NULL, "CATEGORIES");
+		e_vcard_add_attribute (&contact->parent, groups_attr);
 	}
 	
 	/* Add any missing widgets */
@@ -848,6 +894,15 @@ contacts_edit_pane_show (ContactsData *data)
 
 	widget = glade_xml_get_widget (xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
+	
+	/* Connect add group button */
+	gdata = g_new (ContactsGroupChangeData, 1);
+	gdata->attr = groups_attr;
+	gdata->contacts_groups = data->contacts_groups;
+	g_signal_connect (G_OBJECT (gbutton), "clicked",
+			  G_CALLBACK (contacts_change_groups_cb), gdata);
+	g_signal_connect_swapped (G_OBJECT (gbutton), "destroy",
+				  G_CALLBACK (g_free), gdata);
 	
 	/* Connect add field button */
 	widget = glade_xml_get_widget (xml, "add_field_button");

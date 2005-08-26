@@ -426,6 +426,32 @@ contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	return list;
 }
 
+void
+contacts_chooser_add_cb (GtkWidget *button)
+{
+	GtkWidget *treeview, *entry;
+	GtkListStore *model;
+	GtkTreeIter iter;
+	const gchar *text;
+	GladeXML *xml = glade_get_widget_tree (button);
+	
+	entry = glade_xml_get_widget (xml, "chooser_entry");
+	text = gtk_entry_get_text (GTK_ENTRY (entry));
+	
+	if (g_utf8_strlen (text, -1) <= 0)
+		return;
+	
+	treeview = glade_xml_get_widget (xml, "chooser_treeview");
+	model = GTK_LIST_STORE (
+		gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
+	
+	gtk_list_store_append (model, &iter);
+	gtk_list_store_set (model, &iter, CHOOSER_TICK_COL, TRUE,
+			    CHOOSER_NAME_COL, text, -1);
+	
+	gtk_entry_set_text (GTK_ENTRY (entry), "");
+}
+
 gboolean
 contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 		  GList *choices, GList *chosen, gboolean allow_custom,
@@ -463,10 +489,11 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 				    (const gchar *)c->data, -1);
 		if (multiple_choice) {
 			if (d) {
-				gboolean *chosen = (gboolean *)d->data;
+				gboolean chosen =
+					(gboolean)GPOINTER_TO_INT (d->data);
 				gtk_list_store_set (GTK_LIST_STORE (model),
 						    &iter, CHOOSER_TICK_COL,
-						    *chosen, -1);
+						    chosen, -1);
 				d = d->next;
 			} else {
 				gtk_list_store_set (GTK_LIST_STORE (model),

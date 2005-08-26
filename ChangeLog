@@ -1,6 +1,20 @@
 2005-08-26  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
+	* src/contacts-callbacks-ebook.c: (contacts_changed_cb):
+	* src/contacts-edit-pane.c: (contacts_append_to_edit_table),
+	(contacts_remove_field_cb), (contacts_widgets_list_sort),
+	(contacts_widgets_list_find), (contacts_edit_pane_show):
+	* src/contacts-main.c: (chooser_toggle_cb):
+	* src/contacts-utils.c: (contacts_entries_get_values),
+	(contacts_chooser):
+	* src/contacts-utils.h:
+	o Add group editing
+	o New groups are reflected in the contact list group drop-down
+
+2005-08-26  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
 	* src/contacts-edit-pane.c: (contacts_add_attr),
 	(contacts_edit_widget_new), (contacts_add_field_cb),
 	(contacts_remove_field_cb), (contacts_widgets_list_sort),

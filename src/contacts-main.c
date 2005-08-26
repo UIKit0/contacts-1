@@ -140,10 +140,10 @@ chooser_toggle_cb (GtkCellRendererToggle * cell,
 
 	gtk_tree_model_get_iter_from_string (model, &iter, path_string);
 	if (gtk_cell_renderer_toggle_get_active (cell))
-		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 				    CHOOSER_TICK_COL, FALSE, -1);
 	else
-		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 				    CHOOSER_TICK_COL, TRUE, -1);
 }
 

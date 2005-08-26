@@ -84,6 +84,8 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	GList *c;
 	GtkWidget *widget;
 	GtkListStore *model;
+	GtkComboBox *groups_combobox;
+	GladeXML *xml = data->xml;
 	EContact *current_contact = contacts_get_selected_contact (data->xml,
 							data->contacts_table);
 	if (current_contact) g_object_ref (current_contact);
@@ -92,11 +94,14 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
 		 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
 		  (GTK_TREE_VIEW (widget)))));
+	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
+					 (xml, "groups_combobox"));
 
 	/* Loop through changed contacts */	
 	for (c = (GList *)contacts; c; c = c->next) {
 		EContact *contact = E_CONTACT (c->data);
 		EContactListHash *hash;
+		GList *contact_groups;
 		const gchar *uid;
 
 		/* Lookup if contact exists in internal list (it should) */
@@ -126,6 +131,27 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 					(current_contact, E_CONTACT_UID)) == 0)
 				contacts_display_summary (contact, data->xml);
 		}
+
+		/* Check for groups and add them to group list */
+		contact_groups =
+		    e_contact_get (contact,
+				   E_CONTACT_CATEGORY_LIST);
+		if (contact_groups) {
+			GList *group;
+			for (group = contact_groups; group;
+			     group = group->next) {
+				if (!g_list_find_custom (data->contacts_groups, 
+							 group->data,
+							 (GCompareFunc) strcmp))
+				{
+					gtk_combo_box_append_text
+					    (groups_combobox, group->data);
+					data->contacts_groups = g_list_prepend 
+					   (data->contacts_groups, group->data);
+				}
+			}
+			g_list_free (contact_groups);
+		}
 	}
 	
 	if (current_contact) g_object_unref (current_contact);
@@ -134,6 +160,7 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	contacts_update_treeview (widget);
 }
 
+/* TODO: Remove groups that no longer contain contacts */
 void
 contacts_removed_cb (EBookView *book_view, const GList *ids, ContactsData *data)
 {
