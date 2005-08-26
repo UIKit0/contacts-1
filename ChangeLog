@@ -1,3 +1,10 @@
+2005-08-26  mallum <mallum@openedhand.com>
+
+	* Makefile.am:
+	* data/Makefile.am:
+	* src/Makefile.am:
+	Fixes for make dist etc
+
 2005-08-25  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
