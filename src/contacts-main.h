@@ -3,8 +3,6 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-void contacts_main_quit ();
-
 void contacts_update_treeview (GtkWidget *source);
 
 void contacts_display_summary (EContact *contact, GladeXML *xml);

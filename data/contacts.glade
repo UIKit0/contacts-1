@@ -18,7 +18,7 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <signal name="destroy" handler="gtk_main_quit" last_modification_time="Mon, 22 Aug 2005 09:25:47 GMT"/>
+  <signal name="destroy" handler="gtk_main_quit" last_modification_time="Fri, 26 Aug 2005 18:05:29 GMT"/>
 
   <child>
     <widget class="GtkNotebook" id="main_notebook">
@@ -85,7 +85,7 @@
 			  <property name="visible">True</property>
 			  <property name="label">gtk-quit</property>
 			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="gtk_main_quit" last_modification_time="Mon, 22 Aug 2005 09:25:35 GMT"/>
+			  <signal name="activate" handler="gtk_main_quit" last_modification_time="Fri, 26 Aug 2005 18:05:20 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
@@ -792,7 +792,7 @@
 		      <property name="border_width">6</property>
 		      <property name="visible">True</property>
 		      <property name="n_rows">1</property>
-		      <property name="n_columns">3</property>
+		      <property name="n_columns">2</property>
 		      <property name="homogeneous">False</property>
 		      <property name="row_spacing">6</property>
 		      <property name="column_spacing">6</property>
@@ -894,7 +894,8 @@
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
-		  <property name="focus_on_click">True</property>
+		  <property name="focus_on_click">False</property>
+		  <signal name="clicked" handler="contacts_remove_field_cb" last_modification_time="Fri, 26 Aug 2005 16:57:42 GMT"/>
 
 		  <child>
 		    <widget class="GtkAlignment" id="alignment2">

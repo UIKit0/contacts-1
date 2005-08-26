@@ -401,7 +401,7 @@ contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	if (GTK_IS_ENTRY (widget)) {
 		return g_list_append (list, g_strdup (
 				gtk_entry_get_text (GTK_ENTRY (widget))));
-	} else if (GTK_IS_COMBO_BOX (widget)) {
+	} else if (GTK_IS_COMBO_BOX_ENTRY (widget)) {
 		return g_list_append (list, g_strdup (
 			gtk_entry_get_text (
 				GTK_ENTRY (GTK_BIN (widget)->child))));
@@ -488,6 +488,26 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	gtk_widget_hide (dialog);
 	if (dialog_code == GTK_RESPONSE_OK) {
 		if (multiple_choice) {
+			GtkTreeIter iter;
+			gboolean valid =
+				gtk_tree_model_get_iter_first (model, &iter);
+			
+			while (valid) {
+				gboolean selected;
+				gtk_tree_model_get (model, &iter,
+					CHOOSER_TICK_COL, &selected, -1);
+				if (selected) {
+					gchar *name;
+					gtk_tree_model_get (model, &iter,
+						CHOOSER_NAME_COL, &name, -1);
+					*results =
+						g_list_append (*results, name);
+				}
+			
+				valid = gtk_tree_model_iter_next (model, &iter);
+			}
+			
+			return TRUE;
 		} else {
 			gchar *selection_name;
 			GtkTreeSelection *selection =

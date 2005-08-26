@@ -149,47 +149,6 @@ contacts_add_attr (EVCard *contact, const gchar *vcard_field)
 } 
 
 static void
-contacts_add_field (GtkWidget *button, EVCard *contact)
-{
-	GList *fields = NULL;
-	GHashTable *field_trans;
-	GList *field;
-	guint i;
-	GladeXML *xml = glade_get_widget_tree (button);
-	
-	field_trans = g_hash_table_new (g_str_hash, g_str_equal);
-	for (i = 0; contacts_fields[i].vcard_field; i++) {
-		const gchar *vcard_field = contacts_fields[i].vcard_field;
-		const gchar *pretty_name = contacts_field_pretty_name (
-						&contacts_fields[i]);
-		fields = g_list_append (fields, (gpointer)pretty_name);
-		g_hash_table_insert (field_trans, (gpointer)vcard_field,
-				     (gpointer)pretty_name);
-	}
-	
-	if (contacts_chooser (xml, "Add field",
-			      "<span><b>Choose a field</b></span>", fields,
-			      NULL, FALSE, &field)) {
-		GtkWidget *label, *edit;
-		EVCardAttribute *attr =
-			contacts_add_attr (contact, (const gchar *)field->data);
-		
-/*		const gchar *pretty_name = contacts_field_pretty_name (
-						&contacts_fields[i]);
-
-		label = contacts_label_widget_new (contact, attr,
-			   pretty_name, contacts_fields[i].multi_line);
-		edit = contacts_edit_widget_new (contact, attr,
-					contacts_fields[i].multi_line);*/
-		
-		g_list_free (field);
-	}
-	
-	g_list_free (fields);
-	g_hash_table_destroy (field_trans);
-}
-
-static void
 contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
 {
 	gtk_container_remove (GTK_CONTAINER (data), widget);
@@ -259,6 +218,14 @@ contacts_entry_changed (GtkWidget *widget, EContactChangeData *data)
 	GList *v, *values = contacts_entries_get_values (data->widget, NULL);
 	
 	e_vcard_attribute_remove_values (data->attr);
+	/* Note: First element of a structured field is type, so remove it */
+	if (g_list_length (values) > 1) {
+		GList *type = g_list_last (values);
+		values = g_list_remove_link (values, type);
+		g_free (type->data);
+		g_list_free (type);
+	}
+		
 	for (v = g_list_last (values); v; v = v->prev) {
 		e_vcard_attribute_add_value (data->attr,
 					     (const gchar *)v->data);
@@ -455,16 +422,16 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			 * characters.
 			 */
 			gboolean multiline = FALSE;
-			GtkWidget *entry;
+			GtkWidget *label = NULL, *entry;
 			const ContactsStructuredField *sfield =
 			    contacts_get_structured_field_name (attr_name,
 			    					field);
 			const gchar *string = (const gchar *)values->data;
 			/* If we have the information, label the field */
 			if (sfield) {
-				GtkWidget *label = gtk_label_new (NULL);
 				gchar *label_markup;
 
+				label = gtk_label_new (NULL);
 				multiline = sfield->multiline;				
 				gtk_label_set_use_markup (GTK_LABEL (label),
 							  TRUE);
@@ -485,7 +452,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				gtk_table_attach (GTK_TABLE (adr_table), label,
 						  0, 1, field + 1, field + 2,
 						  GTK_FILL, GTK_FILL, 0, 0);
-				gtk_widget_show (label);				
+				gtk_widget_show (label);
 			}
 			/* This code is pretty much a verbatim copy of the
 			 * code below to handle single-valued fields
@@ -529,6 +496,10 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 						  data);
 			}
 			gtk_widget_show (entry);
+	     		/* Hide the label when the entry is hidden */
+			g_signal_connect_swapped (G_OBJECT (entry), "hide", 
+					  G_CALLBACK (gtk_widget_hide),
+					  label);
 			gtk_table_attach (GTK_TABLE (adr_table), entry,
 					  1, 2, field + 1, field + 2,
 					  GTK_FILL | GTK_EXPAND, GTK_FILL,
@@ -587,6 +558,126 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 	return data->widget;
 }
 
+/* Helper function to add contacts label/edit widget pairs to a table,
+ * with respect for structured field edits.
+ */
+static void
+contacts_append_to_edit_table (GtkTable *table,
+			       GtkWidget *label, GtkWidget *edit)
+{
+	guint rows, cols;
+
+	g_object_get (table, "n-rows", &rows, NULL);
+	g_object_get (table, "n-columns", &cols, NULL);
+	
+	gtk_widget_show (label);
+	gtk_widget_show (edit);
+     	if (contacts_get_structured_field_name (
+     	    gtk_widget_get_name (GTK_WIDGET (label)), 0)) {
+     		GtkWidget *expander = gtk_expander_new (NULL);
+     		GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
+     		gtk_expander_set_label_widget (GTK_EXPANDER (expander),
+     					       GTK_WIDGET (label));
+     		gtk_container_add (GTK_CONTAINER (viewport),
+     				   GTK_WIDGET (edit));
+     		gtk_widget_show (GTK_WIDGET (viewport));
+     		gtk_container_add (GTK_CONTAINER (expander), viewport);
+     		gtk_expander_set_expanded (GTK_EXPANDER (expander),
+     					   TRUE);
+     		gtk_widget_show (GTK_WIDGET (expander));
+     		gtk_table_attach (table,
+     				  GTK_WIDGET (expander), 0, cols,
+     				  rows, rows+1, GTK_FILL | GTK_EXPAND,
+     				  GTK_FILL, 0, 0);
+     	} else {
+     		/* Hide the label when the entry is hidden */
+		g_signal_connect_swapped (G_OBJECT (edit), "hide", 
+					  G_CALLBACK (gtk_widget_hide),
+					  label);
+		gtk_table_attach (table, label, 0, 1, rows, rows+1,
+				  GTK_FILL, GTK_FILL, 0, 0);
+		gtk_table_attach (table, edit, 1, cols, rows, rows+1,
+				  GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
+	}
+}
+
+static void
+contacts_add_field_cb (GtkWidget *button, EContact *contact)
+{
+	GList *fields = NULL;
+	GHashTable *field_trans;
+	GList *field;
+	guint i;
+	GladeXML *xml = glade_get_widget_tree (button);
+	
+	field_trans = g_hash_table_new (g_str_hash, g_str_equal);
+	for (i = 0; contacts_fields[i].vcard_field; i++) {
+		const gchar *vcard_field = contacts_fields[i].vcard_field;
+		const gchar *pretty_name = contacts_field_pretty_name (
+						&contacts_fields[i]);
+		fields = g_list_append (fields, (gpointer)pretty_name);
+		g_hash_table_insert (field_trans, (gpointer)pretty_name,
+				     (gpointer)vcard_field);
+	}
+	
+	if (contacts_chooser (xml, "Add field",
+			      "<span><b>Choose a field</b></span>", fields,
+			      NULL, FALSE, &field)) {
+		GtkWidget *label, *edit, *table;
+		const ContactsField *cfield;
+		EVCardAttribute *attr;
+		const gchar *pretty_name;
+		gchar *vcard_field = g_hash_table_lookup (
+				      field_trans, (gconstpointer)field->data);
+		
+		cfield = contacts_get_contacts_field (vcard_field);
+		attr = contacts_add_attr (&contact->parent, vcard_field);
+		pretty_name = contacts_field_pretty_name (cfield);
+
+		label = contacts_label_widget_new (contact, attr,
+			   pretty_name, cfield->multi_line);
+		edit = contacts_edit_widget_new (contact, attr,
+					cfield->multi_line);
+		table = glade_xml_get_widget (xml, "edit_table");
+		
+		contacts_append_to_edit_table (GTK_TABLE (table), label, edit);
+		
+		g_list_free (field);
+	}
+	
+	g_list_free (fields);
+	g_hash_table_destroy (field_trans);
+}
+
+void
+contacts_remove_field_cb (GtkWidget *button, gpointer data)
+{
+	GtkWidget *main_window =
+		gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW);
+	GtkWidget *focus = gtk_window_get_focus (GTK_WINDOW (main_window));
+	
+	/* Empty the data and then hide the relevant widget. Signals have
+	 * been setup when creating these widgets so that other relevant
+	 * widgets are hidden at the same time.
+	 */
+	if (GTK_IS_ENTRY (focus)) {
+		if (gtk_widget_get_ancestor (focus, GTK_TYPE_COMBO_BOX_ENTRY))
+			return;
+			
+		gtk_entry_set_text (GTK_ENTRY (focus), "");
+		gtk_widget_hide (focus);
+	} else if (GTK_IS_TEXT_VIEW (focus)) {
+		GtkTextBuffer *buffer =
+			gtk_text_view_get_buffer (GTK_TEXT_VIEW (focus));
+			
+		gtk_text_buffer_set_text (buffer, "", -1);
+		
+		focus =
+		    gtk_widget_get_ancestor (focus, GTK_TYPE_SCROLLED_WINDOW);
+		gtk_widget_hide (focus);
+	}
+}
+
 static gint
 contacts_widgets_list_sort (GtkWidget *a, GtkWidget *b)
 {
@@ -611,7 +702,7 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 void
 contacts_edit_pane_show (ContactsData *data)
 {
-	GtkWidget *button, *widget;
+	GtkWidget *button, *widget, *glabel, *gbutton;
 	guint row, i;
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
@@ -657,6 +748,12 @@ contacts_edit_pane_show (ContactsData *data)
 			  G_CALLBACK (contacts_choose_photo), contact);
 	gtk_widget_show (button);
 	
+	/* Create groups edit label/button */
+	glabel = gtk_label_new ("<span><b>Groups:</b></span>");
+	gtk_label_set_use_markup (GTK_LABEL (glabel), TRUE);
+	gtk_misc_set_alignment (GTK_MISC (glabel), 1, 0.5);
+	gbutton = gtk_button_new_with_label ("None");
+	
 	/* Create edit pane widgets */
 	attributes = e_vcard_get_attributes (&contact->parent);
 	label_widgets = NULL;
@@ -683,6 +780,13 @@ contacts_edit_pane_show (ContactsData *data)
 				edit_widgets = g_list_append (edit_widgets,
 							      edit);
 			}
+		} else if (strcasecmp (name, "CATEGORIES") == 0) {
+			/* Create categories widget */
+			GList *values = e_vcard_attribute_get_values (a);
+			gchar *types =
+				contacts_string_list_as_string (values, ", ");
+			gtk_button_set_label (GTK_BUTTON (gbutton), types);
+			g_free (types);
 		}
 	}
 	
@@ -717,50 +821,27 @@ contacts_edit_pane_show (ContactsData *data)
 	
 	/* Sort widgets into order and display */
 	widget = glade_xml_get_widget (xml, "edit_table");
-	g_list_sort (label_widgets, (GCompareFunc)contacts_widgets_list_sort);
-	g_list_sort (edit_widgets, (GCompareFunc)contacts_widgets_list_sort);
-	i = 2;
+	label_widgets = g_list_sort (label_widgets,
+		(GCompareFunc)contacts_widgets_list_sort);
+	edit_widgets = g_list_sort (edit_widgets,
+		(GCompareFunc)contacts_widgets_list_sort);
+	g_object_set (widget, "n-rows", 1, NULL);
+	g_object_set (widget, "n-columns", 2, NULL);
 	for (c = label_widgets, d = edit_widgets, row = 0; (c) && (d);
 	     c = c->next, d = d->next, row++) {
 		if (row == 2) {
-/*			GtkWidget *hr = gtk_hseparator_new ();
-	     		gtk_table_attach (GTK_TABLE (widget), hr, 0, 2,
-	     				  3, 4, GTK_FILL, 0, 0, 6);
-	     		gtk_widget_show (hr);
-	     		row ++;*/
-	     		/* Add photo button */
+			/* Add photo */
 			gtk_table_attach (GTK_TABLE (widget), button, 2, 3,
-					  0, 2, 0, 0, 0, 0);
-	     		i = 3;
+					  1, 3, 0, 0, 0, 0);
+					  
+			/* Add groups-editing button */
+			contacts_append_to_edit_table (GTK_TABLE (widget),
+						       glabel, gbutton);
 	     	}
 	     	
-		gtk_widget_show (GTK_WIDGET (c->data));
-		gtk_widget_show (GTK_WIDGET (d->data));
-	     	if (contacts_get_structured_field_name (
-	     	    gtk_widget_get_name (GTK_WIDGET (c->data)), 0)) {
-	     		GtkWidget *expander = gtk_expander_new (NULL);
-	     		GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
-	     		gtk_expander_set_label_widget (GTK_EXPANDER (expander),
-	     					       GTK_WIDGET (c->data));
-	     		gtk_container_add (GTK_CONTAINER (viewport),
-	     				   GTK_WIDGET (d->data));
-	     		gtk_widget_show (GTK_WIDGET (viewport));
-	     		gtk_container_add (GTK_CONTAINER (expander), viewport);
-	     		gtk_expander_set_expanded (GTK_EXPANDER (expander),
-	     					   TRUE);
-	     		gtk_widget_show (GTK_WIDGET (expander));
-	     		gtk_table_attach (GTK_TABLE (widget),
-	     				  GTK_WIDGET (expander), 0, 3,
-	     				  row, row+1, GTK_FILL | GTK_EXPAND,
-	     				  GTK_FILL, 0, 0);
-	     	} else {
-			gtk_table_attach (GTK_TABLE (widget), GTK_WIDGET (c->data),
-					  0, 1, row, row+1,
-					  GTK_FILL, GTK_FILL, 0, 0);
-			gtk_table_attach (GTK_TABLE (widget),
-					  GTK_WIDGET (d->data), 1, i, row,
-					  row+1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-		}
+		contacts_append_to_edit_table (GTK_TABLE (widget),
+					       GTK_WIDGET (c->data),
+					       GTK_WIDGET (d->data));
 	}
 	g_list_free (label_widgets);
 	g_list_free (edit_widgets);
@@ -770,11 +851,19 @@ contacts_edit_pane_show (ContactsData *data)
 	
 	/* Connect add field button */
 	widget = glade_xml_get_widget (xml, "add_field_button");
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_add_field_cb,
+					      NULL);
 	g_signal_connect (G_OBJECT (widget), "clicked", 
-			  G_CALLBACK (contacts_add_field), &contact->parent);
+			  G_CALLBACK (contacts_add_field_cb), contact);
 	
 	/* Connect close button */
 	widget = glade_xml_get_widget (xml, "edit_done_button");
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_edit_pane_hide,
+					      NULL);
 	g_signal_connect (G_OBJECT (widget), "clicked",
 			  G_CALLBACK (contacts_edit_pane_hide), data);
 }

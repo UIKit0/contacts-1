@@ -12,8 +12,10 @@
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
+#include "contacts-edit-pane.h"
 
 #define XML_FILE PKGDATADIR "/contacts.glade"
+
 
 void
 contacts_update_treeview (GtkWidget *source)
