@@ -43,51 +43,32 @@ contacts_update_treeview (GtkWidget *source)
 	}
 }
 
-/* Shows GtkLabel widgets label_name and name and sets the text of name to
- * string. If string is NULL, hides both widgets
- */
-static void
-contacts_set_label (GladeXML *xml, const gchar * label_name, const gchar * name,
-		    const gchar * string)
-{
-	GtkWidget *label, *title_label;
-
-	label = glade_xml_get_widget (xml, name);
-	title_label = glade_xml_get_widget (xml, label_name);
-
-	if (label && title_label) {
-		if (string) {
-			gtk_label_set_text (GTK_LABEL (label), string);
-			gtk_widget_show (title_label);
-			gtk_widget_show (label);
-		} else {
-			gtk_widget_hide (title_label);
-			gtk_widget_hide (label);;
-		}
-	}
-}
-
 void
 contacts_display_summary (EContact *contact, GladeXML *xml)
 {
 	GtkWidget *widget;
 	const gchar *string;
 	GtkImage *photo;
+	GList *a, *groups, *attributes;
+	gchar *name_markup, *groups_text = NULL;
 
 	if (!E_IS_CONTACT (contact))
 		return;
 
-	/* Retrieve contact name */
+	/* Retrieve contact name and groups */
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-	if (string) {
-		gchar *name_markup = g_strdup_printf
-		    ("<span><big><b>%s</b></big></span>", string);
-		gtk_label_set_markup (GTK_LABEL (widget), name_markup);
-		g_free (name_markup);
-	} else {
-		gtk_label_set_markup (GTK_LABEL (widget), "");
+	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
+	groups_text = contacts_string_list_as_string (groups, ", ");
+	name_markup = g_strdup_printf
+		("<span><big><b>%s</b></big>\n<small>%s</small></span>",
+		 string ? string : "", groups_text ? groups_text : "");
+	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
+	if (groups) {
+		g_list_free (groups);
+		g_free (groups_text);
 	}
+	g_free (name_markup);
 
 	/* Retrieve contact picture and resize */
 	widget = glade_xml_get_widget (xml, "photo_image");
@@ -106,25 +87,64 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	}
 	gtk_widget_destroy (GTK_WIDGET (photo));
 
-	/* Retrieve contact business phone number */
-	string = e_contact_get_const (contact, E_CONTACT_PHONE_BUSINESS);
-	contacts_set_label (xml, "bphone_title_label", "bphone_label", string);
+	/* Create summary (displays fields marked as REQUIRED) */
+	widget = glade_xml_get_widget (xml, "summary_table");
+	gtk_container_foreach (GTK_CONTAINER (widget),
+			       (GtkCallback)contacts_remove_edit_widgets_cb,
+			       widget);
+	g_object_set (widget, "n-rows", 1, NULL);
+	g_object_set (widget, "n-columns", 2, NULL);
+	attributes = e_vcard_get_attributes (&contact->parent);
+	for (a = attributes; a; a = a->next) {
+		GtkWidget *name_widget, *value_widget;
+		gchar *value_text, *name_markup;
+		GList *values;
+		const gchar **types;
+		EVCardAttribute *attr = (EVCardAttribute *)a->data;
+		const ContactsField *field = contacts_get_contacts_field (
+			e_vcard_attribute_get_name (attr));
+			
+		if (!field || field->priority >= REQUIRED)
+			continue;
+		
+		values = e_vcard_attribute_get_values (attr);
+		value_text = contacts_string_list_as_string (values, "\n");
+		
+		types = contacts_get_field_types (e_vcard_attribute_get_name (attr));
+		if (types) {
+			gchar *types_string;
+			GList *types_list = NULL;
 
-	/* Retrieve contact home phone number */
-	string = e_contact_get_const (contact, E_CONTACT_PHONE_HOME);
-	contacts_set_label (xml, "hphone_title_label", "hphone_label", string);
-
-	/* Retrieve contact mobile phone number */
-	string = e_contact_get_const (contact, E_CONTACT_PHONE_MOBILE);
-	contacts_set_label (xml, "mobile_title_label", "mobile_label", string);
-
-	/* Retrieve contact e-mail address */
-	string = e_contact_get_const (contact, E_CONTACT_EMAIL_1);
-	contacts_set_label (xml, "email_title_label", "email_label", string);
-
-	/* Retrieve contact address */
-	string = e_contact_get_const (contact, E_CONTACT_ADDRESS_LABEL_HOME);
-	contacts_set_label (xml, "address_title_label", "address_label", string);
+			types_list = contacts_get_type_strings (
+				e_vcard_attribute_get_params (attr));
+			types_string = types_list ?
+			    contacts_string_list_as_string (types_list, ", ") :
+			    "Other";
+			g_list_free (types_list);
+			
+			name_markup = g_strdup_printf (
+				"<span><b>%s:</b>\n<small>(%s)</small></span>",
+				contacts_field_pretty_name (field),
+				types_string);
+			g_free (types_string);
+		} else {
+			name_markup = g_strdup_printf ("<span><b>%s:</b></span>",
+				contacts_field_pretty_name (field));
+		}
+		name_widget = gtk_label_new (name_markup);
+		gtk_label_set_use_markup (GTK_LABEL (name_widget), TRUE);
+		value_widget = gtk_label_new (value_text);
+		gtk_label_set_justify (GTK_LABEL (name_widget),
+				       GTK_JUSTIFY_RIGHT);
+		gtk_misc_set_alignment (GTK_MISC (name_widget), 1, 0);
+		gtk_misc_set_alignment (GTK_MISC (value_widget), 0, 0);
+		
+		contacts_append_to_edit_table (GTK_TABLE (widget), name_widget,
+					       value_widget);
+		
+		g_free (name_markup);
+		g_free (value_text);
+	}
 
 	widget = glade_xml_get_widget (xml, "summary_vbox");
 	gtk_widget_show (widget);

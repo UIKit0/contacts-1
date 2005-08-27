@@ -296,6 +296,24 @@ contacts_get_types (GList *params)
 	return list;
 }
 
+GList *
+contacts_get_type_strings (GList *params)
+{
+	GList *list = NULL;
+
+	for (; params; params = params->next) {
+		EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
+		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) == 0) {
+			GList *types = e_vcard_attribute_param_get_values (p);
+			for (; types; types = types->next) {
+				list = g_list_append (list, types->data);
+			}
+		}
+	}
+	
+	return list;
+}
+
 void
 contacts_choose_photo (GtkWidget *button, EContact *contact)
 {

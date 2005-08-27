@@ -1,3 +1,15 @@
+2005-08-27  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-edit-pane.c: (contacts_get_structured_field_size),
+	(contacts_get_contacts_field), (contacts_add_attr):
+	* src/contacts-edit-pane.h:
+	* src/contacts-main.c: (contacts_update_treeview),
+	(contacts_display_summary):
+	* src/contacts-utils.c: (contacts_get_types):
+	* src/contacts-utils.h:
+	o Rewrite summary display
+
 2005-08-26  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

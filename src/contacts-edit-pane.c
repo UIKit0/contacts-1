@@ -59,7 +59,7 @@ static gchar **contacts_field_types[] = {
 	(gchar *[]){ NULL }
 };
 
-static const gchar **
+const gchar **
 contacts_get_field_types (const gchar *attr_name)
 {
 	guint i;
@@ -100,12 +100,12 @@ contacts_get_structured_field_size (const gchar *attr_name)
 	return size;
 }
 
-static const ContactsField *
+const ContactsField *
 contacts_get_contacts_field (const gchar *vcard_field)
 {
 	guint i;
 	
-	for (i = 0; contacts_fields[i].vcard_field != NULL; i++) {
+	for (i = 0; (contacts_fields[i].vcard_field) && (vcard_field); i++) {
 		if (strcmp (contacts_fields[i].vcard_field, vcard_field) == 0)
 			return &contacts_fields[i];
 	}
@@ -113,7 +113,7 @@ contacts_get_contacts_field (const gchar *vcard_field)
 	return NULL;
 }
 
-static const gchar *
+const gchar *
 contacts_field_pretty_name (const ContactsField *field)
 {
 	if (field->pretty_name) {
@@ -148,7 +148,7 @@ contacts_add_attr (EVCard *contact, const gchar *vcard_field)
 	return NULL;
 } 
 
-static void
+void
 contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
 {
 	gtk_container_remove (GTK_CONTAINER (data), widget);
@@ -323,7 +323,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
  * contact.
  * Returns GtkWidget * on success, NULL on failure
  */
-static GtkWidget *
+GtkWidget *
 contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 			   const gchar *name, gboolean multi_line)
 {	
@@ -561,7 +561,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 /* Helper function to add contacts label/edit widget pairs to a table,
  * with respect for structured field edits.
  */
-static void
+void
 contacts_append_to_edit_table (GtkTable *table,
 			       GtkWidget *label, GtkWidget *edit)
 {

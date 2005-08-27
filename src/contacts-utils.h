@@ -28,6 +28,8 @@ gchar *contacts_string_list_as_string (GList *list,
 
 GList *contacts_get_types (GList *params);
 
+GList *contacts_get_type_strings (GList *params);
+
 void contacts_choose_photo (GtkWidget *button, EContact *contact);
 
 void contacts_free_list_hash (gpointer data);
