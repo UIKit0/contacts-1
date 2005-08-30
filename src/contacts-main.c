@@ -119,7 +119,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 				e_vcard_attribute_get_params (attr));
 			types_string = types_list ?
 			    contacts_string_list_as_string (types_list, ", ") :
-			    "Other";
+			    g_strdup("Other");
 			g_list_free (types_list);
 			
 			name_markup = g_strdup_printf (

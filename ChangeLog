@@ -1,3 +1,8 @@
+2005-08-30  mallum  <mallum@openedhand.com>
+
+	* src/contacts-main.c: (contacts_display_summary):
+	Fix a small segv when freeing non dynamic alloc string. 
+
 2005-08-30  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
