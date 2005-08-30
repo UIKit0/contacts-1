@@ -19,6 +19,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <signal name="destroy" handler="gtk_main_quit" last_modification_time="Fri, 26 Aug 2005 18:05:29 GMT"/>
+  <signal name="set_focus" handler="contacts_edit_pane_set_focus_cb" last_modification_time="Tue, 30 Aug 2005 10:11:51 GMT"/>
 
   <child>
     <widget class="GtkNotebook" id="main_notebook">

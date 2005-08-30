@@ -1,3 +1,15 @@
+2005-08-30  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-edit-pane.c: (contacts_get_field_types),
+	(contacts_add_attr), (contacts_entry_changed),
+	(contacts_type_edit_widget_new), (contacts_label_widget_new),
+	(contacts_edit_widget_new), (contacts_append_to_edit_table),
+	(contacts_add_field_cb):
+	* src/contacts-edit-pane.h:
+	o Fix remove field to work correctly in all cases (hopefully)
+	o Dynamically size multi-line fields
+
 2005-08-27  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

@@ -3,6 +3,9 @@
 #include <gtk/gtk.h>
 #include "contacts-defs.h"
 
+void contacts_edit_pane_set_focus_cb (GtkWindow *window, GtkWidget *widget,
+				      gpointer data);
+
 void contacts_edit_pane_show (ContactsData *data);
 
 void contacts_remove_field_cb (GtkWidget *button, gpointer data);

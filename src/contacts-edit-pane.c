@@ -73,7 +73,7 @@ contacts_get_field_types (const gchar *attr_name)
 }
 
 static const ContactsStructuredField *
-contacts_get_structured_field_name (const gchar *attr_name, guint field)
+contacts_get_structured_field (const gchar *attr_name, guint field)
 {
 	guint i;
 	
@@ -147,6 +147,22 @@ contacts_add_attr (EVCard *contact, const gchar *vcard_field)
 	
 	return NULL;
 } 
+
+void
+contacts_edit_pane_set_focus_cb (GtkWindow *window, GtkWidget *widget,
+				 gpointer data)
+{
+	if (widget && GTK_IS_WIDGET (widget)) {
+		GladeXML *xml = glade_get_widget_tree (GTK_WIDGET (window));
+		GtkWidget *button = glade_xml_get_widget (
+			xml, "remove_field_button");
+		if (contacts_get_contacts_field (
+		    gtk_widget_get_name (widget)))
+			gtk_widget_set_sensitive (button, TRUE);
+		else
+			gtk_widget_set_sensitive (button, FALSE);
+	}
+}
 
 void
 contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
@@ -249,7 +265,8 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
 		EContactTypeChangeData *data;
 		/* Retrieve all types, but we only look at the first one
 		 * TODO: A sane way of selecting multiple types, to conform
-		 * with spec? (Almost no other vCard-using apps do this)
+		 * with spec? (Almost no other vCard-using apps do this,
+		 * so not high priority)
 		 */
 		GList *contact_types = contacts_get_types (
 			e_vcard_attribute_get_params (attr));
@@ -301,7 +318,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
 		else
 			align = gtk_alignment_new (0, 0, 0, 0);
 		/* TODO: Find something better than this? */
-		gtk_widget_set_size_request (combo, 96, -1);
+		gtk_widget_set_size_request (combo, 80, -1);
 		gtk_container_add (GTK_CONTAINER (align), combo);
 
 		/* Connect signal for changes */		
@@ -355,7 +372,7 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 		gtk_box_pack_start (GTK_BOX (container), label_widget,
 				    FALSE, TRUE, 0);
 		gtk_box_pack_end (GTK_BOX (container), type_edit,
-				    FALSE, TRUE, 0);
+				    FALSE, FALSE, 0);
 		label_widget = container;
 	}
 	
@@ -371,7 +388,8 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 static GtkWidget *
 contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			  gboolean multi_line)
-{	
+{
+	GtkWidget *type_edit;
 	EContactChangeData *data;
 	const gchar *attr_name = e_vcard_attribute_get_name (attr);
 
@@ -383,7 +401,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 	/* Create widget */
 	if (!e_vcard_attribute_is_single_valued (attr)) {
 		/* Handle structured fields */
-		GtkWidget *adr_table, *type_edit;
+		GtkWidget *adr_table;
 		guint field;
 		GList *values = e_vcard_attribute_get_values (attr);
 		
@@ -395,9 +413,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		/* Set widget that contains attribute data */		
 		data->widget = adr_table;
 		
-		/* Add type editor (due to GtkComboBoxEntry not working and
-		 * looking very ugly in GtkExpander)
-		 */
+		/* Add type editor */
 		type_edit = contacts_type_edit_widget_new (attr, multi_line);
 		if (type_edit) {
 			GtkWidget *label = gtk_label_new (NULL);
@@ -424,8 +440,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			gboolean multiline = FALSE;
 			GtkWidget *label = NULL, *entry;
 			const ContactsStructuredField *sfield =
-			    contacts_get_structured_field_name (attr_name,
-			    					field);
+			    contacts_get_structured_field (attr_name, field);
 			const gchar *string = (const gchar *)values->data;
 			/* If we have the information, label the field */
 			if (sfield) {
@@ -462,19 +477,17 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				GtkTextView *view;
 				
 				view = GTK_TEXT_VIEW (gtk_text_view_new ());
+				gtk_widget_set_name (GTK_WIDGET (view),
+						     attr_name);
 				buffer = gtk_text_view_get_buffer (view);
 				
 				gtk_text_buffer_set_text (buffer, string ?
 							   string : "", -1);
 				gtk_text_view_set_editable (view, TRUE);
 				
-				entry = gtk_scrolled_window_new (NULL, NULL);
-				gtk_scrolled_window_set_policy (
-					GTK_SCROLLED_WINDOW (entry),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-				gtk_scrolled_window_set_shadow_type (
-				   GTK_SCROLLED_WINDOW (entry), GTK_SHADOW_IN);
+				entry = gtk_frame_new (NULL);
+				gtk_frame_set_shadow_type (GTK_FRAME (entry),
+							   GTK_SHADOW_IN);
 				gtk_container_add (GTK_CONTAINER (entry),
 						   GTK_WIDGET (view));
 				gtk_widget_show (GTK_WIDGET (view));
@@ -486,6 +499,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 						  data);
 			} else {
 				entry = gtk_entry_new ();
+				gtk_widget_set_name (entry, attr_name);
 				gtk_entry_set_text (GTK_ENTRY (entry),
 						    string ? string : "");
 
@@ -509,26 +523,33 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		/* Handle single-valued fields that span multiple lines */
 		const gchar *string = e_vcard_attribute_get_value (attr);
 		
-		GtkWidget *window;
+		GtkWidget *container = NULL;
 		GtkTextView *view = GTK_TEXT_VIEW (gtk_text_view_new ());
 		GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
 		
+		gtk_widget_set_name (GTK_WIDGET (view), attr_name);
 		gtk_text_buffer_set_text (buffer, string ? string : "", -1);
 		gtk_text_view_set_editable (view, TRUE);
 		
-		window = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_policy (
-			GTK_SCROLLED_WINDOW (window),
-			GTK_POLICY_AUTOMATIC,
-			GTK_POLICY_AUTOMATIC);
-		gtk_scrolled_window_set_shadow_type (
-			GTK_SCROLLED_WINDOW (window), GTK_SHADOW_IN);
-		gtk_container_add (GTK_CONTAINER (window),
+		container = gtk_frame_new (NULL);
+		gtk_frame_set_shadow_type (
+			GTK_FRAME (container), GTK_SHADOW_IN);
+		gtk_container_add (GTK_CONTAINER (container),
 				   GTK_WIDGET (view));
 		gtk_widget_show (GTK_WIDGET (view));
 
+/*		if (type_edit) {
+			gtk_widget_show (type_edit);
+			gtk_widget_show (window);
+			container = gtk_hbox_new (FALSE, 6);
+			gtk_box_pack_start (GTK_BOX (container), type_edit,
+					    FALSE, TRUE, 0);
+			gtk_box_pack_end (GTK_BOX (container), window,
+					    TRUE, TRUE, 0);
+		}*/
+
 		/* Set widget that contains attribute data */		
-		data->widget = window;
+		data->widget = container;
 		
 		/* Connect signal for changes */
 		g_signal_connect (G_OBJECT (buffer), "changed", G_CALLBACK
@@ -536,14 +557,25 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 	} else {
 		/* Handle simple single-valued single-line fields */
 		const gchar *string = e_vcard_attribute_get_value (attr);
-		GtkWidget *entry;
+		GtkWidget *entry, *container = NULL;
 
 		entry = gtk_entry_new ();
 		gtk_entry_set_text (GTK_ENTRY (entry),
 				    string ? string : "");
+		gtk_widget_set_name (entry, attr_name);
+
+/*		if (type_edit) {
+			gtk_widget_show (type_edit);
+			gtk_widget_show (entry);
+			container = gtk_hbox_new (FALSE, 6);
+			gtk_box_pack_start (GTK_BOX (container), type_edit,
+					    FALSE, TRUE, 0);
+			gtk_box_pack_end (GTK_BOX (container), entry,
+					    TRUE, TRUE, 0);
+		}*/
 
 		/* Set widget that contains attribute data */		
-		data->widget = entry;
+		data->widget = container ? container : entry;
 		
 		/* Connect signal for changes */
 		g_signal_connect (G_OBJECT (entry), "changed", G_CALLBACK
@@ -572,7 +604,7 @@ contacts_append_to_edit_table (GtkTable *table,
 	
 	gtk_widget_show (label);
 	gtk_widget_show (edit);
-     	if (contacts_get_structured_field_name (
+     	if (contacts_get_structured_field (
      	    gtk_widget_get_name (GTK_WIDGET (label)), 0)) {
      		GtkWidget *expander = gtk_expander_new (NULL);
      		GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
@@ -685,33 +717,79 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 	g_hash_table_destroy (field_trans);
 }
 
+/* Helper method to clear the text in a GtkEntry or GtkTextView and hide it */
+static void
+contacts_remove_entries (GtkWidget *entry)
+{
+	if (GTK_IS_ENTRY (entry)) {
+		if (gtk_widget_get_ancestor (entry, GTK_TYPE_COMBO_BOX_ENTRY))
+			return;
+			
+		gtk_entry_set_text (GTK_ENTRY (entry), "");
+		gtk_widget_hide (entry);
+	} else if (GTK_IS_TEXT_VIEW (entry)) {
+		GtkTextBuffer *buffer =
+			gtk_text_view_get_buffer (GTK_TEXT_VIEW (entry));
+			
+		gtk_text_buffer_set_text (buffer, "", -1);
+		
+		entry =
+		    gtk_widget_get_ancestor (entry, GTK_TYPE_BIN);
+		gtk_widget_hide (entry);
+	} else if (GTK_IS_CONTAINER (entry)) {
+		GList *c, *children =
+			gtk_container_get_children (GTK_CONTAINER (entry));
+		
+		for (c = children; c; c = c->next)
+			contacts_remove_entries (GTK_WIDGET (c->data));
+		
+		g_list_free (children);
+	}
+}
+
 void
 contacts_remove_field_cb (GtkWidget *button, gpointer data)
 {
+	const gchar *attr_name;
 	GtkWidget *main_window =
 		gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW);
 	GtkWidget *focus = gtk_window_get_focus (GTK_WINDOW (main_window));
+	
+	if (!focus || !GTK_IS_WIDGET (focus))
+		return;
+	
+	/* Special case structured fields - Confirm remove, then hide the whole
+	 * container (of sub-fields).
+	 */
+	attr_name = gtk_widget_get_name (focus);
+	if (contacts_get_structured_field (attr_name, 0)) {
+		GtkWidget *dialog = gtk_message_dialog_new (
+			GTK_WINDOW (main_window), GTK_DIALOG_MODAL,
+			GTK_MESSAGE_QUESTION,
+			GTK_BUTTONS_YES_NO, "Removing this sub-field will "
+			"remove the parent field. Are you sure you want to "
+			"remove this field?");
+		
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) ==
+		    GTK_RESPONSE_YES) {
+			GtkWidget *expander = gtk_widget_get_ancestor (
+				focus, GTK_TYPE_EXPANDER);
+			
+			contacts_remove_entries (expander);
+			gtk_widget_hide (expander);
+		}
+		
+		gtk_widget_destroy (dialog);
+		
+		return;
+	}
 	
 	/* Empty the data and then hide the relevant widget. Signals have
 	 * been setup when creating these widgets so that other relevant
 	 * widgets are hidden at the same time.
 	 */
-	if (GTK_IS_ENTRY (focus)) {
-		if (gtk_widget_get_ancestor (focus, GTK_TYPE_COMBO_BOX_ENTRY))
-			return;
-			
-		gtk_entry_set_text (GTK_ENTRY (focus), "");
-		gtk_widget_hide (focus);
-	} else if (GTK_IS_TEXT_VIEW (focus)) {
-		GtkTextBuffer *buffer =
-			gtk_text_view_get_buffer (GTK_TEXT_VIEW (focus));
-			
-		gtk_text_buffer_set_text (buffer, "", -1);
-		
-		focus =
-		    gtk_widget_get_ancestor (focus, GTK_TYPE_SCROLLED_WINDOW);
-		gtk_widget_hide (focus);
-	}
+	if (contacts_get_contacts_field (attr_name))
+		contacts_remove_entries (focus);
 }
 
 static gint
