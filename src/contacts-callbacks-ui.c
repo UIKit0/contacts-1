@@ -23,7 +23,7 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 	if (contact) {
 		contacts_display_summary (contact, data->xml);
 	} else {
-		contact_selected_sensitive (data->xml, FALSE);
+		contacts_set_available_options (data->xml, TRUE, FALSE, FALSE);
 		widget = glade_xml_get_widget (data->xml, "summary_vbox");
 		gtk_widget_hide (widget);
 	}
@@ -42,8 +42,8 @@ contacts_new_cb (GtkWidget *source, ContactsData *data)
 void
 contacts_edit_cb (GtkWidget *source, ContactsData *data)
 {
-	/* Disable the edit/delete buttons and get the contact to edit */
-	contact_selected_sensitive (data->xml, FALSE);
+	/* Disable the new/edit/delete options and get the contact to edit */
+	contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
 	data->contact = contacts_get_selected_contact (data->xml,
 						       data->contacts_table);
 	
@@ -88,7 +88,12 @@ contacts_copy_cb (GtkWindow *main_window)
 	if (widget) {
 		if (GTK_IS_EDITABLE (widget))
 			gtk_editable_copy_clipboard (GTK_EDITABLE (widget));
-		else if (GTK_IS_LABEL (widget)) {
+		else if (GTK_IS_TEXT_VIEW (widget)) {
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (
+				GTK_TEXT_VIEW (widget));
+			gtk_text_buffer_copy_clipboard (buffer,
+				gtk_clipboard_get (GDK_SELECTION_CLIPBOARD));
+		} else if (GTK_IS_LABEL (widget)) {
 			gint start, end;
 			if (gtk_label_get_selection_bounds (GTK_LABEL (widget),
 							    &start, &end)) {
@@ -112,10 +117,18 @@ contacts_cut_cb (GtkWindow *main_window)
 {
 	GtkWidget *widget = gtk_window_get_focus (main_window);
 	
-	if (widget && GTK_IS_EDITABLE (widget))
-		gtk_editable_cut_clipboard (GTK_EDITABLE (widget));
-	else
-		contacts_copy_cb (main_window);
+	if (widget) {
+		if (GTK_IS_EDITABLE (widget))
+			gtk_editable_cut_clipboard (GTK_EDITABLE (widget));
+		else if (GTK_IS_TEXT_VIEW (widget)) {
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (
+				GTK_TEXT_VIEW (widget));
+			gtk_text_buffer_cut_clipboard (buffer,
+				gtk_clipboard_get (GDK_SELECTION_CLIPBOARD),
+				TRUE);
+		} else
+			contacts_copy_cb (main_window);
+	}
 }
 
 void
@@ -123,8 +136,17 @@ contacts_paste_cb (GtkWindow *main_window)
 {
 	GtkWidget *widget = gtk_window_get_focus (main_window);
 
-	if (widget && GTK_IS_EDITABLE (widget))
-		gtk_editable_paste_clipboard (GTK_EDITABLE (widget));
+	if (widget) {
+		if (GTK_IS_EDITABLE (widget))
+			gtk_editable_paste_clipboard (GTK_EDITABLE (widget));
+		else if (GTK_IS_TEXT_VIEW (widget)) {
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (
+				GTK_TEXT_VIEW (widget));
+			gtk_text_buffer_paste_clipboard (buffer,
+				gtk_clipboard_get (GDK_SELECTION_CLIPBOARD),
+				NULL, TRUE);
+		}
+	}
 }
 
 void

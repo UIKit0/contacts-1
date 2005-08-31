@@ -17,7 +17,8 @@ EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
 EContact *contacts_get_selected_contact (GladeXML *xml,
 					 GHashTable *contacts_table);
 
-void contact_selected_sensitive (GladeXML *xml, gboolean sensitive);
+void contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,
+				     gboolean delete);
 
 GtkImage *contacts_load_photo (EContact *contact);
 

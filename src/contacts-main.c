@@ -148,7 +148,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 
 	widget = glade_xml_get_widget (xml, "summary_vbox");
 	gtk_widget_show (widget);
-	contact_selected_sensitive (xml, TRUE);
+	contacts_set_available_options (xml, TRUE, TRUE, TRUE);
 }
 
 static void

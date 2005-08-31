@@ -189,11 +189,13 @@ contacts_edit_pane_hide (GtkWidget *button, ContactsData *data)
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
 			       widget);
+	widget = glade_xml_get_widget (data->xml, "groups");
+	gtk_widget_hide (widget);
 	widget = glade_xml_get_widget (data->xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	widget = glade_xml_get_widget (data->xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Contacts");
-	contact_selected_sensitive (data->xml, TRUE);
+	contacts_set_available_options (data->xml, TRUE, TRUE, TRUE);
 }
 
 static void
@@ -639,13 +641,12 @@ typedef struct {
 } ContactsGroupChangeData;
 
 static void
-contacts_change_groups_cb (GtkWidget *button, ContactsGroupChangeData *data)
+contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 {
 	GList *g, *bools = NULL;
 	GList *results = NULL;
 	GList *values = e_vcard_attribute_get_values (data->attr);
-	GladeXML *xml = glade_get_widget_tree (
-			    gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW));
+	GladeXML *xml = glade_get_widget_tree (widget);
 	
 	for (g = data->contacts_groups; g; g = g->next) {
 		if (g_list_find_custom (values, g->data, (GCompareFunc)strcmp))
@@ -656,11 +657,11 @@ contacts_change_groups_cb (GtkWidget *button, ContactsGroupChangeData *data)
 	
 	if (contacts_chooser (xml, "Change groups", "<span><b>Choose groups"
 		"</b></span>", data->contacts_groups, bools, TRUE, &results)) {
-		gchar *new_groups = results ?
+/*		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ") :
 			g_strdup ("None");
-		gtk_button_set_label (GTK_BUTTON (button), new_groups);
-		g_free (new_groups);
+		gtk_button_set_label (GTK_BUTTON (widget), new_groups);
+		g_free (new_groups);*/
 		e_vcard_attribute_remove_values (data->attr);
 		for (g = results; g; g = g->next) {
 			e_vcard_attribute_add_value (data->attr, g->data);
@@ -816,7 +817,7 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 void
 contacts_edit_pane_show (ContactsData *data)
 {
-	GtkWidget *button, *widget, *glabel, *gbutton;
+	GtkWidget *button, *widget/*, *glabel, *gbutton*/;
 	EVCardAttribute *groups_attr = NULL;
 	ContactsGroupChangeData *gdata;
 	guint row, i;
@@ -866,10 +867,10 @@ contacts_edit_pane_show (ContactsData *data)
 	gtk_widget_show (button);
 	
 	/* Create groups edit label/button */
-	glabel = gtk_label_new ("<span><b>Groups:</b></span>");
+/*	glabel = gtk_label_new ("<span><b>Groups:</b></span>");
 	gtk_label_set_use_markup (GTK_LABEL (glabel), TRUE);
 	gtk_misc_set_alignment (GTK_MISC (glabel), 1, 0.5);
-	gbutton = gtk_button_new_with_label ("None");
+	gbutton = gtk_button_new_with_label ("None");*/
 	
 	/* Create edit pane widgets */
 	attributes = e_vcard_get_attributes (&contact->parent);
@@ -899,11 +900,11 @@ contacts_edit_pane_show (ContactsData *data)
 			}
 		} else if (strcasecmp (name, "CATEGORIES") == 0) {
 			/* Create categories widget */
-			GList *values = e_vcard_attribute_get_values (a);
+/*			GList *values = e_vcard_attribute_get_values (a);
 			gchar *types =
 				contacts_string_list_as_string (values, ", ");
 			gtk_button_set_label (GTK_BUTTON (gbutton), types);
-			g_free (types);
+			g_free (types);*/
 			
 			groups_attr = a;
 		}
@@ -959,8 +960,8 @@ contacts_edit_pane_show (ContactsData *data)
 					  1, 3, 0, 0, 0, 0);
 					  
 			/* Add groups-editing button */
-			contacts_append_to_edit_table (GTK_TABLE (widget),
-						       glabel, gbutton);
+/*			contacts_append_to_edit_table (GTK_TABLE (widget),
+						       glabel, gbutton);*/
 	     	}
 	     	
 		contacts_append_to_edit_table (GTK_TABLE (widget),
@@ -974,13 +975,27 @@ contacts_edit_pane_show (ContactsData *data)
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
 	
 	/* Connect add group button */
+	widget = glade_xml_get_widget (xml, "edit_groups");
 	gdata = g_new (ContactsGroupChangeData, 1);
 	gdata->attr = groups_attr;
 	gdata->contacts_groups = data->contacts_groups;
-	g_signal_connect (G_OBJECT (gbutton), "clicked",
+	/* Remove any old signals and replace with new ones with the correct
+	 * user data.
+	 */
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_change_groups_cb,
+					      NULL);
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, g_free,
+					      NULL);
+	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_change_groups_cb), gdata);
-	g_signal_connect_swapped (G_OBJECT (gbutton), "destroy",
+	g_signal_connect_swapped (G_OBJECT (widget), "hide",
 				  G_CALLBACK (g_free), gdata);
+	widget = glade_xml_get_widget (xml, "groups");
+	gtk_widget_show (widget);
 	
 	/* Connect add field button */
 	widget = glade_xml_get_widget (xml, "add_field_button");

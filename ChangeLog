@@ -1,3 +1,17 @@
+2005-08-31  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-callbacks-ui.c: (contacts_selection_cb),
+	(contacts_copy_cb), (contacts_cut_cb), (contacts_paste_cb):
+	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),
+	(contacts_change_groups_cb), (contacts_edit_pane_show):
+	* src/contacts-main.c: (contacts_display_summary):
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+	o Make menu-bar visible on main and edit pane
+	o Move groups editing to menubar
+	o Cut/copy/paste menu option works in GtkTextView
+
 2005-08-30  mallum  <mallum@openedhand.com>
 
 	* src/contacts-main.c: (contacts_display_summary):

@@ -175,19 +175,25 @@ contacts_get_selected_contact (GladeXML *xml, GHashTable *contacts_table)
 
 /* Helper method to set edit/delete sensitive/insensitive */
 void
-contact_selected_sensitive (GladeXML *xml, gboolean sensitive)
+contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,
+				gboolean delete)
 {
 	GtkWidget *widget;
 
+	widget = glade_xml_get_widget (xml, "new");
+	gtk_widget_set_sensitive (widget, new);
+	widget = glade_xml_get_widget (xml, "new_button");
+	gtk_widget_set_sensitive (widget, new);
+
 	widget = glade_xml_get_widget (xml, "edit");
-	gtk_widget_set_sensitive (widget, sensitive);
+	gtk_widget_set_sensitive (widget, open);
 	widget = glade_xml_get_widget (xml, "edit_button");
-	gtk_widget_set_sensitive (widget, sensitive);
+	gtk_widget_set_sensitive (widget, open);
 
 	widget = glade_xml_get_widget (xml, "delete");
-	gtk_widget_set_sensitive (widget, sensitive);
+	gtk_widget_set_sensitive (widget, delete);
 	widget = glade_xml_get_widget (xml, "delete_button");
-	gtk_widget_set_sensitive (widget, sensitive);
+	gtk_widget_set_sensitive (widget, delete);
 }
 
 static void
