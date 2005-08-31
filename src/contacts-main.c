@@ -305,6 +305,11 @@ main (int argc, char **argv)
 					 (xml, "groups_combobox"));
 	gtk_combo_box_set_active (groups_combobox, 0);
 
+	/* Set transient parent for chooser dialog */
+	gtk_window_set_transient_for (
+		GTK_WINDOW (glade_xml_get_widget (xml, "chooser_dialog")),
+		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
+
 	/* Connect UI-related signals */
 	widget = glade_xml_get_widget (xml, "new_button");
 	g_signal_connect (G_OBJECT (widget), "clicked",

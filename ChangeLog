@@ -1,5 +1,12 @@
 2005-08-31  Chris Lord,,,  <chris@openedhand.com>
 
+	* src/contacts-main.c: (main):
+	* src/contacts-utils.c: (contacts_set_widget_desensitive_recurse):
+	o Free a forgotten GList
+	o Set chooser dialog transient for main window
+
+2005-08-31  Chris Lord,,,  <chris@openedhand.com>
+
 	* src/contacts-utils.c: (contacts_chooser):
 	* src/contacts-utils.h:
 	Set main window widgets insensitive when opening modal dialogs

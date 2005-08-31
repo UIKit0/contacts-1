@@ -720,6 +720,7 @@ contacts_set_widget_desensitive_recurse (GtkWidget *widget, GList **widgets)
 				contacts_set_widget_desensitive_recurse (
 					c->data, widgets);
 			}
+			g_list_free (children);
 		}
 	}
 	
