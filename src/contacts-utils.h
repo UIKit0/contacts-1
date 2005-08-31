@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 #include <glade/glade.h>
+#include "contacts-defs.h"
 
 char *e_util_unicode_get_utf8 (const char *text, gunichar * out);
 
@@ -10,6 +11,19 @@ const char *kozo_utf8_strstrcasestrip (const char *haystack,
 				       const gunichar * needle);
 
 gunichar *kozo_utf8_strcasestrip (const char *str);
+
+const gchar **contacts_get_field_types (const gchar *attr_name);
+
+const ContactsStructuredField *contacts_get_structured_field (
+	const gchar *attr_name, guint field);
+
+guint contacts_get_structured_field_size (const gchar *attr_name);
+
+const ContactsField *contacts_get_contacts_field (const gchar *vcard_field);
+
+const ContactsField *contacts_get_contacts_fields ();
+
+const gchar *contacts_field_pretty_name (const ContactsField *field);
 
 EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
 					   GHashTable *contacts_table);
@@ -24,8 +38,8 @@ GtkImage *contacts_load_photo (EContact *contact);
 
 void contacts_clean_contact (EContact *contact);
 
-gchar *contacts_string_list_as_string (GList *list,
-					      const gchar *separator);
+gchar *contacts_string_list_as_string (GList *list, const gchar *separator,
+				       gboolean include_empty);
 
 GList *contacts_get_types (GList *params);
 

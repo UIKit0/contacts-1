@@ -57,10 +57,24 @@ typedef struct {
 	const gchar *pretty_name; /* Always takes priority over above */
 	gboolean multi_line;
 	guint priority;
+	gboolean unique;
 } ContactsField;
 
-#define REQUIRED 100	/* Contacts with priority < REQUIRED have to be shown */
+/* Contains structured field data
+ * TODO: Replace this with a less ugly construct?
+ */
 
-#define NO_IMAGE 1
+typedef struct {
+	const gchar *attr_name;
+	guint field;
+	const gchar *subfield_name;
+	gboolean multiline;
+} ContactsStructuredField;
+
+#define REQUIRED 100	/* Contacts with priority <= REQUIRED have to be shown
+			 * when creating a new contact.
+			 */
+
+#define NO_IMAGE 1	/* For the image-chooser dialog */
 
 #endif

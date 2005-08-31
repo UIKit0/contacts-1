@@ -131,6 +131,115 @@ kozo_utf8_strcasestrip (const char *str)
 
 /******************************************************************************/
 
+/* List of always-available fields */
+/* TODO: Revise 'supported' fields */
+/* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
+static ContactsField contacts_fields[] = {
+	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10, TRUE },
+	{ "TEL", 0, "Phone", FALSE, 20, FALSE },
+	{ "EMAIL", 0, "Email", FALSE, 30, FALSE },
+	{ "ADR", 0, "Address", FALSE, 40, FALSE },
+	{ "NICKNAME", E_CONTACT_NICKNAME, NULL, FALSE, 110, TRUE },
+	{ "URL", E_CONTACT_HOMEPAGE_URL, "Homepage", FALSE, 120, FALSE },
+	{ "NOTE", E_CONTACT_NOTE, NULL, TRUE, 130, TRUE },
+	{ NULL }
+};
+
+
+
+static ContactsStructuredField contacts_sfields[] = {
+	{ "ADR", 0, "PO Box", FALSE },
+	{ "ADR", 1, "Ext.", TRUE },
+	{ "ADR", 2, "Street", TRUE },
+	{ "ADR", 3, "Locality", FALSE },
+	{ "ADR", 4, "Region", FALSE },
+	{ "ADR", 5, "Post Code", FALSE },
+	{ "ADR", 6, "Country", FALSE },
+	{ NULL, 0, NULL, FALSE }
+};
+
+/* TODO: Would adding a struct for this be gratuititous? */
+static gchar **contacts_field_types[] = {
+	(gchar *[]){ "TEL", "Home", "Msg", "Work", "Pref", "Voice", "Fax",
+			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
+			    "ISDN", "PCS", NULL },
+	(gchar *[]){ "EMAIL", "Internet", "X400", "Pref", NULL },
+	(gchar *[]){ "ADR", "Dom", "Intl", "Postal", "Parcel", "Home", "Work",
+			    "Pref", NULL },
+	(gchar *[]){ NULL }
+};
+
+const gchar **
+contacts_get_field_types (const gchar *attr_name)
+{
+	guint i;
+
+	for (i = 0; contacts_field_types[i][0]; i++) {
+		if (strcmp (contacts_field_types[i][0], attr_name) == 0)
+			return (const gchar **)contacts_field_types[i];
+	}
+	
+	return NULL;
+}
+
+const ContactsStructuredField *
+contacts_get_structured_field (const gchar *attr_name, guint field)
+{
+	guint i;
+	
+	for (i = 0; contacts_sfields[i].attr_name; i++) {
+		if (strcmp (contacts_sfields[i].attr_name, attr_name) == 0) {
+			if (contacts_sfields[i].field == field)
+				return &contacts_sfields[i];
+		}
+	}
+	
+	return NULL;
+}
+
+guint
+contacts_get_structured_field_size (const gchar *attr_name)
+{
+	guint i, size = 1;
+	
+	for (i = 0; contacts_sfields[i].attr_name; i++)
+		if (strcmp (contacts_sfields[i].attr_name, attr_name) == 0)
+			if (contacts_sfields[i].field+1 > size)
+				size = contacts_sfields[i].field+1;
+	
+	return size;
+}
+
+const ContactsField *
+contacts_get_contacts_field (const gchar *vcard_field)
+{
+	guint i;
+	
+	for (i = 0; (contacts_fields[i].vcard_field) && (vcard_field); i++) {
+		if (strcmp (contacts_fields[i].vcard_field, vcard_field) == 0)
+			return &contacts_fields[i];
+	}
+	
+	return NULL;
+}
+
+const ContactsField *
+contacts_get_contacts_fields ()
+{
+	return contacts_fields;
+}
+
+const gchar *
+contacts_field_pretty_name (const ContactsField *field)
+{
+	if (field->pretty_name) {
+		return field->pretty_name;
+	} else if (field->econtact_field > 0) {
+		return e_contact_pretty_name (field->econtact_field);
+	} else
+		return NULL;
+}
+
 EContact *
 contacts_contact_from_selection (GtkTreeSelection *selection,
 				 GHashTable *contacts_table)
@@ -270,19 +379,26 @@ contacts_clean_contact (EContact *contact)
 }
 
 gchar *
-contacts_string_list_as_string (GList *list, const gchar *separator)
+contacts_string_list_as_string (GList *list, const gchar *separator,
+				gboolean include_empty)
 {
 	gchar *old_string, *new_string;
 	GList *c;
 	
+	if (!include_empty)
+		for (; ((list) && (strlen ((const gchar *)list->data) == 0));
+		     list = list->next);
+
 	if (!list) return NULL;
 	
 	new_string = g_strdup (list->data);
 	for (c = list->next; c; c = c->next) {
-		old_string = new_string;
-		new_string = g_strdup_printf ("%s%s%s", new_string, separator,
-					      (const gchar *)c->data);
-		g_free (old_string);
+		if ((strlen ((const gchar *)c->data) > 0) || (include_empty)) {
+			old_string = new_string;
+			new_string = g_strdup_printf ("%s%s%s", new_string,
+				separator, (const gchar *)c->data);
+			g_free (old_string);
+		}
 	}
 	
 	return new_string;
@@ -565,11 +681,9 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 				gtk_tree_view_get_selection (tree);
 			GtkTreeIter iter;
 			
-			if (!selection)
+			if (!gtk_tree_selection_get_selected (
+				selection, NULL, &iter))
 				return FALSE;
-				
-			gtk_tree_selection_get_selected (
-				selection, NULL, &iter);
 			
 			gtk_tree_model_get (model, &iter, CHOOSER_NAME_COL,
 					    &selection_name, -1);

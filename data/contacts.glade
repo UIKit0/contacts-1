@@ -19,7 +19,6 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <signal name="destroy" handler="gtk_main_quit" last_modification_time="Fri, 26 Aug 2005 18:05:29 GMT"/>
-  <signal name="set_focus" handler="contacts_edit_pane_set_focus_cb" last_modification_time="Tue, 30 Aug 2005 10:11:51 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox7">
@@ -393,6 +392,7 @@
 
 			      <child>
 				<widget class="GtkTable" id="summary_table">
+				  <property name="border_width">6</property>
 				  <property name="visible">True</property>
 				  <property name="n_rows">1</property>
 				  <property name="n_columns">2</property>
@@ -773,7 +773,7 @@
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>
-  <property name="default_height">300</property>
+  <property name="default_height">280</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>

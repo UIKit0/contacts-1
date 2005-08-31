@@ -35,7 +35,7 @@ contacts_new_cb (GtkWidget *source, ContactsData *data)
 	data->contact = e_contact_new ();
 	
 	if (e_book_add_contact (data->book, data->contact, NULL)) {
-		contacts_edit_pane_show (data);
+		contacts_edit_pane_show (data, TRUE);
 	}
 }
 
@@ -47,7 +47,7 @@ contacts_edit_cb (GtkWidget *source, ContactsData *data)
 	data->contact = contacts_get_selected_contact (data->xml,
 						       data->contacts_table);
 	
-	contacts_edit_pane_show (data);
+	contacts_edit_pane_show (data, FALSE);
 }
 
 void

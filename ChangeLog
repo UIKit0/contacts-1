@@ -1,6 +1,36 @@
 2005-08-31  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
+	o Tweak spacings
+	o Remove focus-set signal on main_window
+	
+	* src/contacts-callbacks-ui.c: (contacts_new_cb),
+	(contacts_edit_cb):
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c: (contacts_edit_widget_new),
+	(contacts_edit_pane_show):
+	* src/contacts-edit-pane.h:
+	o Remove field now brings up a dialog, similarly to add field
+	o Add unique identifier to fields (e.g. FN and NICKNAME)
+	o Don't omit photo when displaying contacts with only 1 or 2 fields
+	o Empty high-priority fields are only shown on new contacts
+
+	* src/contacts-main.c: (contacts_display_summary):
+	Fix type display in contact summary
+	
+	* src/contacts-utils.c: (contacts_get_selected_contact),
+	(contacts_set_available_options), (contact_photo_size),
+	(contacts_load_photo), (contacts_clean_contact),
+	(contacts_entries_get_values), (contacts_chooser_add_cb),
+	(contacts_chooser):
+	* src/contacts-utils.h:
+	o Move functions from contacts-edit-pane to contacts-utils
+	o Fix contacts_chooser when selection is empty
+	o contacts_string_list_as_string can exclude empty strings
+
+2005-08-31  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
 	* src/contacts-callbacks-ui.c: (contacts_selection_cb),
 	(contacts_copy_cb), (contacts_cut_cb), (contacts_paste_cb):
 	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),

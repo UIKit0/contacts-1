@@ -59,7 +59,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
-	groups_text = contacts_string_list_as_string (groups, ", ");
+	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
 	name_markup = g_strdup_printf
 		("<span><big><b>%s</b></big>\n<small>%s</small></span>",
 		 string ? string : "", groups_text ? groups_text : "");
@@ -100,6 +100,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 		gchar *value_text, *name_markup;
 		GList *values;
 		const gchar **types;
+		const gchar *attr_name;
 		EVCardAttribute *attr = (EVCardAttribute *)a->data;
 		const ContactsField *field = contacts_get_contacts_field (
 			e_vcard_attribute_get_name (attr));
@@ -108,25 +109,46 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 			continue;
 		
 		values = e_vcard_attribute_get_values (attr);
-		value_text = contacts_string_list_as_string (values, "\n");
+		value_text =
+			contacts_string_list_as_string (values, "\n", FALSE);
 		
-		types = contacts_get_field_types (e_vcard_attribute_get_name (attr));
+		attr_name = e_vcard_attribute_get_name (attr);
+		types = contacts_get_field_types (attr_name);
 		if (types) {
-			gchar *types_string;
+			gchar *types_string = NULL;
+			const gchar **valid_types;
 			GList *types_list = NULL;
+			guint i;
 
 			types_list = contacts_get_type_strings (
 				e_vcard_attribute_get_params (attr));
-			types_string = types_list ?
-			    contacts_string_list_as_string (types_list, ", ") :
-			    g_strdup("Other");
-			g_list_free (types_list);
+			if (types_list) {
+				valid_types =
+					contacts_get_field_types (attr_name);
+				if (strncasecmp (types_list->data, "X-",2) == 0)
+					types_string = (gchar *)
+							(types_list->data)+2;
+				else if (valid_types) {
+					for (i = 0; valid_types[i]; i++) {
+						if (strcasecmp (
+							types_list->data,
+							valid_types[i]) == 0) {
+							types_string = (gchar *)
+								valid_types[i];
+							break;
+						}
+					}
+				}
+			}
+			if (!types_string)
+				types_string = "Other";
 			
 			name_markup = g_strdup_printf (
 				"<span><b>%s:</b>\n<small>(%s)</small></span>",
 				contacts_field_pretty_name (field),
 				types_string);
-			g_free (types_string);
+				
+			g_list_free (types_list);
 		} else {
 			name_markup = g_strdup_printf ("<span><b>%s:</b></span>",
 				contacts_field_pretty_name (field));

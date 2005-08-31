@@ -12,118 +12,6 @@
 #include "contacts-callbacks-ebook.h"
 
 
-/* List of always-available fields */
-/* TODO: Revise 'supported' fields */
-/* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
-static ContactsField contacts_fields[] = {
-	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10 },
-	{ "TEL", 0, "Phone", FALSE, 20 },
-	{ "EMAIL", 0, "Email", FALSE, 30 },
-	{ "ADR", 0, "Address", FALSE, 40 },
-	{ "NICKNAME", E_CONTACT_NICKNAME, NULL, FALSE, 110 },
-	{ "URL", E_CONTACT_HOMEPAGE_URL, "Homepage", FALSE, 120 },
-	{ "NOTE", E_CONTACT_NOTE, NULL, TRUE, 130 },
-	{ NULL, 0, NULL, FALSE, 0 }
-};
-
-/* Contains structured field data
- * TODO: Replace this with a less ugly construct?
- */
-
-typedef struct {
-	const gchar *attr_name;
-	guint field;
-	const gchar *subfield_name;
-	gboolean multiline;
-} ContactsStructuredField;
-
-static ContactsStructuredField contacts_sfields[] = {
-	{ "ADR", 0, "PO Box", FALSE },
-	{ "ADR", 1, "Ext.", TRUE },
-	{ "ADR", 2, "Street", TRUE },
-	{ "ADR", 3, "Locality", FALSE },
-	{ "ADR", 4, "Region", FALSE },
-	{ "ADR", 5, "Post Code", FALSE },
-	{ "ADR", 6, "Country", FALSE },
-	{ NULL, 0, NULL, FALSE }
-};
-
-/* TODO: Would adding a struct for this be gratuititous? */
-static gchar **contacts_field_types[] = {
-	(gchar *[]){ "TEL", "Home", "Msg", "Work", "Pref", "Voice", "Fax",
-			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
-			    "ISDN", "PCS", NULL },
-	(gchar *[]){ "EMAIL", "Internet", "X400", "Pref", NULL },
-	(gchar *[]){ "ADR", "Dom", "Intl", "Postal", "Parcel", "Home", "Work",
-			    "Pref", NULL },
-	(gchar *[]){ NULL }
-};
-
-const gchar **
-contacts_get_field_types (const gchar *attr_name)
-{
-	guint i;
-
-	for (i = 0; contacts_field_types[i][0]; i++) {
-		if (strcmp (contacts_field_types[i][0], attr_name) == 0)
-			return (const gchar **)contacts_field_types[i];
-	}
-	
-	return NULL;
-}
-
-static const ContactsStructuredField *
-contacts_get_structured_field (const gchar *attr_name, guint field)
-{
-	guint i;
-	
-	for (i = 0; contacts_sfields[i].attr_name; i++) {
-		if (strcmp (contacts_sfields[i].attr_name, attr_name) == 0) {
-			if (contacts_sfields[i].field == field)
-				return &contacts_sfields[i];
-		}
-	}
-	
-	return NULL;
-}
-
-static guint
-contacts_get_structured_field_size (const gchar *attr_name)
-{
-	guint i, size = 1;
-	
-	for (i = 0; contacts_sfields[i].attr_name; i++)
-		if (strcmp (contacts_sfields[i].attr_name, attr_name) == 0)
-			if (contacts_sfields[i].field+1 > size)
-				size = contacts_sfields[i].field+1;
-	
-	return size;
-}
-
-const ContactsField *
-contacts_get_contacts_field (const gchar *vcard_field)
-{
-	guint i;
-	
-	for (i = 0; (contacts_fields[i].vcard_field) && (vcard_field); i++) {
-		if (strcmp (contacts_fields[i].vcard_field, vcard_field) == 0)
-			return &contacts_fields[i];
-	}
-	
-	return NULL;
-}
-
-const gchar *
-contacts_field_pretty_name (const ContactsField *field)
-{
-	if (field->pretty_name) {
-		return field->pretty_name;
-	} else if (field->econtact_field > 0) {
-		return e_contact_pretty_name (field->econtact_field);
-	} else
-		return NULL;
-}
-
 static EVCardAttribute *
 contacts_add_attr (EVCard *contact, const gchar *vcard_field)
 {
@@ -147,22 +35,6 @@ contacts_add_attr (EVCard *contact, const gchar *vcard_field)
 	
 	return NULL;
 } 
-
-void
-contacts_edit_pane_set_focus_cb (GtkWindow *window, GtkWidget *widget,
-				 gpointer data)
-{
-	if (widget && GTK_IS_WIDGET (widget)) {
-		GladeXML *xml = glade_get_widget_tree (GTK_WIDGET (window));
-		GtkWidget *button = glade_xml_get_widget (
-			xml, "remove_field_button");
-		if (contacts_get_contacts_field (
-		    gtk_widget_get_name (widget)))
-			gtk_widget_set_sensitive (button, TRUE);
-		else
-			gtk_widget_set_sensitive (button, FALSE);
-	}
-}
 
 void
 contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
@@ -461,11 +333,11 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				gtk_label_set_justify (GTK_LABEL (label),
 						       GTK_JUSTIFY_RIGHT);
 				if (!multiline)
-					gtk_misc_set_alignment (GTK_MISC (label),
-								1, 0.5);
+					gtk_misc_set_alignment (
+						GTK_MISC (label), 1, 0.5);
 				else
-					gtk_misc_set_alignment (GTK_MISC (label),
-								1, 0);
+					gtk_misc_set_alignment (
+						GTK_MISC (label), 1, 0);
 				gtk_table_attach (GTK_TABLE (adr_table), label,
 						  0, 1, field + 1, field + 2,
 						  GTK_FILL, GTK_FILL, 0, 0);
@@ -623,6 +495,8 @@ contacts_append_to_edit_table (GtkTable *table,
      				  GTK_WIDGET (expander), 0, cols,
      				  rows, rows+1, GTK_FILL | GTK_EXPAND,
      				  GTK_FILL, 0, 0);
+     		gtk_widget_set_name (GTK_WIDGET (expander),
+     			gtk_widget_get_name (GTK_WIDGET (edit)));
      	} else {
      		/* Hide the label when the entry is hidden */
 		g_signal_connect_swapped (G_OBJECT (edit), "hide", 
@@ -670,17 +544,41 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	}
 }
 
+static gint
+contacts_find_widget_cb (GtkWidget *widget, const gchar *name)
+{
+	return strcmp (gtk_widget_get_name (widget), name);
+}
+
 static void
 contacts_add_field_cb (GtkWidget *button, EContact *contact)
 {
 	GList *fields = NULL;
 	GHashTable *field_trans;
-	GList *field;
+	GList *field, *children;
 	guint i;
 	GladeXML *xml = glade_get_widget_tree (button);
+	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
 	
+	children = gtk_container_get_children (GTK_CONTAINER (
+		glade_xml_get_widget (xml, "edit_table")));
 	field_trans = g_hash_table_new (g_str_hash, g_str_equal);
 	for (i = 0; contacts_fields[i].vcard_field; i++) {
+		/* If a unique field exists, don't give the option to add it */
+		if (contacts_fields[i].unique) {
+			gboolean visible;
+			GList *unique_field = g_list_find_custom (children,
+				contacts_fields[i].vcard_field,
+				(GCompareFunc)contacts_find_widget_cb);
+			
+			if (unique_field) {
+				GObject *f = G_OBJECT (unique_field->data);
+				g_object_get (f, "visible", &visible, NULL);
+				if (visible)
+					continue;
+			}
+		}
+				
 		const gchar *vcard_field = contacts_fields[i].vcard_field;
 		const gchar *pretty_name = contacts_field_pretty_name (
 						&contacts_fields[i]);
@@ -688,6 +586,7 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 		g_hash_table_insert (field_trans, (gpointer)pretty_name,
 				     (gpointer)vcard_field);
 	}
+	g_list_free (children);
 	
 	if (contacts_chooser (xml, "Add field",
 			      "<span><b>Choose a field</b></span>", fields,
@@ -744,53 +643,89 @@ contacts_remove_entries (GtkWidget *entry)
 		for (c = children; c; c = c->next)
 			contacts_remove_entries (GTK_WIDGET (c->data));
 		
+		gtk_widget_hide (entry);
+		
 		g_list_free (children);
 	}
+}
+
+static gboolean
+contacts_widget_is_label (GtkWidget *widget)
+{
+	if (GTK_IS_LABEL (widget))
+		return TRUE;
+	else if (GTK_IS_EXPANDER (widget))
+		return FALSE;
+	else if (GTK_IS_CONTAINER (widget)) {
+		GList *c, *children =
+			gtk_container_get_children (GTK_CONTAINER (widget));
+		
+		for (c = children; c; c = c->next) {
+			if (contacts_widget_is_label (GTK_WIDGET (c->data))) {
+				g_list_free (children);
+				return TRUE;
+			}
+		}
+		
+		g_list_free (children);
+	}
+	
+	return FALSE;
 }
 
 void
 contacts_remove_field_cb (GtkWidget *button, gpointer data)
 {
-	const gchar *attr_name;
-	GtkWidget *main_window =
-		gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW);
-	GtkWidget *focus = gtk_window_get_focus (GTK_WINDOW (main_window));
+	GHashTable *field_trans;
+	GladeXML *xml = glade_get_widget_tree (button);
+	GtkWidget *table = glade_xml_get_widget (xml, "edit_table");
+	GList *c, *children = gtk_container_get_children (
+		GTK_CONTAINER (table));
+	GList *fields = NULL;
+	GList *field = NULL;
 	
-	if (!focus || !GTK_IS_WIDGET (focus))
-		return;
-	
-	/* Special case structured fields - Confirm remove, then hide the whole
-	 * container (of sub-fields).
-	 */
-	attr_name = gtk_widget_get_name (focus);
-	if (contacts_get_structured_field (attr_name, 0)) {
-		GtkWidget *dialog = gtk_message_dialog_new (
-			GTK_WINDOW (main_window), GTK_DIALOG_MODAL,
-			GTK_MESSAGE_QUESTION,
-			GTK_BUTTONS_YES_NO, "Removing this sub-field will "
-			"remove the parent field. Are you sure you want to "
-			"remove this field?");
+	/* Loop through children, only pay attention to the editing fields */
+	field_trans = g_hash_table_new (g_str_hash, g_str_equal);
+	for (c = children; c; c = c->next) {
+		const ContactsField *field = contacts_get_contacts_field (
+			gtk_widget_get_name (GTK_WIDGET (c->data)));
+		gboolean visible;
 		
-		if (gtk_dialog_run (GTK_DIALOG (dialog)) ==
-		    GTK_RESPONSE_YES) {
-			GtkWidget *expander = gtk_widget_get_ancestor (
-				focus, GTK_TYPE_EXPANDER);
-			
-			contacts_remove_entries (expander);
-			gtk_widget_hide (expander);
+		g_object_get (G_OBJECT (c->data), "visible", &visible, NULL);
+		
+		/* These conditions must be met to remove a field:
+		 * - Must exist (obviously)
+		 * - Must be custom, or if non-custom, must not be unique
+		 */
+		if ((visible) && (field) &&
+		    ((field->priority > REQUIRED) ||
+		    	((field->priority <= REQUIRED) && (!field->unique))) &&
+		    (!contacts_widget_is_label (GTK_WIDGET (c->data)))) {
+			const gchar *pretty_name =
+				contacts_field_pretty_name (field);
+			g_hash_table_insert (field_trans,
+				(gpointer)pretty_name, (gpointer)c->data);
+			fields = g_list_append (fields, (gpointer)pretty_name);
 		}
-		
-		gtk_widget_destroy (dialog);
-		
-		return;
 	}
 	
-	/* Empty the data and then hide the relevant widget. Signals have
-	 * been setup when creating these widgets so that other relevant
-	 * widgets are hidden at the same time.
-	 */
-	if (contacts_get_contacts_field (attr_name))
-		contacts_remove_entries (focus);
+	if (contacts_chooser (xml, "Remove field",
+			      "<span><b>Choose a field</b></span>", fields,
+			      NULL, FALSE, &field)) {
+		/* Empty the data and then hide the relevant widget. Signals
+		 * have been setup when creating these widgets so that other
+		 * relevant widgets are hidden at the same time.
+		 */
+		 GtkWidget *widget =
+		 	g_hash_table_lookup (field_trans, field->data);
+		 contacts_remove_entries (widget);
+		 
+		 g_list_free (field);
+	}
+	
+	g_list_free (fields);
+	g_list_free (children);
+	g_hash_table_destroy (field_trans);
 }
 
 static gint
@@ -815,7 +750,7 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 }
 
 void
-contacts_edit_pane_show (ContactsData *data)
+contacts_edit_pane_show (ContactsData *data, gboolean new)
 {
 	GtkWidget *button, *widget/*, *glabel, *gbutton*/;
 	EVCardAttribute *groups_attr = NULL;
@@ -824,7 +759,8 @@ contacts_edit_pane_show (ContactsData *data)
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
 	GladeXML *xml = data->xml;
-	
+	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
+
 #ifdef DEBUG
 	/* Prints out all contact data */
 	attributes = e_vcard_get_attributes (&contact->parent);
@@ -839,11 +775,15 @@ contacts_edit_pane_show (ContactsData *data)
 		if (params)
 			g_print ("Attributes: \n");
 		for (; params; params = params->next) {
-			EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
-			GList *paramvalues = e_vcard_attribute_param_get_values (p);
-			g_printf ("    %s:\n", e_vcard_attribute_param_get_name (p));
+			EVCardAttributeParam *p =
+				(EVCardAttributeParam *)params->data;
+			GList *paramvalues =
+				e_vcard_attribute_param_get_values (p);
+			g_printf ("    %s:\n",
+				  e_vcard_attribute_param_get_name (p));
 			for (; paramvalues; paramvalues = paramvalues->next) {
-				const gchar *value = (const gchar *)paramvalues->data;
+				const gchar *value =
+					(const gchar *)paramvalues->data;
 				g_printf ("      o %s\n", value);
 			}
 		}
@@ -917,7 +857,8 @@ contacts_edit_pane_show (ContactsData *data)
 	
 	/* Add any missing widgets */
 	for (i = 0; contacts_fields[i].vcard_field != NULL; i++) {
-		if (contacts_fields[i].priority >= REQUIRED)
+		if ((contacts_fields[i].priority >= REQUIRED) ||
+		    ((!contacts_fields[i].unique) || (!new)))
 			continue;
 		if (g_list_find_custom (label_widgets,
 					&contacts_fields[i].priority,
@@ -968,6 +909,15 @@ contacts_edit_pane_show (ContactsData *data)
 					       GTK_WIDGET (c->data),
 					       GTK_WIDGET (d->data));
 	}
+	if (row <= 2) {
+		/* Add photo */
+		gtk_table_attach (GTK_TABLE (widget), button, 2, 3,
+				  1, 3, 0, 0, 0, 0);
+				  
+		/* Add groups-editing button */
+/*			contacts_append_to_edit_table (GTK_TABLE (widget),
+					       glabel, gbutton);*/
+     	}
 	g_list_free (label_widgets);
 	g_list_free (edit_widgets);
 
