@@ -597,7 +597,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 		  GList *choices, GList *chosen, gboolean allow_custom,
 		  GList **results)
 {
-	GList *c, *d;
+	GList *c, *d, *widgets;
 	GtkWidget *label_widget;
 	gboolean multiple_choice = chosen ? TRUE : FALSE;
 	GtkWidget *dialog = glade_xml_get_widget (xml, "chooser_dialog");
@@ -606,6 +606,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	GtkTreeModel *model = gtk_tree_view_get_model (tree);
 	GtkWidget *add_custom = glade_xml_get_widget (xml, "chooser_add_hbox");
 	gint dialog_code;
+	gboolean returnval = FALSE;
 	
 	if (allow_custom)
 		gtk_widget_show (add_custom);
@@ -651,6 +652,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	
 	gtk_window_set_title (GTK_WINDOW (dialog), title);
 	
+	widgets = contacts_set_widgets_desensitive (xml);
 	dialog_code = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_hide (dialog);
 	if (dialog_code == GTK_RESPONSE_OK) {
@@ -674,7 +676,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 				valid = gtk_tree_model_iter_next (model, &iter);
 			}
 			
-			return TRUE;
+			returnval = TRUE;
 		} else {
 			gchar *selection_name;
 			GtkTreeSelection *selection =
@@ -682,17 +684,65 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 			GtkTreeIter iter;
 			
 			if (!gtk_tree_selection_get_selected (
-				selection, NULL, &iter))
-				return FALSE;
-			
-			gtk_tree_model_get (model, &iter, CHOOSER_NAME_COL,
-					    &selection_name, -1);
-			
-			*results = g_list_append (NULL, selection_name);
-			
-			return TRUE;
+				selection, NULL, &iter)) {
+				returnval = FALSE;
+			} else {
+				gtk_tree_model_get (model, &iter,
+					CHOOSER_NAME_COL, &selection_name, -1);
+				*results = g_list_append (NULL, selection_name);				
+				returnval = TRUE;
+			}
 		}
 	}
 	
-	return FALSE;
+	contacts_set_widgets_sensitive (widgets);
+	
+	return returnval;
+}
+
+static GList *
+contacts_set_widget_desensitive_recurse (GtkWidget *widget, GList **widgets)
+{
+	if (GTK_IS_WIDGET (widget)) {
+		gboolean sensitive;
+		
+		g_object_get (G_OBJECT (widget), "sensitive", &sensitive, NULL);
+		if (sensitive) {
+			gtk_widget_set_sensitive (widget, FALSE);
+			*widgets = g_list_append (*widgets, widget);
+		}
+		
+		if (GTK_IS_CONTAINER (widget)) {
+			GList *c, *children = gtk_container_get_children (
+				GTK_CONTAINER (widget));
+			
+			for (c = children; c; c = c->next) {
+				contacts_set_widget_desensitive_recurse (
+					c->data, widgets);
+			}
+		}
+	}
+	
+	return *widgets;
+}
+
+GList *
+contacts_set_widgets_desensitive (GladeXML *xml)
+{
+	GtkWidget *main_window = glade_xml_get_widget (xml, "main_window");
+	GList *list = NULL;
+	
+	contacts_set_widget_desensitive_recurse (main_window, &list);
+	
+	return list;
+}
+
+void
+contacts_set_widgets_sensitive (GList *widgets)
+{
+	GList *w;
+	
+	for (w = widgets; w; w = w->next) {
+		gtk_widget_set_sensitive (GTK_WIDGET (w->data), TRUE);
+	}
 }
