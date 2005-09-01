@@ -58,6 +58,6 @@ gboolean contacts_chooser (GladeXML *xml, const gchar *title,
 			   GList *chosen, gboolean allow_custom,
 			   GList **results);
 
-GList *contacts_set_widgets_desensitive (GladeXML *xml);
+GList *contacts_set_widgets_desensitive (GtkWidget *widget);
 
 void contacts_set_widgets_sensitive (GList *widgets);

@@ -56,6 +56,7 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	GtkWidget *dialog, *main_window;
 	EContact *contact;
 	gint result;
+	GList *widgets;
 	
 	main_window = glade_xml_get_widget (data->xml, "main_window");
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
@@ -63,6 +64,8 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 					 GTK_BUTTONS_YES_NO,
 					 "Are you sure you want to delete "\
 					 "this contact?");
+	
+	widgets = contacts_set_widgets_desensitive (main_window);
 	result = gtk_dialog_run (GTK_DIALOG (dialog));
 	switch (result) {
 		case GTK_RESPONSE_YES:
@@ -77,6 +80,51 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 		default:
 			break;
 	}
+	gtk_widget_destroy (dialog);
+	contacts_set_widgets_sensitive (widgets);
+}
+
+void
+contacts_import_cb (GtkWidget *source, ContactsData *data)
+{
+	GList *widgets;
+	GtkFileFilter *filter;
+	GtkWidget *main_window =
+		glade_xml_get_widget (data->xml, "main_window");
+	GtkWidget *dialog = gtk_file_chooser_dialog_new (
+		"Export Contact",
+		GTK_WINDOW (main_window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL,
+		GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE,
+		GTK_RESPONSE_ACCEPT,
+		NULL);
+
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_mime_type (filter, "text/plain");
+	gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
+	
+	widgets = contacts_set_widgets_desensitive (main_window);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		gchar *filename = gtk_file_chooser_get_filename 
+					(GTK_FILE_CHOOSER (dialog));
+		if (filename) {
+			gchar *vcard_string;
+			if (g_file_get_contents (
+				filename, &vcard_string, NULL, NULL)) {
+				EContact *contact =
+					e_contact_new_from_vcard (vcard_string);
+				if (contact) {
+					e_book_add_contact (
+						data->book, contact, NULL);
+					g_object_unref (contact);
+				}
+			}
+		}
+	}
+	
+	contacts_set_widgets_sensitive (widgets);
 	gtk_widget_destroy (dialog);
 }
 

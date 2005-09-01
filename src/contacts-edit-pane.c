@@ -43,16 +43,9 @@ contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
 }
 
 static void
-contacts_edit_pane_hide (GtkWidget *button, ContactsData *data)
+contacts_edit_pane_hide (ContactsData *data)
 {
 	GtkWidget *widget;
-	
-	/* Clean contact */
-	contacts_clean_contact (data->contact);
-	
-	/* Commit changes */
-	if (data->contact)
-		e_book_commit_contact(data->book, data->contact, NULL);
 
 	/* All changed are instant-apply, so just remove the edit components
 	 * and switch back to main view.
@@ -61,13 +54,97 @@ contacts_edit_pane_hide (GtkWidget *button, ContactsData *data)
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
 			       widget);
-	widget = glade_xml_get_widget (data->xml, "groups");
+	widget = glade_xml_get_widget (data->xml, "contact_menu");
 	gtk_widget_hide (widget);
+	widget = glade_xml_get_widget (data->xml, "contacts_menu");
+	gtk_widget_show (widget);
 	widget = glade_xml_get_widget (data->xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	widget = glade_xml_get_widget (data->xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Contacts");
 	contacts_set_available_options (data->xml, TRUE, TRUE, TRUE);
+}
+
+static void
+contacts_edit_delete_cb (GtkWidget *button, ContactsData *data)
+{
+	GtkWidget *dialog, *main_window;
+	GList *widgets;
+	
+	main_window = glade_xml_get_widget (data->xml, "main_window");
+	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
+					 0, GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_YES_NO,
+					 "Are you sure you want to delete "\
+					 "this contact?");
+	
+	widgets = contacts_set_widgets_desensitive (main_window);
+	switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
+		case GTK_RESPONSE_YES:
+			e_book_remove_contact (data->book,
+				e_contact_get_const (
+					data->contact, E_CONTACT_UID), NULL);
+			contacts_set_widgets_sensitive (widgets);
+			contacts_edit_pane_hide (data);
+			break;
+		default:
+			contacts_set_widgets_sensitive (widgets);
+			break;
+	}
+	gtk_widget_destroy (dialog);
+}
+
+static void
+contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
+{
+	/* Clean contact */
+	contacts_clean_contact (data->contact);
+	
+	/* Commit changes */
+	if (data->contact)
+		e_book_commit_contact(data->book, data->contact, NULL);
+	
+	contacts_edit_pane_hide (data);
+}
+
+static void
+contacts_edit_export_cb (GtkWidget *button, ContactsData *data)
+{
+	GList *widgets;
+	GtkWidget *main_window =
+		glade_xml_get_widget (data->xml, "main_window");
+	GtkWidget *dialog = gtk_file_chooser_dialog_new (
+		"Export Contact",
+		GTK_WINDOW (main_window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL,
+		GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE,
+		GTK_RESPONSE_ACCEPT,
+		NULL);
+	
+	widgets = contacts_set_widgets_desensitive (main_window);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		gchar *filename = gtk_file_chooser_get_filename 
+					(GTK_FILE_CHOOSER (dialog));
+		if (filename) {
+			char *vcard = e_vcard_to_string (
+				&data->contact->parent, EVC_FORMAT_VCARD_30);
+				
+			if (vcard) {
+				FILE *file = fopen (filename, "w");
+				if (file) {
+					fputs (vcard, file);
+					fclose (file);
+				}
+				g_free (vcard);
+			}
+			g_free (filename);
+		}
+	}
+	
+	contacts_set_widgets_sensitive (widgets);
+	gtk_widget_destroy (dialog);
 }
 
 static void
@@ -858,7 +935,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	/* Add any missing widgets */
 	for (i = 0; contacts_fields[i].vcard_field != NULL; i++) {
 		if ((contacts_fields[i].priority >= REQUIRED) ||
-		    ((!contacts_fields[i].unique) || (!new)))
+		    ((!contacts_fields[i].unique) && (!new)))
 			continue;
 		if (g_list_find_custom (label_widgets,
 					&contacts_fields[i].priority,
@@ -924,7 +1001,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	widget = glade_xml_get_widget (xml, "main_window");
 	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
 	
-	/* Connect add group button */
+	/* Connect add group menu item */
 	widget = glade_xml_get_widget (xml, "edit_groups");
 	gdata = g_new (ContactsGroupChangeData, 1);
 	gdata->attr = groups_attr;
@@ -944,9 +1021,29 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_change_groups_cb), gdata);
 	g_signal_connect_swapped (G_OBJECT (widget), "hide",
 				  G_CALLBACK (g_free), gdata);
-	widget = glade_xml_get_widget (xml, "groups");
+	widget = glade_xml_get_widget (data->xml, "contacts_menu");
+	gtk_widget_hide (widget);
+	widget = glade_xml_get_widget (xml, "contact_menu");
 	gtk_widget_show (widget);
-	
+
+	/* Connect delete menu item */
+	widget = glade_xml_get_widget (xml, "contact_delete");
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_edit_delete_cb,
+					      NULL);
+	g_signal_connect (G_OBJECT (widget), "activate", 
+			  G_CALLBACK (contacts_edit_delete_cb), data);
+			  
+	/* Connect export menu item */
+	widget = glade_xml_get_widget (xml, "contact_export");
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_edit_export_cb,
+					      NULL);
+	g_signal_connect (G_OBJECT (widget), "activate", 
+			  G_CALLBACK (contacts_edit_export_cb), data);
+			  
 	/* Connect add field button */
 	widget = glade_xml_get_widget (xml, "add_field_button");
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
@@ -960,8 +1057,8 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	widget = glade_xml_get_widget (xml, "edit_done_button");
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_edit_pane_hide,
+					      NULL, contacts_edit_ok_cb,
 					      NULL);
 	g_signal_connect (G_OBJECT (widget), "clicked",
-			  G_CALLBACK (contacts_edit_pane_hide), data);
+			  G_CALLBACK (contacts_edit_ok_cb), data);
 }

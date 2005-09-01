@@ -425,7 +425,7 @@ contacts_get_type_strings (GList *params)
 
 	for (; params; params = params->next) {
 		EVCardAttributeParam *p = (EVCardAttributeParam *)params->data;
-		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) == 0) {
+		if (strcmp ("TYPE", e_vcard_attribute_param_get_name (p)) == 0){
 			GList *types = e_vcard_attribute_param_get_values (p);
 			for (; types; types = types->next) {
 				list = g_list_append (list, types->data);
@@ -442,6 +442,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 	GtkWidget *filechooser, *photo;
 	GtkFileFilter *filter;
 	gint result;
+	GList *widgets;
 	
 	/* Get a filename */
 	/* Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
@@ -473,7 +474,9 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 
 	/* If a file was selected, get the image and set the contact to that
 	 * image.
-	 */	
+	 */
+	widgets = contacts_set_widgets_desensitive (
+		gtk_widget_get_ancestor (button, GTK_TYPE_WINDOW));
 	result = gtk_dialog_run (GTK_DIALOG (filechooser));
 	if (result == GTK_RESPONSE_ACCEPT) {
 		gchar *filename = gtk_file_chooser_get_filename 
@@ -515,6 +518,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 		}
 	}
 	
+	contacts_set_widgets_sensitive (widgets);
 	gtk_widget_destroy (filechooser);
 }
 
@@ -652,7 +656,8 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	
 	gtk_window_set_title (GTK_WINDOW (dialog), title);
 	
-	widgets = contacts_set_widgets_desensitive (xml);
+	widgets = contacts_set_widgets_desensitive (
+		glade_xml_get_widget (xml, "main_window"));
 	dialog_code = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_hide (dialog);
 	if (dialog_code == GTK_RESPONSE_OK) {
@@ -728,12 +733,11 @@ contacts_set_widget_desensitive_recurse (GtkWidget *widget, GList **widgets)
 }
 
 GList *
-contacts_set_widgets_desensitive (GladeXML *xml)
+contacts_set_widgets_desensitive (GtkWidget *widget)
 {
-	GtkWidget *main_window = glade_xml_get_widget (xml, "main_window");
 	GList *list = NULL;
 	
-	contacts_set_widget_desensitive_recurse (main_window, &list);
+	contacts_set_widget_desensitive_recurse (widget, &list);
 	
 	return list;
 }

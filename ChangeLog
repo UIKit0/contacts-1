@@ -1,3 +1,20 @@
+2005-09-01  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-edit-pane.c: (contacts_remove_edit_widgets_cb),
+	(contacts_edit_pane_hide), (contacts_edit_pane_show):
+	* src/contacts-main.c: (main):
+	* src/contacts-utils.c: (contacts_get_type_strings),
+	(contacts_choose_photo), (contacts_chooser),
+	(contacts_set_widget_desensitive_recurse):
+	* src/contacts-utils.h:
+	o All modal dialogs use contacts_set_widget_desensitive
+	o Reorganise menus
+	o Add delete option to edit pane
+	o Add import and export ability
+
 2005-08-31  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-main.c: (main):
