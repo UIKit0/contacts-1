@@ -333,16 +333,35 @@ contacts_load_photo (EContact *contact)
 					  "size-prepared",
 					  G_CALLBACK (contact_photo_size),
 					  NULL);
-			gdk_pixbuf_loader_write
-				     (loader, photo->data, photo->length, NULL);
-			gdk_pixbuf_loader_close (loader, NULL);
-			GdkPixbuf *pixbuf =
-			    gdk_pixbuf_loader_get_pixbuf (loader);
-			if (pixbuf) {
-				image = GTK_IMAGE (gtk_image_new_from_pixbuf
-						   (g_object_ref (pixbuf)));
+#if HAVE_PHOTO_TYPE
+			switch (photo->type) {
+			case E_CONTACT_PHOTO_TYPE_INLINED :
+				gdk_pixbuf_loader_write (loader,
+					photo->inlined.data,
+					photo->inlined.length, NULL);
+				break;
+			case E_CONTACT_PHOTO_TYPE_URI :
+			default :
+				g_warning ("Cannot handle URI photos yet");
+				g_object_unref (loader);
+				loader = NULL;
+				break;
 			}
-			g_object_unref (loader);
+#else
+			gdk_pixbuf_loader_write (loader, photo->data,
+				photo->length, NULL);
+#endif
+			if (loader) {
+				gdk_pixbuf_loader_close (loader, NULL);
+				GdkPixbuf *pixbuf =
+				    gdk_pixbuf_loader_get_pixbuf (loader);
+				if (pixbuf) {
+					image = GTK_IMAGE (
+						gtk_image_new_from_pixbuf (
+							g_object_ref (pixbuf)));
+				}
+				g_object_unref (loader);
+			}
 		}
 		e_contact_photo_free (photo);
 	}
@@ -484,10 +503,19 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 		if (filename) {
 			if (contact) {
 				EContactPhoto new_photo;
-				
+				char **data;
+				int *length;
+#if HAVE_PHOTO_TYPE
+				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
+				data = &new_photo.inlined.data;
+				length = &new_photo.inlined.length;
+#else
+				data = &new_photo.data;
+				length = &new_photo.length;
+#endif
 				if (g_file_get_contents (filename, 
-							 &new_photo.data,
-							 &new_photo.length,
+							 data,
+							 length,
 							 NULL)) {
 					e_contact_set (contact, E_CONTACT_PHOTO,
 						       &new_photo);

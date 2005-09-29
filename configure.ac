@@ -12,6 +12,15 @@ AC_PROG_LIBTOOL
 
 PKG_CHECK_MODULES(CONTACTS, glib-2.0 glib-2.0 gtk+-2.0 libglade-2.0 libebook-1.2)
 
+old_cflags=$CFLAGS
+CFLAGS=$CONTACTS_CFLAGS
+AC_CHECK_TYPE(EContactPhotoType, [], [], [#include <libebook/e-book.h>])
+CFLAGS=$old_cflags
+
+if test $ac_cv_type_EContactPhotoType = yes; then
+	AC_DEFINE(HAVE_PHOTO_TYPE, 1, [Defined if EContactPhotoType exists])
+fi
+
 AC_OUTPUT([
 Makefile
 data/Makefile
