@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Contacts
+Comment=Address book
+Exec=contacts
+Icon=oh-contacts
+Terminal=false
+Type=Application
+Categories=GTK;Application;Office;ContactManagement;
+StartupNotify=true

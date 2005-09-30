@@ -1,5 +1,12 @@
 2005-09-30  Ross Burton  <ross@burtonini.com>
 
+	* data/Makefile.am:
+	* data/contacts.desktop:
+	* data/oh-contacts.png:
+	Add desktop file and icon.
+
+2005-09-30  Ross Burton  <ross@burtonini.com>
+
 	* src/contacts-utils.c:
 	Include config.h to get the EContactPhoto define.
 
