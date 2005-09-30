@@ -4,7 +4,7 @@ ui_DATA = contacts.glade
 applicationdir = $(datadir)/applications
 application_DATA = contacts.desktop
 
-icondir = $(datadir)/icons/hicolor/48x48/apps/
+icondir = $(datadir)/pixmaps/
 icon_DATA = oh-contacts.png
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,3 +1,10 @@
+2005-09-30  mallum  <mallum@openedhand.com>
+
+	* data/Makefile.am:
+	Put icon in /usr/share/pixmaps ( for now )
+	* data/contacts.desktop:
+	Add PIM category.
+
 2005-09-30  Ross Burton  <ross@burtonini.com>
 
 	* data/Makefile.am:

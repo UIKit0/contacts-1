@@ -6,5 +6,5 @@ Exec=contacts
 Icon=oh-contacts
 Terminal=false
 Type=Application
-Categories=GTK;Application;Office;ContactManagement;
+Categories=GTK;Application;PIM;ContactManagement;
 StartupNotify=true
