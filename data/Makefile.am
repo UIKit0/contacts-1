@@ -9,4 +9,4 @@ icon_DATA = oh-contacts.png
 
 MAINTAINERCLEANFILES = config.h.in Makefile.in
 
-EXTRA_DIST = contacts.glade
+EXTRA_DIST = $(ui_DATA) $(application_DATA) $(icon_DATA)
