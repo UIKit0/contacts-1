@@ -8,3 +8,4 @@ Terminal=false
 Type=Application
 Categories=GTK;Application;PIM;ContactManagement;
 StartupNotify=true
+SingleInstance=true

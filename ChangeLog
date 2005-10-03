@@ -1,3 +1,8 @@
+2005-10-03  mallum  <mallum@openedhand.com>
+
+	* data/contacts.desktop:
+	Add SingleInstance=true to desktop file
+
 2005-09-30  mallum  <mallum@openedhand.com>
 
 	* data/Makefile.am:
