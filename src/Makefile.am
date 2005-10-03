@@ -1,5 +1,5 @@
 AM_CPPFLAGS=-DPKGDATADIR=\"$(pkgdatadir)\"
-AM_CFLAGS = -Wall -g  $(CONTACTS_CFLAGS)
+AM_CFLAGS = -Wall -export-dynamic $(CONTACTS_CFLAGS)
 
 bin_PROGRAMS = contacts
 
