@@ -1,3 +1,11 @@
+2005-10-04  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.desktop:
+	Add SingleInstance=true (again?)
+	
+	* data/contacts.glade:
+	Add ellipses to name label
+
 2005-10-03  mallum  <mallum@openedhand.com>
 
 	* data/contacts.desktop:
