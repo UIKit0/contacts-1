@@ -9,4 +9,3 @@ Type=Application
 Categories=GTK;Application;PIM;ContactManagement;
 SingleInstance=true
 StartupNotify=true
-SingleInstance=true
