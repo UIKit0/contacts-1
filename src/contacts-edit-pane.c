@@ -97,13 +97,42 @@ contacts_edit_delete_cb (GtkWidget *button, ContactsData *data)
 static void
 contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 {
-	/* Clean contact */
-	contacts_clean_contact (data->contact);
+	GError *error = NULL;
+
+	if (data->contact) {
+		/* Clean contact */
+		contacts_clean_contact (data->contact);
 	
-	/* Commit changes */
-	if (data->contact)
-		e_book_commit_contact(data->book, data->contact, NULL);
+		/* Commit changes */
+		e_book_commit_contact(data->book, data->contact, &error);
+		if (error) {
+			/* TODO: show dialog */
+			g_warning ("Cannot commit contacts: %s", error->message);
+			g_error_free (error);
+		}
+	}
+
+	contacts_edit_pane_hide (data);
+}
+
+static void
+contacts_edit_ok_new_cb (GtkWidget *button, ContactsData *data)
+{
+	GError *error = NULL;
+
+	if (data->contact) {
+		/* Clean contact */
+		contacts_clean_contact (data->contact);
 	
+		/* Commit changes */
+		e_book_add_contact(data->book, data->contact, &error);
+		if (error) {
+			/* TODO: show dialog */
+			g_warning ("Cannot commit contacts: %s", error->message);
+			g_error_free (error);
+		}
+	}
+
 	contacts_edit_pane_hide (data);
 }
 
@@ -1059,6 +1088,14 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_edit_ok_cb,
 					      NULL);
-	g_signal_connect (G_OBJECT (widget), "clicked",
-			  G_CALLBACK (contacts_edit_ok_cb), data);
+	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+					      G_SIGNAL_MATCH_FUNC, 0, 0,
+					      NULL, contacts_edit_ok_new_cb,
+					      NULL);
+	if (new)
+		g_signal_connect (G_OBJECT (widget), "clicked",
+				  G_CALLBACK (contacts_edit_ok_new_cb), data);
+	else
+		g_signal_connect (G_OBJECT (widget), "clicked",
+				  G_CALLBACK (contacts_edit_ok_cb), data);
 }
