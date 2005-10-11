@@ -1,5 +1,10 @@
 2005-10-11  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-utils.c:
+	Constify some structures.
+
+2005-10-11  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-edit-pane.c:
 	Handle adding new contacts as well as editing existing contacts.
 

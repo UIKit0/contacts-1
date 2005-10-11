@@ -135,7 +135,7 @@ kozo_utf8_strcasestrip (const char *str)
 /* List of always-available fields */
 /* TODO: Revise 'supported' fields */
 /* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
-static ContactsField contacts_fields[] = {
+static const ContactsField contacts_fields[] = {
 	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10, TRUE },
 	{ "TEL", 0, "Phone", FALSE, 20, FALSE },
 	{ "EMAIL", 0, "Email", FALSE, 30, FALSE },
@@ -148,7 +148,7 @@ static ContactsField contacts_fields[] = {
 
 
 
-static ContactsStructuredField contacts_sfields[] = {
+static const ContactsStructuredField contacts_sfields[] = {
 	{ "ADR", 0, "PO Box", FALSE },
 	{ "ADR", 1, "Ext.", TRUE },
 	{ "ADR", 2, "Street", TRUE },
@@ -159,8 +159,8 @@ static ContactsStructuredField contacts_sfields[] = {
 	{ NULL, 0, NULL, FALSE }
 };
 
-/* TODO: Would adding a struct for this be gratuititous? */
-static gchar **contacts_field_types[] = {
+/* TODO: Would adding a struct for this be gratuititous? RB: NOT AT ALL */
+static const gchar **contacts_field_types[] = {
 	(gchar *[]){ "TEL", "Home", "Msg", "Work", "Pref", "Voice", "Fax",
 			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
 			    "ISDN", "PCS", NULL },
