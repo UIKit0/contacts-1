@@ -1,5 +1,12 @@
 2005-10-11  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-main.c:
+	* src/contacts-edit-pane.c:
+	Use g_ascii_strcasecmp when comparing types are they have to be
+	ASCII.
+
+2005-10-11  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-utils.c:
 	Constify some structures.
 

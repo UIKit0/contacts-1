@@ -189,7 +189,7 @@ contacts_type_entry_changed (GtkWidget *widget, EContactTypeChangeData *data)
 		gboolean custom_type = TRUE;
 		
 		for (i = 0; types[i]; i++) {
-			if (strcasecmp (type, types[i]) == 0)
+			if (g_ascii_strcasecmp (type, types[i]) == 0)
 				custom_type = FALSE;
 		}
 		
@@ -274,7 +274,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
 			 * we can use non-locale-friendly strcasecmp)
 			 */
 			if (first_type) {
-				if (strcasecmp (types[i], first_type) == 0) {
+				if (g_ascii_strcasecmp (types[i], first_type) == 0) {
 					first_type = NULL;
 					gtk_combo_box_set_active (
 						GTK_COMBO_BOX (combo), i-1);
@@ -282,7 +282,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
 			}
 		}
 		/* Support custom types, as per spec */
-		if ((first_type) && (strncasecmp (first_type, "X-", 2) == 0)) {
+		if ((first_type) && (g_ascii_strncasecmp (first_type, "X-", 2) == 0)) {
 			gtk_entry_set_text (
 				GTK_ENTRY (GTK_BIN (combo)->child),
 				(const gchar *)(first_type+2));
@@ -944,7 +944,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 				edit_widgets = g_list_append (edit_widgets,
 							      edit);
 			}
-		} else if (strcasecmp (name, "CATEGORIES") == 0) {
+		} else if (g_ascii_strcasecmp (name, "CATEGORIES") == 0) {
 			/* Create categories widget */
 /*			GList *values = e_vcard_attribute_get_values (a);
 			gchar *types =

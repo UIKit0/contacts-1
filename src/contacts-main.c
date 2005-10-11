@@ -125,12 +125,12 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 			if (types_list) {
 				valid_types =
 					contacts_get_field_types (attr_name);
-				if (strncasecmp (types_list->data, "X-",2) == 0)
+				if (g_ascii_strncasecmp (types_list->data, "X-",2) == 0)
 					types_string = (gchar *)
 							(types_list->data)+2;
 				else if (valid_types) {
 					for (i = 0; valid_types[i]; i++) {
-						if (strcasecmp (
+						if (g_ascii_strcasecmp (
 							types_list->data,
 							valid_types[i]) == 0) {
 							types_string = (gchar *)
