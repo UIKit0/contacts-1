@@ -1,5 +1,10 @@
 2005-10-11  Ross Burton  <ross@openedhand.com>
 
+	* data/oh-contacts.png:
+	Replace with stock_contact, to match window icon.
+
+2005-10-11  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-main.c:
 	* src/contacts-defs.h:
 	Open the book and view in an idle handler, asynchronously.
