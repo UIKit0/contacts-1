@@ -28,6 +28,7 @@ enum {
 
 typedef struct {
 	EBook *book;
+	EBookView *book_view;
 	EContact *contact;
 	GHashTable *contacts_table;
 	GList *contacts_groups;

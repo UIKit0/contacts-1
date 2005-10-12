@@ -1,6 +1,12 @@
 2005-10-11  Ross Burton  <ross@openedhand.com>
 
 	* src/contacts-main.c:
+	* src/contacts-defs.h:
+	Open the book and view in an idle handler, asynchronously.
+
+2005-10-11  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-main.c:
 	* src/contacts-edit-pane.c:
 	Use g_ascii_strcasecmp when comparing types are they have to be
 	ASCII.

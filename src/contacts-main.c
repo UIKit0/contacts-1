@@ -189,6 +189,50 @@ chooser_toggle_cb (GtkCellRendererToggle * cell,
 				    CHOOSER_TICK_COL, TRUE, -1);
 }
 
+static void
+start_query (EBook *book, EBookStatus status, EBookView *book_view, gpointer closure)
+{
+	ContactsData *contacts_data = closure;
+	if (status == E_BOOK_ERROR_OK) {
+		contacts_data->book_view = book_view;
+
+		/* Connect signals on EBookView */
+		g_signal_connect (G_OBJECT (book_view), "contacts_added",
+				  G_CALLBACK (contacts_added_cb), contacts_data);
+		g_signal_connect (G_OBJECT (book_view), "contacts_changed",
+				  G_CALLBACK (contacts_changed_cb), contacts_data);
+		g_signal_connect (G_OBJECT (book_view), "contacts_removed",
+				  G_CALLBACK (contacts_removed_cb), contacts_data);
+		
+		e_book_view_start (book_view);
+	} else {
+		g_warning("Got error %d when getting book view", status);
+	}
+}
+
+static void
+opened_book (EBook *book, EBookStatus status, gpointer closure)
+{
+	ContactsData *contacts_data = closure;
+	EBookQuery *query;
+	
+	if (status == E_BOOK_ERROR_OK) {
+		query = e_book_query_any_field_contains ("");
+		e_book_async_get_book_view (contacts_data->book, query, NULL, -1, start_query, contacts_data);
+		e_book_query_unref (query);
+	} else {
+		g_warning("Got error %d when opening book", status);
+	}
+}
+
+static gboolean
+open_book (gpointer data)
+{
+	ContactsData *contacts_data = data;
+	e_book_async_open (contacts_data->book, FALSE, opened_book, contacts_data);
+	return FALSE;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -199,14 +243,12 @@ main (int argc, char **argv)
 	GtkListStore *model;
 	GtkTreeModelFilter *filter;
 	GtkCellRenderer *renderer;
-	gboolean status;
 	GladeXML *xml;			/* */
-	EBook *book;			/* EBook variables */
-	EBookView *book_view;
-	EBookQuery *query;		/* */
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
 					 */
+
+	contacts_data = g_new0 (ContactsData, 1);
 
 	/* Standard initialisation for gtk and glade */
 	gtk_init (&argc, &argv);
@@ -222,22 +264,13 @@ main (int argc, char **argv)
 			    XML_FILE);
 
 	/* Load the system addressbook */
-	book = e_book_new_system_addressbook (NULL);
-	if (!book)
+	contacts_data->book = e_book_new_system_addressbook (NULL);
+	if (!contacts_data->book)
 		g_critical ("Could not load system addressbook");
-	if (!(status = e_book_open (book, FALSE, NULL)))
-		g_critical ("Error '%d' opening ebook", status);
-	/* Create an EBookView */
-	query = e_book_query_any_field_contains ("");
-	e_book_get_book_view (book, query, NULL, -1, &book_view, NULL);
-	e_book_query_unref (query);
 
 	/* Hook up signals defined in interface xml */
 	glade_xml_signal_autoconnect (xml);
 	
-	/* Initialise global data construct */
-	contacts_data = g_new0 (ContactsData, 1);
-	contacts_data->book = book;
 	contacts_data->contacts_table = g_hash_table_new_full (g_str_hash,
 						g_str_equal, NULL, 
 						(GDestroyNotify)
@@ -336,22 +369,15 @@ main (int argc, char **argv)
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
 
-	/* Connect signals on EBookView */
-	g_signal_connect (G_OBJECT (book_view), "contacts_added",
-			  G_CALLBACK (contacts_added_cb), contacts_data);
-	g_signal_connect (G_OBJECT (book_view), "contacts_changed",
-			  G_CALLBACK (contacts_changed_cb), contacts_data);
-	g_signal_connect (G_OBJECT (book_view), "contacts_removed",
-			  G_CALLBACK (contacts_removed_cb), contacts_data);
 			  
 	/* Start */
-	e_book_view_start (book_view);
+	g_idle_add (open_book, contacts_data);
 	gtk_main ();
 
 	/* Unload the addressbook */
-	e_book_view_stop (book_view);
-	g_object_unref (book_view);
-	g_object_unref (book);
+	e_book_view_stop (contacts_data->book_view);
+	g_object_unref (contacts_data->book_view);
+	g_object_unref (contacts_data->book);
 
 	return 0;
 }
