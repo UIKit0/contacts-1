@@ -32,11 +32,8 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 void
 contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
-	data->contact = e_contact_new ();
-	
-	if (e_book_add_contact (data->book, data->contact, NULL)) {
-		contacts_edit_pane_show (data, TRUE);
-	}
+	data->contact = e_contact_new ();	
+	contacts_edit_pane_show (data, TRUE);
 }
 
 void

@@ -125,7 +125,8 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 			if (types_list) {
 				valid_types =
 					contacts_get_field_types (attr_name);
-				if (g_ascii_strncasecmp (types_list->data, "X-",2) == 0)
+				if (g_ascii_strncasecmp (types_list->data,
+				    "X-", 2) == 0)
 					types_string = (gchar *)
 							(types_list->data)+2;
 				else if (valid_types) {
@@ -190,19 +191,21 @@ chooser_toggle_cb (GtkCellRendererToggle * cell,
 }
 
 static void
-start_query (EBook *book, EBookStatus status, EBookView *book_view, gpointer closure)
+start_query (EBook *book, EBookStatus status, EBookView *book_view,
+	gpointer closure)
 {
 	ContactsData *contacts_data = closure;
 	if (status == E_BOOK_ERROR_OK) {
+		g_object_ref (book_view);
 		contacts_data->book_view = book_view;
 
 		/* Connect signals on EBookView */
 		g_signal_connect (G_OBJECT (book_view), "contacts_added",
-				  G_CALLBACK (contacts_added_cb), contacts_data);
+			G_CALLBACK (contacts_added_cb), contacts_data);
 		g_signal_connect (G_OBJECT (book_view), "contacts_changed",
-				  G_CALLBACK (contacts_changed_cb), contacts_data);
+			G_CALLBACK (contacts_changed_cb), contacts_data);
 		g_signal_connect (G_OBJECT (book_view), "contacts_removed",
-				  G_CALLBACK (contacts_removed_cb), contacts_data);
+			G_CALLBACK (contacts_removed_cb), contacts_data);
 		
 		e_book_view_start (book_view);
 	} else {
@@ -218,7 +221,8 @@ opened_book (EBook *book, EBookStatus status, gpointer closure)
 	
 	if (status == E_BOOK_ERROR_OK) {
 		query = e_book_query_any_field_contains ("");
-		e_book_async_get_book_view (contacts_data->book, query, NULL, -1, start_query, contacts_data);
+		e_book_async_get_book_view (contacts_data->book, query, NULL,
+			-1, start_query, contacts_data);
 		e_book_query_unref (query);
 	} else {
 		g_warning("Got error %d when opening book", status);
@@ -229,7 +233,8 @@ static gboolean
 open_book (gpointer data)
 {
 	ContactsData *contacts_data = data;
-	e_book_async_open (contacts_data->book, FALSE, opened_book, contacts_data);
+	e_book_async_open (
+		contacts_data->book, FALSE, opened_book, contacts_data);
 	return FALSE;
 }
 

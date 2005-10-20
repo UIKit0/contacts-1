@@ -1,3 +1,12 @@
+2005-10-20  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	Don't add a new contact twice, add it after editing is finished
+	
+	* src/contacts-main.c: (contacts_display_summary),
+	(chooser_toggle_cb), (opened_book), (open_book):
+	g_object_ref book_view to fix working under eds-corba
+
 2005-10-11  Ross Burton  <ross@openedhand.com>
 
 	* data/oh-contacts.png:
