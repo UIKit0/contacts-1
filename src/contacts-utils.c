@@ -3,6 +3,7 @@
 #include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf-io.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
@@ -505,11 +506,15 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 			if (contact) {
 				EContactPhoto new_photo;
 				char **data;
-				int *length;
+				gsize *length;
 #if HAVE_PHOTO_TYPE
+				char **mime_types;
 				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
-				data = &new_photo.inlined.data;
-				length = &new_photo.inlined.length;
+				data = (char**)&new_photo.inlined.data;
+				length = (gsize*)&new_photo.inlined.length;
+				mime_types = gdk_pixbuf_format_get_mime_types (gdk_pixbuf_get_file_info (filename, NULL, NULL));
+				new_photo.inlined.mime_type = g_strdup (mime_types[0]);
+				g_strfreev (mime_types);
 #else
 				data = &new_photo.data;
 				length = &new_photo.length;

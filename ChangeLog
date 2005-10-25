@@ -1,3 +1,8 @@
+2005-10-25  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-utils.c:
+	Set the MIME type on new photos, as required by latest EDS.
+
 2005-10-20  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-callbacks-ui.c:
