@@ -3,7 +3,6 @@
 #include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <gdk-pixbuf/gdk-pixbuf-io.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
 
@@ -350,8 +349,8 @@ contacts_load_photo (EContact *contact)
 				break;
 			}
 #else
-			gdk_pixbuf_loader_write (loader, photo->data,
-				photo->length, NULL);
+			gdk_pixbuf_loader_write (loader, (const guchar *)
+				photo->data, photo->length, NULL);
 #endif
 			if (loader) {
 				gdk_pixbuf_loader_close (loader, NULL);
@@ -506,25 +505,22 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 			if (contact) {
 				EContactPhoto new_photo;
 				char **data;
-				gsize *length;
+				int *length;
 #if HAVE_PHOTO_TYPE
-				char **mime_types;
 				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
-				data = (char**)&new_photo.inlined.data;
-				length = (gsize*)&new_photo.inlined.length;
-				mime_types = gdk_pixbuf_format_get_mime_types (gdk_pixbuf_get_file_info (filename, NULL, NULL));
-				new_photo.inlined.mime_type = g_strdup (mime_types[0]);
-				g_strfreev (mime_types);
+				data = &new_photo.inlined.data;
+				length = &new_photo.inlined.length;
 #else
 				data = &new_photo.data;
 				length = &new_photo.length;
 #endif
 				if (g_file_get_contents (filename, 
 							 data,
-							 length,
+							 (gsize *)length,
 							 NULL)) {
 					e_contact_set (contact, E_CONTACT_PHOTO,
 						       &new_photo);
+					g_free (*data);
 					/* Re-display contact photo */
 					gtk_container_foreach (
 						GTK_CONTAINER (button),
@@ -751,7 +747,8 @@ contacts_set_widget_desensitive_recurse (GtkWidget *widget, GList **widgets)
 			*widgets = g_list_append (*widgets, widget);
 		}
 		
-		if (GTK_IS_CONTAINER (widget)) {
+		if (GTK_IS_TABLE (widget) || GTK_IS_HBOX (widget) ||
+		    GTK_IS_VBOX (widget)) {
 			GList *c, *children = gtk_container_get_children (
 				GTK_CONTAINER (widget));
 			
