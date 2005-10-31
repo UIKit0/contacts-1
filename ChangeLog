@@ -1,5 +1,10 @@
 2005-10-31  Chris Lord,,,  <chris@openedhand.com>
 
+	* src/contacts-callbacks-ui.c: (contacts_import_cb):
+	Finish off contacts import and plug a leak in it
+
+2005-10-31  Chris Lord,,,  <chris@openedhand.com>
+
 	* data/contacts.desktop:
 	Add 'Office' category
 	

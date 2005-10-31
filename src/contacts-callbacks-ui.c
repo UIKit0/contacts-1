@@ -89,12 +89,12 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 	GtkWidget *main_window =
 		glade_xml_get_widget (data->xml, "main_window");
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
-		"Export Contact",
+		"Import Contact",
 		GTK_WINDOW (main_window),
-		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_FILE_CHOOSER_ACTION_OPEN,
 		GTK_STOCK_CANCEL,
 		GTK_RESPONSE_CANCEL,
-		GTK_STOCK_SAVE,
+		GTK_STOCK_OPEN,
 		GTK_RESPONSE_ACCEPT,
 		NULL);
 
@@ -117,6 +117,7 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 						data->book, contact, NULL);
 					g_object_unref (contact);
 				}
+				g_free (vcard_string);
 			}
 		}
 	}
