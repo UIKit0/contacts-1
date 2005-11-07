@@ -61,7 +61,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
 	name_markup = g_strdup_printf
-		("<span><big><b>%s</b></big>\n<small>%s</small></span>",
+		("<big><b>%s</b></big>\n<small>%s</small>",
 		 string ? string : "", groups_text ? groups_text : "");
 	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
 	if (groups) {
@@ -145,13 +145,13 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 				types_string = "Other";
 			
 			name_markup = g_strdup_printf (
-				"<span><b>%s:</b>\n<small>(%s)</small></span>",
+				"<b>%s:</b>\n<small>(%s)</small>",
 				contacts_field_pretty_name (field),
 				types_string);
 				
 			g_list_free (types_list);
 		} else {
-			name_markup = g_strdup_printf ("<span><b>%s:</b></span>",
+			name_markup = g_strdup_printf ("<b>%s:</b>",
 				contacts_field_pretty_name (field));
 		}
 		name_widget = gtk_label_new (name_markup);

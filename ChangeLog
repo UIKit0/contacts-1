@@ -1,3 +1,9 @@
+2005-11-07  Ross Burton  <ross@burtonini.com>
+
+	* src/contacts-main.c:
+	* src/contacts-edit-pane.c:
+	Remove redundant <span> elements.
+
 2005-10-31  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_import_cb):

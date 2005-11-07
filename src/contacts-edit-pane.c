@@ -328,7 +328,7 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 	gchar *label_markup;
 
 	/* Create label/button text */
-	label_markup = g_strdup_printf ("<span><b>%s:</b></span>", name);
+	label_markup = g_strdup_printf ("<b>%s:</b>", name);
 
 	/* Create widget */
 	label_widget = gtk_label_new (NULL);
@@ -399,7 +399,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			GtkWidget *label = gtk_label_new (NULL);
 			gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
 			gtk_label_set_markup (GTK_LABEL (label),
-				"<span><b>Type:</b></span>");
+				"<b>Type:</b>");
 			gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 			gtk_table_attach (GTK_TABLE (adr_table), label, 0, 1,
 					  0, 1, GTK_FILL, GTK_FILL, 0, 0);
@@ -431,7 +431,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				gtk_label_set_use_markup (GTK_LABEL (label),
 							  TRUE);
 				label_markup = g_strdup_printf (
-					"<span><b>%s:</b></span>",
+					"<b>%s:</b>",
 					sfield->subfield_name);
 				gtk_label_set_markup (GTK_LABEL (label),
 						      label_markup);
@@ -635,8 +635,8 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 			bools = g_list_append (bools, GINT_TO_POINTER (FALSE));
 	}
 	
-	if (contacts_chooser (xml, "Change groups", "<span><b>Choose groups"
-		"</b></span>", data->contacts_groups, bools, TRUE, &results)) {
+	if (contacts_chooser (xml, "Change groups", "<b>Choose groups"
+		"</b>", data->contacts_groups, bools, TRUE, &results)) {
 /*		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ") :
 			g_strdup ("None");
@@ -695,7 +695,7 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 	g_list_free (children);
 	
 	if (contacts_chooser (xml, "Add field",
-			      "<span><b>Choose a field</b></span>", fields,
+			      "<b>Choose a field</b>", fields,
 			      NULL, FALSE, &field)) {
 		GtkWidget *label, *edit, *table;
 		const ContactsField *cfield;
@@ -816,7 +816,7 @@ contacts_remove_field_cb (GtkWidget *button, gpointer data)
 	}
 	
 	if (contacts_chooser (xml, "Remove field",
-			      "<span><b>Choose a field</b></span>", fields,
+			      "<b>Choose a field</b>", fields,
 			      NULL, FALSE, &field)) {
 		/* Empty the data and then hide the relevant widget. Signals
 		 * have been setup when creating these widgets so that other
@@ -913,7 +913,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gtk_widget_show (button);
 	
 	/* Create groups edit label/button */
-/*	glabel = gtk_label_new ("<span><b>Groups:</b></span>");
+/*	glabel = gtk_label_new ("<b>Groups:</b>");
 	gtk_label_set_use_markup (GTK_LABEL (glabel), TRUE);
 	gtk_misc_set_alignment (GTK_MISC (glabel), 1, 0.5);
 	gbutton = gtk_button_new_with_label ("None");*/
