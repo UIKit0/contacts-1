@@ -43,6 +43,7 @@ contacts_edit_cb (GtkWidget *source, ContactsData *data)
 	contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
 	data->contact = contacts_get_selected_contact (data->xml,
 						       data->contacts_table);
+	data->changed = FALSE;
 	
 	contacts_edit_pane_show (data, FALSE);
 }

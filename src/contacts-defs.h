@@ -33,6 +33,7 @@ typedef struct {
 	GHashTable *contacts_table;
 	GList *contacts_groups;
 	GladeXML *xml;
+	gboolean changed;
 } ContactsData;
 
 typedef struct {
@@ -45,11 +46,13 @@ typedef struct {
 	EContact *contact;
 	EVCardAttribute *attr;
 	GtkWidget *widget; /* The widget containing the data */
+	gboolean *changed;
 } EContactChangeData;
 
 typedef struct {
 	const gchar *attr_name;
 	EVCardAttributeParam *param;
+	gboolean *changed;
 } EContactTypeChangeData;
 
 typedef struct {

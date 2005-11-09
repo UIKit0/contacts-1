@@ -99,7 +99,7 @@ contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 {
 	GError *error = NULL;
 
-	if (data->contact) {
+	if (data->contact && data->changed) {
 		/* Clean contact */
 		contacts_clean_contact (data->contact);
 	
@@ -209,6 +209,7 @@ contacts_type_entry_changed (GtkWidget *widget, EContactTypeChangeData *data)
 				data->param, (const char *)v->data);
 		g_list_foreach (v, (GFunc)g_free, NULL);
 		g_list_free (v);
+		*data->changed = TRUE;
 	}
 }
 
@@ -232,10 +233,12 @@ contacts_entry_changed (GtkWidget *widget, EContactChangeData *data)
 	}
 	g_list_foreach (values, (GFunc)g_free, NULL);
 	g_list_free (values);
+	*data->changed = TRUE;
 }
 
 static GtkWidget *
-contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
+contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
+	gboolean *changed)
 {
 	const gchar **types;
 
@@ -269,6 +272,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
 		data = g_new (EContactTypeChangeData, 1);
 		data->param = param;
 		data->attr_name = e_vcard_attribute_get_name (attr);
+		data->changed = changed;
 		
 		for (i = 1; types[i]; i++) {
 			gtk_combo_box_append_text (
@@ -326,7 +330,8 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line)
  */
 GtkWidget *
 contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
-			   const gchar *name, gboolean multi_line)
+			   const gchar *name, gboolean multi_line,
+			   gboolean *changed)
 {	
 	GtkWidget *label_widget, *type_edit = NULL, *container;
 	gchar *label_markup;
@@ -348,7 +353,8 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 	g_free (label_markup);
 	
 	if (e_vcard_attribute_is_single_valued (attr))
-		type_edit = contacts_type_edit_widget_new (attr, multi_line);
+		type_edit = contacts_type_edit_widget_new (attr, multi_line,
+			changed);
 	if (type_edit) {
 		gtk_widget_show (type_edit);
 		gtk_widget_show (label_widget);
@@ -371,7 +377,7 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
  */
 static GtkWidget *
 contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
-			  gboolean multi_line)
+			  gboolean multi_line, gboolean *changed)
 {
 	GtkWidget *type_edit;
 	EContactChangeData *data;
@@ -381,6 +387,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 	data = g_new0 (EContactChangeData, 1);
 	data->contact = contact;
 	data->attr = attr;
+	data->changed = changed;
 
 	/* Create widget */
 	if (!e_vcard_attribute_is_single_valued (attr)) {
@@ -398,7 +405,8 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		data->widget = adr_table;
 		
 		/* Add type editor */
-		type_edit = contacts_type_edit_widget_new (attr, multi_line);
+		type_edit = contacts_type_edit_widget_new (attr, multi_line,
+			changed);
 		if (type_edit) {
 			GtkWidget *label = gtk_label_new (NULL);
 			gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
@@ -661,7 +669,7 @@ contacts_find_widget_cb (GtkWidget *widget, const gchar *name)
 }
 
 static void
-contacts_add_field_cb (GtkWidget *button, EContact *contact)
+contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 {
 	GList *fields = NULL;
 	GHashTable *field_trans;
@@ -669,6 +677,7 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 	guint i;
 	GladeXML *xml = glade_get_widget_tree (button);
 	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
+	EContact *contact = data->contact;
 	
 	children = gtk_container_get_children (GTK_CONTAINER (
 		glade_xml_get_widget (xml, "edit_table")));
@@ -713,9 +722,9 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 		pretty_name = contacts_field_pretty_name (cfield);
 
 		label = contacts_label_widget_new (contact, attr,
-			   pretty_name, cfield->multi_line);
+			   pretty_name, cfield->multi_line, &data->changed);
 		edit = contacts_edit_widget_new (contact, attr,
-					cfield->multi_line);
+					cfield->multi_line, &data->changed);
 		table = glade_xml_get_widget (xml, "edit_table");
 		
 		contacts_append_to_edit_table (GTK_TABLE (table), label, edit);
@@ -938,9 +947,11 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			
 			label = contacts_label_widget_new (contact, a,
 							   pretty_name,
-							   field->multi_line);
+							   field->multi_line,
+							   &data->changed);
 			edit = contacts_edit_widget_new (contact, a,
-							 field->multi_line);
+							 field->multi_line,
+							 &data->changed);
 			
 			if (label && edit) {
 				label_widgets = g_list_append (label_widgets,
@@ -982,9 +993,11 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 							&contacts_fields[i]);
 
 			label = contacts_label_widget_new (contact, attr,
-				   pretty_name, contacts_fields[i].multi_line);
+				   pretty_name, contacts_fields[i].multi_line,
+				   &data->changed);
 			edit = contacts_edit_widget_new (contact, attr,
-						contacts_fields[i].multi_line);
+						contacts_fields[i].multi_line,
+						&data->changed);
 			
 			if (label && edit) {
 				label_widgets = g_list_append (label_widgets,
@@ -1084,7 +1097,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 					      NULL, contacts_add_field_cb,
 					      NULL);
 	g_signal_connect (G_OBJECT (widget), "clicked", 
-			  G_CALLBACK (contacts_add_field_cb), contact);
+			  G_CALLBACK (contacts_add_field_cb), data);
 	
 	/* Connect close button */
 	widget = glade_xml_get_widget (xml, "edit_done_button");
