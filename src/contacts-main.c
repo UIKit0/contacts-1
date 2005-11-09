@@ -51,6 +51,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	GtkImage *photo;
 	GList *a, *groups, *attributes;
 	gchar *name_markup, *groups_text = NULL;
+	GValue *can_focus = g_new0 (GValue, 1);
 
 	if (!E_IS_CONTACT (contact))
 		return;
@@ -97,6 +98,8 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	g_object_set (widget, "n-rows", 1, NULL);
 	g_object_set (widget, "n-columns", 2, NULL);
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
+	g_value_init (can_focus, G_TYPE_BOOLEAN);
+	g_value_set_boolean (can_focus, FALSE);
 	for (a = attributes; a; a = a->next) {
 		GtkWidget *name_widget, *value_widget;
 		gchar *value_text, *name_markup;
@@ -159,10 +162,15 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 		name_widget = gtk_label_new (name_markup);
 		gtk_label_set_use_markup (GTK_LABEL (name_widget), TRUE);
 		value_widget = gtk_label_new (value_text);
+		gtk_label_set_selectable (GTK_LABEL (value_widget), TRUE);
 		gtk_label_set_justify (GTK_LABEL (name_widget),
 				       GTK_JUSTIFY_RIGHT);
 		gtk_misc_set_alignment (GTK_MISC (name_widget), 1, 0);
 		gtk_misc_set_alignment (GTK_MISC (value_widget), 0, 0);
+		g_object_set_property (G_OBJECT (name_widget),
+			"can-focus", can_focus);
+		g_object_set_property (G_OBJECT (value_widget),
+			"can-focus", can_focus);
 		
 		contacts_append_to_edit_table (GTK_TABLE (widget), name_widget,
 					       value_widget);
@@ -170,6 +178,8 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 		g_free (name_markup);
 		g_free (value_text);
 	}
+	g_value_unset (can_focus);
+	g_free (can_focus);
 
 	widget = glade_xml_get_widget (xml, "summary_vbox");
 	gtk_widget_show (widget);

@@ -1,5 +1,13 @@
 2005-11-09  Chris Lord,,,  <chris@openedhand.com>
 
+	* data/contacts.glade:
+	Change name label can_focus to FALSE (bug #36)
+	
+	* src/contacts-main.c: (contacts_display_summary):
+	Make sure summary details are selectable, but not focusable (bug #36)
+
+2005-11-09  Chris Lord,,,  <chris@openedhand.com>
+
 	* src/contacts-callbacks-ui.c: (contacts_edit_cb):
 	* src/contacts-defs.h:
 	* src/contacts-edit-pane.c:
