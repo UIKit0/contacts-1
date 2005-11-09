@@ -1,3 +1,17 @@
+2005-11-09  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/contacts-main.c: (contacts_display_summary):
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb):
+	If a contact has an empty name, label it as 'Unnamed' (bug #41)
+	
+	* src/contacts-edit-pane.c:
+	Don't add empty contacts (bug #41)
+	
+	* src/contacts-utils.c: (contacts_clean_contact):
+	* src/contacts-utils.h:
+	Add a function to see if a contact is empty (bug #41)
+
 2005-11-07  Ross Burton  <ross@burtonini.com>
 
 	* src/contacts-main.c:

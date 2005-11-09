@@ -107,7 +107,7 @@ contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 		e_book_commit_contact(data->book, data->contact, &error);
 		if (error) {
 			/* TODO: show dialog */
-			g_warning ("Cannot commit contacts: %s", error->message);
+			g_warning ("Cannot commit contact: %s", error->message);
 			g_error_free (error);
 		}
 	}
@@ -118,18 +118,22 @@ contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 static void
 contacts_edit_ok_new_cb (GtkWidget *button, ContactsData *data)
 {
-	GError *error = NULL;
-
 	if (data->contact) {
 		/* Clean contact */
 		contacts_clean_contact (data->contact);
 	
 		/* Commit changes */
-		e_book_add_contact(data->book, data->contact, &error);
-		if (error) {
-			/* TODO: show dialog */
-			g_warning ("Cannot commit contacts: %s", error->message);
-			g_error_free (error);
+		if (contacts_contact_is_empty (data->contact)) {
+			g_object_unref (data->contact);
+		} else {
+			GError *error = NULL;
+			e_book_add_contact(data->book, data->contact, &error);
+			if (error) {
+				/* TODO: show dialog */
+				g_warning ("Cannot add contact: %s",
+					error->message);
+				g_error_free (error);
+			}
 		}
 	}
 
@@ -158,7 +162,7 @@ contacts_edit_export_cb (GtkWidget *button, ContactsData *data)
 					(GTK_FILE_CHOOSER (dialog));
 		if (filename) {
 			char *vcard = e_vcard_to_string (
-				&data->contact->parent, EVC_FORMAT_VCARD_30);
+				E_VCARD (data->contact), EVC_FORMAT_VCARD_30);
 				
 			if (vcard) {
 				FILE *file = fopen (filename, "w");
@@ -705,7 +709,7 @@ contacts_add_field_cb (GtkWidget *button, EContact *contact)
 				      field_trans, (gconstpointer)field->data);
 		
 		cfield = contacts_get_contacts_field (vcard_field);
-		attr = contacts_add_attr (&contact->parent, vcard_field);
+		attr = contacts_add_attr (E_VCARD (contact), vcard_field);
 		pretty_name = contacts_field_pretty_name (cfield);
 
 		label = contacts_label_widget_new (contact, attr,
@@ -869,7 +873,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 
 #ifdef DEBUG
 	/* Prints out all contact data */
-	attributes = e_vcard_get_attributes (&contact->parent);
+	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		GList *params = e_vcard_attribute_get_params (a);
@@ -919,7 +923,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gbutton = gtk_button_new_with_label ("None");*/
 	
 	/* Create edit pane widgets */
-	attributes = e_vcard_get_attributes (&contact->parent);
+	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	label_widgets = NULL;
 	edit_widgets = NULL;
 	for (c = attributes; c; c = c->next) {
@@ -958,7 +962,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	
 	if (!groups_attr) {
 		groups_attr = e_vcard_attribute_new (NULL, "CATEGORIES");
-		e_vcard_add_attribute (&contact->parent, groups_attr);
+		e_vcard_add_attribute (E_VCARD (contact), groups_attr);
 	}
 	
 	/* Add any missing widgets */
@@ -971,7 +975,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 					(GCompareFunc)
 					 contacts_widgets_list_find) == NULL) {
 			EVCardAttribute *attr = 
-				contacts_add_attr (&contact->parent,
+				contacts_add_attr (E_VCARD (contact),
 					   contacts_fields[i].vcard_field);
 			GtkWidget *label, *edit;
 			const gchar *pretty_name = contacts_field_pretty_name (

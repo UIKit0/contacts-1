@@ -38,6 +38,8 @@ GtkImage *contacts_load_photo (EContact *contact);
 
 void contacts_clean_contact (EContact *contact);
 
+gboolean contacts_contact_is_empty (EContact *contact);
+
 gchar *contacts_string_list_as_string (GList *list, const gchar *separator,
 				       gboolean include_empty);
 

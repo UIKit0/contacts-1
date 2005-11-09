@@ -58,6 +58,8 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	/* Retrieve contact name and groups */
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+	if ((!string) || (g_utf8_strlen (string, -1) <= 0))
+		string = "Unnamed";
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
 	name_markup = g_strdup_printf
@@ -94,7 +96,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 			       widget);
 	g_object_set (widget, "n-rows", 1, NULL);
 	g_object_set (widget, "n-columns", 2, NULL);
-	attributes = e_vcard_get_attributes (&contact->parent);
+	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	for (a = attributes; a; a = a->next) {
 		GtkWidget *name_widget, *value_widget;
 		gchar *value_text, *name_markup;

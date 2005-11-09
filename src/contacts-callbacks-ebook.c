@@ -42,6 +42,8 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		/* Add contact to list */
 		hash = g_new (EContactListHash, 1);
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
+			name = "Unnamed";
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		gtk_list_store_insert_with_values (model, &hash->iter, 0,
 						   CONTACT_NAME_COL, name,
@@ -102,7 +104,7 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 		EContact *contact = E_CONTACT (c->data);
 		EContactListHash *hash;
 		GList *contact_groups;
-		const gchar *uid;
+		const gchar *uid, *name;
 
 		/* Lookup if contact exists in internal list (it should) */
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
@@ -118,9 +120,10 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 		g_hash_table_insert (data->contacts_table, (gchar *)uid, hash);
 
 		/* Update list with possibly new name */
-		gtk_list_store_set (model, &hash->iter,
-			CONTACT_NAME_COL,
-			e_contact_get (contact, E_CONTACT_FULL_NAME),
+		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
+			name = "Unnamed";
+		gtk_list_store_set (model, &hash->iter, CONTACT_NAME_COL, name,
 			-1);
 
 		/* If contact is currently selected, update display */

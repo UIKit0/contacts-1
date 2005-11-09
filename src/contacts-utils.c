@@ -381,7 +381,7 @@ contacts_clean_contact (EContact *contact)
 {
 	GList *attributes, *c;
 
-	attributes = e_vcard_get_attributes (&contact->parent);
+	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		GList *values = e_vcard_attribute_get_values (a);
@@ -391,11 +391,29 @@ contacts_clean_contact (EContact *contact)
 				remove = FALSE;
 		}
 		if (remove) {
-			e_vcard_remove_attribute (&contact->parent, a);
+			e_vcard_remove_attribute (E_VCARD (contact), a);
 			contacts_clean_contact (contact);
 			break;
 		}
 	}
+}
+
+gboolean
+contacts_contact_is_empty (EContact *contact)
+{
+	GList *attributes, *c;
+	
+	attributes = e_vcard_get_attributes (E_VCARD (contact));
+	for (c = attributes; c; c = c->next) {
+		EVCardAttribute *a = (EVCardAttribute*)c->data;
+		GList *values = e_vcard_attribute_get_values (a);
+		for (; values; values = values->next) {
+			if (g_utf8_strlen ((const gchar *)values->data, -1) > 0)
+				return FALSE;
+		}
+	}
+	
+	return TRUE;
 }
 
 gchar *
