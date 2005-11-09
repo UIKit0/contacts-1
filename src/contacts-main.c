@@ -253,6 +253,7 @@ open_book (gpointer data)
 int
 main (int argc, char **argv)
 {
+	GValue *can_focus = g_new0 (GValue, 1);
 	GtkWidget *widget;		/* Variables for UI initialisation */
 	GtkComboBox *groups_combobox;
 	GtkTreeView *contacts_treeview;
@@ -362,6 +363,14 @@ main (int argc, char **argv)
 	gtk_window_set_transient_for (
 		GTK_WINDOW (glade_xml_get_widget (xml, "about_dialog")),
 		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
+	
+	/* Set can_focus to FALSE for summary name label */
+	widget = glade_xml_get_widget (xml, "summary_name_label");
+	g_value_init (can_focus, G_TYPE_BOOLEAN);
+	g_value_set_boolean (can_focus, FALSE);
+	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
+	g_value_unset (can_focus);
+	g_free (can_focus);
 
 	/* Connect UI-related signals */
 	widget = glade_xml_get_widget (xml, "new_button");

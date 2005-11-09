@@ -1,5 +1,10 @@
 2005-11-09  Chris Lord,,,  <chris@openedhand.com>
 
+	* src/contacts-main.c: (main):
+	Completely fix bug #36
+
+2005-11-09  Chris Lord,,,  <chris@openedhand.com>
+
 	* data/contacts.glade:
 	Change name label can_focus to FALSE (bug #36)
 	
