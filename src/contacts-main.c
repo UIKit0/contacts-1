@@ -369,8 +369,6 @@ main (int argc, char **argv)
 	g_value_set_boolean (can_focus, FALSE);
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
-	widget = glade_xml_get_widget (xml, "contacts_treeview");
-	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
 	g_value_unset (can_focus);
 	g_free (can_focus);
 
