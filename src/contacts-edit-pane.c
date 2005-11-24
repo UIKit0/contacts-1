@@ -46,10 +46,12 @@ static void
 contacts_edit_pane_hide (ContactsData *data)
 {
 	GtkWidget *widget;
+	GtkWindow *window;
 
 	/* All changed are instant-apply, so just remove the edit components
 	 * and switch back to main view.
 	 */
+	window = GTK_WINDOW (glade_xml_get_widget (data->xml, "main_window"));
 	widget = glade_xml_get_widget (data->xml, "edit_table");
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
@@ -60,9 +62,12 @@ contacts_edit_pane_hide (ContactsData *data)
 	gtk_widget_show (widget);
 	widget = glade_xml_get_widget (data->xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
-	widget = glade_xml_get_widget (data->xml, "main_window");
-	gtk_window_set_title (GTK_WINDOW (widget), "Contacts");
+	gtk_window_set_title (window, "Contacts");
 	contacts_set_available_options (data->xml, TRUE, TRUE, TRUE);
+	gtk_window_set_default (window, glade_xml_get_widget (
+		data->xml, "edit_button"));
+	gtk_window_set_focus (window, glade_xml_get_widget (
+		data->xml, "search_entry"));
 }
 
 static void
@@ -935,6 +940,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	label_widgets = NULL;
 	edit_widgets = NULL;
+	widget = glade_xml_get_widget (xml, "main_window");
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		const gchar *name = e_vcard_attribute_get_name (a);
@@ -952,6 +958,9 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			edit = contacts_edit_widget_new (contact, a,
 							 field->multi_line,
 							 &data->changed);
+			if (!edit_widgets)
+				gtk_window_set_focus (
+					GTK_WINDOW (widget), edit);
 			
 			if (label && edit) {
 				label_widgets = g_list_append (label_widgets,
@@ -1115,4 +1124,6 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	else
 		g_signal_connect (G_OBJECT (widget), "clicked",
 				  G_CALLBACK (contacts_edit_ok_cb), data);
+	gtk_window_set_default (GTK_WINDOW (
+		glade_xml_get_widget (xml, "main_window")), widget);
 }
