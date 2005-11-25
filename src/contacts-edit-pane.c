@@ -873,6 +873,13 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 	return field1->priority - *b;
 }
 
+static void
+contacts_edit_choose_photo (GtkWidget *button, ContactsData *data)
+{
+	data->changed = TRUE;
+	contacts_choose_photo (button, data->contact);
+}
+
 void
 contacts_edit_pane_show (ContactsData *data, gboolean new)
 {
@@ -927,7 +934,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gtk_container_add (GTK_CONTAINER (button), widget);
 	gtk_widget_show (widget);
 	g_signal_connect (G_OBJECT (button), "clicked",
-			  G_CALLBACK (contacts_choose_photo), contact);
+			  G_CALLBACK (contacts_edit_choose_photo), data);
 	gtk_widget_show (button);
 	
 	/* Create groups edit label/button */

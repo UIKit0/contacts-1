@@ -528,6 +528,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
 				data = &new_photo.inlined.data;
 				length = &new_photo.inlined.length;
+				new_photo.inlined.mime_type = NULL;
 #else
 				data = &new_photo.data;
 				length = &new_photo.length;
