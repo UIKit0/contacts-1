@@ -1,3 +1,21 @@
+/* 
+ *  Contacts - A small libebook-based address book.
+ *
+ *  Authored By Chris Lord <chris@o-hand.com>
+ *
+ *  Copyright (c) 2005 OpenedHand Ltd - http://o-hand.com
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ */
 
 #include <string.h>
 #include <glib.h>
@@ -947,7 +965,6 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
 	label_widgets = NULL;
 	edit_widgets = NULL;
-	widget = glade_xml_get_widget (xml, "main_window");
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		const gchar *name = e_vcard_attribute_get_name (a);
@@ -965,9 +982,6 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			edit = contacts_edit_widget_new (contact, a,
 							 field->multi_line,
 							 &data->changed);
-			if (!edit_widgets)
-				gtk_window_set_focus (
-					GTK_WINDOW (widget), edit);
 			
 			if (label && edit) {
 				label_widgets = g_list_append (label_widgets,
@@ -1034,29 +1048,36 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	g_object_set (widget, "n-columns", 2, NULL);
 	for (c = label_widgets, d = edit_widgets, row = 0; (c) && (d);
 	     c = c->next, d = d->next, row++) {
+		/* Make sure address entries are displayed beneath photo */
+		if (row < 2 && GTK_IS_CONTAINER (d->data))
+			row = 2;
+		
+		/* Widen panel after photo */
 		if (row == 2) {
-			/* Add photo */
-			gtk_table_attach (GTK_TABLE (widget), button, 2, 3,
-					  1, 3, 0, 0, 0, 0);
-					  
-			/* Add groups-editing button */
-/*			contacts_append_to_edit_table (GTK_TABLE (widget),
-						       glabel, gbutton);*/
-	     	}
-	     	
+			g_object_set (widget, "n-columns", 3, NULL);
+			g_object_set (widget, "n-rows", 3, NULL);
+		}
+
 		contacts_append_to_edit_table (GTK_TABLE (widget),
 					       GTK_WIDGET (c->data),
 					       GTK_WIDGET (d->data));
+
+		/* Set focus on first entry */
+		if (row == 0)
+			gtk_window_set_focus (GTK_WINDOW (
+				glade_xml_get_widget (xml, "main_window")),
+				d->data);
 	}
-	if (row <= 2) {
-		/* Add photo */
-		gtk_table_attach (GTK_TABLE (widget), button, 2, 3,
-				  1, 3, 0, 0, 0, 0);
-				  
-		/* Add groups-editing button */
-/*			contacts_append_to_edit_table (GTK_TABLE (widget),
-					       glabel, gbutton);*/
-     	}
+	
+	/* Add photo */
+	g_object_set (widget, "n-rows", 3, NULL);
+	g_object_set (widget, "n-columns", 3, NULL);
+	gtk_table_attach (GTK_TABLE (widget), button, 2, 3,
+			  1, 3, 0, 0, 0, 0);
+	/* Add groups-editing button */
+/*	contacts_append_to_edit_table (GTK_TABLE (widget),
+				       glabel, gbutton);*/
+				       
 	g_list_free (label_widgets);
 	g_list_free (edit_widgets);
 
