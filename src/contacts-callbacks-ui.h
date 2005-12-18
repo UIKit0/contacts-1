@@ -42,6 +42,10 @@ void contacts_paste_cb (GtkWindow *main_window);
 
 void contacts_about_cb (GtkWidget *dialog);
 
+gboolean contacts_treeview_keypress_cb (GtkWidget *search_entry,
+					GdkEventKey *event,
+					GtkTreeView *treeview);
+
 gboolean contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 				     GHashTable *contacts_table);
 

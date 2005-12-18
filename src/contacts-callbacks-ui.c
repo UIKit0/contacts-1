@@ -221,6 +221,17 @@ contacts_about_cb (GtkWidget *dialog)
 }
 
 gboolean
+contacts_treeview_keypress_cb (GtkWidget *search_entry, GdkEventKey *event,
+	GtkTreeView *treeview)
+{
+	gtk_widget_event (search_entry, (GdkEvent *)event);
+	gtk_widget_grab_focus (search_entry);
+	gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
+	
+	return FALSE;
+}
+
+gboolean
 contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 			    GHashTable *contacts_table)
 {

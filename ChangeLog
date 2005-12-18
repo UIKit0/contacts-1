@@ -1,3 +1,20 @@
+2005-12-18  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	- Set can_focus to true on contact list treeview
+	- Add a callback on treeview keypress
+	- Restore object property in cut/copy/paste signal handlers, fixes bug
+	  #50
+	
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-callbacks-ui.h:
+	Add a keypress handler that passes key-presses from the treeview to
+	the search entry and focuses it
+
+	* src/contacts-main.c:
+	Stop setting can-focus to false for selectable labels - breaks
+	cut/copy/paste, see bug #36
+
 2005-12-14  Chris Lord,,,  <chris@openedhand.com>
 
 	* configure.ac:

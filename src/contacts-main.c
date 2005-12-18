@@ -183,10 +183,10 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 				       GTK_JUSTIFY_RIGHT);
 		gtk_misc_set_alignment (GTK_MISC (name_widget), 1, 0);
 		gtk_misc_set_alignment (GTK_MISC (value_widget), 0, 0);
-		g_object_set_property (G_OBJECT (name_widget),
+/*		g_object_set_property (G_OBJECT (name_widget),
 			"can-focus", can_focus);
 		g_object_set_property (G_OBJECT (value_widget),
-			"can-focus", can_focus);
+			"can-focus", can_focus);*/
 		
 		contacts_append_to_edit_table (GTK_TABLE (widget), name_widget,
 					       value_widget);
@@ -269,7 +269,7 @@ open_book (gpointer data)
 int
 main (int argc, char **argv)
 {
-	GValue *can_focus = g_new0 (GValue, 1);
+/*	GValue *can_focus = g_new0 (GValue, 1);*/
 	GtkWidget *widget;		/* Variables for UI initialisation */
 	GtkComboBox *groups_combobox;
 	GtkTreeView *contacts_treeview;
@@ -381,12 +381,13 @@ main (int argc, char **argv)
 		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
 	
 	/* Set can_focus to FALSE for summary name label & contacts treeview */
-	g_value_init (can_focus, G_TYPE_BOOLEAN);
+	/* FIXME: This breaks cut/copy/paste, think of a better solution */
+/*	g_value_init (can_focus, G_TYPE_BOOLEAN);
 	g_value_set_boolean (can_focus, FALSE);
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
 	g_value_unset (can_focus);
-	g_free (can_focus);
+	g_free (can_focus);*/
 
 	/* Connect UI-related signals */
 	widget = glade_xml_get_widget (xml, "new_button");
