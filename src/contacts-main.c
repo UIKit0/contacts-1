@@ -65,6 +65,25 @@ contacts_search_changed_cb (GtkWidget *search_entry)
 	contacts_update_treeview (search_entry);
 }
 
+static void
+contacts_remove_labels_from_focus_chain (GtkContainer *container)
+{
+	GList *chain, *l;
+	
+	gtk_container_get_focus_chain (container, &chain);
+	
+	for (l = chain; l; l = l->next) {
+		if (GTK_IS_LABEL (l->data)) {
+			gconstpointer data = l->data;
+			l = l->prev;
+			chain = g_list_remove (chain, data);
+		}
+	}
+	
+	gtk_container_set_focus_chain (container, chain);
+	g_list_free (chain);
+}
+
 void
 contacts_display_summary (EContact *contact, GladeXML *xml)
 {
@@ -206,6 +225,9 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	widget = glade_xml_get_widget (xml, "summary_vbox");
 	gtk_widget_show (widget);
 	contacts_set_available_options (xml, TRUE, TRUE, TRUE);
+
+	widget = glade_xml_get_widget (xml, "summary_table");
+	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 }
 
 static void
@@ -394,6 +416,8 @@ main (int argc, char **argv)
 	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
 	g_value_unset (can_focus);
 	g_free (can_focus);*/
+	widget = glade_xml_get_widget (xml, "preview_header_hbox");
+	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 
 	/* Connect UI-related signals */
 	widget = glade_xml_get_widget (xml, "new_button");

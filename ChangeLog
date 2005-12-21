@@ -1,6 +1,13 @@
 2005-12-21  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
+	* src/contacts-main.c: (contacts_search_changed_cb),
+	(contacts_display_summary), (main):
+	Remove labels from focus chain - bug #36
+
+2005-12-21  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
 	* src/contacts-callbacks-ui.c: (contacts_about_cb):
 	* src/contacts-callbacks-ui.h:
 	* src/contacts-main.c:
