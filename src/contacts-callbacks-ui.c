@@ -67,31 +67,50 @@ contacts_edit_cb (GtkWidget *source, ContactsData *data)
 }
 
 void
+contacts_treeview_edit_cb (GtkTreeView *treeview, GtkTreePath *arg1,
+	GtkTreeViewColumn *arg2, ContactsData *data)
+{
+	/* Disable the new/edit/delete options and get the contact to edit */
+	contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
+	data->contact = contacts_get_selected_contact (data->xml,
+						       data->contacts_table);
+	data->changed = FALSE;
+	
+	contacts_edit_pane_show (data, FALSE);
+}
+
+void
 contacts_delete_cb (GtkWidget *source, ContactsData *data)
 {
 	GtkWidget *dialog, *main_window;
 	EContact *contact;
 	gint result;
 	GList *widgets;
+	const gchar *name;
 	
+	contact = contacts_get_selected_contact (data->xml,
+					data->contacts_table);
+	if (!contact) return;
+
+	name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+	if (g_utf8_strlen (name, -1) <= 0)
+		name = "Unknown";
+
 	main_window = glade_xml_get_widget (data->xml, "main_window");
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_YES_NO,
+					 GTK_BUTTONS_CANCEL,
 					 "Are you sure you want to delete "\
-					 "this contact?");
+					 "'%s'?", name);
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog), "_Delete contact",
+		GTK_RESPONSE_YES, NULL);
 	
 	widgets = contacts_set_widgets_desensitive (main_window);
 	result = gtk_dialog_run (GTK_DIALOG (dialog));
 	switch (result) {
 		case GTK_RESPONSE_YES:
-			contact = contacts_get_selected_contact (data->xml,
-							data->contacts_table);
-			if (contact) {
-				e_book_remove_contact (data->book,
-					e_contact_get_const
-						(contact, E_CONTACT_UID), NULL);
-			}
+			e_book_remove_contact (data->book, e_contact_get_const
+				(contact, E_CONTACT_UID), NULL);
 			break;
 		default:
 			break;
@@ -225,8 +244,12 @@ contacts_treeview_keypress_cb (GtkWidget *search_entry, GdkEventKey *event,
 	GtkTreeView *treeview)
 {
 	gtk_widget_event (search_entry, (GdkEvent *)event);
-	gtk_widget_grab_focus (search_entry);
-	gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
+	if (gtk_window_get_focus (
+	    GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (treeview)))) == 
+	    GTK_WIDGET (treeview)) {
+		gtk_widget_grab_focus (search_entry);
+		gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
+	}
 	
 	return FALSE;
 }

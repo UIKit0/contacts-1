@@ -30,6 +30,9 @@ void contacts_new_cb (GtkWidget *source, ContactsData *data);
 
 void contacts_edit_cb (GtkWidget *source, ContactsData *data);
 
+void contacts_treeview_edit_cb (GtkTreeView *treeview, GtkTreePath *arg1,
+				GtkTreeViewColumn *arg2, ContactsData *data);
+	
 void contacts_delete_cb (GtkWidget *source, ContactsData *data);
 
 void contacts_import_cb (GtkWidget *source, ContactsData *data);

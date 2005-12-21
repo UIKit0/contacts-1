@@ -399,6 +399,9 @@ main (int argc, char **argv)
 	widget = glade_xml_get_widget (xml, "edit_button");
 	g_signal_connect (G_OBJECT (widget), "clicked",
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
+	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	g_signal_connect (G_OBJECT (widget), "row_activated",
+			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
 	widget = glade_xml_get_widget (xml, "edit");
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
