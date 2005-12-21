@@ -284,7 +284,7 @@
 			  <property name="has_frame">True</property>
 			  <property name="invisible_char">*</property>
 			  <property name="activates_default">True</property>
-			  <signal name="changed" handler="contacts_update_treeview" last_modification_time="Fri, 19 Aug 2005 17:23:17 GMT"/>
+			  <signal name="changed" handler="contacts_search_changed_cb" last_modification_time="Wed, 21 Dec 2005 17:59:44 GMT"/>
 			  <accelerator key="S" modifiers="GDK_MOD1_MASK" signal="grab_focus"/>
 			</widget>
 			<packing>
@@ -336,7 +336,7 @@
 			  <property name="fixed_height_mode">False</property>
 			  <property name="hover_selection">False</property>
 			  <property name="hover_expand">False</property>
-			  <signal name="key_press_event" handler="contacts_treeview_keypress_cb" after="yes" object="search_entry" last_modification_time="Sun, 18 Dec 2005 03:54:22 GMT"/>
+			  <signal name="key_press_event" handler="contacts_treeview_search_cb" after="yes" object="search_entry" last_modification_time="Wed, 21 Dec 2005 17:55:31 GMT"/>
 			</widget>
 		      </child>
 		    </widget>

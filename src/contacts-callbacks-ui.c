@@ -240,16 +240,11 @@ contacts_about_cb (GtkWidget *dialog)
 }
 
 gboolean
-contacts_treeview_keypress_cb (GtkWidget *search_entry, GdkEventKey *event,
+contacts_treeview_search_cb (GtkWidget *search_entry, GdkEventKey *event,
 	GtkTreeView *treeview)
 {
 	gtk_widget_event (search_entry, (GdkEvent *)event);
-	if (gtk_window_get_focus (
-	    GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (treeview)))) == 
-	    GTK_WIDGET (treeview)) {
-		gtk_widget_grab_focus (search_entry);
-		gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
-	}
+	gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
 	
 	return FALSE;
 }

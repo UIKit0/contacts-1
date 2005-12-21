@@ -1,6 +1,14 @@
 2005-12-21  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:
+	* src/contacts-callbacks-ui.c: (contacts_about_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-main.c:
+	- Fix oddness with starting search from treeview
+
+2005-12-21  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
 	Change 'OK' button in edit pane to 'Close' - bug #55
 	
 	* src/contacts-callbacks-ui.c: (contacts_edit_cb),

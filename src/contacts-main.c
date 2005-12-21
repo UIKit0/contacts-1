@@ -32,7 +32,6 @@
 
 #define XML_FILE PKGDATADIR "/contacts.glade"
 
-
 void
 contacts_update_treeview (GtkWidget *source)
 {
@@ -57,6 +56,13 @@ contacts_update_treeview (GtkWidget *source)
 			gtk_tree_selection_select_iter (selection, &iter);
 		}
 	}
+}
+
+void
+contacts_search_changed_cb (GtkWidget *search_entry)
+{
+	gtk_widget_grab_focus (search_entry);
+	contacts_update_treeview (search_entry);
 }
 
 void
