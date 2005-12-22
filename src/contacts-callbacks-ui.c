@@ -22,11 +22,11 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
+#include "config.h"
 #ifdef HAVE_GNOMEVFS
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
-#include "config.h"
 #include "contacts-defs.h"
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
@@ -124,9 +124,11 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 	gchar *vcard_string;
 #ifdef HAVE_GNOMEVFS
 	int size;
+	GnomeVFSResult vfs_result;
 	
-	if (gnome_vfs_read_entire_file (filename, &size, &vcard_string) ==
-	    GNOME_VFS_OK) {
+	vfs_result = gnome_vfs_read_entire_file (
+		filename, &size, &vcard_string);
+	if (vfs_result == GNOME_VFS_OK) {
 #else
 	if (g_file_get_contents (
 		filename, &vcard_string, NULL, NULL)) {
@@ -184,6 +186,12 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 		}
 		g_free (vcard_string);
 	}
+#ifdef HAVE_GNOMEVFS
+	else {
+		g_warning ("Error loading '%s': %s",
+			filename, gnome_vfs_result_to_string (vfs_result));
+	}
+#endif
 }
 
 void
@@ -235,7 +243,7 @@ contacts_export (ContactsData *data, const gchar *filename)
 #ifdef HAVE_GNOMEVFS
 		GnomeVFSHandle *file;
 		GnomeVFSFileSize bytes_written;
-		if (gnome_vfs_open (&handle, filename, GNOME_VFS_OPEN_WRITE) ==
+		if (gnome_vfs_open (&file, filename, GNOME_VFS_OPEN_WRITE) ==
 		    GNOME_VFS_OK) {
 			if (gnome_vfs_write (file, vcard, strlen (vcard),
 			    &bytes_written) != GNOME_VFS_OK)

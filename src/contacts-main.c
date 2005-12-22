@@ -23,11 +23,12 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
+#include "config.h"
 #ifdef HAVE_GNOMEVFS
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
-#include "config.h"
+#include "bacon-message-connection.h"
 #include "contacts-defs.h"
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
@@ -303,15 +304,33 @@ contacts_import_from_param (gpointer data)
 {
 	ContactsData *contacts_data = data;
 	
+	g_printf ("Opening '%s'\n", contacts_data->file);
 	contacts_import (contacts_data, contacts_data->file, TRUE);
 	
 	return FALSE;
+}
+
+static void
+contacts_bacon_cb (const char *message, gpointer user_data)
+{
+	ContactsData *data = user_data;
+	
+	if (!message)
+		return;
+	
+	gtk_window_present (GTK_WINDOW (
+		glade_xml_get_widget (data->xml, "main_window")));
+	if (message[0] != ':') {
+		g_printf ("Opening '%s'\n", message);
+		contacts_import (data, message, TRUE);
+	}
 }
 
 int
 main (int argc, char **argv)
 {
 /*	GValue *can_focus = g_new0 (GValue, 1);*/
+	BaconMessageConnection *mc;
 	GtkWidget *widget;		/* Variables for UI initialisation */
 	GtkComboBox *groups_combobox;
 	GtkTreeView *contacts_treeview;
@@ -324,10 +343,20 @@ main (int argc, char **argv)
 					 * see contacts-defs.h.
 					 */
 
-	contacts_data = g_new0 (ContactsData, 1);
-
-	/* Standard initialisation for gtk and glade */
 	gtk_init (&argc, &argv);
+
+	mc = bacon_message_connection_new ("contacts");
+	if (!bacon_message_connection_get_is_server (mc)) {
+		bacon_message_connection_send (mc, argv[1] ? argv[1] : ":");
+		bacon_message_connection_free (mc);
+		gdk_notify_startup_complete ();
+		return 0;
+	}
+
+	contacts_data = g_new0 (ContactsData, 1);	
+	bacon_message_connection_set_callback (
+		mc, contacts_bacon_cb, contacts_data);
+
 	glade_init ();
 #ifdef HAVE_GNOMEVFS
 	gnome_vfs_init ();

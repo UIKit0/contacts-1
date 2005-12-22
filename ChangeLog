@@ -1,6 +1,22 @@
 2005-12-22  Chris Lord,,,  <chris@openedhand.com>
 
 	* configure.ac:
+	Typo (GNOMEVFS -> HAVE_GNOMEVFS)
+	
+	* data/contacts.desktop:
+	Add vCard mimetype
+	
+	* src/Makefile.am:
+	Add libbacon files
+	
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-main.c: (contacts_import_from_param),
+	(contacts_bacon_cb), (main):
+	Fix gnome-vfs code, use libbacon to maintain only one instance
+
+2005-12-22  Chris Lord,,,  <chris@openedhand.com>
+
+	* configure.ac:
 	Add --enable-gnome-vfs switch for vCard import/export using gnome-vfs
 	
 	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
