@@ -52,6 +52,7 @@ typedef struct {
 	GList *contacts_groups;
 	GladeXML *xml;
 	gboolean changed;
+	gchar *file;
 } ContactsData;
 
 typedef struct {

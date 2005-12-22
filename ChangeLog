@@ -1,3 +1,31 @@
+2005-12-22  Chris Lord,,,  <chris@openedhand.com>
+
+	* configure.ac:
+	Add --enable-gnome-vfs switch for vCard import/export using gnome-vfs
+	
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
+	Allow manual triggering of the contact-added signal
+	
+	* src/contacts-callbacks-ui.c: (contacts_edit_cb),
+	(contacts_treeview_edit_cb):
+	* src/contacts-callbacks-ui.h:
+	- Separate import/export UI and function
+	- Add confirmation option for contact import (bug #47)
+	- Select a contact after importing, if contact is imported into db
+	
+	* src/contacts-defs.h:
+	Add new var for importing contacts from the command-line (bug #47)
+	
+	* src/contacts-edit-pane.c: (contacts_edit_ok_new_cb):
+	Move export to contacts-callbacks-ui
+	
+	* src/contacts-main.c: (open_book), (main):
+	Allow import of contacts from command-line (bug #47)
+	
+	* src/contacts-utils.c: (contacts_get_selected_contact):
+	* src/contacts-utils.h:
+	New function contacts_set_selected_contact to select a contact by UID
+
 2005-12-21  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

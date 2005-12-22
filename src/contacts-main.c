@@ -23,7 +23,11 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
+#ifdef HAVE_GNOMEVFS
+#include <libgnomevfs/gnome-vfs.h>
+#endif
 
+#include "config.h"
 #include "contacts-defs.h"
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
@@ -294,6 +298,16 @@ open_book (gpointer data)
 	return FALSE;
 }
 
+static gboolean
+contacts_import_from_param (gpointer data)
+{
+	ContactsData *contacts_data = data;
+	
+	contacts_import (contacts_data, contacts_data->file, TRUE);
+	
+	return FALSE;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -315,6 +329,9 @@ main (int argc, char **argv)
 	/* Standard initialisation for gtk and glade */
 	gtk_init (&argc, &argv);
 	glade_init ();
+#ifdef HAVE_GNOMEVFS
+	gnome_vfs_init ();
+#endif
 
 	/* Set critical errors to close application */
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
@@ -445,9 +462,12 @@ main (int argc, char **argv)
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
 
-			  
 	/* Start */
 	g_idle_add (open_book, contacts_data);
+	if (argv[1] != NULL) {
+		contacts_data->file = argv[1];
+		g_idle_add (contacts_import_from_param, contacts_data);
+	}
 	gtk_main ();
 
 	/* Unload the addressbook */

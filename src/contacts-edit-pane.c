@@ -164,46 +164,6 @@ contacts_edit_ok_new_cb (GtkWidget *button, ContactsData *data)
 }
 
 static void
-contacts_edit_export_cb (GtkWidget *button, ContactsData *data)
-{
-	GList *widgets;
-	GtkWidget *main_window =
-		glade_xml_get_widget (data->xml, "main_window");
-	GtkWidget *dialog = gtk_file_chooser_dialog_new (
-		"Export Contact",
-		GTK_WINDOW (main_window),
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL,
-		GTK_RESPONSE_CANCEL,
-		GTK_STOCK_SAVE,
-		GTK_RESPONSE_ACCEPT,
-		NULL);
-	
-	widgets = contacts_set_widgets_desensitive (main_window);
-	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-		gchar *filename = gtk_file_chooser_get_filename 
-					(GTK_FILE_CHOOSER (dialog));
-		if (filename) {
-			char *vcard = e_vcard_to_string (
-				E_VCARD (data->contact), EVC_FORMAT_VCARD_30);
-				
-			if (vcard) {
-				FILE *file = fopen (filename, "w");
-				if (file) {
-					fputs (vcard, file);
-					fclose (file);
-				}
-				g_free (vcard);
-			}
-			g_free (filename);
-		}
-	}
-	
-	contacts_set_widgets_sensitive (widgets);
-	gtk_widget_destroy (dialog);
-}
-
-static void
 contacts_type_entry_changed (GtkWidget *widget, EContactTypeChangeData *data)
 {
 	GList *v = contacts_entries_get_values (widget, NULL);
@@ -1122,10 +1082,10 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	widget = glade_xml_get_widget (xml, "contact_export");
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_edit_export_cb,
+					      NULL, contacts_export_cb,
 					      NULL);
 	g_signal_connect (G_OBJECT (widget), "activate", 
-			  G_CALLBACK (contacts_edit_export_cb), data);
+			  G_CALLBACK (contacts_export_cb), data);
 			  
 	/* Connect add field button */
 	widget = glade_xml_get_widget (xml, "add_field_button");

@@ -302,6 +302,35 @@ contacts_get_selected_contact (GladeXML *xml, GHashTable *contacts_table)
 	return contact;
 }
 
+void
+contacts_set_selected_contact (GladeXML *xml, const gchar *uid)
+{
+	GtkTreeView *treeview;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+
+	treeview = GTK_TREE_VIEW (
+		glade_xml_get_widget (xml, "contacts_treeview"));
+	model = /*gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (*/
+		gtk_tree_view_get_model (treeview)/*))*/;
+	
+	if (!gtk_tree_model_get_iter_first (model, &iter)) return;
+	
+	do {
+		const gchar *ruid;
+		gtk_tree_model_get (model, &iter, CONTACT_UID_COL, &ruid, -1);
+		if (strcmp (uid, ruid) == 0) {
+			GtkTreeSelection *selection =
+				gtk_tree_view_get_selection (treeview);
+			if (selection)
+				gtk_tree_selection_select_iter (
+					selection, &iter);
+			return;
+		}
+	} while (gtk_tree_model_iter_next (model, &iter));
+
+}
+
 /* Helper method to set edit/delete sensitive/insensitive */
 void
 contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,

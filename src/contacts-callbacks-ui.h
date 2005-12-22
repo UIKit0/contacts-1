@@ -35,7 +35,14 @@ void contacts_treeview_edit_cb (GtkTreeView *treeview, GtkTreePath *arg1,
 	
 void contacts_delete_cb (GtkWidget *source, ContactsData *data);
 
+void contacts_import (ContactsData *data, const gchar *filename,
+		      gboolean do_confirm);
+
 void contacts_import_cb (GtkWidget *source, ContactsData *data);
+
+void contacts_export (ContactsData *data, const gchar *filename);
+
+void contacts_export_cb (GtkWidget *source, ContactsData *data);
 
 void contacts_copy_cb (GtkWindow *main_window);
 

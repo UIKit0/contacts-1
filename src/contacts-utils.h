@@ -48,6 +48,8 @@ EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
 
 EContact *contacts_get_selected_contact (GladeXML *xml,
 					 GHashTable *contacts_table);
+					 
+void contacts_set_selected_contact (GladeXML *xml, const gchar *uid);
 
 void contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,
 				     gboolean delete);

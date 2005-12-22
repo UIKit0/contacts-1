@@ -22,10 +22,15 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libebook/e-book.h>
+#ifdef HAVE_GNOMEVFS
+#include <libgnomevfs/gnome-vfs.h>
+#endif
 
+#include "config.h"
 #include "contacts-defs.h"
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
+#include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
 
@@ -70,13 +75,7 @@ void
 contacts_treeview_edit_cb (GtkTreeView *treeview, GtkTreePath *arg1,
 	GtkTreeViewColumn *arg2, ContactsData *data)
 {
-	/* Disable the new/edit/delete options and get the contact to edit */
-	contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
-	data->contact = contacts_get_selected_contact (data->xml,
-						       data->contacts_table);
-	data->changed = FALSE;
-	
-	contacts_edit_pane_show (data, FALSE);
+	contacts_edit_cb (GTK_WIDGET (treeview), data);
 }
 
 void
@@ -120,6 +119,74 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 }
 
 void
+contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
+{
+	gchar *vcard_string;
+#ifdef HAVE_GNOMEVFS
+	int size;
+	
+	if (gnome_vfs_read_entire_file (filename, &size, &vcard_string) ==
+	    GNOME_VFS_OK) {
+#else
+	if (g_file_get_contents (
+		filename, &vcard_string, NULL, NULL)) {
+#endif
+		EContact *contact =
+			e_contact_new_from_vcard (vcard_string);
+		if (contact) {
+			gint result = GTK_RESPONSE_YES;
+			if (do_confirm) {
+				GtkWidget *dialog, *main_window;
+				GList *widgets;
+				
+				main_window = glade_xml_get_widget (
+					data->xml, "main_window");
+				dialog = gtk_message_dialog_new (
+					GTK_WINDOW (main_window),
+					0, GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_NONE,
+					"Would you like to import contact "\
+					"'%s'?",
+					(const char *)e_contact_get_const (
+						contact, E_CONTACT_FULL_NAME));
+				gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+					"_Show contact", GTK_RESPONSE_NO,
+					"_Import contact", GTK_RESPONSE_YES,
+					NULL);
+				widgets = contacts_set_widgets_desensitive (
+					main_window);
+				result = gtk_dialog_run (GTK_DIALOG (dialog));
+				gtk_widget_destroy (dialog);
+				contacts_set_widgets_sensitive (widgets);
+				g_list_free (widgets);
+			}
+			if (result == GTK_RESPONSE_YES) {
+				GList *lcontact =
+					g_list_prepend (NULL, contact);
+				/* Add contact to db and select it */
+				e_book_add_contact (
+					data->book, contact, NULL);
+				/* Maually trigger the added callback so that
+				 * the contact can be selected.
+				 */
+				contacts_added_cb (data->book_view, lcontact,
+					data);
+				contacts_set_selected_contact (data->xml,
+					(const gchar *)e_contact_get_const (
+						contact, E_CONTACT_UID));
+				g_list_free (lcontact);
+			} else {
+				contacts_display_summary (contact, data->xml);
+				contacts_set_available_options (
+					data->xml, TRUE, FALSE, FALSE);
+			}
+			g_object_unref (contact);
+		}
+		g_free (vcard_string);
+	}
+}
+
+void
 contacts_import_cb (GtkWidget *source, ContactsData *data)
 {
 	GList *widgets;
@@ -137,31 +204,91 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 		NULL);
 
 	filter = gtk_file_filter_new ();
-	gtk_file_filter_add_mime_type (filter, "text/plain");
+	gtk_file_filter_add_mime_type (filter, "text/x-vcard");
 	gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
+#ifdef HAVE_GNOMEVFS
+	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), FALSE);
+#endif
 	
 	widgets = contacts_set_widgets_desensitive (main_window);
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		gchar *filename = gtk_file_chooser_get_filename 
 					(GTK_FILE_CHOOSER (dialog));
 		if (filename) {
-			gchar *vcard_string;
-			if (g_file_get_contents (
-				filename, &vcard_string, NULL, NULL)) {
-				EContact *contact =
-					e_contact_new_from_vcard (vcard_string);
-				if (contact) {
-					e_book_add_contact (
-						data->book, contact, NULL);
-					g_object_unref (contact);
-				}
-				g_free (vcard_string);
-			}
+			contacts_import (data, filename, FALSE);
+			g_free (filename);
 		}
 	}
 	
 	contacts_set_widgets_sensitive (widgets);
 	gtk_widget_destroy (dialog);
+	g_list_free (widgets);
+}
+
+void
+contacts_export (ContactsData *data, const gchar *filename)
+{
+	char *vcard = e_vcard_to_string (
+		E_VCARD (data->contact), EVC_FORMAT_VCARD_30);
+		
+	if (vcard) {
+#ifdef HAVE_GNOMEVFS
+		GnomeVFSHandle *file;
+		GnomeVFSFileSize bytes_written;
+		if (gnome_vfs_open (&handle, filename, GNOME_VFS_OPEN_WRITE) ==
+		    GNOME_VFS_OK) {
+			if (gnome_vfs_write (file, vcard, strlen (vcard),
+			    &bytes_written) != GNOME_VFS_OK)
+				g_warning ("Wrinting to '%s' failed, %d bytes "
+					"written", filename, bytes_written);
+			gnome_vfs_close (file);
+		}
+#else
+		FILE *file = fopen (filename, "w");
+		if (file) {
+			fputs (vcard, file);
+			fclose (file);
+		}
+#endif
+		g_free (vcard);
+	}
+}
+
+void
+contacts_export_cb (GtkWidget *source, ContactsData *data)
+{
+	GList *widgets;
+	GtkWidget *main_window =
+		glade_xml_get_widget (data->xml, "main_window");
+	GtkWidget *dialog = gtk_file_chooser_dialog_new (
+		"Export Contact",
+		GTK_WINDOW (main_window),
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL,
+		GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE,
+		GTK_RESPONSE_ACCEPT,
+		NULL);
+	
+	gtk_file_chooser_set_do_overwrite_confirmation (
+		GTK_FILE_CHOOSER (dialog), TRUE);
+#ifdef HAVE_GNOMEVFS
+	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), FALSE);
+#endif
+
+	widgets = contacts_set_widgets_desensitive (main_window);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		gchar *filename = gtk_file_chooser_get_filename 
+					(GTK_FILE_CHOOSER (dialog));
+		if (filename) {
+			contacts_export (data, filename);
+			g_free (filename);
+		}
+	}
+	
+	contacts_set_widgets_sensitive (widgets);
+	gtk_widget_destroy (dialog);
+	g_list_free (widgets);
 }
 
 void

@@ -57,6 +57,13 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		if (!E_IS_CONTACT (contact))
 			continue;
 
+		/* Check if the contact has already been added (can happen if
+		 * contact has been manually added before handling the signal)
+		 */
+		if (g_hash_table_lookup (contacts_table, e_contact_get_const (
+		    contact, E_CONTACT_UID)) != NULL)
+			continue;
+			
 		/* Add contact to list */
 		hash = g_new (EContactListHash, 1);
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
