@@ -21,6 +21,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <signal name="destroy" handler="gtk_main_quit" last_modification_time="Fri, 26 Aug 2005 18:05:29 GMT"/>
+  <signal name="set_focus" handler="contacts_edit_set_focus_cb" object="remove_field_button" last_modification_time="Sat, 24 Dec 2005 00:06:50 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox7">
@@ -582,7 +583,7 @@
 			  <property name="n_columns">2</property>
 			  <property name="homogeneous">False</property>
 			  <property name="row_spacing">6</property>
-			  <property name="column_spacing">6</property>
+			  <property name="column_spacing">0</property>
 			</widget>
 		      </child>
 		    </widget>

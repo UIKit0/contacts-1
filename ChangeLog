@@ -1,3 +1,22 @@
+2005-12-24  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	* src/contacts-edit-pane.c: (contacts_edit_widget_new),
+	(contacts_edit_focus_in), (contacts_edit_focus_out),
+	(contacts_edit_add_focus_events), (contacts_append_to_edit_table),
+	(contacts_change_groups_cb), (contacts_find_widget_cb),
+	(contacts_add_field_cb), (contacts_remove_entries),
+	(contacts_widget_is_label), (contacts_edit_set_focus_cb),
+	(contacts_remove_field_cb), (contacts_widgets_list_sort),
+	(contacts_widgets_list_find), (contacts_edit_choose_photo),
+	(contacts_edit_pane_show):
+	* src/contacts-edit-pane.h:
+	* src/contacts-main.c: (contacts_display_summary):
+	* src/contacts-utils.c: (contacts_set_widget_desensitive_recurse):
+	Highlight currently selected field in edit pane. When the user clicks
+	remove, just remove the selected field. Fixed, as suggested by Jorn
+	Baayen, bug #58
+
 2005-12-22  Chris Lord,,,  <chris@openedhand.com>
 
 	* configure.ac:

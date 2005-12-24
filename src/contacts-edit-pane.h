@@ -23,6 +23,9 @@
 
 void contacts_edit_pane_show (ContactsData *data, gboolean new);
 
+void contacts_edit_set_focus_cb (GtkWindow *window, GtkWidget *widget,
+				 gpointer user_data);
+
 void contacts_remove_field_cb (GtkWidget *button, gpointer data);
 
 GtkWidget *contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
@@ -30,5 +33,5 @@ GtkWidget *contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 
 void contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data);
 
-void contacts_append_to_edit_table (GtkTable *table,
-				    GtkWidget *label, GtkWidget *edit);
+void contacts_append_to_edit_table (GtkTable *table, GtkWidget *label,
+				    GtkWidget *edit, gboolean do_focus);

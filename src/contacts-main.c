@@ -219,7 +219,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 			"can-focus", can_focus);*/
 		
 		contacts_append_to_edit_table (GTK_TABLE (widget), name_widget,
-					       value_widget);
+					       value_widget, FALSE);
 		
 		g_free (name_markup);
 		g_free (value_text);

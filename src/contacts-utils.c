@@ -815,7 +815,7 @@ contacts_set_widget_desensitive_recurse (GtkWidget *widget, GList **widgets)
 		}
 		
 		if (GTK_IS_TABLE (widget) || GTK_IS_HBOX (widget) ||
-		    GTK_IS_VBOX (widget)) {
+		    GTK_IS_VBOX (widget) || GTK_IS_EVENT_BOX (widget)) {
 			GList *c, *children = gtk_container_get_children (
 				GTK_CONTAINER (widget));
 			
