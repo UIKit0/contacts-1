@@ -31,6 +31,23 @@ if test "$want_gnomevfs" = "yes"; then
 	CONTACTS_LIBS="$CONTACTS_LIBS $GNOMEVFS_LIBS"
 fi
 
+AC_ARG_ENABLE(gconf, [  --enable-gconf          Use gconf for storing settings [[default=no]]],
+ [want_gconf="$enableval"])
+
+if test "$want_gconf" = "yes"; then
+	PKG_CHECK_MODULES(GCONF, gconf-2.0)
+	AC_DEFINE(HAVE_GCONF, 1, [Define if you want Gconf support])
+	CONTACTS_CFLAGS="$CONTACTS_CFLAGS $GCONF_CFLAGS"
+	CONTACTS_LIBS="$CONTACTS_LIBS $GCONF_LIBS"
+
+	# Find how and where to put the GConf schemas
+	AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
+	if test x"$GCONFTOOL" = xno; then
+		AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
+	fi
+	AM_GCONF_SOURCE_2
+fi
+
 AC_OUTPUT([
 Makefile
 data/Makefile

@@ -1,3 +1,15 @@
+2005-12-29  Chris Lord,,,  <chris@openedhand.com>
+
+	* autogen.sh:
+	* configure.ac:
+	* data/Makefile.am:
+	* data/contacts.glade:
+	* data/contacts.schemas:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-main.c: (contacts_bacon_cb),
+	(contacts_gconf_search_cb), (main):
+	Add gconf support for specifying search UI (fixes bug #57). Needs work
+
 2005-12-24  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

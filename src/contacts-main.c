@@ -27,6 +27,9 @@
 #ifdef HAVE_GNOMEVFS
 #include <libgnomevfs/gnome-vfs.h>
 #endif
+#ifdef HAVE_GCONF
+#include <gconf/gconf-client.h>
+#endif
 
 #include "bacon-message-connection.h"
 #include "contacts-defs.h"
@@ -35,6 +38,8 @@
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
 
+#define GCONF_PATH "/apps/contacts"
+#define GCONF_KEY_SEARCH "/apps/contacts/search_type"
 #define XML_FILE PKGDATADIR "/contacts.glade"
 
 void
@@ -326,11 +331,42 @@ contacts_bacon_cb (const char *message, gpointer user_data)
 	}
 }
 
+#ifdef HAVE_GCONF
+static void
+contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
+	gpointer user_data)
+{
+	const gchar *search;
+	GConfValue *value;
+	GtkWidget *widget;
+	GladeXML *xml = user_data;
+		
+	value = gconf_entry_get_value (entry);
+	search = gconf_value_get_string (value);
+	if (strcmp (search, "entry") == 0) {
+		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		gtk_widget_show (widget);
+		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		gtk_widget_hide (widget);
+	} else if (strcmp (search, "alphatab") == 0) {
+		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		gtk_widget_hide (widget);
+		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		gtk_widget_show (widget);
+	} else {
+		g_warning ("Unknown search UI type \"%s\"", search);
+	}
+}
+#endif
+
 int
 main (int argc, char **argv)
 {
-/*	GValue *can_focus = g_new0 (GValue, 1);*/
 	BaconMessageConnection *mc;
+#ifdef HAVE_GCONF
+	const char *search;
+	GConfClient *client;
+#endif
 	GtkWidget *widget;		/* Variables for UI initialisation */
 	GtkComboBox *groups_combobox;
 	GtkTreeView *contacts_treeview;
@@ -358,9 +394,6 @@ main (int argc, char **argv)
 		mc, contacts_bacon_cb, contacts_data);
 
 	glade_init ();
-#ifdef HAVE_GNOMEVFS
-	gnome_vfs_init ();
-#endif
 
 	/* Set critical errors to close application */
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
@@ -375,6 +408,27 @@ main (int argc, char **argv)
 	contacts_data->book = e_book_new_system_addressbook (NULL);
 	if (!contacts_data->book)
 		g_critical ("Could not load system addressbook");
+
+#ifdef HAVE_GNOMEVFS
+	gnome_vfs_init ();
+#endif
+#ifdef HAVE_GCONF
+	client = gconf_client_get_default ();
+	search = gconf_client_get_string (client, GCONF_KEY_SEARCH, NULL);
+	if (!search) {
+		gconf_client_set_string (
+			client, GCONF_KEY_SEARCH, "entry", NULL);
+	} else if (strcmp (search, "alphatab") == 0) {
+		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		gtk_widget_hide (widget);
+		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		gtk_widget_show (widget);
+	}
+	gconf_client_add_dir (client, GCONF_PATH, GCONF_CLIENT_PRELOAD_NONE,
+		NULL);
+	gconf_client_notify_add (client, GCONF_KEY_SEARCH,
+		contacts_gconf_search_cb, xml, NULL, NULL);
+#endif
 
 	/* Hook up signals defined in interface xml */
 	glade_xml_signal_autoconnect (xml);
@@ -453,15 +507,8 @@ main (int argc, char **argv)
 	gtk_window_set_transient_for (
 		GTK_WINDOW (glade_xml_get_widget (xml, "about_dialog")),
 		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
-	
-	/* Set can_focus to FALSE for summary name label & contacts treeview */
-	/* FIXME: This breaks cut/copy/paste, think of a better solution */
-/*	g_value_init (can_focus, G_TYPE_BOOLEAN);
-	g_value_set_boolean (can_focus, FALSE);
-	widget = glade_xml_get_widget (xml, "summary_name_label");
-	g_object_set_property (G_OBJECT (widget), "can-focus", can_focus);
-	g_value_unset (can_focus);
-	g_free (can_focus);*/
+
+	/* Remove selectable label from focus chain */	
 	widget = glade_xml_get_widget (xml, "preview_header_hbox");
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 

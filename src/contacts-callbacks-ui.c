@@ -425,21 +425,70 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
 	 * empty searches.
 	 */
-	search_string = gtk_entry_get_text (GTK_ENTRY (glade_xml_get_widget
-							(xml, "search_entry")));
-	if ((search_string) && (g_utf8_strlen (search_string, -1) > 0)) {
-		gchar *name_string;
-		gtk_tree_model_get (model, iter, CONTACT_NAME_COL, &name_string,
-				    -1);
-		if (name_string) {
-			gunichar *isearch =
-			    kozo_utf8_strcasestrip (search_string);
-			if (!kozo_utf8_strstrcasestrip
-			    (name_string, isearch))
-				result = FALSE;
-			g_free (name_string);
-			g_free (isearch);
+	if (GTK_WIDGET_VISIBLE (glade_xml_get_widget (
+	    xml, "search_entry_hbox"))) {
+		search_string = gtk_entry_get_text (
+			GTK_ENTRY (glade_xml_get_widget (xml, "search_entry")));
+		if ((search_string) &&
+		    (g_utf8_strlen (search_string, -1) > 0)) {
+			gchar *name_string;
+			gtk_tree_model_get (model, iter, CONTACT_NAME_COL,
+				&name_string, -1);
+			if (name_string) {
+				gunichar *isearch =
+				    kozo_utf8_strcasestrip (search_string);
+				if (!kozo_utf8_strstrcasestrip
+				    (name_string, isearch))
+					result = FALSE;
+				g_free (name_string);
+				g_free (isearch);
+			}
 		}
+	} else {
+		gint i;
+		gchar *name, *uname;
+		gunichar c;
+		GSList *b, *buttons = gtk_radio_button_get_group (
+			GTK_RADIO_BUTTON (glade_xml_get_widget (
+				xml, "symbols_radiobutton")));
+		
+		/* Find the active radio button */
+		for (b = buttons, i = 0; b; b = b->next, i++)
+			if (gtk_toggle_button_get_active (
+				GTK_TOGGLE_BUTTON (b->data))) break;
+		
+		gtk_tree_model_get (model, iter, CONTACT_NAME_COL,
+			&name, -1);
+		uname = g_utf8_strup (name, -1);
+		c = g_utf8_get_char (uname);
+		
+		switch (i) {
+			case 4 :
+				if (c >= 'A' || c <= 'Z')
+					return FALSE;
+				break;
+			case 3 :
+				if (c < 'A' || c > 'G')
+					return FALSE;
+				break;
+			case 2 :
+				if (c < 'H' || c > 'N')
+					return FALSE;
+				break;
+			case 1 :
+				if (c < 'O' || c > 'U')
+					return FALSE;
+				break;
+			case 0 :
+				if (c < 'V' || c > 'Z')
+					return FALSE;
+				break;
+			default :
+				g_warning ("Unknown search tab state %d", i);
+				break;
+		}
+		
+		g_free (name);
 	}
 	return result;
 }
