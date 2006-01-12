@@ -45,8 +45,9 @@ if test "$want_gconf" = "yes"; then
 	if test x"$GCONFTOOL" = xno; then
 		AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
 	fi
-	AM_GCONF_SOURCE_2
 fi
+
+AM_GCONF_SOURCE_2
 
 AC_OUTPUT([
 Makefile
