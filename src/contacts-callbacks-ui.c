@@ -247,8 +247,9 @@ contacts_export (ContactsData *data, const gchar *filename)
 		    GNOME_VFS_OK) {
 			if (gnome_vfs_write (file, vcard, strlen (vcard),
 			    &bytes_written) != GNOME_VFS_OK)
-				g_warning ("Wrinting to '%s' failed, %d bytes "
-					"written", filename, bytes_written);
+				g_warning ("Writing to '%s' failed, %ld bytes "
+					"written", filename,
+					(guint64)bytes_written);
 			gnome_vfs_close (file);
 		}
 #else
@@ -278,8 +279,9 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 		GTK_RESPONSE_ACCEPT,
 		NULL);
 	
-	gtk_file_chooser_set_do_overwrite_confirmation (
-		GTK_FILE_CHOOSER (dialog), TRUE);
+	/* Gtk 2.8 feature */
+/*	gtk_file_chooser_set_do_overwrite_confirmation (
+		GTK_FILE_CHOOSER (dialog), TRUE);*/
 #ifdef HAVE_GNOMEVFS
 	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), FALSE);
 #endif
@@ -289,8 +291,52 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 		gchar *filename = gtk_file_chooser_get_filename 
 					(GTK_FILE_CHOOSER (dialog));
 		if (filename) {
-			contacts_export (data, filename);
+#ifdef HAVE_GNOMEVFS
+			GnomeVFSURI *uri = gnome_vfs_uri_new (filename);
+			if (gnome_vfs_uri_exists (uri))
+#else
+			if (g_file_test (
+			    filename, G_FILE_TEST_EXISTS))
+#endif
+			{
+				GtkWidget *button, *image;
+				GtkWidget *overwrite_dialog =
+				gtk_message_dialog_new_with_markup (
+					GTK_WINDOW (dialog),
+					GTK_DIALOG_MODAL,
+					GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_CANCEL,
+					"<big><b>The file \"%s\""
+					" already exists.\n"
+					"Do you want to replace it?</b></big>",
+					filename);
+				gtk_message_dialog_format_secondary_markup (
+					GTK_MESSAGE_DIALOG (overwrite_dialog),
+					"Replacing it will overwrite its "
+					"contents.");
+				button = gtk_dialog_add_button (
+					GTK_DIALOG (overwrite_dialog),
+					"_Replace",
+					GTK_RESPONSE_OK);
+				image = gtk_image_new_from_stock (
+					GTK_STOCK_SAVE_AS,
+					GTK_ICON_SIZE_BUTTON);
+				gtk_button_set_image (
+					GTK_BUTTON (button), image);
+				
+				if (gtk_dialog_run (
+				     GTK_DIALOG (overwrite_dialog)) ==
+				      GTK_RESPONSE_OK)
+					contacts_export (data, filename);
+				
+				gtk_widget_destroy (overwrite_dialog);
+			} else
+				contacts_export (data, filename);
+			
 			g_free (filename);
+#ifdef HAVE_GNOMEVFS
+			gnome_vfs_uri_unref (uri);
+#endif
 		}
 	}
 	

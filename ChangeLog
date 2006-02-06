@@ -1,3 +1,9 @@
+2006-02-06  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	Remove dependency gtk+-2.0 >= 2.8.0 (don't use
+	gtk_file_chooser_set_do_overwrite_confirmation)
+
 2005-12-29  Chris Lord,,,  <chris@openedhand.com>
 
 	* autogen.sh:
