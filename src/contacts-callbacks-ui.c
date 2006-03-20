@@ -247,9 +247,9 @@ contacts_export (ContactsData *data, const gchar *filename)
 		    GNOME_VFS_OK) {
 			if (gnome_vfs_write (file, vcard, strlen (vcard),
 			    &bytes_written) != GNOME_VFS_OK)
-				g_warning ("Writing to '%s' failed, %ld bytes "
+				g_warning ("Writing to '%s' failed, %lld bytes "
 					"written", filename,
-					(guint64)bytes_written);
+					bytes_written);
 			gnome_vfs_close (file);
 		}
 #else
