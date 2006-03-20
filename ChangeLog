@@ -1,3 +1,8 @@
+2006-03-20  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	Delete contacts async to avoid deadlocks with DBus EDS.
+
 2006-02-06  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-callbacks-ui.c:

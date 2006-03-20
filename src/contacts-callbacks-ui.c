@@ -108,8 +108,8 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	result = gtk_dialog_run (GTK_DIALOG (dialog));
 	switch (result) {
 		case GTK_RESPONSE_YES:
-			e_book_remove_contact (data->book, e_contact_get_const
-				(contact, E_CONTACT_UID), NULL);
+			/* TODO: add callback to handle errors */
+			e_book_async_remove_contact (data->book, contact, NULL, NULL);
 			break;
 		default:
 			break;
