@@ -27,6 +27,7 @@
 
 #include "contacts-utils.h"
 #include "contacts-defs.h"
+#include "contacts-main.h"
 
 /* The following functions taken from
  * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
@@ -153,6 +154,7 @@ kozo_utf8_strcasestrip (const char *str)
 
 /* List of always-available fields */
 /* TODO: Revise 'supported' fields */
+/* TODO: i18n */
 /* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
 static const ContactsField contacts_fields[] = {
 	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10, TRUE },
@@ -167,6 +169,7 @@ static const ContactsField contacts_fields[] = {
 
 
 
+/* TODO: i18n */
 static const ContactsStructuredField contacts_sfields[] = {
 	{ "ADR", 0, "PO Box", FALSE },
 	{ "ADR", 1, "Ext.", TRUE },
@@ -180,6 +183,7 @@ static const ContactsStructuredField contacts_sfields[] = {
 
 /* TODO: Would adding a struct for this be gratuititous? RB: NOT AT ALL */
 static const gchar **contacts_field_types[] = {
+        /* TODO: can these be i18n-ized? */
 	(gchar *[]){ "TEL", "Home", "Msg", "Work", "Pref", "Voice", "Fax",
 			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
 			    "ISDN", "PCS", NULL },
@@ -534,7 +538,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 	/* Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 	 * can return NULL and this would probably throw a critical Gtk error.
 	 */
-	filechooser = gtk_file_chooser_dialog_new ("Open image",
+	filechooser = gtk_file_chooser_dialog_new (_("Open image"),
 						   (GtkWindow *)
 						   gtk_widget_get_ancestor (
 						   	button,
@@ -544,7 +548,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 						   GTK_RESPONSE_CANCEL,
 						   GTK_STOCK_OPEN,
 						   GTK_RESPONSE_ACCEPT,
-						   "No image",
+						   _("No image"),
 						   NO_IMAGE,
 						   NULL);
 	/* Set filter by supported EContactPhoto image types */

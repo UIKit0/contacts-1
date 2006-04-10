@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Contacts
+Name[et]=Kontaktid
 Comment=Address book
+Comment[et]=Aadressiraamat
 Exec=contacts
 Icon=oh-contacts
 Terminal=false

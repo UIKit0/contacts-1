@@ -1,8 +1,10 @@
 uidir = $(pkgdatadir)
 ui_DATA = contacts.glade
 
-applicationdir = $(datadir)/applications
-application_DATA = contacts.desktop
+desktopdir = $(datadir)/applications
+desktop_in_files = contacts.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
 
 icondir = $(datadir)/pixmaps/
 icon_DATA = oh-contacts.png
@@ -21,4 +23,4 @@ install-data-local:
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(ui_DATA) $(application_DATA) $(icon_DATA) $(schema_DATA)
+EXTRA_DIST = $(ui_DATA) $(desktop_DATA) $(icon_DATA) $(schema_DATA)

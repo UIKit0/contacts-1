@@ -25,6 +25,7 @@
 #include <libebook/e-book.h>
 
 #include "contacts-defs.h"
+#include "contacts-main.h"
 #include "contacts-utils.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
@@ -80,7 +81,7 @@ contacts_edit_pane_hide (ContactsData *data)
 	gtk_widget_show (widget);
 	widget = glade_xml_get_widget (data->xml, "main_notebook");
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
-	gtk_window_set_title (window, "Contacts");
+	gtk_window_set_title (window, _("Contacts"));
 	contacts_set_available_options (data->xml, TRUE, TRUE, TRUE);
 	gtk_window_set_default (window, glade_xml_get_widget (
 		data->xml, "edit_button"));
@@ -98,8 +99,8 @@ contacts_edit_delete_cb (GtkWidget *button, ContactsData *data)
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_YES_NO,
-					 "Are you sure you want to delete "\
-					 "this contact?");
+					 _("Are you sure you want to delete "\
+					 "this contact?"));
 	
 	widgets = contacts_set_widgets_desensitive (main_window);
 	switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
@@ -279,7 +280,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 				(const gchar *)(first_type+2));
 			first_type = NULL;
 		}
-		gtk_combo_box_append_text (GTK_COMBO_BOX (combo), "Other");
+		gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Other"));
 		if (first_type)
 			gtk_combo_box_set_active (GTK_COMBO_BOX (combo), i-1);
 		gtk_widget_show (combo);
@@ -394,7 +395,8 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			GtkWidget *label = gtk_label_new (NULL);
 			gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
 			gtk_label_set_markup (GTK_LABEL (label),
-				"<b>Type:</b>");
+                                /* TODO: make nicer for i18n */
+				_("<b>Type:</b>"));
 			gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 			gtk_table_attach (GTK_TABLE (adr_table), label, 0, 1,
 					  0, 1, GTK_FILL, GTK_FILL, 0, 0);
@@ -729,7 +731,8 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 			bools = g_list_append (bools, GINT_TO_POINTER (FALSE));
 	}
 	
-	if (contacts_chooser (xml, "Change groups", "<b>Choose groups"
+        /* TODO: make nicer for i18n and WTF? for the third parameter :) */
+	if (contacts_chooser (xml, _("Change groups"), "<b>Choose groups"
 		"</b>", data->contacts_groups, bools, TRUE, &results)) {
 /*		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ") :
@@ -789,8 +792,9 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 	}
 	g_list_free (children);
 	
-	if (contacts_chooser (xml, "Add field",
-			      "<b>Choose a field</b>", fields,
+	if (contacts_chooser (xml, _("Add field"),
+                              /* TODO: make nicer for i18n */
+			      _("<b>Choose a field</b>"), fields,
 			      NULL, FALSE, &field)) {
 		GtkWidget *label, *edit, *table;
 		const ContactsField *cfield;
@@ -1020,10 +1024,10 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gtk_widget_show (button);
 	
 	/* Create groups edit label/button */
-/*	glabel = gtk_label_new ("<b>Groups:</b>");
+/*	glabel = gtk_label_new ("_(<b>Groups:</b>)");
 	gtk_label_set_use_markup (GTK_LABEL (glabel), TRUE);
 	gtk_misc_set_alignment (GTK_MISC (glabel), 1, 0.5);
-	gbutton = gtk_button_new_with_label ("None");*/
+	gbutton = gtk_button_new_with_label (_("None"));*/
 	
 	/* Create edit pane widgets */
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
@@ -1150,7 +1154,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	g_list_free (edit_widgets);
 
 	widget = glade_xml_get_widget (xml, "main_window");
-	gtk_window_set_title (GTK_WINDOW (widget), "Edit contact");
+	gtk_window_set_title (GTK_WINDOW (widget), _("Edit contact"));
 	
 	/* Connect add group menu item */
 	widget = glade_xml_get_widget (xml, "edit_groups");

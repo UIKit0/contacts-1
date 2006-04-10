@@ -34,6 +34,7 @@
 #include "bacon-message-connection.h"
 #include "contacts-defs.h"
 #include "contacts-utils.h"
+#include "contacts-main.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
@@ -111,7 +112,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 	if ((!string) || (g_utf8_strlen (string, -1) <= 0))
-		string = "Unnamed";
+		string = _("Unnamed");
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
 	name_markup = g_strdup_printf
@@ -198,7 +199,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 				}
 			}
 			if (!types_string)
-				types_string = "Other";
+				types_string = _("Other");
 			
 			name_markup = g_strdup_printf (
 				"<b>%s:</b>\n<small>(%s)</small>",
@@ -380,6 +381,11 @@ main (int argc, char **argv)
 					 */
 
 	gtk_init (&argc, &argv);
+
+        /* Initialise the i18n support code */
+        bindtextdomain (GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
+        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+        textdomain (GETTEXT_PACKAGE);
 
 	mc = bacon_message_connection_new ("contacts");
 	if (!bacon_message_connection_get_is_server (mc)) {

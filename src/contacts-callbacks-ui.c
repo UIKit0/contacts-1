@@ -93,15 +93,15 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 
 	name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 	if (g_utf8_strlen (name, -1) <= 0)
-		name = "Unknown";
+		name = _("Unknown");
 
 	main_window = glade_xml_get_widget (data->xml, "main_window");
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_CANCEL,
-					 "Are you sure you want to delete "\
-					 "'%s'?", name);
-	gtk_dialog_add_buttons (GTK_DIALOG (dialog), "_Delete contact",
+					 _("Are you sure you want to delete "\
+					 "'%s'?"), name);
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Delete contact"),
 		GTK_RESPONSE_YES, NULL);
 	
 	widgets = contacts_set_widgets_desensitive (main_window);
@@ -147,13 +147,13 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 					GTK_WINDOW (main_window),
 					0, GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE,
-					"Would you like to import contact "\
-					"'%s'?",
+					_("Would you like to import contact "\
+					"'%s'?"),
 					(const char *)e_contact_get_const (
 						contact, E_CONTACT_FULL_NAME));
 				gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-					"_Show contact", GTK_RESPONSE_NO,
-					"_Import contact", GTK_RESPONSE_YES,
+					_("_Show contact"), GTK_RESPONSE_NO,
+					_("_Import contact"), GTK_RESPONSE_YES,
 					NULL);
 				widgets = contacts_set_widgets_desensitive (
 					main_window);
@@ -202,7 +202,7 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 	GtkWidget *main_window =
 		glade_xml_get_widget (data->xml, "main_window");
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
-		"Import Contact",
+		_("Import Contact"),
 		GTK_WINDOW (main_window),
 		GTK_FILE_CHOOSER_ACTION_OPEN,
 		GTK_STOCK_CANCEL,
@@ -270,7 +270,7 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 	GtkWidget *main_window =
 		glade_xml_get_widget (data->xml, "main_window");
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
-		"Export Contact",
+		_("Export Contact"),
 		GTK_WINDOW (main_window),
 		GTK_FILE_CHOOSER_ACTION_SAVE,
 		GTK_STOCK_CANCEL,
@@ -306,17 +306,18 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 					GTK_DIALOG_MODAL,
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_CANCEL,
-					"<big><b>The file \"%s\""
+                                        /* TODO: make it nicer for i18n */
+					_("<big><b>The file \"%s\""
 					" already exists.\n"
-					"Do you want to replace it?</b></big>",
+					"Do you want to replace it?</b></big>"),
 					filename);
 				gtk_message_dialog_format_secondary_markup (
 					GTK_MESSAGE_DIALOG (overwrite_dialog),
-					"Replacing it will overwrite its "
-					"contents.");
+					_("Replacing it will overwrite its "
+					"contents."));
 				button = gtk_dialog_add_button (
 					GTK_DIALOG (overwrite_dialog),
-					"_Replace",
+					_("_Replace"),
 					GTK_RESPONSE_OK);
 				image = gtk_image_new_from_stock (
 					GTK_STOCK_SAVE_AS,

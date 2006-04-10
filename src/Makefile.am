@@ -1,4 +1,10 @@
-AM_CPPFLAGS=-DPKGDATADIR=\"$(pkgdatadir)\"
+INCLUDES = 						\
+	-I$(top_srcdir)
+
+AM_CPPFLAGS=-DPKGDATADIR=\"$(pkgdatadir)\"				\
+	-DCONTACTS_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"  	\
+	-DDATADIR=\""$(datadir)"\"
+
 AM_CFLAGS = -Wall -export-dynamic $(CONTACTS_CFLAGS)
 
 bin_PROGRAMS = contacts
@@ -11,5 +17,6 @@ contacts_SOURCES = contacts-main.c contacts-edit-pane.c               \
 		   bacon-message-connection.c bacon-message-connection.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
+contacts_LDFLAGS = @CONTACTS_LIBS@
 
 MAINTAINERCLEANFILES = config.h.in Makefile.in
