@@ -1,0 +1,14 @@
+contacts (0.1-2) unstable; urgency=low
+
+  * Add --as-needed to LDFLAGS to reduce the stated dependencies
+    (#359319)
+  * Remove gconf build-deps and options, as they are not needed in 0.1.
+  
+ -- Ross Burton <ross@debian.org>  Tue, 28 Mar 2006 09:22:05 +0100
+
+contacts (0.1-1) unstable; urgency=low
+
+  * Initial packaging.
+
+ -- Ross Burton <ross@debian.org>  Thu, 23 Feb 2006 09:50:30 +0000
+
