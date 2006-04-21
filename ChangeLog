@@ -1,5 +1,6 @@
 2006-04-21  Olivier Lê Thanh Duong  <olivier@lethanh.be>
 
+	* configure.ac:
 	* po/fr.po:
 	New French translation
 
