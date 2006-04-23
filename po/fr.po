@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-21 12:21-0400\n"
+"POT-Creation-Date: 2006-04-23 15:02-0400\n"
 "PO-Revision-Date: 2006-04-21 12:21-0400\n"
 "Last-Translator: Olivier Lê Thanh Duong <olivier@lethanh.be>\n"
 "Language-Team: French <LL@li.org>\n"
@@ -182,21 +182,24 @@ msgstr "Autre"
 msgid "<b>Type:</b>"
 msgstr "<b>Type :</b>"
 
-#. TODO: make nicer for i18n and WTF? for the third parameter :)
-#: ../src/contacts-edit-pane.c:735
+#: ../src/contacts-edit-pane.c:734
 msgid "Change groups"
 msgstr "Changer les groupes"
 
-#: ../src/contacts-edit-pane.c:795
+#: ../src/contacts-edit-pane.c:734
+msgid "<b>Choose groups</b>"
+msgstr "<b>Selectionner les groupes</b>"
+
+#: ../src/contacts-edit-pane.c:794
 msgid "Add field"
 msgstr "Ajouter un champ"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:797
+#: ../src/contacts-edit-pane.c:796
 msgid "<b>Choose a field</b>"
 msgstr "<b>Choisissez un champ</b>"
 
-#: ../src/contacts-edit-pane.c:1157
+#: ../src/contacts-edit-pane.c:1156
 msgid "Edit contact"
 msgstr "Editer un contact"
 
@@ -204,14 +207,58 @@ msgstr "Editer un contact"
 msgid "Unnamed"
 msgstr "Sans nom"
 
+#: ../src/contacts-utils.c:160
+msgid "Phone"
+msgstr "Téléphone"
+
+#: ../src/contacts-utils.c:161
+msgid "Email"
+msgstr "Courriel"
+
+#: ../src/contacts-utils.c:162
+msgid "Address"
+msgstr "Adresse"
+
+#: ../src/contacts-utils.c:164
+msgid "Homepage"
+msgstr "Site perso"
+
+#: ../src/contacts-utils.c:172
+msgid "PO Box"
+msgstr "Boite postale"
+
+#: ../src/contacts-utils.c:173
+msgid "Ext."
+msgstr "Ext."
+
+#: ../src/contacts-utils.c:174
+msgid "Street"
+msgstr "Rue"
+
+#: ../src/contacts-utils.c:175
+msgid "Locality"
+msgstr "Ville"
+
+#: ../src/contacts-utils.c:176
+msgid "Region"
+msgstr "Région"
+
+#: ../src/contacts-utils.c:177
+msgid "Post Code"
+msgstr "Code postal"
+
+#: ../src/contacts-utils.c:178
+msgid "Country"
+msgstr "Pays"
+
 #. Get a filename
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:541
+#: ../src/contacts-utils.c:539
 msgid "Open image"
 msgstr "Ouvrir une image"
 
-#: ../src/contacts-utils.c:551
+#: ../src/contacts-utils.c:549
 msgid "No image"
 msgstr "Pas d'image"

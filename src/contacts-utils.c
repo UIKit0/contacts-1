@@ -154,30 +154,28 @@ kozo_utf8_strcasestrip (const char *str)
 
 /* List of always-available fields */
 /* TODO: Revise 'supported' fields */
-/* TODO: i18n */
 /* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
 static const ContactsField contacts_fields[] = {
 	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10, TRUE },
-	{ "TEL", 0, "Phone", FALSE, 20, FALSE },
-	{ "EMAIL", 0, "Email", FALSE, 30, FALSE },
-	{ "ADR", 0, "Address", FALSE, 40, FALSE },
+	{ "TEL", 0, N_("Phone"), FALSE, 20, FALSE },
+	{ "EMAIL", 0, N_("Email"), FALSE, 30, FALSE },
+	{ "ADR", 0, N_("Address"), FALSE, 40, FALSE },
 	{ "NICKNAME", E_CONTACT_NICKNAME, NULL, FALSE, 110, TRUE },
-	{ "URL", E_CONTACT_HOMEPAGE_URL, "Homepage", FALSE, 120, FALSE },
+	{ "URL", E_CONTACT_HOMEPAGE_URL, N_("Homepage"), FALSE, 120, FALSE },
 	{ "NOTE", E_CONTACT_NOTE, NULL, TRUE, 130, TRUE },
 	{ NULL }
 };
 
 
 
-/* TODO: i18n */
 static const ContactsStructuredField contacts_sfields[] = {
-	{ "ADR", 0, "PO Box", FALSE },
-	{ "ADR", 1, "Ext.", TRUE },
-	{ "ADR", 2, "Street", TRUE },
-	{ "ADR", 3, "Locality", FALSE },
-	{ "ADR", 4, "Region", FALSE },
-	{ "ADR", 5, "Post Code", FALSE },
-	{ "ADR", 6, "Country", FALSE },
+	{ "ADR", 0, N_("PO Box"), FALSE },
+	{ "ADR", 1, N_("Ext."), TRUE },
+	{ "ADR", 2, N_("Street"), TRUE },
+	{ "ADR", 3, N_("Locality"), FALSE },
+	{ "ADR", 4, N_("Region"), FALSE },
+	{ "ADR", 5, N_("Post Code"), FALSE },
+	{ "ADR", 6, N_("Country"), FALSE },
 	{ NULL, 0, NULL, FALSE }
 };
 
@@ -257,7 +255,7 @@ const gchar *
 contacts_field_pretty_name (const ContactsField *field)
 {
 	if (field->pretty_name) {
-		return field->pretty_name;
+		return gettext(field->pretty_name);
 	} else if (field->econtact_field > 0) {
 		return e_contact_pretty_name (field->econtact_field);
 	} else

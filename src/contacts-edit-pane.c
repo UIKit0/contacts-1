@@ -429,7 +429,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 							  TRUE);
 				label_markup = g_strdup_printf (
 					"<b>%s:</b>",
-					sfield->subfield_name);
+					gettext(sfield->subfield_name));
 				gtk_label_set_markup (GTK_LABEL (label),
 						      label_markup);
 				g_free (label_markup);
@@ -731,9 +731,8 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 			bools = g_list_append (bools, GINT_TO_POINTER (FALSE));
 	}
 	
-        /* TODO: make nicer for i18n and WTF? for the third parameter :) */
-	if (contacts_chooser (xml, _("Change groups"), "<b>Choose groups"
-		"</b>", data->contacts_groups, bools, TRUE, &results)) {
+	if (contacts_chooser (xml, _("Change groups"), _("<b>Choose groups"
+		"</b>"), data->contacts_groups, bools, TRUE, &results)) {
 /*		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ") :
 			g_strdup ("None");

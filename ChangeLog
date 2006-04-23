@@ -1,3 +1,12 @@
+2006-04-23  Olivier Lê Thanh Duong  <olivier@lethanh.be>
+
+	* src/contacts-edit-pane.c:
+	* src/contacts-utils.c:
+	Mark 'choose groups' as translatable, allow to translate fields in
+	contacts_fields and contacts_sfields.
+	* po/fr.po:
+	Updated French translation
+
 2006-04-21  Olivier Lê Thanh Duong  <olivier@lethanh.be>
 
 	* configure.ac:
