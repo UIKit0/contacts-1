@@ -63,12 +63,13 @@ void
 contacts_edit_cb (GtkWidget *source, ContactsData *data)
 {
 	/* Disable the new/edit/delete options and get the contact to edit */
-	contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
 	data->contact = contacts_get_selected_contact (data->xml,
 						       data->contacts_table);
-	data->changed = FALSE;
-	
-	contacts_edit_pane_show (data, FALSE);
+	if (data->contact) {
+		contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
+		data->changed = FALSE;		
+		contacts_edit_pane_show (data, FALSE);
+	}
 }
 
 void
