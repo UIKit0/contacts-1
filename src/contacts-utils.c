@@ -388,8 +388,8 @@ contacts_load_photo (EContact *contact)
 			switch (photo->type) {
 			case E_CONTACT_PHOTO_TYPE_INLINED :
 				gdk_pixbuf_loader_write (loader,
-					photo->inlined.data,
-					photo->inlined.length, NULL);
+					photo->data.inlined.data,
+					photo->data.inlined.length, NULL);
 				break;
 			case E_CONTACT_PHOTO_TYPE_URI :
 			default :
