@@ -393,7 +393,7 @@ main (int argc, char **argv)
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
         textdomain (GETTEXT_PACKAGE);
 
-	context = g_option_context_new (" - A light-weight, zooming calendar");
+	context = g_option_context_new (" - A light-weight address-book");
 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
