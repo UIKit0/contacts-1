@@ -575,6 +575,8 @@ main (int argc, char **argv)
 		g_object_unref (contents);
 		g_signal_connect (G_OBJECT (plug_widget), "destroy",
 				  G_CALLBACK (gtk_main_quit), NULL);
+		widget = glade_xml_get_widget (xml, "main_menubar");
+		gtk_widget_hide (widget);
 		gtk_widget_show (plug_widget);
 	} else {
 		g_signal_connect (G_OBJECT (widget), "destroy",
