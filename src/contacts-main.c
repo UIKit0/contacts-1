@@ -379,13 +379,24 @@ main (int argc, char **argv)
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
 					 */
-
-	gtk_init (&argc, &argv);
+	GOptionContext *context;
+	static gint plug = 0;
+	
+	static GOptionEntry entries[] = {
+		{ "plug", 'p', 0, G_OPTION_ARG_INT, &plug,
+			"Socket ID of an XEmbed socket to plug into", NULL },
+		{ NULL }
+	};
 
         /* Initialise the i18n support code */
         bindtextdomain (GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
         textdomain (GETTEXT_PACKAGE);
+
+	context = g_option_context_new (" - A light-weight, zooming calendar");
+	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_parse (context, &argc, &argv, NULL);
 
 	mc = bacon_message_connection_new ("contacts");
 	if (!bacon_message_connection_get_is_server (mc)) {
@@ -549,6 +560,26 @@ main (int argc, char **argv)
 	if (argv[1] != NULL) {
 		contacts_data->file = argv[1];
 		g_idle_add (contacts_import_from_param, contacts_data);
+	}
+	
+	widget = glade_xml_get_widget (xml, "main_window");
+	if (plug > 0) {
+		GtkWidget *plug_widget;
+		GtkWidget *contents;
+		
+		g_debug ("Plugging into socket %d", plug);
+		plug_widget = gtk_plug_new (plug);
+		contents = g_object_ref (gtk_bin_get_child (GTK_BIN (widget)));
+		gtk_container_remove (GTK_CONTAINER (widget), contents);
+		gtk_container_add (GTK_CONTAINER (plug_widget), contents);
+		g_object_unref (contents);
+		g_signal_connect (G_OBJECT (plug_widget), "destroy",
+				  G_CALLBACK (gtk_main_quit), NULL);
+		gtk_widget_show (plug_widget);
+	} else {
+		g_signal_connect (G_OBJECT (widget), "destroy",
+				  G_CALLBACK (gtk_main_quit), NULL);
+		gtk_widget_show (widget);
 	}
 	gtk_main ();
 

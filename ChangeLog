@@ -1,3 +1,12 @@
+2006-07-09  Chris Lord,,,  <chris@openedhand.com>
+
+	* data/contacts.glade:
+	- Make main window not initially visible
+	
+	* src/contacts-main.c: (main):
+	- Add GOption support
+	- Add XEmbed support (-p/--plug <socket id>)
+
 2006-06-21  Chris Lord,,,  <chris@openedhand.com>
 
 	* src/contacts-utils.c: (contacts_load_photo):
