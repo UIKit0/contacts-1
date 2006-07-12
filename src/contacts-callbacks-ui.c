@@ -93,7 +93,7 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	if (!contact) return;
 
 	name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-	if (g_utf8_strlen (name, -1) <= 0)
+	if ((!name) || (g_utf8_strlen (name, 4) <= 0))
 		name = _("Unknown");
 
 	main_window = glade_xml_get_widget (data->xml, "main_window");

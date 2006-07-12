@@ -1,3 +1,11 @@
+2006-07-12  Chris Lord,,,  <chris@openedhand.com>
+
+	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
+	Check if name text is NULL before g_utf8_strlen on delete dialog
+	
+	* src/contacts-main.c: (contacts_display_summary):
+	Escape name text before displaying in the preview pane
+
 2006-07-09  Chris Lord,,,  <chris@openedhand.com>
 
 	* data/contacts.glade:

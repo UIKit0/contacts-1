@@ -111,13 +111,14 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	/* Retrieve contact name and groups */
 	widget = glade_xml_get_widget (xml, "summary_name_label");
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-	if ((!string) || (g_utf8_strlen (string, -1) <= 0))
+	/* Only examine 4-bytes (maximum UTF-8 character width is 4 bytes?) */
+	if ((!string) || (g_utf8_strlen (string, 4) <= 0))
 		string = _("Unnamed");
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
-	name_markup = g_strdup_printf
-		("<big><b>%s</b></big>\n<small>%s</small>",
-		 string ? string : "", groups_text ? groups_text : "");
+	name_markup = g_markup_printf_escaped (
+		"<big><b>%s</b></big>\n<small>%s</small>",
+		string ? string : "", groups_text ? groups_text : "");
 	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
 	if (groups) {
 		g_list_free (groups);
