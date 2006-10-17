@@ -3,7 +3,7 @@ Section: gnome
 Priority: optional
 Maintainer: Ross Burton <ross@debian.org>
 Build-Depends: debhelper (>= 4.1.0), cdbs, libgtk2.0-dev, libglade2-dev, libebook1.2-dev
-Standards-Version: 3.6.2
+Standards-Version: 3.7.2
 
 Package: contacts
 Architecture: any
