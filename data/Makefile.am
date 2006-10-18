@@ -23,6 +23,8 @@ install-data-local:
 		@true
 endif
 
+CLEANFILES = $(desktop_DATA)
+
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(ui_DATA) $(desktop_DATA) $(icon_DATA) $(schema_DATA)
+EXTRA_DIST = $(ui_DATA) $(desktop_in_files) $(icon_DATA) $(schema_DATA)

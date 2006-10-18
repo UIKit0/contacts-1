@@ -1,5 +1,14 @@
 2006-10-18  Ross Burton  <ross@openedhand.com>
 
+	* INSTALL:
+	* COPYING:
+	* data/Makefile.am:
+	* Makefile.am:
+	* autogen.sh:
+	Switch to automake 1.8, fix dist, fix clean targets.
+
+2006-10-18  Ross Burton  <ross@openedhand.com>
+
 	* configure.ac:
 	* data/Makefile.am:
 	Don't try and install GConf schemas if GConf isn't being used.

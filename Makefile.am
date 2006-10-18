@@ -1,10 +1,14 @@
 SUBDIRS = src po data
 
-EXTRA_DIST = intltool-extract.in intltool-merge.in intltool-update.in
+INTLTOOL_BUILT = \
+        intltool-extract \
+        intltool-merge \
+        intltool-update
 
-# Extra clean files so that maintainer-clean removes *everything*
-MAINTAINERCLEANFILES = aclocal.m4 compile config.guess config.sub configure depcomp install-sh ltmain.sh Makefile.in missing
+EXTRA_DIST = $(INTLTOOL_BUILT:=.in)
+
+DISTCLEANFILES = $(INTLTOOL_BUILT)
+MAINTAINERCLEANFILES = aclocal.m4 compile config.guess config.sub configure depcomp $(INTLTOOL_BUILT:=.in) install-sh ltmain.sh mkinstalldirs Makefile.in missing
 
 snapshot:
         $(MAKE) dist distdir=$(PACKAGE)-snap`date +"%Y%m%d"`
-

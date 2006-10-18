@@ -3,7 +3,7 @@
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
-REQUIRED_AUTOMAKE_VERSION=1.7
+REQUIRED_AUTOMAKE_VERSION=1.8
 PKG_NAME=contacts
 
 (test -f $srcdir/configure.ac \
