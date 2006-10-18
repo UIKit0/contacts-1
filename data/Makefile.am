@@ -12,6 +12,7 @@ icon_DATA = oh-contacts.png
 schemadir = $(GCONF_SCHEMA_FILE_DIR)
 schema_DATA = contacts.schemas
 
+if HAVE_GCONF
 install-data-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) \
 		$(GCONFTOOL) --makefile-install-rule $(schema_DATA) || \
@@ -20,6 +21,7 @@ install-data-local:
 		echo "Installation of schemas failed, install them manually"; \
 		echo "*****************************************************";)
 		@true
+endif
 
 MAINTAINERCLEANFILES = Makefile.in
 

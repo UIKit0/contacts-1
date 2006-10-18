@@ -1,5 +1,11 @@
 2006-10-18  Ross Burton  <ross@openedhand.com>
 
+	* configure.ac:
+	* data/Makefile.am:
+	Don't try and install GConf schemas if GConf isn't being used.
+
+2006-10-18  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-callbacks-ebook.c:
 	Fix the order of hash creation and store population, fixing
 	chronic breakage on GTK+ 2.10.

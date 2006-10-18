@@ -54,6 +54,7 @@ if test "$want_gconf" = "yes"; then
 		AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
 	fi
 fi
+AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
 
 AM_GCONF_SOURCE_2
 
