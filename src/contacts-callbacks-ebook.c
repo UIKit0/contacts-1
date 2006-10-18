@@ -70,13 +70,14 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
 			name = "Unnamed";
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
+		hash->contact = g_object_ref (contact);
+		hash->xml = xml;
+		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
+
 		gtk_list_store_insert_with_values (model, &hash->iter, 0,
 						   CONTACT_NAME_COL, name,
 						   CONTACT_UID_COL, uid,
 						   -1);
-		hash->contact = g_object_ref (contact);
-		hash->xml = xml;
-		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
 
 		/* Check for groups and add them to group list */
 		contact_groups =
