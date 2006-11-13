@@ -376,6 +376,7 @@ main (int argc, char **argv)
 	GtkListStore *model;
 	GtkTreeModelFilter *filter;
 	GtkCellRenderer *renderer;
+	GtkSizeGroup *size_group;
 	GladeXML *xml;			/* */
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
@@ -518,17 +519,22 @@ main (int argc, char **argv)
 					 (xml, "groups_combobox"));
 	gtk_combo_box_set_active (groups_combobox, 0);
 
-	/* Set transient parent for chooser and about dialog */
+	/* Set transient parent for chooser */
 	gtk_window_set_transient_for (
 		GTK_WINDOW (glade_xml_get_widget (xml, "chooser_dialog")),
 		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
-	gtk_window_set_transient_for (
-		GTK_WINDOW (glade_xml_get_widget (xml, "about_dialog")),
-		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
 
-	/* Remove selectable label from focus chain */	
+	/* Remove selectable label from focus chain */
 	widget = glade_xml_get_widget (xml, "preview_header_hbox");
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
+
+	/* Set up size group for bottom row of buttons and search */
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
+	widget = glade_xml_get_widget (xml, "search_hbox");
+	gtk_size_group_add_widget (size_group, widget);
+	widget = glade_xml_get_widget (xml, "summary_hbuttonbox");
+	gtk_size_group_add_widget (size_group, widget);
+	g_object_unref (size_group);
 
 	/* Connect UI-related signals */
 	widget = glade_xml_get_widget (xml, "new_button");

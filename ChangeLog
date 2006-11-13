@@ -1,3 +1,9 @@
+2006-11-13  Thomas Wood  <thomas@openedhand.com>
+
+	* data/contacts.glade: Clean up padding and remove about dialog
+	* src/contacts-callbacks-ui.c: Use gtk_show_about_dialog instead of glade
+	* src/contacts-main.c: (main): Added a size group for a nicer UI
+
 2006-10-18  Ross Burton  <ross@openedhand.com>
 
 	* INSTALL:
