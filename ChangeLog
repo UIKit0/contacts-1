@@ -1,3 +1,10 @@
+2006-11-14  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-utils.c:
+	* src/contacts-edit-pane.c:
+
+	Fix compiler warnings
+
 2006-11-13  Thomas Wood  <thomas@openedhand.com>
 
 	* data/contacts.glade: Clean up padding and remove about dialog

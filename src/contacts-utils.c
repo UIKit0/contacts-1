@@ -179,16 +179,19 @@ static const ContactsStructuredField contacts_sfields[] = {
 	{ NULL, 0, NULL, FALSE }
 };
 
-/* TODO: Would adding a struct for this be gratuititous? RB: NOT AT ALL */
-static const gchar **contacts_field_types[] = {
+struct contacts_field_types_def {
+	char *field;
+	gchar **types;
+};
+
+static const struct contacts_field_types_def contacts_field_types[] = {
         /* TODO: can these be i18n-ized? */
-	(gchar *[]){ "TEL", "Home", "Msg", "Work", "Pref", "Voice", "Fax",
+	{ "TEL", (gchar*[]){"Home", "Msg", "Work", "Pref", "Voice", "Fax",
 			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
-			    "ISDN", "PCS", NULL },
-	(gchar *[]){ "EMAIL", "Internet", "X400", "Pref", NULL },
-	(gchar *[]){ "ADR", "Dom", "Intl", "Postal", "Parcel", "Home", "Work",
-			    "Pref", NULL },
-	(gchar *[]){ NULL }
+			    "ISDN", "PCS", NULL }},
+	{ "EMAIL", (gchar*[]){"Internet", "X400", "Pref", NULL}},
+	{ "ADR", (gchar*[]){"Dom", "Intl", "Postal", "Parcel", "Home", "Work", "Pref", NULL}},
+	{ NULL, NULL }
 };
 
 const gchar **
@@ -196,9 +199,9 @@ contacts_get_field_types (const gchar *attr_name)
 {
 	guint i;
 
-	for (i = 0; contacts_field_types[i][0]; i++) {
-		if (strcmp (contacts_field_types[i][0], attr_name) == 0)
-			return (const gchar **)contacts_field_types[i];
+	for (i = 0; contacts_field_types[i].field; i++) {
+		if (strcmp (contacts_field_types[i].field, attr_name) == 0)
+			return (const gchar **)contacts_field_types[i].types;
 	}
 	
 	return NULL;
@@ -572,7 +575,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 		if (filename) {
 			if (contact) {
 				EContactPhoto new_photo;
-				char **data;
+				guchar **data;
 				int *length;
 #if HAVE_PHOTO_TYPE
 				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
@@ -584,7 +587,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 				length = &new_photo.length;
 #endif
 				if (g_file_get_contents (filename, 
-							 data,
+							 (gchar **)data,
 							 (gsize *)length,
 							 NULL)) {
 					e_contact_set (contact, E_CONTACT_PHOTO,

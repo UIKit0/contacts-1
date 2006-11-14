@@ -258,7 +258,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 		data->attr_name = e_vcard_attribute_get_name (attr);
 		data->changed = changed;
 		
-		for (i = 1; types[i]; i++) {
+		for (i = 0; types[i]; i++) {
 			gtk_combo_box_append_text (
 				GTK_COMBO_BOX (combo), types[i]);
 			/* Note: We use a case-insensitive search here, as
@@ -269,7 +269,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 				if (g_ascii_strcasecmp (types[i], first_type) == 0) {
 					first_type = NULL;
 					gtk_combo_box_set_active (
-						GTK_COMBO_BOX (combo), i-1);
+						GTK_COMBO_BOX (combo), i);
 				}
 			}
 		}
@@ -282,7 +282,7 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 		}
 		gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Other"));
 		if (first_type)
-			gtk_combo_box_set_active (GTK_COMBO_BOX (combo), i-1);
+			gtk_combo_box_set_active (GTK_COMBO_BOX (combo), i);
 		gtk_widget_show (combo);
 		if (/*(e_vcard_attribute_is_single_valued (attr)) &&*/
 		    (multi_line == FALSE))
