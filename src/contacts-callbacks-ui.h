@@ -44,6 +44,8 @@ void contacts_export (ContactsData *data, const gchar *filename);
 
 void contacts_export_cb (GtkWidget *source, ContactsData *data);
 
+void contacts_edit_menu_activate_cb (GtkWidget *widget, ContactsData *data);
+
 void contacts_copy_cb (GtkWindow *main_window);
 
 void contacts_cut_cb (GtkWindow *main_window);

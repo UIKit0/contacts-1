@@ -400,6 +400,43 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 }
 
 void
+contacts_edit_menu_activate_cb (GtkWidget *widget, ContactsData *data)
+{
+	gboolean can_cutcopy, can_paste;
+
+	widget = glade_xml_get_widget (data->xml, "main_window");
+	widget = gtk_window_get_focus (GTK_WINDOW (widget));
+	if ((GTK_IS_EDITABLE (widget) || GTK_IS_TEXT_VIEW (widget) || GTK_IS_LABEL (widget)))
+	{
+		GtkClipboard *clip;
+		clip = gtk_clipboard_get_for_display (gtk_widget_get_display (widget), GDK_SELECTION_CLIPBOARD);
+		can_paste = gtk_clipboard_wait_is_text_available (clip);
+
+		if (GTK_IS_EDITABLE (widget))
+			can_cutcopy = gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), NULL, NULL);
+		else if (GTK_IS_TEXT_VIEW (widget))
+		{
+			GtkTextBuffer *buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
+			can_cutcopy = gtk_text_buffer_get_selection_bounds (buf, NULL, NULL);
+		}
+		else if (GTK_IS_LABEL (widget))
+			can_cutcopy = gtk_label_get_selection_bounds (GTK_LABEL (widget), NULL, NULL);
+		else
+			/* if we can't work out whether we can cut/copy, assume we can */
+			can_cutcopy = TRUE;
+	}
+	else
+		can_cutcopy = can_paste = FALSE;
+
+	widget = glade_xml_get_widget (data->xml, "cut");
+	gtk_widget_set_sensitive (widget, can_cutcopy);
+	widget = glade_xml_get_widget (data->xml, "copy");
+	gtk_widget_set_sensitive (widget, can_cutcopy);
+	widget = glade_xml_get_widget (data->xml, "paste");
+	gtk_widget_set_sensitive (widget, can_paste);
+}
+
+void
 contacts_copy_cb (GtkWindow *main_window)
 {
 	GtkWidget *widget = gtk_window_get_focus (main_window);

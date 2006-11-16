@@ -463,6 +463,7 @@ main (int argc, char **argv)
 	    GTK_TREE_VIEW (glade_xml_get_widget
 			   (xml, "contacts_treeview"));
 	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
 						     (contacts_treeview),
 						     -1, NULL, renderer,
@@ -566,6 +567,10 @@ main (int argc, char **argv)
 	widget = glade_xml_get_widget (xml, "contacts_import");
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
+	widget = glade_xml_get_widget (xml, "edit_menu");
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (contacts_edit_menu_activate_cb), contacts_data);
+
 
 	/* Start */
 	g_idle_add (open_book, contacts_data);
