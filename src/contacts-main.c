@@ -488,11 +488,16 @@ main (int argc, char **argv)
 				      GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
 				      GTK_SORT_ASCENDING);
 	g_object_unref (model);
+
+
 	/* Connect signal for selection changed event */
 	selection = gtk_tree_view_get_selection (contacts_treeview);
 	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (contacts_selection_cb), contacts_data);
-	
+
+	/* Enable multiple select (for delete) */
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+
 	/* Create model/view for groups/type chooser list */
 	contacts_treeview = GTK_TREE_VIEW (glade_xml_get_widget (
 						xml, "chooser_treeview"));

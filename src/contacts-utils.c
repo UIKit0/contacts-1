@@ -266,16 +266,10 @@ contacts_field_pretty_name (const ContactsField *field)
 }
 
 EContact *
-contacts_contact_from_selection (GtkTreeSelection *selection,
-				 GHashTable *contacts_table)
+contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path, GHashTable *contacts_table)
 {
-	GtkTreeModel *model;
 	GtkTreeIter iter;
-	
-	if (!selection || !GTK_IS_TREE_SELECTION (selection))
-		return NULL;
-		
-	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+	if (gtk_tree_model_get_iter (model, &iter, path)) {
 		const gchar *uid;
 		EContactListHash *hash;
 		gtk_tree_model_get (model, &iter, CONTACT_UID_COL, &uid, -1);
@@ -286,6 +280,30 @@ contacts_contact_from_selection (GtkTreeSelection *selection,
 		}
 	}
 	return NULL;
+}
+
+EContact *
+contacts_contact_from_selection (GtkTreeSelection *selection,
+				 GHashTable *contacts_table)
+{
+	GtkTreeModel *model;
+	GList *selected_paths;
+	GtkTreePath *path;
+	EContact *result;
+	
+	if (!selection || !GTK_IS_TREE_SELECTION (selection))
+		return NULL;
+
+	selected_paths = gtk_tree_selection_get_selected_rows (selection, &model);
+	if (!selected_paths)
+		return NULL;
+	path = selected_paths->data;
+
+	result = contacts_contact_from_tree_path (model, path, contacts_table);
+
+	g_list_foreach (selected_paths, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free (selected_paths);
+	return result;
 }
 
 EContact *

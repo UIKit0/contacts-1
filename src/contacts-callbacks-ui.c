@@ -83,38 +83,72 @@ void
 contacts_delete_cb (GtkWidget *source, ContactsData *data)
 {
 	GtkWidget *dialog, *main_window;
+	gint result, count_selected;
 	EContact *contact;
-	gint result;
-	GList *widgets;
+	GList *widgets, *selected_paths, *current_path;
+	GList *contact_list = NULL;
 	const gchar *name;
-	
-	contact = contacts_get_selected_contact (data->xml,
-					data->contacts_table);
-	if (!contact) return;
+	gchar *message = NULL;
+	GtkTreeModel *model;
 
-	name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-	if ((!name) || (g_utf8_strlen (name, 4) <= 0))
-		name = _("Unknown");
+	GtkWidget *widget;
+	GtkTreeSelection *selection;
+
+	widget = glade_xml_get_widget (data->xml, "contacts_treeview");
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	count_selected = gtk_tree_selection_count_selected_rows (selection);
+
+	if (count_selected < 2) {
+		contact = contacts_get_selected_contact (data->xml,
+						data->contacts_table);
+		if (!contact) return;
+
+		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+		if ((!name) || (g_utf8_strlen (name, 4) <= 0))
+			name = _("Unknown");
+
+		contact_list = g_list_prepend (contact_list, e_contact_get (contact, E_CONTACT_UID));
+
+		message = g_strdup_printf (_("Are you sure you want to delete "\
+				 "'%s'?"), name);
+	}
+	else {
+		message = g_strdup_printf (_("Are you sure you want to delete "\
+					"%d contacts?"), count_selected);
+
+		selected_paths = gtk_tree_selection_get_selected_rows (selection, &model);
+		
+		current_path = g_list_first (selected_paths);
+		while (current_path) {
+			contact = contacts_contact_from_tree_path (model, current_path->data, data->contacts_table);
+			contact_list = g_list_prepend (contact_list, e_contact_get(contact, E_CONTACT_UID));
+			current_path = g_list_next (current_path);
+		}
+
+		g_list_foreach (selected_paths, (GFunc)gtk_tree_path_free, NULL);
+		g_list_free (selected_paths);
+	}
+
 
 	main_window = glade_xml_get_widget (data->xml, "main_window");
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_CANCEL,
-					 _("Are you sure you want to delete "\
-					 "'%s'?"), name);
-	gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Delete contact"),
+					 message);
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_DELETE,
 		GTK_RESPONSE_YES, NULL);
-	
+
 	widgets = contacts_set_widgets_desensitive (main_window);
 	result = gtk_dialog_run (GTK_DIALOG (dialog));
 	switch (result) {
 		case GTK_RESPONSE_YES:
-			/* TODO: add callback to handle errors */
-			e_book_async_remove_contact (data->book, contact, NULL, NULL);
+			/* TODO: add progress indicator and callback here */
+			e_book_async_remove_contacts (data->book, contact_list, NULL, NULL);
 			break;
 		default:
 			break;
 	}
+	g_list_free (contact_list);
 	gtk_widget_destroy (dialog);
 	contacts_set_widgets_sensitive (widgets);
 }
@@ -122,11 +156,13 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 void
 contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 {
-	gchar *vcard_string;
+	gchar *vcard_string, *card;
+	gchar **vcard_array = NULL;
+	gint i = 0;
 #ifdef HAVE_GNOMEVFS
 	int size;
 	GnomeVFSResult vfs_result;
-	
+
 	vfs_result = gnome_vfs_read_entire_file (
 		filename, &size, &vcard_string);
 	if (vfs_result == GNOME_VFS_OK) {
@@ -134,58 +170,74 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 	if (g_file_get_contents (
 		filename, &vcard_string, NULL, NULL)) {
 #endif
-		EContact *contact =
-			e_contact_new_from_vcard (vcard_string);
-		if (contact) {
-			gint result = GTK_RESPONSE_YES;
-			if (do_confirm) {
-				GtkWidget *dialog, *main_window;
-				GList *widgets;
-				
-				main_window = glade_xml_get_widget (
-					data->xml, "main_window");
-				dialog = gtk_message_dialog_new (
-					GTK_WINDOW (main_window),
-					0, GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_NONE,
-					_("Would you like to import contact "\
-					"'%s'?"),
-					(const char *)e_contact_get_const (
-						contact, E_CONTACT_FULL_NAME));
-				gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-					_("_Show contact"), GTK_RESPONSE_NO,
-					_("_Import contact"), GTK_RESPONSE_YES,
-					NULL);
-				widgets = contacts_set_widgets_desensitive (
-					main_window);
-				result = gtk_dialog_run (GTK_DIALOG (dialog));
-				gtk_widget_destroy (dialog);
-				contacts_set_widgets_sensitive (widgets);
-				g_list_free (widgets);
+		vcard_array = g_strsplit (vcard_string, "END:VCARD\n", 0);
+		while ((card = vcard_array[i++]))
+		{
+			EContact *contact = NULL;
+			gchar *str1;
+			/* make sure we haven't reached the end */
+			if (strlen (card) < 1)
+				continue;
+			/* END:VCARD is stripped by strsplit, so add it again here */
+			str1 = g_strconcat (card, "END:VCARD", NULL);
+			contact = e_contact_new_from_vcard (str1);
+			g_free (str1);
+
+			if (contact) {
+				gint result = GTK_RESPONSE_YES;
+				if (do_confirm) {
+					GtkWidget *dialog, *main_window;
+					GList *widgets;
+					
+					main_window = glade_xml_get_widget (
+						data->xml, "main_window");
+					dialog = gtk_message_dialog_new (
+						GTK_WINDOW (main_window),
+						0, GTK_MESSAGE_QUESTION,
+						GTK_BUTTONS_NONE,
+						_("Would you like to import contact "\
+						"'%s'?"),
+						(const char *)e_contact_get_const (
+							contact, E_CONTACT_FULL_NAME));
+					gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+						_("_Show contact"), GTK_RESPONSE_NO,
+						_("_Import contact"), GTK_RESPONSE_YES,
+						NULL);
+					widgets = contacts_set_widgets_desensitive (
+						main_window);
+					result = gtk_dialog_run (GTK_DIALOG (dialog));
+					gtk_widget_destroy (dialog);
+					contacts_set_widgets_sensitive (widgets);
+					g_list_free (widgets);
+				}
+				if (result == GTK_RESPONSE_YES) {
+					GList *lcontact =
+						g_list_prepend (NULL, contact);
+					/* Add contact to db and select it */
+					/* TODO: add progress indicator and callback here */
+					e_book_async_add_contact (data->book, contact,
+								   NULL, NULL);
+					/* Maually trigger the added callback so that
+					 * the contact can be selected.
+					 */
+					#if 0
+					contacts_added_cb (data->book_view, lcontact,
+						data);
+					contacts_set_selected_contact (data->xml,
+						(const gchar *)e_contact_get_const (
+							contact, E_CONTACT_UID));
+					#endif
+					g_list_free (lcontact);
+				} else {
+					contacts_display_summary (contact, data->xml);
+					contacts_set_available_options (
+						data->xml, TRUE, FALSE, FALSE);
+				}
+				g_object_unref (contact);
 			}
-			if (result == GTK_RESPONSE_YES) {
-				GList *lcontact =
-					g_list_prepend (NULL, contact);
-				/* Add contact to db and select it */
-				e_book_add_contact (
-					data->book, contact, NULL);
-				/* Maually trigger the added callback so that
-				 * the contact can be selected.
-				 */
-				contacts_added_cb (data->book_view, lcontact,
-					data);
-				contacts_set_selected_contact (data->xml,
-					(const gchar *)e_contact_get_const (
-						contact, E_CONTACT_UID));
-				g_list_free (lcontact);
-			} else {
-				contacts_display_summary (contact, data->xml);
-				contacts_set_available_options (
-					data->xml, TRUE, FALSE, FALSE);
-			}
-			g_object_unref (contact);
 		}
 		g_free (vcard_string);
+		g_strfreev (vcard_array);
 	}
 #ifdef HAVE_GNOMEVFS
 	else {

@@ -43,6 +43,10 @@ const ContactsField *contacts_get_contacts_fields ();
 
 const gchar *contacts_field_pretty_name (const ContactsField *field);
 
+EContact *
+contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path,
+				GHashTable *contacts_table);
+
 EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
 					   GHashTable *contacts_table);
 

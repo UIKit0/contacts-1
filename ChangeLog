@@ -1,3 +1,12 @@
+2006-11-16  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-main.c:
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+
+	Implement multiple import and delete
+
 2006-11-14  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-utils.c:
