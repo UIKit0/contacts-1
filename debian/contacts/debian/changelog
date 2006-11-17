@@ -3,6 +3,7 @@ contacts (0.2-1) unstable; urgency=low
   * New upstream release
     - Multiple import implemented (closes: #378507)
     - Much, much more.
+    - Remove debian/patches/photo.diff.
 
  -- Ross Burton <ross@debian.org>  Fri, 17 Nov 2006 16:22:38 +0000
 
