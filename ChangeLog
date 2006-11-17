@@ -1,3 +1,10 @@
+2006-11-17  Thomas Wood  <thomas@openedhand.com>
+
+	* NEWS:
+	* configure.ac:
+
+	Updated for 0.2 release
+
 2006-11-16  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c:
