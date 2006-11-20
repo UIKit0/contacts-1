@@ -21,7 +21,6 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <gtk/gtk.h>
-#include <glade/glade.h>
 #include <libebook/e-book.h>
 #include "config.h"
 #ifdef HAVE_GNOMEVFS
@@ -39,19 +38,19 @@
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
 
+#include FRONTEND_HEADER
+
 #define GCONF_PATH "/apps/contacts"
 #define GCONF_KEY_SEARCH "/apps/contacts/search_type"
-#define XML_FILE PKGDATADIR "/contacts.glade"
 
 void
-contacts_update_treeview (GtkWidget *source)
+contacts_update_treeview (ContactsData *data, GtkWidget *source)
 {
 	GtkTreeView *view;
 	GtkTreeModelFilter *model;
 	gint visible_rows;
-	GladeXML *xml = glade_get_widget_tree (source);
 
-	view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "contacts_treeview"));
+	view = GTK_TREE_VIEW (data->ui->contacts_treeview);
 	model = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (view));
 	gtk_tree_model_filter_refilter (model);
 	
@@ -67,13 +66,6 @@ contacts_update_treeview (GtkWidget *source)
 			gtk_tree_selection_select_iter (selection, &iter);
 		}
 	}
-}
-
-void
-contacts_search_changed_cb (GtkWidget *search_entry)
-{
-	gtk_widget_grab_focus (search_entry);
-	contacts_update_treeview (search_entry);
 }
 
 static void
@@ -96,7 +88,7 @@ contacts_remove_labels_from_focus_chain (GtkContainer *container)
 }
 
 void
-contacts_display_summary (EContact *contact, GladeXML *xml)
+contacts_display_summary (EContact *contact, ContactsData *contacts_data)
 {
 	GtkWidget *widget;
 	const gchar *string;
@@ -109,7 +101,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 		return;
 
 	/* Retrieve contact name and groups */
-	widget = glade_xml_get_widget (xml, "summary_name_label");
+	widget = contacts_data->ui->summary_name_label;
 	string = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 	/* Only examine 4-bytes (maximum UTF-8 character width is 4 bytes?) */
 	if ((!string) || (g_utf8_strlen (string, 4) <= 0))
@@ -127,7 +119,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	g_free (name_markup);
 
 	/* Retrieve contact picture and resize */
-	widget = glade_xml_get_widget (xml, "photo_image");
+	widget = contacts_data->ui->photo_image;
 	photo = contacts_load_photo (contact);
 	if ((gtk_image_get_storage_type (photo) == GTK_IMAGE_EMPTY) ||
 	    (gtk_image_get_storage_type (photo) == GTK_IMAGE_PIXBUF))
@@ -144,7 +136,7 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	gtk_widget_destroy (GTK_WIDGET (photo));
 
 	/* Create summary (displays fields marked as REQUIRED) */
-	widget = glade_xml_get_widget (xml, "summary_table");
+	widget = contacts_data->ui->summary_table;
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
 			       widget);
@@ -234,11 +226,11 @@ contacts_display_summary (EContact *contact, GladeXML *xml)
 	g_value_unset (can_focus);
 	g_free (can_focus);
 
-	widget = glade_xml_get_widget (xml, "summary_vbox");
+	widget = contacts_data->ui->summary_vbox;
 	gtk_widget_show (widget);
-	contacts_set_available_options (xml, TRUE, TRUE, TRUE);
+	contacts_set_available_options (contacts_data, TRUE, TRUE, TRUE);
 
-	widget = glade_xml_get_widget (xml, "summary_table");
+	widget = contacts_data->ui->summary_table;
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 }
 
@@ -325,8 +317,7 @@ contacts_bacon_cb (const char *message, gpointer user_data)
 	if (!message)
 		return;
 	
-	gtk_window_present (GTK_WINDOW (
-		glade_xml_get_widget (data->xml, "main_window")));
+	gtk_window_present (GTK_WINDOW (data->ui->main_window));
 	if (message[0] != ':') {
 		g_printf ("Opening '%s'\n", message);
 		contacts_import (data, message, TRUE);
@@ -341,19 +332,19 @@ contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
 	const gchar *search;
 	GConfValue *value;
 	GtkWidget *widget;
-	GladeXML *xml = user_data;
+	ContactsData *contacts_data = user_data;
 		
 	value = gconf_entry_get_value (entry);
 	search = gconf_value_get_string (value);
 	if (strcmp (search, "entry") == 0) {
-		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		widget = contacts_data->ui->search_entry_hbox;
 		gtk_widget_show (widget);
-		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		widget = contacts_data->ui->search_tab_hbox;
 		gtk_widget_hide (widget);
 	} else if (strcmp (search, "alphatab") == 0) {
-		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		widget = contacts_data->ui->search_entry_hbox;
 		gtk_widget_hide (widget);
-		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		widget = contacts_data->ui->search_tab_hbox;
 		gtk_widget_show (widget);
 	} else {
 		g_warning ("Unknown search UI type \"%s\"", search);
@@ -377,7 +368,6 @@ main (int argc, char **argv)
 	GtkTreeModelFilter *filter;
 	GtkCellRenderer *renderer;
 	GtkSizeGroup *size_group;
-	GladeXML *xml;			/* */
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
 					 */
@@ -408,25 +398,20 @@ main (int argc, char **argv)
 		return 0;
 	}
 
-	contacts_data = g_new0 (ContactsData, 1);	
+	contacts_data = g_new0 (ContactsData, 1);
+	contacts_data->ui = g_new0 (ContactsUI, 1);
 	bacon_message_connection_set_callback (
 		mc, contacts_bacon_cb, contacts_data);
 
-	glade_init ();
-
 	/* Set critical errors to close application */
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
-
-	/* Load up main_window from interface xml, quit if xml file not found */
-	xml = glade_xml_new (XML_FILE, NULL, NULL);
-	if (!xml)
-		g_critical ("Could not find interface XML file '%s'",
-			    XML_FILE);
 
 	/* Load the system addressbook */
 	contacts_data->book = e_book_new_system_addressbook (NULL);
 	if (!contacts_data->book)
 		g_critical ("Could not load system addressbook");
+
+	contacts_create_ui (contacts_data);
 
 #ifdef HAVE_GNOMEVFS
 	gnome_vfs_init ();
@@ -438,9 +423,9 @@ main (int argc, char **argv)
 		gconf_client_set_string (
 			client, GCONF_KEY_SEARCH, "entry", NULL);
 	} else if (strcmp (search, "alphatab") == 0) {
-		widget = glade_xml_get_widget (xml, "search_entry_hbox");
+		widget = contacts_data->ui->search_entry_hbox;
 		gtk_widget_hide (widget);
-		widget = glade_xml_get_widget (xml, "search_tab_hbox");
+		widget = contacts_data->ui->search_tab_hbox;
 		gtk_widget_show (widget);
 	}
 	gconf_client_add_dir (client, GCONF_PATH, GCONF_CLIENT_PRELOAD_NONE,
@@ -449,19 +434,13 @@ main (int argc, char **argv)
 		contacts_gconf_search_cb, xml, NULL, NULL);
 #endif
 
-	/* Hook up signals defined in interface xml */
-	glade_xml_signal_autoconnect (xml);
-	
 	contacts_data->contacts_table = g_hash_table_new_full (g_str_hash,
 						g_str_equal, NULL, 
 						(GDestroyNotify)
 						 contacts_free_list_hash);
-	contacts_data->xml = xml;
 
 	/* Add the column to the GtkTreeView */
-	contacts_treeview =
-	    GTK_TREE_VIEW (glade_xml_get_widget
-			   (xml, "contacts_treeview"));
+	contacts_treeview = GTK_TREE_VIEW (contacts_data->ui->contacts_treeview);
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, "ypad", 0, NULL);
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
@@ -500,8 +479,7 @@ main (int argc, char **argv)
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
 	/* Create model/view for groups/type chooser list */
-	contacts_treeview = GTK_TREE_VIEW (glade_xml_get_widget (
-						xml, "chooser_treeview"));
+	contacts_treeview = GTK_TREE_VIEW (contacts_data->ui->chooser_treeview);
 	model = gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
 	renderer = gtk_cell_renderer_toggle_new ();
 	g_object_set (renderer, "activatable", TRUE, NULL);
@@ -521,53 +499,52 @@ main (int argc, char **argv)
 	g_object_unref (model);
 
 	/* Select 'All' in the groups combobox */
-	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
-					 (xml, "groups_combobox"));
+	groups_combobox = GTK_COMBO_BOX (contacts_data->ui->groups_combobox);
 	gtk_combo_box_set_active (groups_combobox, 0);
 
 	/* Set transient parent for chooser */
 	gtk_window_set_transient_for (
-		GTK_WINDOW (glade_xml_get_widget (xml, "chooser_dialog")),
-		GTK_WINDOW (glade_xml_get_widget (xml, "main_window")));
+		GTK_WINDOW (contacts_data->ui->chooser_dialog),
+		GTK_WINDOW (contacts_data->ui->main_window));
 
 	/* Remove selectable label from focus chain */
-	widget = glade_xml_get_widget (xml, "preview_header_hbox");
+	widget = contacts_data->ui->preview_header_hbox;
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 
 	/* Set up size group for bottom row of buttons and search */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
-	widget = glade_xml_get_widget (xml, "search_hbox");
+	widget = contacts_data->ui->search_hbox;
 	gtk_size_group_add_widget (size_group, widget);
-	widget = glade_xml_get_widget (xml, "summary_hbuttonbox");
+	widget = contacts_data->ui->summary_hbuttonbox;
 	gtk_size_group_add_widget (size_group, widget);
 	g_object_unref (size_group);
 
 	/* Connect UI-related signals */
-	widget = glade_xml_get_widget (xml, "new_button");
+	widget = contacts_data->ui->new_button;
 	g_signal_connect (G_OBJECT (widget), "clicked",
 			  G_CALLBACK (contacts_new_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "new");
+	widget = contacts_data->ui->new_menuitem;
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_new_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "edit_button");
+	widget = contacts_data->ui->edit_button;
 	g_signal_connect (G_OBJECT (widget), "clicked",
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	widget = contacts_data->ui->contacts_treeview;
 	g_signal_connect (G_OBJECT (widget), "row_activated",
 			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "edit");
+	widget = contacts_data->ui->edit_menuitem;
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "delete_button");
+	widget = contacts_data->ui->delete_button;
 	g_signal_connect (G_OBJECT (widget), "clicked",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "delete");
+	widget = contacts_data->ui->delete_menuitem;
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "contacts_import");
+	widget = contacts_data->ui->contacts_import;
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
-	widget = glade_xml_get_widget (xml, "edit_menu");
+	widget = contacts_data->ui->edit_menu;
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_edit_menu_activate_cb), contacts_data);
 
@@ -579,7 +556,7 @@ main (int argc, char **argv)
 		g_idle_add (contacts_import_from_param, contacts_data);
 	}
 	
-	widget = glade_xml_get_widget (xml, "main_window");
+	widget = contacts_data->ui->main_window;
 	if (plug > 0) {
 		GtkWidget *plug_widget;
 		GtkWidget *contents;
@@ -592,7 +569,7 @@ main (int argc, char **argv)
 		g_object_unref (contents);
 		g_signal_connect (G_OBJECT (plug_widget), "destroy",
 				  G_CALLBACK (gtk_main_quit), NULL);
-		widget = glade_xml_get_widget (xml, "main_menubar");
+		widget = contacts_data->ui->main_menubar;
 		gtk_widget_hide (widget);
 		gtk_widget_show (plug_widget);
 	} else {
@@ -602,7 +579,7 @@ main (int argc, char **argv)
 	}
 
 	/* fix icon sizes to 16x16 for the moment... */
-	gtk_rc_parse_string ("gtk_icon_sizes=\"gtk-button=16,16:gtk-menu:16,16\"");
+	gtk_rc_parse_string ("gtk_icon_sizes=\"gtk-button=16,16:gtk-menu=16,16\"");
 
 	gtk_main ();
 
@@ -610,6 +587,7 @@ main (int argc, char **argv)
 	e_book_view_stop (contacts_data->book_view);
 	g_object_unref (contacts_data->book_view);
 	g_object_unref (contacts_data->book);
+	g_free (contacts_data->ui);
 
 	return 0;
 }

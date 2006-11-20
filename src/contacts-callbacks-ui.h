@@ -22,7 +22,9 @@
 #include <libebook/e-book.h>
 #include "contacts-defs.h"
 
-void contacts_update_treeview ();
+void contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data);
+
+void contacts_chooser_add_cb (GtkWidget *button, ContactsData *data);
 
 void contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data);
 

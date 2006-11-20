@@ -20,7 +20,6 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
-#include <glade/glade.h>
 #include "contacts-defs.h"
 
 char *e_util_unicode_get_utf8 (const char *text, gunichar * out);
@@ -50,12 +49,12 @@ contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path,
 EContact *contacts_contact_from_selection (GtkTreeSelection *selection,
 					   GHashTable *contacts_table);
 
-EContact *contacts_get_selected_contact (GladeXML *xml,
+EContact *contacts_get_selected_contact (ContactsData *data,
 					 GHashTable *contacts_table);
 					 
-void contacts_set_selected_contact (GladeXML *xml, const gchar *uid);
+void contacts_set_selected_contact (ContactsData *data, const gchar *uid);
 
-void contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,
+void contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
 				     gboolean delete);
 
 GtkImage *contacts_load_photo (EContact *contact);
@@ -77,9 +76,7 @@ void contacts_free_list_hash (gpointer data);
 
 GList *contacts_entries_get_values (GtkWidget *widget, GList *list);
 
-void contacts_chooser_add_cb (GtkWidget *button);
-
-gboolean contacts_chooser (GladeXML *xml, const gchar *title,
+gboolean contacts_chooser (ContactsData *data, const gchar *title,
 			   const gchar *label_markup, GList *choices,
 			   GList *chosen, gboolean allow_custom,
 			   GList **results);

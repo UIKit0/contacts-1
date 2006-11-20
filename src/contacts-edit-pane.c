@@ -21,7 +21,6 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <gtk/gtk.h>
-#include <glade/glade.h>
 #include <libebook/e-book.h>
 
 #include "contacts-defs.h"
@@ -70,23 +69,21 @@ contacts_edit_pane_hide (ContactsData *data)
 	/* All changed are instant-apply, so just remove the edit components
 	 * and switch back to main view.
 	 */
-	window = GTK_WINDOW (glade_xml_get_widget (data->xml, "main_window"));
-	widget = glade_xml_get_widget (data->xml, "edit_table");
+	window = GTK_WINDOW (data->ui->main_window);
+	widget = data->ui->edit_table;
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
 			       widget);
-	widget = glade_xml_get_widget (data->xml, "contact_menu");
+	widget = data->ui->contact_menu;
 	gtk_widget_hide (widget);
-	widget = glade_xml_get_widget (data->xml, "contacts_menu");
+	widget = data->ui->contacts_menu;
 	gtk_widget_show (widget);
-	widget = glade_xml_get_widget (data->xml, "main_notebook");
+	widget = data->ui->main_notebook;
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	gtk_window_set_title (window, _("Contacts"));
-	contacts_set_available_options (data->xml, TRUE, TRUE, TRUE);
-	gtk_window_set_default (window, glade_xml_get_widget (
-		data->xml, "edit_button"));
-	gtk_window_set_focus (window, glade_xml_get_widget (
-		data->xml, "search_entry"));
+	contacts_set_available_options (data, TRUE, TRUE, TRUE);
+	gtk_window_set_default (window, data->ui->edit_button);
+	gtk_window_set_focus (window, data->ui->search_entry);
 }
 
 static void
@@ -95,7 +92,7 @@ contacts_edit_delete_cb (GtkWidget *button, ContactsData *data)
 	GtkWidget *dialog, *main_window;
 	GList *widgets;
 	
-	main_window = glade_xml_get_widget (data->xml, "main_window");
+	main_window = data->ui->main_window;
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_YES_NO,
@@ -714,6 +711,7 @@ contacts_append_to_edit_table (GtkTable *table, GtkWidget *label,
 typedef struct {
 	EVCardAttribute *attr;
 	GList *contacts_groups;
+	ContactsData *contacts_data;
 } ContactsGroupChangeData;
 
 static void
@@ -722,8 +720,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	GList *g, *bools = NULL;
 	GList *results = NULL;
 	GList *values = e_vcard_attribute_get_values (data->attr);
-	GladeXML *xml = glade_get_widget_tree (widget);
-	
+
 	for (g = data->contacts_groups; g; g = g->next) {
 		if (g_list_find_custom (values, g->data, (GCompareFunc)strcmp))
 			bools = g_list_append (bools, GINT_TO_POINTER (TRUE));
@@ -731,7 +728,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 			bools = g_list_append (bools, GINT_TO_POINTER (FALSE));
 	}
 	
-	if (contacts_chooser (xml, _("Change groups"), _("<b>Choose groups"
+	if (contacts_chooser (data->contacts_data, _("Change groups"), _("<b>Choose groups"
 		"</b>"), data->contacts_groups, bools, TRUE, &results)) {
 /*		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ") :
@@ -759,12 +756,11 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 	GHashTable *field_trans;
 	GList *field, *children;
 	guint i;
-	GladeXML *xml = glade_get_widget_tree (button);
 	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
 	EContact *contact = data->contact;
 	
 	children = gtk_container_get_children (GTK_CONTAINER (
-		glade_xml_get_widget (xml, "edit_table")));
+		data->ui->edit_table));
 	field_trans = g_hash_table_new (g_str_hash, g_str_equal);
 	for (i = 0; contacts_fields[i].vcard_field; i++) {
 		/* If a unique field exists, don't give the option to add it */
@@ -791,7 +787,7 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 	}
 	g_list_free (children);
 	
-	if (contacts_chooser (xml, _("Add field"),
+	if (contacts_chooser (data, _("Add field"),
                               /* TODO: make nicer for i18n */
 			      _("<b>Choose a field</b>"), fields,
 			      NULL, FALSE, &field)) {
@@ -810,7 +806,7 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 			   pretty_name, cfield->multi_line, &data->changed);
 		edit = contacts_edit_widget_new (contact, attr,
 					cfield->multi_line, &data->changed);
-		table = glade_xml_get_widget (xml, "edit_table");
+		table = data->ui->edit_table;
 		
 		contacts_append_to_edit_table (GTK_TABLE (table), label, edit,
 			TRUE);
@@ -974,7 +970,6 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	guint row, i;
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
-	GladeXML *xml = data->xml;
 	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
 
 #ifdef DEBUG
@@ -1010,7 +1005,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	/* ODD: Doing this after adding the widgets will cause the first view
 	 * not to work... But only when using a viewport (Gtk bug?)
 	 */
-	widget = glade_xml_get_widget (xml, "main_notebook");
+	widget = data->ui->main_notebook;
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
 	
 	/* Create contact photo button */
@@ -1106,7 +1101,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	}
 	
 	/* Sort widgets into order and display */
-	widget = glade_xml_get_widget (xml, "edit_table");
+	widget = data->ui->edit_table;
 	label_widgets = g_list_sort (label_widgets,
 		(GCompareFunc)contacts_widgets_list_sort);
 	edit_widgets = g_list_sort (edit_widgets,
@@ -1132,7 +1127,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		/* Set focus on first entry */
 		if (row == 0)
 			gtk_window_set_focus (GTK_WINDOW (
-				glade_xml_get_widget (xml, "main_window")),
+				data->ui->main_window),
 				d->data);
 	}
 	
@@ -1152,12 +1147,13 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	g_list_free (label_widgets);
 	g_list_free (edit_widgets);
 
-	widget = glade_xml_get_widget (xml, "main_window");
+	widget = data->ui->main_window;
 	gtk_window_set_title (GTK_WINDOW (widget), _("Edit contact"));
 	
 	/* Connect add group menu item */
-	widget = glade_xml_get_widget (xml, "edit_groups");
+	widget = data->ui->edit_groups;
 	gdata = g_new (ContactsGroupChangeData, 1);
+	gdata->contacts_data = data;
 	gdata->attr = groups_attr;
 	gdata->contacts_groups = data->contacts_groups;
 	/* Remove any old signals and replace with new ones with the correct
@@ -1175,15 +1171,15 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_change_groups_cb), gdata);
 	g_signal_connect_swapped (G_OBJECT (widget), "hide",
 				  G_CALLBACK (g_free), gdata);
-	widget = glade_xml_get_widget (data->xml, "contacts_menu");
+	widget = data->ui->contacts_menu;
 	gtk_widget_hide (widget);
-	widget = glade_xml_get_widget (xml, "contact_menu");
+	widget = data->ui->contact_menu;
 	gtk_widget_show (widget);
-	widget = glade_xml_get_widget (xml, "remove_field_button");
+	widget = data->ui->remove_field_button;
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* Connect delete menu item */
-	widget = glade_xml_get_widget (xml, "contact_delete");
+	widget = data->ui->contact_delete;
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_edit_delete_cb,
@@ -1192,7 +1188,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_edit_delete_cb), data);
 			  
 	/* Connect export menu item */
-	widget = glade_xml_get_widget (xml, "contact_export");
+	widget = data->ui->contact_export;
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_export_cb,
@@ -1201,7 +1197,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_export_cb), data);
 			  
 	/* Connect add field button */
-	widget = glade_xml_get_widget (xml, "add_field_button");
+	widget = data->ui->add_field_button;
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_add_field_cb,
@@ -1210,7 +1206,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_add_field_cb), data);
 	
 	/* Connect close button */
-	widget = glade_xml_get_widget (xml, "edit_done_button");
+	widget = data->ui->edit_done_button;
 	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_edit_ok_cb,
@@ -1226,5 +1222,5 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		g_signal_connect (G_OBJECT (widget), "clicked",
 				  G_CALLBACK (contacts_edit_ok_cb), data);
 	gtk_window_set_default (GTK_WINDOW (
-		glade_xml_get_widget (xml, "main_window")), widget);
+		data->ui->main_window), widget);
 }

@@ -22,7 +22,6 @@
 #include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <glade/glade.h>
 #include <libebook/e-book.h>
 
 #include "contacts-utils.h"
@@ -307,14 +306,14 @@ contacts_contact_from_selection (GtkTreeSelection *selection,
 }
 
 EContact *
-contacts_get_selected_contact (GladeXML *xml, GHashTable *contacts_table)
+contacts_get_selected_contact (ContactsData *data, GHashTable *contacts_table)
 {
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
 	EContact *contact;
 
 	/* Get the currently selected contact */
-	widget = glade_xml_get_widget (xml, "contacts_treeview");
+	widget = data->ui->contacts_treeview;
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	
 	if (!selection || !GTK_IS_TREE_SELECTION (selection))
@@ -326,14 +325,14 @@ contacts_get_selected_contact (GladeXML *xml, GHashTable *contacts_table)
 }
 
 void
-contacts_set_selected_contact (GladeXML *xml, const gchar *uid)
+contacts_set_selected_contact (ContactsData *data, const gchar *uid)
 {
 	GtkTreeView *treeview;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 
 	treeview = GTK_TREE_VIEW (
-		glade_xml_get_widget (xml, "contacts_treeview"));
+		data->ui->contacts_treeview);
 	model = /*gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (*/
 		gtk_tree_view_get_model (treeview)/*))*/;
 	
@@ -356,24 +355,24 @@ contacts_set_selected_contact (GladeXML *xml, const gchar *uid)
 
 /* Helper method to set edit/delete sensitive/insensitive */
 void
-contacts_set_available_options (GladeXML *xml, gboolean new, gboolean open,
+contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
 				gboolean delete)
 {
 	GtkWidget *widget;
 
-	widget = glade_xml_get_widget (xml, "new");
+	widget = data->ui->new_menuitem;
 	gtk_widget_set_sensitive (widget, new);
-	widget = glade_xml_get_widget (xml, "new_button");
+	widget = data->ui->new_button;
 	gtk_widget_set_sensitive (widget, new);
 
-	widget = glade_xml_get_widget (xml, "edit");
+	widget = data->ui->edit_menuitem;
 	gtk_widget_set_sensitive (widget, open);
-	widget = glade_xml_get_widget (xml, "edit_button");
+	widget = data->ui->edit_button;
 	gtk_widget_set_sensitive (widget, open);
 
-	widget = glade_xml_get_widget (xml, "delete");
+	widget = data->ui->delete_menuitem;
 	gtk_widget_set_sensitive (widget, delete);
-	widget = glade_xml_get_widget (xml, "delete_button");
+	widget = data->ui->delete_button;
 	gtk_widget_set_sensitive (widget, delete);
 }
 
@@ -651,8 +650,7 @@ contacts_free_list_hash (gpointer data)
 		GtkListStore *model = GTK_LIST_STORE 
 			(gtk_tree_model_filter_get_model 
 			 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
-			  (GTK_TREE_VIEW (glade_xml_get_widget
-					(hash->xml, "contacts_treeview"))))));
+			  (GTK_TREE_VIEW (hash->contacts_data->ui->contacts_treeview)))));
 		gtk_list_store_remove (model, &hash->iter);
 		g_object_unref (hash->contact);
 		g_free (hash);
@@ -690,45 +688,18 @@ contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	return list;
 }
 
-void
-contacts_chooser_add_cb (GtkWidget *button)
-{
-	GtkWidget *treeview, *entry;
-	GtkListStore *model;
-	GtkTreeIter iter;
-	const gchar *text;
-	GladeXML *xml = glade_get_widget_tree (button);
-	
-	entry = glade_xml_get_widget (xml, "chooser_entry");
-	text = gtk_entry_get_text (GTK_ENTRY (entry));
-	
-	if (g_utf8_strlen (text, -1) <= 0)
-		return;
-	
-	treeview = glade_xml_get_widget (xml, "chooser_treeview");
-	model = GTK_LIST_STORE (
-		gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
-	
-	gtk_list_store_append (model, &iter);
-	gtk_list_store_set (model, &iter, CHOOSER_TICK_COL, TRUE,
-			    CHOOSER_NAME_COL, text, -1);
-	
-	gtk_entry_set_text (GTK_ENTRY (entry), "");
-}
-
 gboolean
-contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
+contacts_chooser (ContactsData *data, const gchar *title, const gchar *label_markup,
 		  GList *choices, GList *chosen, gboolean allow_custom,
 		  GList **results)
 {
 	GList *c, *d, *widgets;
 	GtkWidget *label_widget;
 	gboolean multiple_choice = chosen ? TRUE : FALSE;
-	GtkWidget *dialog = glade_xml_get_widget (xml, "chooser_dialog");
-	GtkTreeView *tree = GTK_TREE_VIEW (glade_xml_get_widget
-						(xml, "chooser_treeview"));
+	GtkWidget *dialog = data->ui->chooser_dialog;
+	GtkTreeView *tree = GTK_TREE_VIEW (data->ui->chooser_treeview);
 	GtkTreeModel *model = gtk_tree_view_get_model (tree);
-	GtkWidget *add_custom = glade_xml_get_widget (xml, "chooser_add_hbox");
+	GtkWidget *add_custom = data->ui->chooser_add_hbox;
 	gint dialog_code;
 	gboolean returnval = FALSE;
 	
@@ -737,7 +708,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	else
 		gtk_widget_hide (add_custom);
 	
-	label_widget = glade_xml_get_widget (xml, "chooser_label");
+	label_widget = data->ui->chooser_label;
 	if (label_markup) {
 		gtk_label_set_markup (GTK_LABEL (label_widget), label_markup);
 		gtk_widget_show (label_widget);
@@ -777,7 +748,7 @@ contacts_chooser (GladeXML *xml, const gchar *title, const gchar *label_markup,
 	gtk_window_set_title (GTK_WINDOW (dialog), title);
 	
 	widgets = contacts_set_widgets_desensitive (
-		glade_xml_get_widget (xml, "main_window"));
+		data->ui->main_window);
 	dialog_code = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_hide (dialog);
 	if (dialog_code == GTK_RESPONSE_OK) {

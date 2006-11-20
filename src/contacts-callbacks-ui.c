@@ -20,7 +20,6 @@
 #include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <glade/glade.h>
 #include <libebook/e-book.h>
 #include "config.h"
 #ifdef HAVE_GNOMEVFS
@@ -35,6 +34,41 @@
 #include "contacts-main.h"
 
 void
+contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
+{
+	GtkWidget *treeview, *entry;
+	GtkListStore *model;
+	GtkTreeIter iter;
+	const gchar *text;
+	
+	entry = data->ui->chooser_entry;
+	text = gtk_entry_get_text (GTK_ENTRY (entry));
+	
+	if (g_utf8_strlen (text, -1) <= 0)
+		return;
+	
+	treeview = data->ui->chooser_treeview;
+	model = GTK_LIST_STORE (
+		gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
+	
+	gtk_list_store_append (model, &iter);
+	gtk_list_store_set (model, &iter, CHOOSER_TICK_COL, TRUE,
+			    CHOOSER_NAME_COL, text, -1);
+	
+	gtk_entry_set_text (GTK_ENTRY (entry), "");
+}
+
+
+
+void
+contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data)
+{
+	gtk_widget_grab_focus (search_entry);
+	contacts_update_treeview (data, search_entry);
+}
+
+
+void
 contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 {
 	GtkWidget *widget;
@@ -44,10 +78,10 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 	contact = contacts_contact_from_selection (selection,
 						   data->contacts_table);
 	if (contact) {
-		contacts_display_summary (contact, data->xml);
+		contacts_display_summary (contact, data);
 	} else {
-		contacts_set_available_options (data->xml, TRUE, FALSE, FALSE);
-		widget = glade_xml_get_widget (data->xml, "summary_vbox");
+		contacts_set_available_options (data, TRUE, FALSE, FALSE);
+		widget = data->ui->summary_vbox;
 		gtk_widget_hide (widget);
 	}
 }
@@ -63,10 +97,10 @@ void
 contacts_edit_cb (GtkWidget *source, ContactsData *data)
 {
 	/* Disable the new/edit/delete options and get the contact to edit */
-	data->contact = contacts_get_selected_contact (data->xml,
+	data->contact = contacts_get_selected_contact (data,
 						       data->contacts_table);
 	if (data->contact) {
-		contacts_set_available_options (data->xml, FALSE, FALSE, FALSE);
+		contacts_set_available_options (data, FALSE, FALSE, FALSE);
 		data->changed = FALSE;		
 		contacts_edit_pane_show (data, FALSE);
 	}
@@ -94,12 +128,12 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
 
-	widget = glade_xml_get_widget (data->xml, "contacts_treeview");
+	widget = data->ui->contacts_treeview;
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	count_selected = gtk_tree_selection_count_selected_rows (selection);
 
 	if (count_selected < 2) {
-		contact = contacts_get_selected_contact (data->xml,
+		contact = contacts_get_selected_contact (data,
 						data->contacts_table);
 		if (!contact) return;
 
@@ -130,7 +164,7 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	}
 
 
-	main_window = glade_xml_get_widget (data->xml, "main_window");
+	main_window = data->ui->main_window;
 	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
 					 0, GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_CANCEL,
@@ -189,8 +223,7 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 					GtkWidget *dialog, *main_window;
 					GList *widgets;
 					
-					main_window = glade_xml_get_widget (
-						data->xml, "main_window");
+					main_window = data->ui->main_window;
 					dialog = gtk_message_dialog_new (
 						GTK_WINDOW (main_window),
 						0, GTK_MESSAGE_QUESTION,
@@ -229,9 +262,9 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 					#endif
 					g_list_free (lcontact);
 				} else {
-					contacts_display_summary (contact, data->xml);
+					contacts_display_summary (contact, data);
 					contacts_set_available_options (
-						data->xml, TRUE, FALSE, FALSE);
+						data, TRUE, FALSE, FALSE);
 				}
 				g_object_unref (contact);
 			}
@@ -253,7 +286,7 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 	GList *widgets;
 	GtkFileFilter *filter;
 	GtkWidget *main_window =
-		glade_xml_get_widget (data->xml, "main_window");
+		data->ui->main_window;
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
 		_("Import Contact"),
 		GTK_WINDOW (main_window),
@@ -321,7 +354,7 @@ contacts_export_cb (GtkWidget *source, ContactsData *data)
 {
 	GList *widgets;
 	GtkWidget *main_window =
-		glade_xml_get_widget (data->xml, "main_window");
+		data->ui->main_window;
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
 		_("Export Contact"),
 		GTK_WINDOW (main_window),
@@ -404,7 +437,7 @@ contacts_edit_menu_activate_cb (GtkWidget *widget, ContactsData *data)
 {
 	gboolean can_cutcopy, can_paste;
 
-	widget = glade_xml_get_widget (data->xml, "main_window");
+	widget = data->ui->main_window;
 	widget = gtk_window_get_focus (GTK_WINDOW (widget));
 	if ((GTK_IS_EDITABLE (widget) || GTK_IS_TEXT_VIEW (widget) || GTK_IS_LABEL (widget)))
 	{
@@ -428,11 +461,11 @@ contacts_edit_menu_activate_cb (GtkWidget *widget, ContactsData *data)
 	else
 		can_cutcopy = can_paste = FALSE;
 
-	widget = glade_xml_get_widget (data->xml, "cut");
+	widget = data->ui->cut_menuitem;
 	gtk_widget_set_sensitive (widget, can_cutcopy);
-	widget = glade_xml_get_widget (data->xml, "copy");
+	widget = data->ui->copy_menuitem;
 	gtk_widget_set_sensitive (widget, can_cutcopy);
-	widget = glade_xml_get_widget (data->xml, "paste");
+	widget = data->ui->paste_menuitem;
 	gtk_widget_set_sensitive (widget, can_paste);
 }
 
@@ -550,16 +583,15 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	EContactListHash *hash;
 	GtkComboBox *groups_combobox;
 	const gchar *search_string;
-	GladeXML *xml;
+	ContactsData *contacts_data;
 
 	/* Check if the contact is in the currently selected group. */
 	gtk_tree_model_get (model, iter, CONTACT_UID_COL, &uid, -1);
 	if (!uid) return FALSE;
 	hash = g_hash_table_lookup (contacts_table, uid);
 	if (!hash || !hash->contact) return FALSE;
-	xml = hash->xml;
-	groups_combobox = GTK_COMBO_BOX (glade_xml_get_widget 
-					 (xml, "groups_combobox"));
+	contacts_data = hash->contacts_data;
+	groups_combobox = GTK_COMBO_BOX (contacts_data->ui->groups_combobox);
 	group = gtk_combo_box_get_active_text (groups_combobox);
 	groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
 	if (gtk_combo_box_get_active (groups_combobox) > 0) {
@@ -580,10 +612,9 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
 	 * empty searches.
 	 */
-	if (GTK_WIDGET_VISIBLE (glade_xml_get_widget (
-	    xml, "search_entry_hbox"))) {
+	if (GTK_WIDGET_VISIBLE (contacts_data->ui->search_entry_hbox)) {
 		search_string = gtk_entry_get_text (
-			GTK_ENTRY (glade_xml_get_widget (xml, "search_entry")));
+			GTK_ENTRY (contacts_data->ui->search_entry));
 		if ((search_string) &&
 		    (g_utf8_strlen (search_string, -1) > 0)) {
 			gchar *name_string;
@@ -604,8 +635,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 		gchar *name, *uname;
 		gunichar c;
 		GSList *b, *buttons = gtk_radio_button_get_group (
-			GTK_RADIO_BUTTON (glade_xml_get_widget (
-				xml, "symbols_radiobutton")));
+			GTK_RADIO_BUTTON (contacts_data->ui->symbols_radiobutton));
 		
 		/* Find the active radio button */
 		for (b = buttons, i = 0; b; b = b->next, i++)

@@ -1,3 +1,30 @@
+2006-11-20  Thomas Wood  <thos@gnome.org>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb), (contacts_removed_cb):
+	* src/contacts-callbacks-ui.c: (contacts_chooser_add_cb),
+	(contacts_search_changed_cb), (contacts_selection_cb),
+	(contacts_new_cb), (contacts_edit_cb), (contacts_treeview_edit_cb),
+	(contacts_delete_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),
+	(contacts_edit_delete_cb), (contacts_change_groups_cb),
+	(contacts_add_field_cb), (contacts_edit_pane_show):
+	* src/contacts-gtk.c:
+	* src/contacts-gtk.h:
+	* src/contacts-main.c: (contacts_update_treeview),
+	(contacts_display_summary), (contacts_bacon_cb),
+	(contacts_gconf_search_cb), (main):
+	* src/contacts-main.h:
+	* src/contacts-utils.c: (contacts_free_list_hash),
+	(contacts_chooser):
+	* src/contacts-utils.h:
+
+	Remove glade dependency
+
 2006-11-20  Emmanuele Bassi  <ebassi@openedhand.com>
 
 	* configure.ac: Add it translation.

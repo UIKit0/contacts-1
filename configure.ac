@@ -18,7 +18,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 ALL_LINGUAS="de et fi fr it nl sv"
 AM_GLIB_GNU_GETTEXT
 
-PKG_CHECK_MODULES(CONTACTS, glib-2.0 glib-2.0 gtk+-2.0 libglade-2.0 libebook-1.2)
+PKG_CHECK_MODULES(CONTACTS, glib-2.0 glib-2.0 gtk+-2.0 libebook-1.2)
 
 old_cflags=$CFLAGS
 CFLAGS=$CONTACTS_CFLAGS
@@ -55,6 +55,14 @@ if test "$want_gconf" = "yes"; then
 	fi
 fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
+ 
+#AC_ARG_ENABLE(front, [ --use-frontend      Frontend to use. Possible values = desktop [[default=desktop]]],
+# [want_frontend="$enableval"])
+
+#if test "$want_frontend" = "desktop"; then
+	AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-gtk.h"], [Main GTK+ Frontend])
+#fi
+
 
 AM_GCONF_SOURCE_2
 

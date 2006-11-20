@@ -45,12 +45,62 @@ enum {
 };
 
 typedef struct {
+	GtkWidget *chooser_add_hbox;
+	GtkWidget *chooser_dialog;
+	GtkWidget *chooser_entry;
+	GtkWidget *chooser_label;
+	GtkWidget *chooser_treeview;
+
+	GtkWidget *contact_delete;
+	GtkWidget *contact_export;
+	GtkWidget *contact_menu;
+
+	GtkWidget *contacts_import;
+	GtkWidget *contacts_menu;
+	GtkWidget *contacts_treeview;
+
+	GtkWidget *new_menuitem;
+	GtkWidget *copy_menuitem;
+	GtkWidget *cut_menuitem;
+	GtkWidget *delete_menuitem;
+	GtkWidget *delete_button;
+	GtkWidget *edit_menuitem;
+	GtkWidget *edit_button;
+	GtkWidget *edit_done_button;
+	GtkWidget *edit_groups;
+	GtkWidget *edit_menu;
+	GtkWidget *edit_table;
+	GtkWidget *groups_combobox;
+	GtkWidget *main_menubar;
+	GtkWidget *main_notebook;
+	GtkWidget *main_window;
+	GtkWidget *new_button;
+	GtkWidget *paste_menuitem;
+	GtkWidget *photo_image;
+	GtkWidget *preview_header_hbox;
+
+	GtkWidget *add_field_button;
+	GtkWidget *remove_field_button;
+
+	GtkWidget *search_entry;
+	GtkWidget *search_entry_hbox;
+	GtkWidget *search_hbox;
+	GtkWidget *search_tab_hbox;
+	GtkWidget *symbols_radiobutton;
+
+	GtkWidget *summary_hbuttonbox;
+	GtkWidget *summary_name_label;
+	GtkWidget *summary_table;
+	GtkWidget *summary_vbox;
+} ContactsUI;
+
+typedef struct {
 	EBook *book;
 	EBookView *book_view;
 	EContact *contact;
+	ContactsUI *ui;
 	GHashTable *contacts_table;
 	GList *contacts_groups;
-	GladeXML *xml;
 	gboolean changed;
 	gchar *file;
 } ContactsData;
@@ -58,7 +108,7 @@ typedef struct {
 typedef struct {
 	EContact *contact;
 	GtkTreeIter iter;
-	GladeXML *xml;
+	ContactsData *contacts_data;
 } EContactListHash;
 
 typedef struct {

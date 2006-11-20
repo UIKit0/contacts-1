@@ -19,10 +19,8 @@
 
 #include <libebook/e-book.h>
 #include <gtk/gtk.h>
-#include <glade/glade.h>
-
 #include <glib/gi18n.h>
 
-void contacts_update_treeview (GtkWidget *source);
+void contacts_update_treeview (ContactsData *data, GtkWidget *source);
 
-void contacts_display_summary (EContact *contact, GladeXML *xml);
+void contacts_display_summary (EContact *contact, ContactsData *data);
