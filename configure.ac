@@ -15,7 +15,7 @@ dnl i18n support
 GETTEXT_PACKAGE=Contacts
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 AC_SUBST(GETTEXT_PACKAGE)
-ALL_LINGUAS="et fr"
+ALL_LINGUAS="et fr de fi nl sv"
 AM_GLIB_GNU_GETTEXT
 
 PKG_CHECK_MODULES(CONTACTS, glib-2.0 glib-2.0 gtk+-2.0 libglade-2.0 libebook-1.2)

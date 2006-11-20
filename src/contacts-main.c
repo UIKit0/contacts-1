@@ -463,7 +463,7 @@ main (int argc, char **argv)
 	    GTK_TREE_VIEW (glade_xml_get_widget
 			   (xml, "contacts_treeview"));
 	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, "ypad", 0, NULL);
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
 						     (contacts_treeview),
 						     -1, NULL, renderer,
@@ -600,6 +600,10 @@ main (int argc, char **argv)
 				  G_CALLBACK (gtk_main_quit), NULL);
 		gtk_widget_show (widget);
 	}
+
+	/* fix icon sizes to 16x16 for the moment... */
+	gtk_rc_parse_string ("gtk_icon_sizes=\"gtk-button=16,16:gtk-menu:16,16\"");
+
 	gtk_main ();
 
 	/* Unload the addressbook */
