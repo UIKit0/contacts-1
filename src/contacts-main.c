@@ -37,8 +37,7 @@
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
-
-#include FRONTEND_HEADER
+#include "contacts-ui.h"
 
 #define GCONF_PATH "/apps/contacts"
 #define GCONF_KEY_SEARCH "/apps/contacts/search_type"
@@ -66,25 +65,6 @@ contacts_update_treeview (ContactsData *data, GtkWidget *source)
 			gtk_tree_selection_select_iter (selection, &iter);
 		}
 	}
-}
-
-static void
-contacts_remove_labels_from_focus_chain (GtkContainer *container)
-{
-	GList *chain, *l;
-	
-	gtk_container_get_focus_chain (container, &chain);
-	
-	for (l = chain; l; l = l->next) {
-		if (GTK_IS_LABEL (l->data)) {
-			gconstpointer data = l->data;
-			l = l->prev;
-			chain = g_list_remove (chain, data);
-		}
-	}
-	
-	gtk_container_set_focus_chain (container, chain);
-	g_list_free (chain);
 }
 
 void
@@ -233,23 +213,6 @@ contacts_display_summary (EContact *contact, ContactsData *contacts_data)
 	widget = contacts_data->ui->summary_table;
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
 }
-
-static void
-chooser_toggle_cb (GtkCellRendererToggle * cell,
-		   gchar * path_string, gpointer user_data)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL (user_data);
-
-	gtk_tree_model_get_iter_from_string (model, &iter, path_string);
-	if (gtk_cell_renderer_toggle_get_active (cell))
-		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-				    CHOOSER_TICK_COL, FALSE, -1);
-	else
-		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-				    CHOOSER_TICK_COL, TRUE, -1);
-}
-
 static void
 start_query (EBook *book, EBookStatus status, EBookView *book_view,
 	gpointer closure)
@@ -360,19 +323,12 @@ main (int argc, char **argv)
 	const char *search;
 	GConfClient *client;
 #endif
-	GtkWidget *widget;		/* Variables for UI initialisation */
-	GtkComboBox *groups_combobox;
-	GtkTreeView *contacts_treeview;
-	GtkTreeSelection *selection;
-	GtkListStore *model;
-	GtkTreeModelFilter *filter;
-	GtkCellRenderer *renderer;
-	GtkSizeGroup *size_group;
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
 					 */
 	GOptionContext *context;
 	static gint plug = 0;
+	GtkWidget *widget;
 	
 	static GOptionEntry entries[] = {
 		{ "plug", 'p', 0, G_OPTION_ARG_INT, &plug,
@@ -411,7 +367,6 @@ main (int argc, char **argv)
 	if (!contacts_data->book)
 		g_critical ("Could not load system addressbook");
 
-	contacts_create_ui (contacts_data);
 
 #ifdef HAVE_GNOMEVFS
 	gnome_vfs_init ();
@@ -439,115 +394,8 @@ main (int argc, char **argv)
 						(GDestroyNotify)
 						 contacts_free_list_hash);
 
-	/* Add the column to the GtkTreeView */
-	contacts_treeview = GTK_TREE_VIEW (contacts_data->ui->contacts_treeview);
-	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, "ypad", 0, NULL);
-	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
-						     (contacts_treeview),
-						     -1, NULL, renderer,
-						     "text", CONTACT_NAME_COL,
-						     NULL);
-	/* Create model and groups/search filter for contacts list */
-	model = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
-	filter =
-	    GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new
-				   (GTK_TREE_MODEL (model), NULL));
-	gtk_tree_model_filter_set_visible_func (filter,
-						(GtkTreeModelFilterVisibleFunc)
-						 contacts_is_row_visible_cb,
-						contacts_data->contacts_table,
-						NULL);
-	gtk_tree_view_set_model (GTK_TREE_VIEW (contacts_treeview),
-				 GTK_TREE_MODEL (filter));
-	/* Alphabetise the list */
-	gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (model),
-						 contacts_sort_treeview_cb,
-						 NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
-				      GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
-				      GTK_SORT_ASCENDING);
-	g_object_unref (model);
-
-
-	/* Connect signal for selection changed event */
-	selection = gtk_tree_view_get_selection (contacts_treeview);
-	g_signal_connect (G_OBJECT (selection), "changed",
-			  G_CALLBACK (contacts_selection_cb), contacts_data);
-
-	/* Enable multiple select (for delete) */
-	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
-
-	/* Create model/view for groups/type chooser list */
-	contacts_treeview = GTK_TREE_VIEW (contacts_data->ui->chooser_treeview);
-	model = gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
-	renderer = gtk_cell_renderer_toggle_new ();
-	g_object_set (renderer, "activatable", TRUE, NULL);
-	g_signal_connect (renderer, "toggled",
-			  (GCallback) chooser_toggle_cb, model);
-	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
-						     (contacts_treeview), -1,
-						     NULL, renderer, "active",
-						     CHOOSER_TICK_COL, NULL);
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
-						     (contacts_treeview), -1,
-						     NULL, renderer, "text",
-						     CHOOSER_NAME_COL, NULL);
-	gtk_tree_view_set_model (GTK_TREE_VIEW (contacts_treeview),
-				 GTK_TREE_MODEL (model));
-	g_object_unref (model);
-
-	/* Select 'All' in the groups combobox */
-	groups_combobox = GTK_COMBO_BOX (contacts_data->ui->groups_combobox);
-	gtk_combo_box_set_active (groups_combobox, 0);
-
-	/* Set transient parent for chooser */
-	gtk_window_set_transient_for (
-		GTK_WINDOW (contacts_data->ui->chooser_dialog),
-		GTK_WINDOW (contacts_data->ui->main_window));
-
-	/* Remove selectable label from focus chain */
-	widget = contacts_data->ui->preview_header_hbox;
-	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
-
-	/* Set up size group for bottom row of buttons and search */
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
-	widget = contacts_data->ui->search_hbox;
-	gtk_size_group_add_widget (size_group, widget);
-	widget = contacts_data->ui->summary_hbuttonbox;
-	gtk_size_group_add_widget (size_group, widget);
-	g_object_unref (size_group);
-
-	/* Connect UI-related signals */
-	widget = contacts_data->ui->new_button;
-	g_signal_connect (G_OBJECT (widget), "clicked",
-			  G_CALLBACK (contacts_new_cb), contacts_data);
-	widget = contacts_data->ui->new_menuitem;
-	g_signal_connect (G_OBJECT (widget), "activate",
-			  G_CALLBACK (contacts_new_cb), contacts_data);
-	widget = contacts_data->ui->edit_button;
-	g_signal_connect (G_OBJECT (widget), "clicked",
-			  G_CALLBACK (contacts_edit_cb), contacts_data);
-	widget = contacts_data->ui->contacts_treeview;
-	g_signal_connect (G_OBJECT (widget), "row_activated",
-			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
-	widget = contacts_data->ui->edit_menuitem;
-	g_signal_connect (G_OBJECT (widget), "activate",
-			  G_CALLBACK (contacts_edit_cb), contacts_data);
-	widget = contacts_data->ui->delete_button;
-	g_signal_connect (G_OBJECT (widget), "clicked",
-			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	widget = contacts_data->ui->delete_menuitem;
-	g_signal_connect (G_OBJECT (widget), "activate",
-			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	widget = contacts_data->ui->contacts_import;
-	g_signal_connect (G_OBJECT (widget), "activate",
-			  G_CALLBACK (contacts_import_cb), contacts_data);
-	widget = contacts_data->ui->edit_menu;
-	g_signal_connect (G_OBJECT (widget), "activate",
-			  G_CALLBACK (contacts_edit_menu_activate_cb), contacts_data);
-
+	/* Setup the ui */
+	contacts_setup_ui (contacts_data);
 
 	/* Start */
 	g_idle_add (open_book, contacts_data);

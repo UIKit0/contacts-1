@@ -67,6 +67,23 @@ contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data)
 	contacts_update_treeview (data, search_entry);
 }
 
+void
+contacts_chooser_toggle_cb (GtkCellRendererToggle * cell,
+		   gchar * path_string, gpointer user_data)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL (user_data);
+
+	gtk_tree_model_get_iter_from_string (model, &iter, path_string);
+	if (gtk_cell_renderer_toggle_get_active (cell))
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+				    CHOOSER_TICK_COL, FALSE, -1);
+	else
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+				    CHOOSER_TICK_COL, TRUE, -1);
+}
+
+
 
 void
 contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)

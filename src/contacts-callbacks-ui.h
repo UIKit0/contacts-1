@@ -26,6 +26,8 @@ void contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data);
 
 void contacts_chooser_add_cb (GtkWidget *button, ContactsData *data);
 
+void contacts_chooser_toggle_cb (GtkCellRendererToggle * cell, gchar * path_string, gpointer user_data);
+
 void contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data);
 
 void contacts_new_cb (GtkWidget *source, ContactsData *data);

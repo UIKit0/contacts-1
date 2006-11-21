@@ -1,3 +1,16 @@
+2006-11-21  Thomas Wood  <thos@gnome.org>
+
+	* src/Makefile.am:
+	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-gtk.c: (create_main_window),
+	(create_chooser_dialog):
+	* src/contacts-main.c: (contacts_update_treeview), (main):
+	* src/contacts-ui.c:
+	* src/contacts-ui.h:
+
+	Some more refactoring of UI code
+
 2006-11-20  Thomas Wood  <thos@gnome.org>
 
 	* configure.ac:

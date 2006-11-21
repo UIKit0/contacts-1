@@ -23,7 +23,9 @@ contacts_SOURCES =  bacon-message-connection.c \
                     contacts-main.c \
                     contacts-main.h \
                     contacts-utils.c \
-                    contacts-utils.h
+                    contacts-utils.h \
+		    contacts-ui.c \
+		    contacts-ui.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
 contacts_LDFLAGS = @CONTACTS_LIBS@

@@ -35,8 +35,8 @@ create_main_window (ContactsData *contacts_data)
 	GtkWidget *main_menubar;
 	GtkWidget *contacts_menu;
 	GtkWidget *contacts_menu_menu;
-	GtkWidget *new;
-	GtkWidget *edit;
+	GtkWidget *new_menuitem;
+	GtkWidget *edit_menuitem;
 	GtkWidget *delete_menuitem;
 	GtkWidget *contacts_import;
 	GtkWidget *separatormenuitem1;
@@ -123,14 +123,14 @@ create_main_window (ContactsData *contacts_data)
 	contacts_menu_menu = gtk_menu_new ();
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (contacts_menu), contacts_menu_menu);
 
-	new = gtk_image_menu_item_new_from_stock ("gtk-new", accel_group);
-	gtk_widget_show (new);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), new);
+	new_menuitem = gtk_image_menu_item_new_from_stock ("gtk-new", accel_group);
+	gtk_widget_show (new_menuitem);
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), new_menuitem);
 
-	edit = gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
-	gtk_widget_show (edit);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), edit);
-	gtk_widget_set_sensitive (edit, FALSE);
+	edit_menuitem = gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
+	gtk_widget_show (edit_menuitem);
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), edit_menuitem);
+	gtk_widget_set_sensitive (edit_menuitem, FALSE);
 
 	delete_menuitem = gtk_image_menu_item_new_from_stock ("gtk-delete", accel_group);
 	gtk_widget_show (delete_menuitem);
@@ -360,11 +360,11 @@ create_main_window (ContactsData *contacts_data)
 	gtk_widget_set_sensitive (delete_button, FALSE);
 	GTK_WIDGET_SET_FLAGS (delete_button, GTK_CAN_DEFAULT);
 	gtk_button_set_focus_on_click (GTK_BUTTON (delete_button), FALSE);
-
+/*
 	label1 = gtk_label_new ("");
 	gtk_widget_show (label1);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 0), label1);
-
+*/
 	vbox4 = gtk_vbox_new (FALSE, 6);
 	gtk_widget_show (vbox4);
 	gtk_container_add (GTK_CONTAINER (main_notebook), vbox4);
@@ -405,7 +405,7 @@ create_main_window (ContactsData *contacts_data)
 	gtk_widget_show (edit_done_button);
 	gtk_container_add (GTK_CONTAINER (hbuttonbox2), edit_done_button);
 	GTK_WIDGET_SET_FLAGS (edit_done_button, GTK_CAN_DEFAULT);
-
+/*
 	label2 = gtk_label_new ("");
 	gtk_widget_show (label2);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 1), label2);
@@ -414,7 +414,7 @@ create_main_window (ContactsData *contacts_data)
 	gtk_widget_show (empty_notebook_page);
 	gtk_container_add (GTK_CONTAINER (main_notebook), empty_notebook_page);
 
-	label3 = gtk_label_new ("");
+	label3 = gtk_label_new ();
 	gtk_widget_show (label3);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 2), label3);
 
@@ -425,7 +425,15 @@ create_main_window (ContactsData *contacts_data)
 	label4 = gtk_label_new ("");
 	gtk_widget_show (label4);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 3), label4);
+*/
+	gtk_label_set_mnemonic_widget (GTK_LABEL (search_label), search_entry);
 
+	gtk_widget_grab_focus (search_entry);
+	gtk_widget_grab_default (edit_button);
+	gtk_window_add_accel_group (GTK_WINDOW (main_window), accel_group);
+
+
+	/* connect signals */
 	g_signal_connect ((gpointer) main_window, "destroy",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
@@ -478,13 +486,25 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) remove_field_button, "clicked",
 			G_CALLBACK (contacts_remove_field_cb),
 			NULL);
-
-	gtk_label_set_mnemonic_widget (GTK_LABEL (search_label), search_entry);
-
-	gtk_widget_grab_focus (search_entry);
-	gtk_widget_grab_default (edit_button);
-	gtk_window_add_accel_group (GTK_WINDOW (main_window), accel_group);
-
+	g_signal_connect (G_OBJECT (new_button), "clicked",
+			  G_CALLBACK (contacts_new_cb), contacts_data);
+	g_signal_connect (G_OBJECT (new_menuitem), "activate",
+			  G_CALLBACK (contacts_new_cb), contacts_data);
+	g_signal_connect (G_OBJECT (edit_button), "clicked",
+			  G_CALLBACK (contacts_edit_cb), contacts_data);
+	g_signal_connect (G_OBJECT (contacts_treeview), "row_activated",
+			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
+	g_signal_connect (G_OBJECT (edit_menuitem), "activate",
+			  G_CALLBACK (contacts_edit_cb), contacts_data);
+	g_signal_connect (G_OBJECT (delete_button), "clicked",
+			  G_CALLBACK (contacts_delete_cb), contacts_data);
+	g_signal_connect (G_OBJECT (delete_menuitem), "activate",
+			  G_CALLBACK (contacts_delete_cb), contacts_data);
+	g_signal_connect (G_OBJECT (contacts_import), "activate",
+			  G_CALLBACK (contacts_import_cb), contacts_data);
+	g_signal_connect (G_OBJECT (edit_menu), "activate",
+			  G_CALLBACK (contacts_edit_menu_activate_cb), contacts_data);
+	
 	ui->contact_delete = contact_delete;
 	ui->contact_export = contact_export;
 	ui->contact_menu = contact_menu;
@@ -493,12 +513,12 @@ create_main_window (ContactsData *contacts_data)
 	ui->contacts_menu = contacts_menu;
 	ui->contacts_treeview = contacts_treeview;
 
-	ui->new_menuitem = new;
+	ui->new_menuitem = new_menuitem;
 	ui->copy_menuitem = copy;
 	ui->cut_menuitem = cut;
 	ui->delete_menuitem = delete_menuitem;
 	ui->delete_button = delete_button;
-	ui->edit_menuitem = edit;
+	ui->edit_menuitem = edit_menuitem;
 	ui->edit_button = edit_button;
 	ui->edit_done_button = edit_done_button;
 	ui->edit_groups = edit_groups;
@@ -606,12 +626,14 @@ create_chooser_dialog (ContactsData *data)
 	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), chooser_ok_button, GTK_RESPONSE_OK);
 	GTK_WIDGET_SET_FLAGS (chooser_ok_button, GTK_CAN_DEFAULT);
 
+	gtk_widget_grab_focus (chooser_entry);
+	gtk_widget_grab_default (add_type_button);
+
+	/* connect signals */
 	g_signal_connect ((gpointer) add_type_button, "clicked",
 			G_CALLBACK (contacts_chooser_add_cb),
 			data);
 
-	gtk_widget_grab_focus (chooser_entry);
-	gtk_widget_grab_default (add_type_button);
 
 	data->ui->chooser_add_hbox = chooser_add_hbox;
 	data->ui->chooser_dialog = chooser_dialog;
