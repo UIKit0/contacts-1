@@ -1,5 +1,4 @@
 uidir = $(pkgdatadir)
-ui_DATA = contacts.glade
 
 desktopdir = $(datadir)/applications
 desktop_in_files = contacts.desktop.in
@@ -27,4 +26,4 @@ CLEANFILES = $(desktop_DATA)
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(ui_DATA) $(desktop_in_files) $(icon_DATA) $(schema_DATA)
+EXTRA_DIST = $(desktop_in_files) $(icon_DATA) $(schema_DATA)

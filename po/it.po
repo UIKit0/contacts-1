@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contact 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-20 10:15+0000\n"
+"POT-Creation-Date: 2006-11-24 09:52+0000\n"
 "PO-Revision-Date: 2006-11-20 10:16+0000\n"
 "Last-Translator: Emmanuele Bassi <ebassi@gnome.org>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -20,7 +20,7 @@ msgid "Address book"
 msgstr "Indirizzi"
 
 #: ../data/contacts.desktop.in.h:2 ../data/contacts.glade.h:6
-#: ../src/contacts-edit-pane.c:84
+#: ../src/contacts-edit-pane.c:83
 msgid "Contacts"
 msgstr "Contatti"
 
@@ -100,43 +100,43 @@ msgstr "_Rimuovi campo"
 msgid "_Search:"
 msgstr "_Trova:"
 
-#: ../src/contacts-callbacks-ui.c:108
+#: ../src/contacts-callbacks-ui.c:159
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: ../src/contacts-callbacks-ui.c:112
+#: ../src/contacts-callbacks-ui.c:163
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
 msgstr "Sei sicuro di voler cancellare '%s'?"
 
-#: ../src/contacts-callbacks-ui.c:116
+#: ../src/contacts-callbacks-ui.c:167
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
 msgstr "Sei sicuro di voler canellare %d contatti"
 
-#: ../src/contacts-callbacks-ui.c:198
+#: ../src/contacts-callbacks-ui.c:248
 #, c-format
 msgid "Would you like to import contact '%s'?"
 msgstr "Vuoi importare il contatto '%s'"
 
-#: ../src/contacts-callbacks-ui.c:203
+#: ../src/contacts-callbacks-ui.c:253
 msgid "_Show contact"
 msgstr "_Mostra contatto"
 
-#: ../src/contacts-callbacks-ui.c:204
+#: ../src/contacts-callbacks-ui.c:254
 msgid "_Import contact"
 msgstr "_Importa contatto"
 
-#: ../src/contacts-callbacks-ui.c:258
+#: ../src/contacts-callbacks-ui.c:308
 msgid "Import Contact"
 msgstr "Importa contatto"
 
-#: ../src/contacts-callbacks-ui.c:326
+#: ../src/contacts-callbacks-ui.c:376
 msgid "Export Contact"
 msgstr "Esporta contatto"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:363
+#: ../src/contacts-callbacks-ui.c:413
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
@@ -145,99 +145,99 @@ msgstr ""
 "<big><b>Il file \"%s\" è già esistente.\n"
 "Vuoi sovrascriverlo?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:369
+#: ../src/contacts-callbacks-ui.c:419
 msgid "Replacing it will overwrite its contents."
 msgstr "Sovrascriverlo cancellerà il suo contenuto."
 
-#: ../src/contacts-callbacks-ui.c:373
+#: ../src/contacts-callbacks-ui.c:423
 msgid "_Replace"
 msgstr "_Sovrascrivi"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:514
+#: ../src/contacts-callbacks-ui.c:564
 msgid "translator-credits"
 msgstr "Emmanuele Bassi <ebassi@gnome.org>"
 
-#: ../src/contacts-edit-pane.c:102
+#: ../src/contacts-edit-pane.c:99
 msgid "Are you sure you want to delete this contact?"
 msgstr "Sei sicuro di voler cancellare questo contatto"
 
-#: ../src/contacts-edit-pane.c:283 ../src/contacts-main.c:203
+#: ../src/contacts-edit-pane.c:280 ../src/contacts-main.c:175
 msgid "Other"
 msgstr "Altro"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:399
+#: ../src/contacts-edit-pane.c:396
 msgid "<b>Type:</b>"
 msgstr "<b>Tipo:</b>"
 
-#: ../src/contacts-edit-pane.c:734
+#: ../src/contacts-edit-pane.c:731
 msgid "Change groups"
 msgstr "Cambia gruppi"
 
-#: ../src/contacts-edit-pane.c:734
+#: ../src/contacts-edit-pane.c:731
 msgid "<b>Choose groups</b>"
 msgstr "<b>Scegli i gruppi</b>"
 
-#: ../src/contacts-edit-pane.c:794
+#: ../src/contacts-edit-pane.c:790
 msgid "Add field"
 msgstr "Aggiungi campo"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:796
+#: ../src/contacts-edit-pane.c:792
 msgid "<b>Choose a field</b>"
 msgstr "<b>Scegli un campo</b>"
 
-#: ../src/contacts-edit-pane.c:1156
+#: ../src/contacts-edit-pane.c:1151
 msgid "Edit contact"
 msgstr "Modifica contatto"
 
-#: ../src/contacts-main.c:116
+#: ../src/contacts-main.c:88
 msgid "Unnamed"
 msgstr "Senza nome"
 
-#: ../src/contacts-utils.c:160
+#: ../src/contacts-utils.c:159
 msgid "Phone"
 msgstr "Telefono"
 
-#: ../src/contacts-utils.c:161
+#: ../src/contacts-utils.c:160
 msgid "Email"
 msgstr "Email"
 
-#: ../src/contacts-utils.c:162
+#: ../src/contacts-utils.c:161
 msgid "Address"
 msgstr "Indirizzo"
 
-#: ../src/contacts-utils.c:164
+#: ../src/contacts-utils.c:163
 msgid "Homepage"
 msgstr "Homepage"
 
-#: ../src/contacts-utils.c:172
+#: ../src/contacts-utils.c:171
 msgid "PO Box"
 msgstr "Casella postale"
 
-#: ../src/contacts-utils.c:173
+#: ../src/contacts-utils.c:172
 msgid "Ext."
 msgstr "Est."
 
-#: ../src/contacts-utils.c:174
+#: ../src/contacts-utils.c:173
 msgid "Street"
 msgstr "Via"
 
-#: ../src/contacts-utils.c:175
+#: ../src/contacts-utils.c:174
 msgid "Locality"
 msgstr "Località"
 
-#: ../src/contacts-utils.c:176
+#: ../src/contacts-utils.c:175
 msgid "Region"
 msgstr "Regione"
 
-#: ../src/contacts-utils.c:177
+#: ../src/contacts-utils.c:176
 msgid "Post Code"
 msgstr "CAP"
 
-#: ../src/contacts-utils.c:178
+#: ../src/contacts-utils.c:177
 msgid "Country"
 msgstr "Nazione"
 
@@ -245,10 +245,10 @@ msgstr "Nazione"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:560
+#: ../src/contacts-utils.c:559
 msgid "Open image"
 msgstr "Apri immagine"
 
-#: ../src/contacts-utils.c:570
+#: ../src/contacts-utils.c:569
 msgid "No image"
 msgstr "Nessuna immagine"

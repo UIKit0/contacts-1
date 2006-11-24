@@ -1,4 +1,9 @@
-2006-11-21  Thomas Wood  <thos@gnome.org>
+2006-11-24  Thomas Wood  <thomas@openedhand.com>
+
+	* configure.ac: Added catalan translation
+	* data/Makefile.am: Remove glade file
+
+2006-11-21  Thomas Wood  <thomas@openedhand.com>
 
 	* src/Makefile.am:
 	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb):
@@ -11,7 +16,7 @@
 
 	Some more refactoring of UI code
 
-2006-11-20  Thomas Wood  <thos@gnome.org>
+2006-11-20  Thomas Wood  <thomas@openedhand.com>
 
 	* configure.ac:
 	* src/Makefile.am:
