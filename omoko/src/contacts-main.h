@@ -20,7 +20,7 @@
 #include <libebook/e-book.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include "contacts-defs.h"
 
-void contacts_update_treeview (ContactsData *data, GtkWidget *source);
+void contacts_update_treeview (ContactsData *data);
 
-void contacts_display_summary (EContact *contact, ContactsData *data);

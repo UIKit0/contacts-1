@@ -70,7 +70,6 @@ typedef struct {
 	GtkWidget *edit_groups;
 	GtkWidget *edit_menu;
 	GtkWidget *edit_table;
-	GtkWidget *groups_combobox;
 	GtkWidget *main_menubar;
 	GtkWidget *main_notebook;
 	GtkWidget *main_window;
@@ -101,8 +100,12 @@ typedef struct {
 	ContactsUI *ui;
 	GHashTable *contacts_table;
 	GList *contacts_groups;
+	gchar *selected_group;
 	gboolean changed;
 	gchar *file;
+	GtkListStore *contacts_liststore;
+	GtkTreeModelFilter *contacts_filter;
+	gboolean initialising;
 } ContactsData;
 
 typedef struct {

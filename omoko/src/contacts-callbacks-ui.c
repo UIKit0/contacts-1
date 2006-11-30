@@ -28,6 +28,7 @@
 
 #include "contacts-defs.h"
 #include "contacts-utils.h"
+#include "contacts-ui.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
@@ -64,7 +65,7 @@ void
 contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data)
 {
 	gtk_widget_grab_focus (search_entry);
-	contacts_update_treeview (data, search_entry);
+	contacts_update_treeview (data);
 }
 
 void
@@ -594,24 +595,22 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 			    GHashTable *contacts_table)
 {
 	gboolean result = FALSE;
-	gchar *group;
+	gchar *group = NULL;
 	GList *groups, *g;
 	const gchar *uid;
 	EContactListHash *hash;
-	GtkComboBox *groups_combobox;
 	const gchar *search_string;
-	ContactsData *contacts_data;
+	ContactsData *data;
 
 	/* Check if the contact is in the currently selected group. */
 	gtk_tree_model_get (model, iter, CONTACT_UID_COL, &uid, -1);
 	if (!uid) return FALSE;
 	hash = g_hash_table_lookup (contacts_table, uid);
 	if (!hash || !hash->contact) return FALSE;
-	contacts_data = hash->contacts_data;
-	groups_combobox = GTK_COMBO_BOX (contacts_data->ui->groups_combobox);
-	group = gtk_combo_box_get_active_text (groups_combobox);
+	data = hash->contacts_data;
+
 	groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
-	if (gtk_combo_box_get_active (groups_combobox) > 0) {
+	if ((group = data->selected_group)) {
 		for (g = groups; g; g = g->next) {
 			if (strcmp (group, g->data) == 0)
 				result = TRUE;
@@ -621,7 +620,6 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 			g_list_free (groups);
 	} else
 		result = TRUE;
-	g_free (group);
 	if (!result)
 		return FALSE;
 
@@ -629,9 +627,9 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
 	 * empty searches.
 	 */
-	if (GTK_WIDGET_VISIBLE (contacts_data->ui->search_entry_hbox)) {
+	if (GTK_WIDGET_VISIBLE (data->ui->search_entry)) {
 		search_string = gtk_entry_get_text (
-			GTK_ENTRY (contacts_data->ui->search_entry));
+			GTK_ENTRY (data->ui->search_entry));
 		if ((search_string) &&
 		    (g_utf8_strlen (search_string, -1) > 0)) {
 			gchar *name_string;
@@ -647,12 +645,12 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 				g_free (isearch);
 			}
 		}
-	} else {
+	} else if ((data->ui->symbols_radiobutton)){
 		gint i;
 		gchar *name, *uname;
 		gunichar c;
 		GSList *b, *buttons = gtk_radio_button_get_group (
-			GTK_RADIO_BUTTON (contacts_data->ui->symbols_radiobutton));
+			GTK_RADIO_BUTTON (data->ui->symbols_radiobutton));
 		
 		/* Find the active radio button */
 		for (b = buttons, i = 0; b; b = b->next, i++)

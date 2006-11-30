@@ -18,14 +18,14 @@ contacts_SOURCES =  bacon-message-connection.c \
                     contacts-defs.h \
                     contacts-edit-pane.c \
                     contacts-edit-pane.h \
-                    contacts-gtk.c \
-                    contacts-gtk.h \
                     contacts-main.c \
                     contacts-main.h \
                     contacts-utils.c \
                     contacts-utils.h \
 		    contacts-ui.c \
-		    contacts-ui.h
+		    contacts-ui.h \
+		    contacts-@FRONTEND@.c \
+		    comtacts-@FRONTEND@.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
 contacts_LDFLAGS = @CONTACTS_LIBS@

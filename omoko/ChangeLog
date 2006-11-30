@@ -1,3 +1,25 @@
+2006-11-30  Thomas Wood  <thomas@openedhand.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/contacts-callbacks-ebook.c:
+	* src/contacts-callbacks-ebook.h:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c:
+	* src/contacts-gtk.c:
+	* src/contacts-main.c:
+	* src/contacts-main.h:
+	* src/contacts-omoko.c:
+	* src/contacts-omoko.h:
+	* src/contacts-ui.c:
+	* src/contacts-ui.h:
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+
+	- Code refactoring
+	- Added OpenMoko frontend
+
 2006-11-24  Thomas Wood  <thomas@openedhand.com>
 
 	* configure.ac: Added catalan translation

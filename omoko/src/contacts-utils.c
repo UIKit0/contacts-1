@@ -353,29 +353,6 @@ contacts_set_selected_contact (ContactsData *data, const gchar *uid)
 
 }
 
-/* Helper method to set edit/delete sensitive/insensitive */
-void
-contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
-				gboolean delete)
-{
-	GtkWidget *widget;
-
-	widget = data->ui->new_menuitem;
-	gtk_widget_set_sensitive (widget, new);
-	widget = data->ui->new_button;
-	gtk_widget_set_sensitive (widget, new);
-
-	widget = data->ui->edit_menuitem;
-	gtk_widget_set_sensitive (widget, open);
-	widget = data->ui->edit_button;
-	gtk_widget_set_sensitive (widget, open);
-
-	widget = data->ui->delete_menuitem;
-	gtk_widget_set_sensitive (widget, delete);
-	widget = data->ui->delete_button;
-	gtk_widget_set_sensitive (widget, delete);
-}
-
 static void
 contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
 		    gpointer user_data)

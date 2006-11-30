@@ -54,9 +54,6 @@ EContact *contacts_get_selected_contact (ContactsData *data,
 					 
 void contacts_set_selected_contact (ContactsData *data, const gchar *uid);
 
-void contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
-				     gboolean delete);
-
 GtkImage *contacts_load_photo (EContact *contact);
 
 void contacts_clean_contact (EContact *contact);

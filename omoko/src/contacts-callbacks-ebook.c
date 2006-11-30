@@ -23,6 +23,7 @@
 #include <libebook/e-book.h>
 
 #include "contacts-defs.h"
+#include "contacts-ui.h"
 #include "contacts-utils.h"
 #include "contacts-main.h"
 
@@ -30,7 +31,6 @@ void
 contacts_added_cb (EBookView *book_view, const GList *contacts,
 		   ContactsData *data)
 {
-	GtkComboBox *groups_combobox;
 	GtkListStore *model;
 	GtkTreeModelFilter *filter;
 	GList *c;
@@ -42,7 +42,6 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 	filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
 				 	(GTK_TREE_VIEW (widget)));
 	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model (filter));
-	groups_combobox = GTK_COMBO_BOX (data->ui->groups_combobox);
 
 	/* Iterate over new contacts and add them to the list */
 	for (c = (GList *)contacts; c; c = c->next) {
@@ -88,8 +87,10 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 							 group->data,
 							 (GCompareFunc) strcmp))
 				{
-					gtk_combo_box_append_text
+					/* TODO: invoce some update groups list function here
+					   gtk_combo_box_append_text
 					    (groups_combobox, group->data);
+					 */
 					data->contacts_groups = g_list_prepend 
 					   (data->contacts_groups, group->data);
 				}
@@ -99,7 +100,8 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 	}
 	
 	/* Update view */
-	contacts_update_treeview (data, widget);
+	contacts_update_treeview (data);
+	
 }
 
 void
@@ -109,7 +111,6 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	GList *c;
 	GtkWidget *widget;
 	GtkListStore *model;
-	GtkComboBox *groups_combobox;
 
 	EContact *current_contact = contacts_get_selected_contact (data,
 							data->contacts_table);
@@ -119,7 +120,6 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	model = GTK_LIST_STORE (gtk_tree_model_filter_get_model 
 		 (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
 		  (GTK_TREE_VIEW (widget)))));
-	groups_combobox = GTK_COMBO_BOX (data->ui->groups_combobox);
 
 	/* Loop through changed contacts */	
 	for (c = (GList *)contacts; c; c = c->next) {
@@ -169,8 +169,10 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 							 group->data,
 							 (GCompareFunc) strcmp))
 				{
+					/* TODO: invoke some group list update function here
 					gtk_combo_box_append_text
 					    (groups_combobox, group->data);
+					    */
 					data->contacts_groups = g_list_prepend 
 					   (data->contacts_groups, group->data);
 				}
@@ -182,7 +184,7 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	if (current_contact) g_object_unref (current_contact);
 
 	/* Update view */
-	contacts_update_treeview (data, widget);
+	contacts_update_treeview (data);
 }
 
 /* TODO: Remove groups that no longer contain contacts */
@@ -197,6 +199,26 @@ contacts_removed_cb (EBookView *book_view, const GList *ids, ContactsData *data)
 	}
 
 	/* Update view */
-	contacts_update_treeview (data, data->ui->contacts_treeview);
+	contacts_update_treeview (data);
 }
 
+void
+contacts_sequence_complete_cb (EBookView *book_view, const GList *ids, ContactsData *data)
+{
+	GtkTreeModelFilter *model;
+
+	model = GTK_TREE_MODEL_FILTER (data->contacts_filter);
+
+	/* If there's only one visible contact, select it */
+	if (data->initialising) {
+		GtkTreeSelection *selection =
+					gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview));
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
+						   &iter)) {
+			gtk_tree_selection_select_iter (selection, &iter);
+		}
+		data->initialising = FALSE;
+		gtk_tree_view_scroll_to_point (GTK_TREE_VIEW (data->ui->contacts_treeview), 0, 0);
+	}
+}

@@ -56,13 +56,20 @@ if test "$want_gconf" = "yes"; then
 fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
  
-#AC_ARG_ENABLE(front, [ --use-frontend      Frontend to use. Possible values = desktop [[default=desktop]]],
-# [want_frontend="$enableval"])
+AC_ARG_ENABLE(frontend, [ --enable-frontend[=desktop,omoko]  Frontend to use. ]], [want_frontend="$enableval"])
 
-#if test "$want_frontend" = "desktop"; then
+if test "$want_frontend" = "omoko"; then
+	FRONTEND="omoko"
+	PKG_CHECK_MODULES(OMOKO,[openmoko-libs])
+	CONTACTS_CFLAGS="$CONTACTS_CFLAGS $OMOKO_CFLAGS"
+	CONTACTS_LIBS="$CONTACTS_LIBS $OMOKO_LIBS"
+	AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-omoko.h"], [OpenMoko Frontend])
+	AC_SUBST(FRONTEND)
+else
+	FRONTEND="gtk"
+	AC_SUBST(FRONTEND)
 	AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-gtk.h"], [Main GTK+ Frontend])
-#fi
-
+fi
 
 AM_GCONF_SOURCE_2
 
