@@ -1,3 +1,40 @@
+2006-12-08  Thomas Wood  <thomas@openedhand.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	Cleanups
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb), (contacts_removed_cb):
+	* src/contacts-callbacks-ebook.h:
+	- Remove group combobox specific code
+	- Add contacts_sequence_complete_cb callback
+
+	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb): Remove
+	combobox specific code.
+	* src/contacts-defs.h: Remove combobox and add references to some
+	models.
+	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),
+	(contacts_edit_pane_show): Add some safegaurds in case widgets don't
+	exist in the current frontend.
+
+	* src/contacts-gtk.c: (create_main_window),
+	(create_chooser_dialog): Clean up code (less calls to gtk_widget_show)
+	* src/contacts-main.c: (contacts_update_treeview):
+	* src/contacts-main.h:
+	Move UI specific code into contacts-ui.
+
+	* src/contacts-ui.c: (contacts_remove_labels_from_focus_chain),
+	(contacts_display_summary), (contacts_set_available_options),
+	(contacts_setup_ui):
+	* src/contacts-ui.h:
+	Add UI specific code from contacts-main/contacts-utils. Remove combobox
+	specific filter code.
+
+	* src/contacts-utils.c: (contacts_set_selected_contact):
+	* src/contacts-utils.h:
+	Move UI specific code to contacts-ui
+
 2006-11-24  Thomas Wood  <thomas@openedhand.com>
 
 	* configure.ac: Added catalan translation

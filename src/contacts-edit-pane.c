@@ -26,6 +26,7 @@
 #include "contacts-defs.h"
 #include "contacts-main.h"
 #include "contacts-utils.h"
+#include "contacts-ui.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
 
@@ -74,16 +75,18 @@ contacts_edit_pane_hide (ContactsData *data)
 	gtk_container_foreach (GTK_CONTAINER (widget),
 			       (GtkCallback)contacts_remove_edit_widgets_cb,
 			       widget);
-	widget = data->ui->contact_menu;
-	gtk_widget_hide (widget);
-	widget = data->ui->contacts_menu;
-	gtk_widget_show (widget);
+	if ((widget = data->ui->contact_menu))
+		gtk_widget_hide (widget);
+	if ((widget = data->ui->contacts_menu))
+		gtk_widget_show (widget);
 	widget = data->ui->main_notebook;
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	gtk_window_set_title (window, _("Contacts"));
 	contacts_set_available_options (data, TRUE, TRUE, TRUE);
-	gtk_window_set_default (window, data->ui->edit_button);
-	gtk_window_set_focus (window, data->ui->search_entry);
+	if (data->ui->edit_button)
+		gtk_window_set_default (window, data->ui->edit_button);
+	if ((widget = data->ui->search_entry) && GTK_WIDGET_VISIBLE (widget))
+		gtk_window_set_focus (window, data->ui->search_entry);
 }
 
 static void
@@ -1000,6 +1003,10 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		}
 	}
 #endif
+	/* remove any widgets in the edit table */
+	gtk_container_foreach (GTK_CONTAINER (data->ui->edit_table),
+			       (GtkCallback)contacts_remove_edit_widgets_cb,
+			       data->ui->edit_table);
 	
 	/* Display edit pane */
 	/* ODD: Doing this after adding the widgets will cause the first view
@@ -1171,12 +1178,13 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_change_groups_cb), gdata);
 	g_signal_connect_swapped (G_OBJECT (widget), "hide",
 				  G_CALLBACK (g_free), gdata);
-	widget = data->ui->contacts_menu;
-	gtk_widget_hide (widget);
-	widget = data->ui->contact_menu;
-	gtk_widget_show (widget);
-	widget = data->ui->remove_field_button;
-	gtk_widget_set_sensitive (widget, FALSE);
+	if (data->ui->contacts_menu && data->ui->contact_menu)
+	{
+		gtk_widget_hide (data->ui->contacts_menu);
+		gtk_widget_show (widget);
+	}
+	if ((widget = data->ui->remove_field_button))
+		gtk_widget_set_sensitive (widget, FALSE);
 
 	/* Connect delete menu item */
 	widget = data->ui->contact_delete;
@@ -1197,30 +1205,34 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			  G_CALLBACK (contacts_export_cb), data);
 			  
 	/* Connect add field button */
-	widget = data->ui->add_field_button;
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
-					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_add_field_cb,
-					      NULL);
-	g_signal_connect (G_OBJECT (widget), "clicked", 
-			  G_CALLBACK (contacts_add_field_cb), data);
+	if ((widget = data->ui->add_field_button))
+	{
+		g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+						      G_SIGNAL_MATCH_FUNC, 0, 0,
+						      NULL, contacts_add_field_cb,
+						      NULL);
+		g_signal_connect (G_OBJECT (widget), "clicked", 
+				  G_CALLBACK (contacts_add_field_cb), data);
+	}
 	
 	/* Connect close button */
-	widget = data->ui->edit_done_button;
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
-					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_edit_ok_cb,
-					      NULL);
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
-					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_edit_ok_new_cb,
-					      NULL);
-	if (new)
-		g_signal_connect (G_OBJECT (widget), "clicked",
-				  G_CALLBACK (contacts_edit_ok_new_cb), data);
-	else
-		g_signal_connect (G_OBJECT (widget), "clicked",
-				  G_CALLBACK (contacts_edit_ok_cb), data);
-	gtk_window_set_default (GTK_WINDOW (
-		data->ui->main_window), widget);
+	if ((widget = data->ui->edit_done_button))
+	{
+		g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+						      G_SIGNAL_MATCH_FUNC, 0, 0,
+						      NULL, contacts_edit_ok_cb,
+						      NULL);
+		g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+						      G_SIGNAL_MATCH_FUNC, 0, 0,
+						      NULL, contacts_edit_ok_new_cb,
+						      NULL);
+		if (new)
+			g_signal_connect (G_OBJECT (widget), "clicked",
+					  G_CALLBACK (contacts_edit_ok_new_cb), data);
+		else
+			g_signal_connect (G_OBJECT (widget), "clicked",
+					  G_CALLBACK (contacts_edit_ok_cb), data);
+		gtk_window_set_default (GTK_WINDOW (
+			data->ui->main_window), widget);
+	}
 }
