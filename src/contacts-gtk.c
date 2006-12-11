@@ -33,6 +33,8 @@
 #define GCONF_PATH "/apps/contacts"
 #define GCONF_KEY_SEARCH "/apps/contacts/search_type"
 
+static GtkWidget *groups_combobox;
+
 #ifdef HAVE_GCONF
 static void
 contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
@@ -61,14 +63,35 @@ contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
 }
 #endif
 
-void
-contacts_update_groups_list (ContactsData *data)
+static void
+groups_combobox_changed_cb (GtkWidget *widget, ContactsData *data)
 {
-	/*
-	GtkTreeModel *model;
-	model = gtk_combo_box_get_model ();
-	gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combobox), _("All"));
-	*/
+	GtkTreeIter iter;
+	gchar *text = NULL;
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (groups_combobox), &iter);
+	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (groups_combobox)), &iter, 0, &text, -1);
+	g_free (data->selected_group);
+	data->selected_group = text;
+	contacts_update_treeview (data);
+}
+
+void
+contacts_ui_update_groups_list (ContactsData *data)
+{
+	void add_to_list (gpointer data, gpointer list)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_insert_with_values (list, &iter, 0, 0, data, -1);
+	}
+	GtkListStore *list;
+
+	list = (GtkListStore*) gtk_combo_box_get_model (GTK_COMBO_BOX(groups_combobox));
+	gtk_list_store_clear (list);
+	g_list_foreach (data->contacts_groups, add_to_list, list);
+
+	/* Select 'All' in the groups combobox if nothing selected */
+	if (gtk_combo_box_get_active (GTK_COMBO_BOX (groups_combobox)))
+		gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combobox), 0);
 }
 
 void
@@ -103,7 +126,6 @@ create_main_window (ContactsData *data)
 	GtkWidget *main_notebook;
 	GtkWidget *main_hpane;
 	GtkWidget *contacts_vbox;
-	GtkWidget *groups_combobox;
 	GtkWidget *scrolledwindow2;
 	GtkWidget *contacts_treeview;
 	GtkWidget *search_hbox;
@@ -241,9 +263,13 @@ create_main_window (ContactsData *data)
 	gtk_paned_pack1 (GTK_PANED (main_hpane), contacts_vbox, FALSE, FALSE);
 	gtk_container_set_border_width (GTK_CONTAINER (contacts_vbox), 6);
 
-	groups_combobox = gtk_combo_box_new_text ();
+	groups_combobox = gtk_combo_box_new ();
+	GtkListStore *ls = gtk_list_store_new (1, G_TYPE_STRING);
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (groups_combobox), renderer, TRUE);
+	gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (groups_combobox), renderer, "text", 0);
+	gtk_combo_box_set_model (GTK_COMBO_BOX (groups_combobox), GTK_TREE_MODEL(ls));
 	gtk_box_pack_start (GTK_BOX (contacts_vbox), groups_combobox, FALSE, TRUE, 0);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combobox), _("All"));
 	gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (groups_combobox), FALSE);
 
 	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
@@ -490,6 +516,8 @@ create_main_window (ContactsData *data)
 			  G_CALLBACK (contacts_import_cb), data);
 	g_signal_connect (G_OBJECT (edit_menu), "activate",
 			  G_CALLBACK (contacts_edit_menu_activate_cb), data);
+	g_signal_connect (G_OBJECT (groups_combobox), "changed",
+			  G_CALLBACK (groups_combobox_changed_cb), data);
 
 	ui->contact_delete = contact_delete;
 	ui->contact_export = contact_export;
@@ -552,8 +580,6 @@ create_main_window (ContactsData *data)
 		contacts_gconf_search_cb, xml, NULL, NULL);
 #endif
 
-	/* Select 'All' in the groups combobox */
-	gtk_combo_box_set_active (groups_combobox, 0);
 
 
 

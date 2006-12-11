@@ -62,9 +62,9 @@ contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 
 
 void
-contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data)
+contacts_search_changed_cb (GtkWidget *widget, ContactsData *data)
 {
-	gtk_widget_grab_focus (search_entry);
+	gtk_widget_grab_focus (data->ui->search_entry);
 	contacts_update_treeview (data);
 }
 
@@ -609,19 +609,24 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 
-	groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
-	if ((group = data->selected_group)) {
-		for (g = groups; g; g = g->next) {
-			if (strcmp (group, g->data) == 0)
-				result = TRUE;
-			g_free (g->data);
-		}
-		if (groups)
-			g_list_free (groups);
-	} else
+	if (data->selected_group && strcmp ("All", data->selected_group))
+	{
+		groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
+		if ((group = data->selected_group)) {
+			for (g = groups; g; g = g->next) {
+				if (strcmp (group, g->data) == 0)
+					result = TRUE;
+				g_free (g->data);
+			}
+			if (groups)
+				g_list_free (groups);
+		} else
+			result = TRUE;
+		if (!result)
+			return FALSE;
+	}
+	else
 		result = TRUE;
-	if (!result)
-		return FALSE;
 
 	/* Search for any occurrence of the string in the search box in the 
 	 * contact file-as name; if none is found, row isn't visible. Ignores 

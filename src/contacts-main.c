@@ -195,6 +195,7 @@ main (int argc, char **argv)
 
 	/* Setup the ui */
 	contacts_setup_ui (contacts_data);
+	contacts_data->contacts_groups = g_list_prepend (contacts_data->contacts_groups, "All");
 
 #ifdef HAVE_GNOMEVFS
 	gnome_vfs_init ();
