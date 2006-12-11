@@ -57,6 +57,8 @@ contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 			    CHOOSER_NAME_COL, text, -1);
 	
 	gtk_entry_set_text (GTK_ENTRY (entry), "");
+
+	contacts_ui_update_groups_list (data);
 }
 
 

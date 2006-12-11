@@ -1,17 +1,10 @@
 #include <string.h>
 
-#include "config.h"
 #include "contacts-main.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-ui.h"
 #include "contacts-utils.h"
 #include "contacts-edit-pane.h"
-
-#ifndef FRONTEND_HEADER
-#error Foo  no frontend header defined
-#else
-#include FRONTEND_HEADER
-#endif
 
 #define CONTACTS_VIEW_PAGE 0
 #define CONTACTS_EDIT_PAGE 1

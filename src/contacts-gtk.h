@@ -22,3 +22,4 @@
  
  
 void contacts_create_ui (ContactsData *data);
+void contacts_ui_update_groups_list (ContactsData *data);

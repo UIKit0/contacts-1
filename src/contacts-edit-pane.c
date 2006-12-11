@@ -743,6 +743,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 			e_vcard_attribute_add_value (data->attr, g->data);
 		}
 		g_list_free (results);
+		data->contacts_data->changed = TRUE;
 	}
 }
 
@@ -1014,7 +1015,13 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	 */
 	widget = data->ui->main_notebook;
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 1);
-	
+
+	if ((widget = data->ui->contact_menu))
+		gtk_widget_show (widget);
+	if ((widget = data->ui->contacts_menu))
+		gtk_widget_hide (widget);
+
+
 	/* Create contact photo button */
 	button = gtk_button_new ();
 	widget = GTK_WIDGET (contacts_load_photo (contact));
