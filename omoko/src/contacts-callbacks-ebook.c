@@ -37,7 +37,7 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 	GtkWidget *widget;
 	GHashTable *contacts_table = data->contacts_table;
 
-	/* Get TreeView model and combo box to add contacts/groups */
+	/* Get TreeView model and combo box to add contacts */
 	widget = data->ui->contacts_treeview;
 	filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model 
 				 	(GTK_TREE_VIEW (widget)));
@@ -83,16 +83,13 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 			GList *group;
 			for (group = contact_groups; group;
 			     group = group->next) {
-				if (!g_list_find_custom (data->contacts_groups, 
+				if (!g_list_find_custom (data->contacts_groups,
 							 group->data,
 							 (GCompareFunc) strcmp))
 				{
-					/* TODO: invoce some update groups list function here
-					   gtk_combo_box_append_text
-					    (groups_combobox, group->data);
-					 */
-					data->contacts_groups = g_list_prepend 
+					data->contacts_groups = g_list_prepend
 					   (data->contacts_groups, group->data);
+					contacts_ui_update_groups_list (data);
 				}
 			}
 			g_list_free (contact_groups);
@@ -101,7 +98,6 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 	
 	/* Update view */
 	contacts_update_treeview (data);
-	
 }
 
 void
@@ -165,16 +161,13 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 			GList *group;
 			for (group = contact_groups; group;
 			     group = group->next) {
-				if (!g_list_find_custom (data->contacts_groups, 
+				if (!g_list_find_custom (data->contacts_groups,
 							 group->data,
 							 (GCompareFunc) strcmp))
 				{
-					/* TODO: invoke some group list update function here
-					gtk_combo_box_append_text
-					    (groups_combobox, group->data);
-					    */
 					data->contacts_groups = g_list_prepend 
 					   (data->contacts_groups, group->data);
+					contacts_ui_update_groups_list (data);
 				}
 			}
 			g_list_free (contact_groups);

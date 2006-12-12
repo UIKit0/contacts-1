@@ -33,6 +33,8 @@
 #define GCONF_PATH "/apps/contacts"
 #define GCONF_KEY_SEARCH "/apps/contacts/search_type"
 
+static GtkWidget *groups_combobox;
+
 #ifdef HAVE_GCONF
 static void
 contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
@@ -61,14 +63,37 @@ contacts_gconf_search_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry,
 }
 #endif
 
-void
-contacts_update_groups_list (ContactsData *data)
+static void
+groups_combobox_changed_cb (GtkWidget *widget, ContactsData *data)
 {
-	/*
-	GtkTreeModel *model;
-	model = gtk_combo_box_get_model ();
-	gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combobox), _("All"));
-	*/
+	GtkTreeIter iter;
+	gchar *text = NULL;
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (groups_combobox), &iter);
+	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (groups_combobox)), &iter, 0, &text, -1);
+	g_free (data->selected_group);
+	data->selected_group = text;
+	contacts_update_treeview (data);
+}
+
+void
+contacts_ui_update_groups_list (ContactsData *data)
+{
+	void add_to_list (gpointer data, gpointer list)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_insert_with_values (list, &iter, 1, 0, data, -1);
+	}
+	GtkListStore *list;
+
+	list = (GtkListStore*) gtk_combo_box_get_model (GTK_COMBO_BOX(groups_combobox));
+	if (!list) return;
+	gtk_list_store_clear (list);
+	gtk_list_store_insert_with_values (list, NULL, 0, 0, "All", -1);
+	g_list_foreach (data->contacts_groups, add_to_list, list);
+
+	/* Select 'All' in the groups combobox if nothing selected */
+	if (gtk_combo_box_get_active (GTK_COMBO_BOX (groups_combobox)))
+		gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combobox), 0);
 }
 
 void
@@ -83,14 +108,12 @@ create_main_window (ContactsData *data)
 	GtkWidget *edit_menuitem;
 	GtkWidget *delete_menuitem;
 	GtkWidget *contacts_import;
-	GtkWidget *separatormenuitem1;
 	GtkWidget *contacts_quit;
 	GtkWidget *contact_menu;
 	GtkWidget *contact_menu_menu;
 	GtkWidget *contact_delete;
 	GtkWidget *edit_groups;
 	GtkWidget *contact_export;
-	GtkWidget *separator1;
 	GtkWidget *contact_quit;
 	GtkWidget *edit_menu;
 	GtkWidget *menuitem5_menu;
@@ -103,12 +126,10 @@ create_main_window (ContactsData *data)
 	GtkWidget *main_notebook;
 	GtkWidget *main_hpane;
 	GtkWidget *contacts_vbox;
-	GtkWidget *groups_combobox;
 	GtkWidget *scrolledwindow2;
 	GtkWidget *contacts_treeview;
 	GtkWidget *search_hbox;
 	GtkWidget *search_entry_hbox;
-	GtkWidget *search_label;
 	GtkWidget *search_entry;
 	GtkWidget *search_tab_hbox;
 	GtkWidget *symbols_radiobutton;
@@ -137,6 +158,7 @@ create_main_window (ContactsData *data)
 	GtkWidget *add_field_button;
 	GtkWidget *remove_field_button;
 	GtkWidget *edit_done_button;
+	GtkWidget *widget;
 	GtkAccelGroup *accel_group;
 	ContactsUI *ui = data->ui;
 	GtkSizeGroup *size_group;
@@ -174,9 +196,9 @@ create_main_window (ContactsData *data)
 	contacts_import = gtk_menu_item_new_with_mnemonic (_("_Import"));
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), contacts_import);
 
-	separatormenuitem1 = gtk_separator_menu_item_new ();
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), separatormenuitem1);
-	gtk_widget_set_sensitive (separatormenuitem1, FALSE);
+	widget = gtk_separator_menu_item_new ();
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), widget);
+	gtk_widget_set_sensitive (widget, FALSE);
 
 	contacts_quit = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), contacts_quit);
@@ -196,9 +218,9 @@ create_main_window (ContactsData *data)
 	contact_export = gtk_menu_item_new_with_mnemonic (_("_Export"));
 	gtk_container_add (GTK_CONTAINER (contact_menu_menu), contact_export);
 
-	separator1 = gtk_separator_menu_item_new ();
-	gtk_container_add (GTK_CONTAINER (contact_menu_menu), separator1);
-	gtk_widget_set_sensitive (separator1, FALSE);
+	widget = gtk_separator_menu_item_new ();
+	gtk_container_add (GTK_CONTAINER (contact_menu_menu), widget);
+	gtk_widget_set_sensitive (widget, FALSE);
 
 	contact_quit = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
 	gtk_container_add (GTK_CONTAINER (contact_menu_menu), contact_quit);
@@ -241,9 +263,13 @@ create_main_window (ContactsData *data)
 	gtk_paned_pack1 (GTK_PANED (main_hpane), contacts_vbox, FALSE, FALSE);
 	gtk_container_set_border_width (GTK_CONTAINER (contacts_vbox), 6);
 
-	groups_combobox = gtk_combo_box_new_text ();
+	groups_combobox = gtk_combo_box_new ();
+	GtkListStore *ls = gtk_list_store_new (1, G_TYPE_STRING);
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (groups_combobox), renderer, TRUE);
+	gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (groups_combobox), renderer, "text", 0);
+	gtk_combo_box_set_model (GTK_COMBO_BOX (groups_combobox), GTK_TREE_MODEL(ls));
 	gtk_box_pack_start (GTK_BOX (contacts_vbox), groups_combobox, FALSE, TRUE, 0);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combobox), _("All"));
 	gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (groups_combobox), FALSE);
 
 	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
@@ -263,13 +289,14 @@ create_main_window (ContactsData *data)
 	search_entry_hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (search_hbox), search_entry_hbox, TRUE, TRUE, 0);
 
-	search_label = gtk_label_new_with_mnemonic (_("_Search:"));
-	gtk_box_pack_start (GTK_BOX (search_entry_hbox), search_label, FALSE, FALSE, 0);
-	gtk_misc_set_padding (GTK_MISC (search_label), 6, 0);
-
 	search_entry = gtk_entry_new ();
-	gtk_box_pack_start (GTK_BOX (search_entry_hbox), search_entry, TRUE, TRUE, 0);
+	gtk_box_pack_end (GTK_BOX (search_entry_hbox), search_entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default (GTK_ENTRY (search_entry), TRUE);
+
+	widget = gtk_label_new_with_mnemonic (_("_Search:"));
+	gtk_box_pack_start (GTK_BOX (search_entry_hbox), widget, FALSE, FALSE, 0);
+	gtk_misc_set_padding (GTK_MISC (widget), 6, 0);
+	gtk_label_set_mnemonic_widget (GTK_LABEL (widget), search_entry);
 
 	search_tab_hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (search_hbox), search_tab_hbox, TRUE, TRUE, 0);
@@ -353,10 +380,7 @@ create_main_window (ContactsData *data)
 	gtk_widget_set_sensitive (delete_button, FALSE);
 	GTK_WIDGET_SET_FLAGS (delete_button, GTK_CAN_DEFAULT);
 	gtk_button_set_focus_on_click (GTK_BUTTON (delete_button), FALSE);
-/*
-	label1 = gtk_label_new ("");
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 0), label1);
-*/
+
 	vbox4 = gtk_vbox_new (FALSE, 6);
 	gtk_container_add (GTK_CONTAINER (main_notebook), vbox4);
 	gtk_container_set_border_width (GTK_CONTAINER (vbox4), 6);
@@ -389,23 +413,7 @@ create_main_window (ContactsData *data)
 	edit_done_button = gtk_button_new_from_stock ("gtk-close");
 	gtk_container_add (GTK_CONTAINER (hbuttonbox2), edit_done_button);
 	GTK_WIDGET_SET_FLAGS (edit_done_button, GTK_CAN_DEFAULT);
-/*
-	label2 = gtk_label_new ("");
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 1), label2);
 
-	empty_notebook_page = gtk_vbox_new (FALSE, 0);
-	gtk_container_add (GTK_CONTAINER (main_notebook), empty_notebook_page);
-
-	label3 = gtk_label_new ();
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 2), label3);
-
-	empty_notebook_page = gtk_vbox_new (FALSE, 0);
-	gtk_container_add (GTK_CONTAINER (main_notebook), empty_notebook_page);
-
-	label4 = gtk_label_new ("");
-	gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 3), label4);
-*/
-	gtk_label_set_mnemonic_widget (GTK_LABEL (search_label), search_entry);
 
 	gtk_widget_grab_focus (search_entry);
 	gtk_widget_grab_default (edit_button);
@@ -490,6 +498,8 @@ create_main_window (ContactsData *data)
 			  G_CALLBACK (contacts_import_cb), data);
 	g_signal_connect (G_OBJECT (edit_menu), "activate",
 			  G_CALLBACK (contacts_edit_menu_activate_cb), data);
+	g_signal_connect (G_OBJECT (groups_combobox), "changed",
+			  G_CALLBACK (groups_combobox_changed_cb), data);
 
 	ui->contact_delete = contact_delete;
 	ui->contact_export = contact_export;
@@ -534,6 +544,7 @@ create_main_window (ContactsData *data)
 
 	gtk_widget_show_all (main_window);
 	gtk_widget_hide (search_tab_hbox);
+	gtk_widget_hide (contact_menu);
 
 
 #ifdef HAVE_GCONF
@@ -552,11 +563,6 @@ create_main_window (ContactsData *data)
 		contacts_gconf_search_cb, xml, NULL, NULL);
 #endif
 
-	/* Select 'All' in the groups combobox */
-	gtk_combo_box_set_active (groups_combobox, 0);
-
-
-
 }
 
 void
@@ -571,9 +577,9 @@ create_chooser_dialog (ContactsData *data)
 	GtkWidget *add_type_button;
 	GtkWidget *scrolledwindow5;
 	GtkWidget *chooser_treeview;
-	GtkWidget *dialog_action_area1;
-	GtkWidget *chooser_cancel_button;
-	GtkWidget *chooser_ok_button;
+	GtkWidget *widget;
+	GtkTreeModel *model;
+	GtkCellRenderer *renderer;
 
 	chooser_dialog = gtk_dialog_new ();
 	gtk_window_set_title (GTK_WINDOW (chooser_dialog), _("Edit Types"));
@@ -615,16 +621,16 @@ create_chooser_dialog (ContactsData *data)
 	gtk_container_add (GTK_CONTAINER (scrolledwindow5), chooser_treeview);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (chooser_treeview), FALSE);
 
-	dialog_action_area1 = GTK_DIALOG (chooser_dialog)->action_area;
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1), GTK_BUTTONBOX_END);
+	widget = GTK_DIALOG (chooser_dialog)->action_area;
+	gtk_button_box_set_layout (GTK_BUTTON_BOX (widget), GTK_BUTTONBOX_END);
 
-	chooser_cancel_button = gtk_button_new_from_stock ("gtk-cancel");
-	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), chooser_cancel_button, GTK_RESPONSE_CANCEL);
-	GTK_WIDGET_SET_FLAGS (chooser_cancel_button, GTK_CAN_DEFAULT);
+	widget = gtk_button_new_from_stock ("gtk-cancel");
+	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), widget, GTK_RESPONSE_CANCEL);
+	GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_DEFAULT);
 
-	chooser_ok_button = gtk_button_new_from_stock ("gtk-ok");
-	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), chooser_ok_button, GTK_RESPONSE_OK);
-	GTK_WIDGET_SET_FLAGS (chooser_ok_button, GTK_CAN_DEFAULT);
+	widget = gtk_button_new_from_stock ("gtk-ok");
+	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), widget, GTK_RESPONSE_OK);
+	GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_DEFAULT);
 
 	gtk_widget_grab_focus (chooser_entry);
 	gtk_widget_grab_default (add_type_button);
@@ -634,7 +640,25 @@ create_chooser_dialog (ContactsData *data)
 			G_CALLBACK (contacts_chooser_add_cb),
 			data);
 
-	gtk_widget_show_all (dialog_vbox1);
+
+	/* Create model/view for groups/type chooser list */
+	model = (GtkTreeModel *) gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
+	renderer = gtk_cell_renderer_toggle_new ();
+	g_object_set (renderer, "activatable", TRUE, NULL);
+	g_signal_connect (renderer, "toggled",
+			  (GCallback) contacts_chooser_toggle_cb, model);
+	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
+						     (chooser_treeview), -1,
+						     NULL, renderer, "active",
+						     CHOOSER_TICK_COL, NULL);
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
+						     (chooser_treeview), -1,
+						     NULL, renderer, "text",
+						     CHOOSER_NAME_COL, NULL);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (chooser_treeview),
+				 GTK_TREE_MODEL (model));
+	g_object_unref (model);
 
 	data->ui->chooser_add_hbox = chooser_add_hbox;
 	data->ui->chooser_dialog = chooser_dialog;
@@ -642,6 +666,7 @@ create_chooser_dialog (ContactsData *data)
 	data->ui->chooser_label = chooser_label;
 	data->ui->chooser_treeview = chooser_treeview;
 
+	gtk_widget_show_all (dialog_vbox1);
 }
 
 void
