@@ -28,13 +28,15 @@
 #include "contacts-callbacks-ui.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
+#include "contacts-ui.h"
+
+static void moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data);
+static GtkMenu *filter_menu;
 
 void
 create_main_window (ContactsData *contacts_data)
 {
 	GtkWidget *main_window;
-	GtkWidget *main_menubar;
-	//GtkWidget *contacts_menu;
 	GtkWidget *contacts_menu_menu;
 	GtkWidget *new_menuitem;
 	GtkWidget *edit_menuitem;
@@ -42,14 +44,6 @@ create_main_window (ContactsData *contacts_data)
 	GtkWidget *contacts_import;
 	GtkWidget *separatormenuitem1;
 	GtkWidget *contacts_quit;
-	//GtkWidget *contact_menu;
-	//GtkWidget *contact_delete;
-	GtkWidget *edit_groups;
-	//GtkWidget *contact_export;
-	GtkWidget *edit_menu;
-	/*GtkWidget *cut;
-	GtkWidget *copy;
-	GtkWidget *paste;*/
 	GtkWidget *main_notebook;
 	GtkWidget *scrolledwindow2;
 	GtkWidget *contacts_treeview;
@@ -61,14 +55,12 @@ create_main_window (ContactsData *contacts_data)
 	GtkWidget *scrolledwindow3;
 	GtkWidget *viewport;
 	GtkWidget *summary_table;
-	GtkWidget *summary_hbuttonbox;
 	GtkWidget *new_button;
 	GtkWidget *edit_button;
 	GtkWidget *delete_button;
 	GtkWidget *edit_table;
-	GtkWidget *add_field_button;
-	GtkWidget *remove_field_button;
-	GtkWidget *edit_done_button;
+	//GtkWidget *add_field_button;
+	//GtkWidget *remove_field_button;
 	GtkAccelGroup *accel_group;
 	ContactsUI *ui = contacts_data->ui;
 
@@ -106,9 +98,7 @@ create_main_window (ContactsData *contacts_data)
 
 	/*** filter ***/
 
-	GtkWidget *filter_menu = gtk_menu_new ();
-	GtkWidget *filter_all = gtk_menu_item_new_with_label (_("All"));
-	gtk_container_add (GTK_CONTAINER (filter_menu), filter_all);
+	filter_menu = (GtkMenu*) gtk_menu_new ();
 	moko_paned_window_set_filter_menu (MOKO_PANED_WINDOW (main_window), GTK_MENU(filter_menu));
 
 	/* contacts list vbox */
@@ -207,25 +197,15 @@ create_main_window (ContactsData *contacts_data)
 	gtk_container_set_border_width (GTK_CONTAINER (edit_table), 6);
 	gtk_table_set_row_spacings (GTK_TABLE (edit_table), 6);
 
-	/*
-	GtkWidget *hbuttonbox2 = gtk_hbutton_box_new ();
-	gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox2, FALSE, TRUE, 0);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
-
-	edit_done_button = gtk_button_new_from_stock ("gtk-close");
-	gtk_container_add (GTK_CONTAINER (hbuttonbox2), edit_done_button);
-	GTK_WIDGET_SET_FLAGS (edit_done_button, GTK_CAN_DEFAULT);
-	*/
-
 	/*** connect signals ***/
 	g_signal_connect ((gpointer) main_window, "destroy",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
-	
+/*	
 	g_signal_connect_swapped ((gpointer) main_window, "set_focus",
 			G_CALLBACK (contacts_edit_set_focus_cb),
 			GTK_OBJECT (remove_field_button));
-			
+*/
 	g_signal_connect ((gpointer) contacts_quit, "activate",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
@@ -250,17 +230,14 @@ create_main_window (ContactsData *contacts_data)
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
 	g_signal_connect (G_OBJECT (contacts_treeview), "row_activated",
 			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
-	/*g_signal_connect (G_OBJECT (edit_menuitem), "activate",
-			  G_CALLBACK (contacts_edit_cb), contacts_data);*/
 	g_signal_connect (G_OBJECT (delete_button), "clicked",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
 	g_signal_connect (G_OBJECT (delete_menuitem), "activate",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
 	g_signal_connect (G_OBJECT (contacts_import), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
-/*	g_signal_connect (G_OBJECT (edit_menu), "activate",
-			  G_CALLBACK (contacts_edit_menu_activate_cb), contacts_data);
-*/
+	g_signal_connect (G_OBJECT (moko_paned_window_get_menubox (MOKO_PANED_WINDOW (main_window))), 
+			"filter_changed", G_CALLBACK (moko_filter_changed), contacts_data);
 	ui->contact_delete = NULL;//contact_delete;
 	ui->contact_export = NULL;//contact_export;
 	ui->contact_menu = NULL; //contact_menu;
@@ -276,11 +253,11 @@ create_main_window (ContactsData *contacts_data)
 	ui->delete_button = delete_button;
 	ui->edit_menuitem = edit_menuitem;
 	ui->edit_button = edit_button;
-	ui->edit_done_button = edit_done_button;
-	ui->edit_groups = edit_groups;
-	ui->edit_menu = edit_menu;
+	ui->edit_done_button = NULL;//edit_done_button;
+	ui->edit_groups = NULL;//edit_groups;
+	ui->edit_menu = NULL;//edit_menu;
 	ui->edit_table = edit_table;
-	ui->main_menubar = main_menubar;
+	ui->main_menubar = NULL;//main_menubar;
 	ui->main_notebook = main_notebook;
 	ui->main_window = main_window;
 	ui->new_button = new_button;
@@ -288,15 +265,15 @@ create_main_window (ContactsData *contacts_data)
 	ui->photo_image = photo_image;
 	ui->preview_header_hbox = preview_header_hbox;
 
-	ui->add_field_button = add_field_button;
-	ui->remove_field_button = remove_field_button;
+	ui->add_field_button = NULL;//add_field_button;
+	ui->remove_field_button = NULL;//remove_field_button;
 
 	ui->search_entry = search_entry;
 	ui->search_entry_hbox = NULL;//search_entry_hbox;
 	ui->search_hbox = NULL; //search_hbox;
 	ui->search_tab_hbox = NULL; //search_tab_hbox;
 
-	ui->summary_hbuttonbox = summary_hbuttonbox;
+	ui->summary_hbuttonbox = NULL;//summary_hbuttonbox;
 	ui->summary_name_label = summary_name_label;
 	ui->summary_table = summary_table;
 	ui->summary_vbox = summary_vbox;
@@ -394,8 +371,6 @@ create_chooser_dialog (ContactsData *data)
 	data->ui->chooser_label = chooser_label;
 	data->ui->chooser_treeview = chooser_treeview;
 
-	//gtk_widget_show_all (chooser_dialog);
-
 }
 
 void
@@ -405,7 +380,33 @@ contacts_create_ui (ContactsData *data)
 	create_chooser_dialog (data);
 }
 
-void
-contacts_update_groups_list (ContactsData *data)
+static void
+moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data)
 {
+	data->selected_group = text;
+	contacts_update_treeview (data);
+}
+
+
+void
+contacts_ui_update_groups_list (ContactsData *data)
+{
+	void remove_menu_item (GtkWidget *menu_item, GtkWidget *menu)
+	{
+		gtk_container_remove (GTK_CONTAINER (menu), menu_item);
+	}
+
+	void add_menu_item (gchar *group, GtkMenu *menu)
+	{
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_menu_item_new_with_label (group));
+	}
+
+	/* update filter menu */
+	gtk_container_foreach (GTK_CONTAINER (filter_menu), (GtkCallback)remove_menu_item, filter_menu);
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("All")));
+
+	g_list_foreach (data->contacts_groups, (GFunc)add_menu_item, filter_menu);
+
+	gtk_widget_show_all (GTK_WIDGET (filter_menu));
+
 }
