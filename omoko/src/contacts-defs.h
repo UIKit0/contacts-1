@@ -106,6 +106,8 @@ typedef struct {
 	GtkListStore *contacts_liststore;
 	GtkTreeModelFilter *contacts_filter;
 	gboolean initialising;
+	gchar *search_string;
+	gboolean search_enabled;
 } ContactsData;
 
 typedef struct {
@@ -152,5 +154,7 @@ typedef struct {
 			 */
 
 #define NO_IMAGE 1	/* For the image-chooser dialog */
+
+#define str_equal(x, y) (x != NULL && y != NULL && strcmp (x, y) == 0)
 
 #endif

@@ -62,15 +62,32 @@ contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 }
 
 void
-contacts_clear_search_cb (GtkWidget *widget, ContactsData *data)
+contacts_disable_search_cb (GtkWidget *widget, ContactsData *data)
 {
-	gtk_entry_set_text (GTK_ENTRY (data->ui->search_entry), "");
+	/* save the old search string */
+	g_free (data->search_string);
+	data->search_string = g_strdup (gtk_entry_get_text (GTK_ENTRY (data->ui->search_entry)));
+	data->search_enabled = FALSE;
+
+	contacts_update_treeview (data);
+}
+
+void
+contacts_enable_search_cb (GtkWidget *widget, ContactsData *data)
+{
+	if (data->search_string != NULL)
+		gtk_entry_set_text (GTK_ENTRY (data->ui->search_entry), data->search_string);
+	data->search_enabled = TRUE;
+
 	contacts_update_treeview (data);
 }
 
 void
 contacts_search_changed_cb (GtkWidget *widget, ContactsData *data)
 {
+	g_free (data->search_string);
+	data->search_string = g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
+
 	gtk_widget_grab_focus (data->ui->search_entry);
 	contacts_update_treeview (data);
 }
@@ -616,12 +633,13 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 
-	if (data->selected_group && strcmp ("All", data->selected_group))
+	if (!str_equal (_("All"), data->selected_group)
+	    && !str_equal(_("Search Results"), data->selected_group))
 	{
 		groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
 		if ((group = data->selected_group)) {
 			for (g = groups; g; g = g->next) {
-				if (strcmp (group, g->data) == 0)
+				if (str_equal (group, g->data))
 					result = TRUE;
 				g_free (g->data);
 			}
@@ -639,9 +657,8 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
 	 * empty searches.
 	 */
-	if (GTK_WIDGET_VISIBLE (data->ui->search_entry)) {
-		search_string = gtk_entry_get_text (
-			GTK_ENTRY (data->ui->search_entry));
+	if (data->search_enabled || str_equal(_("Search Results"), data->selected_group)) {
+		search_string = data->search_string;
 		if ((search_string) &&
 		    (g_utf8_strlen (search_string, -1) > 0)) {
 			gchar *name_string;

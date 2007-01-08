@@ -220,7 +220,9 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect (G_OBJECT (moko_paned_window_get_menubox (MOKO_PANED_WINDOW (main_window))),
 			"filter_changed", G_CALLBACK (moko_filter_changed), contacts_data);
 	g_signal_connect (G_OBJECT(moko_tool_box), "searchbox_invisible",
-			  G_CALLBACK (contacts_clear_search_cb), contacts_data);
+			  G_CALLBACK (contacts_disable_search_cb), contacts_data);
+	g_signal_connect (G_OBJECT(moko_tool_box), "searchbox_visible",
+			  G_CALLBACK (contacts_enable_search_cb), contacts_data);
 
 	ui->contact_delete = NULL;//contact_delete;
 	ui->contact_export = NULL;//contact_export;
@@ -387,9 +389,10 @@ contacts_ui_update_groups_list (ContactsData *data)
 
 	/* update filter menu */
 	gtk_container_foreach (GTK_CONTAINER (filter_menu), (GtkCallback)remove_menu_item, filter_menu);
-	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("All")));
 
 	g_list_foreach (data->contacts_groups, (GFunc)add_menu_item, filter_menu);
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("Search Results")));
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("All")));
 
 	gtk_widget_show_all (GTK_WIDGET (filter_menu));
 

@@ -22,7 +22,8 @@
 #include <libebook/e-book.h>
 #include "contacts-defs.h"
 
-void contacts_clear_search_cb (GtkWidget *widget, ContactsData *data);
+void contacts_disable_search_cb (GtkWidget *widget, ContactsData *data);
+void contacts_enable_search_cb (GtkWidget *widget, ContactsData *data);
 void contacts_search_changed_cb (GtkWidget *search_entry, ContactsData *data);
 
 void contacts_chooser_add_cb (GtkWidget *button, ContactsData *data);
