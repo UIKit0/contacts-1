@@ -1,3 +1,11 @@
+2007-01-08  Thomas Wood  <thos@gnome.org>
+
+	* src/contacts-omoko.c: (create_main_window): 
+	
+	- Use OpenMoko API for tool box buttons. Seems to fix search problems
+	too.
+	- Adjust padding in edit mode to match view mode
+
 2006-12-13  Thomas Wood <thomas@openedhand.com>
 
 	* configure.ac: Fix formatting

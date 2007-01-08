@@ -55,12 +55,10 @@ create_main_window (ContactsData *contacts_data)
 	GtkWidget *scrolledwindow3;
 	GtkWidget *viewport;
 	GtkWidget *summary_table;
-	GtkWidget *new_button;
-	GtkWidget *edit_button;
-	GtkWidget *delete_button;
+	MokoPixmapButton *new_button;
+	MokoPixmapButton *edit_button;
+	MokoPixmapButton *delete_button;
 	GtkWidget *edit_table;
-	//GtkWidget *add_field_button;
-	//GtkWidget *remove_field_button;
 	GtkAccelGroup *accel_group;
 	ContactsUI *ui = contacts_data->ui;
 
@@ -115,25 +113,19 @@ create_main_window (ContactsData *contacts_data)
 
 	/* tool box */
 	GtkWidget *moko_tool_box = moko_tool_box_new_with_search ();
-	GtkHBox *moko_button_box = moko_tool_box_get_button_box (MOKO_TOOL_BOX (moko_tool_box));
 
 	moko_paned_window_add_toolbox (MOKO_PANED_WINDOW (main_window), MOKO_TOOL_BOX(moko_tool_box));
 	search_entry = (GtkWidget*)moko_tool_box_get_entry (MOKO_TOOL_BOX(moko_tool_box));
 
-	new_button = gtk_button_new_from_stock ("gtk-new");
-	gtk_container_add (GTK_CONTAINER (moko_button_box), new_button);
-	GTK_WIDGET_SET_FLAGS (new_button, GTK_CAN_DEFAULT);
+	/* FIXME? We seem to have to add these in reverse order at the moment */
+	delete_button = moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
+	moko_pixmap_button_set_center_stock (delete_button, "gtk-delete");
 
-	edit_button = gtk_button_new_from_stock ("gtk-edit");
-	gtk_container_add (GTK_CONTAINER (moko_button_box), edit_button);
-	gtk_widget_set_sensitive (edit_button, FALSE);
-	GTK_WIDGET_SET_FLAGS (edit_button, GTK_CAN_DEFAULT);
+	edit_button = moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
+	moko_pixmap_button_set_center_stock (edit_button, "gtk-edit");
 
-	delete_button = gtk_button_new_from_stock ("gtk-delete");
-	gtk_container_add (GTK_CONTAINER (moko_button_box), delete_button);
-	gtk_widget_set_sensitive (delete_button, FALSE);
-	GTK_WIDGET_SET_FLAGS (delete_button, GTK_CAN_DEFAULT);
-	gtk_button_set_focus_on_click (GTK_BUTTON (delete_button), FALSE);
+	new_button = moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
+	moko_pixmap_button_set_center_stock (new_button, "gtk-new");
 
 
 	/*** contacts display ***/
@@ -183,7 +175,7 @@ create_main_window (ContactsData *contacts_data)
 	/*** edit mode ***/
 	GtkWidget *vbox4 = gtk_vbox_new (FALSE, 6);
 	gtk_notebook_append_page (GTK_NOTEBOOK (main_notebook), vbox4, NULL);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox4), 6);
+	gtk_container_set_border_width (GTK_CONTAINER (vbox4), 0);
 
 	GtkWidget *scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start (GTK_BOX (vbox4), scrolledwindow4, TRUE, TRUE, 0);
@@ -250,9 +242,10 @@ create_main_window (ContactsData *contacts_data)
 	ui->copy_menuitem = NULL;//copy;
 	ui->cut_menuitem = NULL;//cut;
 	ui->delete_menuitem = delete_menuitem;
-	ui->delete_button = delete_button;
+	ui->delete_button = GTK_WIDGET (delete_button);
+	ui->edit_button = GTK_WIDGET (edit_button);
+	ui->new_button = GTK_WIDGET (new_button);
 	ui->edit_menuitem = edit_menuitem;
-	ui->edit_button = edit_button;
 	ui->edit_done_button = NULL;//edit_done_button;
 	ui->edit_groups = NULL;//edit_groups;
 	ui->edit_menu = NULL;//edit_menu;
@@ -260,7 +253,6 @@ create_main_window (ContactsData *contacts_data)
 	ui->main_menubar = NULL;//main_menubar;
 	ui->main_notebook = main_notebook;
 	ui->main_window = main_window;
-	ui->new_button = new_button;
 	ui->paste_menuitem = NULL;// paste;
 	ui->photo_image = photo_image;
 	ui->preview_header_hbox = preview_header_hbox;
