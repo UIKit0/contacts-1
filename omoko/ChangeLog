@@ -1,4 +1,12 @@
-2007-01-08  Thomas Wood  <thos@gnome.org>
+2007-01-08  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c: (contacts_clear_search_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-omoko.c: (create_main_window):
+
+	Clear the search results when hiding the search widget
+
+2007-01-08  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-omoko.c: (create_main_window): 
 	

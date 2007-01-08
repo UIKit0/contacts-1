@@ -61,7 +61,12 @@ contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 	contacts_ui_update_groups_list (data);
 }
 
-
+void
+contacts_clear_search_cb (GtkWidget *widget, ContactsData *data)
+{
+	gtk_entry_set_text (GTK_ENTRY (data->ui->search_entry), "");
+	contacts_update_treeview (data);
+}
 
 void
 contacts_search_changed_cb (GtkWidget *widget, ContactsData *data)

@@ -193,15 +193,9 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) main_window, "destroy",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
-/*	
-	g_signal_connect_swapped ((gpointer) main_window, "set_focus",
-			G_CALLBACK (contacts_edit_set_focus_cb),
-			GTK_OBJECT (remove_field_button));
-*/
 	g_signal_connect ((gpointer) contacts_quit, "activate",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
-
 	g_signal_connect_data ((gpointer) contacts_treeview, "key_press_event",
 			G_CALLBACK (contacts_treeview_search_cb),
 			GTK_OBJECT (search_entry),
@@ -209,11 +203,6 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) search_entry, "changed",
 			G_CALLBACK (contacts_search_changed_cb),
 			contacts_data);
-/*
-	g_signal_connect ((gpointer) remove_field_button, "clicked",
-			G_CALLBACK (contacts_remove_field_cb),
-			NULL);
-			*/
 	g_signal_connect (G_OBJECT (new_button), "clicked",
 			  G_CALLBACK (contacts_new_cb), contacts_data);
 	g_signal_connect (G_OBJECT (new_menuitem), "activate",
@@ -228,8 +217,11 @@ create_main_window (ContactsData *contacts_data)
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
 	g_signal_connect (G_OBJECT (contacts_import), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
-	g_signal_connect (G_OBJECT (moko_paned_window_get_menubox (MOKO_PANED_WINDOW (main_window))), 
+	g_signal_connect (G_OBJECT (moko_paned_window_get_menubox (MOKO_PANED_WINDOW (main_window))),
 			"filter_changed", G_CALLBACK (moko_filter_changed), contacts_data);
+	g_signal_connect (G_OBJECT(moko_tool_box), "searchbox_invisible",
+			  G_CALLBACK (contacts_clear_search_cb), contacts_data);
+
 	ui->contact_delete = NULL;//contact_delete;
 	ui->contact_export = NULL;//contact_export;
 	ui->contact_menu = NULL; //contact_menu;
