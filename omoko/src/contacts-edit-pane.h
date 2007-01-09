@@ -22,6 +22,7 @@
 #include "contacts-defs.h"
 
 void contacts_edit_pane_show (ContactsData *data, gboolean new);
+void contacts_edit_pane_hide (ContactsData *data);
 
 void contacts_edit_set_focus_cb (GtkWindow *window, GtkWidget *widget,
 				 gpointer user_data);

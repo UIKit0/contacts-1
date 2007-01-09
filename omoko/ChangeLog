@@ -1,4 +1,16 @@
-2007-01-09  Thomas Wood  <thos@openedhand.com>
+2007-01-09  Thomas Wood  <thomas@opendhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-edit-pane.c: (contacts_remove_edit_widgets_cb),
+	(contacts_edit_pane_hide), (contacts_edit_add_focus_events),
+	(contacts_edit_pane_show):
+	* src/contacts-edit-pane.h:
+	* src/contacts-ui.c: (contacts_display_summary):
+	* src/contacts-utils.c: (contacts_contact_from_tree_path):
+
+	Plug various leaks reported by valgrind.
+
+2007-01-09  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb):
 	* src/contacts-main.c: (main):
@@ -6,7 +18,7 @@
 
 	Filter menu now works correctly with "Search Results" item
 
-2007-01-08  Thomas Wood  <thonas@openedhand.com>
+2007-01-08  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_chooser_add_cb):
 	* src/contacts-callbacks-ui.h:

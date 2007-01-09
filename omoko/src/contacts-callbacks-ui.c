@@ -622,7 +622,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	gboolean result = FALSE;
 	gchar *group = NULL;
 	GList *groups, *g;
-	const gchar *uid;
+	gchar *uid;
 	EContactListHash *hash;
 	const gchar *search_string;
 	ContactsData *data;
@@ -631,6 +631,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	gtk_tree_model_get (model, iter, CONTACT_UID_COL, &uid, -1);
 	if (!uid) return FALSE;
 	hash = g_hash_table_lookup (contacts_table, uid);
+	g_free (uid);
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 

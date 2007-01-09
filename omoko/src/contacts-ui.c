@@ -43,7 +43,9 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	if (!E_IS_CONTACT (contact))
 		return;
 
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_VIEW_PAGE);
+	if (gtk_notebook_get_current_page (GTK_NOTEBOOK (data->ui->main_notebook))
+			== CONTACTS_EDIT_PAGE)
+		contacts_edit_pane_hide (data);
 
 	/* Retrieve contact name and groups */
 	widget = data->ui->summary_name_label;
@@ -60,6 +62,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 
 	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
 	if (groups) {
+		g_list_foreach (groups, (GFunc) g_free, NULL);
 		g_list_free (groups);
 		g_free (groups_text);
 	}
@@ -112,7 +115,11 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		attr_name = e_vcard_attribute_get_name (attr);
 
 		/* we already have the Full Name above ... */
-		if (!strcmp (attr_name, "FN")) continue;
+		if (!strcmp (attr_name, "FN"))
+		{
+			g_free (value_text);
+			continue;
+		}
 
 		types = contacts_get_field_types (attr_name);
 		if (types) {

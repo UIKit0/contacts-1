@@ -269,11 +269,12 @@ contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path, GHashTa
 {
 	GtkTreeIter iter;
 	if (gtk_tree_model_get_iter (model, &iter, path)) {
-		const gchar *uid;
+		gchar *uid;
 		EContactListHash *hash;
 		gtk_tree_model_get (model, &iter, CONTACT_UID_COL, &uid, -1);
 		if (uid) {
 			hash = g_hash_table_lookup (contacts_table, uid);
+			g_free (uid);
 			if (hash)
 				return hash->contact;
 		}

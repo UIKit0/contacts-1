@@ -61,7 +61,7 @@ contacts_remove_edit_widgets_cb (GtkWidget *widget, gpointer data)
 	gtk_container_remove (GTK_CONTAINER (data), widget);
 }
 
-static void
+void
 contacts_edit_pane_hide (ContactsData *data)
 {
 	GtkWidget *widget;
@@ -87,6 +87,12 @@ contacts_edit_pane_hide (ContactsData *data)
 		gtk_window_set_default (window, data->ui->edit_button);
 	if ((widget = data->ui->search_entry) && GTK_WIDGET_VISIBLE (widget))
 		gtk_window_set_focus (window, data->ui->search_entry);
+
+	/* better clear some things up now? */
+	if (data->contact)
+		g_object_unref (data->contact);
+
+	g_debug ("hide edit pane\n");
 }
 
 static void
@@ -630,7 +636,8 @@ contacts_edit_add_focus_events (GtkWidget *widget, GtkWidget *ebox,
 			contacts_edit_add_focus_events (GTK_WIDGET (c->data),
 				ebox, widgets);
 		}
-	} else if (GTK_IS_WIDGET (widget)) {	
+		g_list_free (children);
+	} else if (GTK_IS_WIDGET (widget)) {
 		GList *w;
 		g_signal_connect (G_OBJECT (widget), "focus-in-event",
 			G_CALLBACK (contacts_edit_focus_in), ebox);
@@ -1177,14 +1184,15 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, contacts_change_groups_cb,
 					      NULL);
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+	/*g_signal_handlers_disconnect_matched (G_OBJECT (widget),
 					      G_SIGNAL_MATCH_FUNC, 0, 0,
 					      NULL, g_free,
-					      NULL);
+					      NULL);*/
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_change_groups_cb), gdata);
-	g_signal_connect_swapped (G_OBJECT (widget), "hide",
-				  G_CALLBACK (g_free), gdata);
+	/*g_signal_connect_swapped (G_OBJECT (widget), "hide",
+				  G_CALLBACK (g_free), gdata);*/
+	g_object_weak_ref (G_OBJECT (widget), (GWeakNotify) g_free, gdata);
 	if (data->ui->contacts_menu && data->ui->contact_menu)
 	{
 		gtk_widget_hide (data->ui->contacts_menu);
