@@ -86,7 +86,8 @@ void
 contacts_search_changed_cb (GtkWidget *widget, ContactsData *data)
 {
 	g_free (data->search_string);
-	data->search_string = g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
+	data->search_string =
+		g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
 
 	gtk_widget_grab_focus (data->ui->search_entry);
 	contacts_update_treeview (data);
@@ -633,8 +634,9 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 
-	if (!str_equal (_("All"), data->selected_group)
-	    && !str_equal(_("Search Results"), data->selected_group))
+	if (data->selected_group != NULL
+		&& !str_equal (_("All"), data->selected_group)
+		&& !str_equal(_("Search Results"), data->selected_group))
 	{
 		groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
 		if ((group = data->selected_group)) {
@@ -657,7 +659,8 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	 * contact file-as name; if none is found, row isn't visible. Ignores 
 	 * empty searches.
 	 */
-	if (data->search_enabled || str_equal(_("Search Results"), data->selected_group)) {
+	if (data->search_enabled
+		|| str_equal(_("Search Results"), data->selected_group)) {
 		search_string = data->search_string;
 		if ((search_string) &&
 		    (g_utf8_strlen (search_string, -1) > 0)) {

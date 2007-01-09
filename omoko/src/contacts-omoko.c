@@ -369,7 +369,8 @@ contacts_create_ui (ContactsData *data)
 static void
 moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data)
 {
-	data->selected_group = text;
+	g_free (data->selected_group);
+	data->selected_group = g_strdup (text);
 	contacts_update_treeview (data);
 }
 
@@ -390,9 +391,14 @@ contacts_ui_update_groups_list (ContactsData *data)
 	/* update filter menu */
 	gtk_container_foreach (GTK_CONTAINER (filter_menu), (GtkCallback)remove_menu_item, filter_menu);
 
-	g_list_foreach (data->contacts_groups, (GFunc)add_menu_item, filter_menu);
-	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("Search Results")));
-	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu), gtk_menu_item_new_with_label (_("All")));
+	g_list_foreach (data->contacts_groups, (GFunc)add_menu_item,
+			filter_menu);
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
+			gtk_separator_menu_item_new ());
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
+			gtk_menu_item_new_with_label (_("Search Results")));
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
+			gtk_menu_item_new_with_label (_("All")));
 
 	gtk_widget_show_all (GTK_WIDGET (filter_menu));
 

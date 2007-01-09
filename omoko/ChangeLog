@@ -1,3 +1,11 @@
+2007-01-09  Thomas Wood  <thos@openedhand.com>
+
+	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb):
+	* src/contacts-main.c: (main):
+	* src/contacts-omoko.c: (contacts_ui_update_groups_list):
+
+	Filter menu now works correctly with "Search Results" item
+
 2007-01-08  Thomas Wood  <thonas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_chooser_add_cb):

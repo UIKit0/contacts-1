@@ -238,7 +238,14 @@ main (int argc, char **argv)
 	e_book_view_stop (contacts_data->book_view);
 	g_object_unref (contacts_data->book_view);
 	g_object_unref (contacts_data->book);
+
+	/* free various things */
 	g_free (contacts_data->ui);
+	g_free (contacts_data->selected_group);
+	g_free (contacts_data->search_string);
+	//g_list_free (contacts_data->contacts_groups);
+	//g_hash_table_destroy (contacts_data->contacts_table);
+
 
 	return 0;
 }
