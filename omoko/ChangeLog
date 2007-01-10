@@ -1,3 +1,13 @@
+2007-01-10  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-omoko.c: (create_main_window): Clean up
+
+	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),
+	(contacts_edit_pane_show):
+	* src/contacts-ui.c: (contacts_display_summary):
+
+	Prevent some Gtk-CRITICAL warnings
+
 2007-01-10  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:

@@ -83,16 +83,11 @@ contacts_edit_pane_hide (ContactsData *data)
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (widget), 0);
 	gtk_window_set_title (window, _("Contacts"));
 	contacts_set_available_options (data, TRUE, TRUE, TRUE);
-	if (data->ui->edit_button)
+	if (data->ui->edit_button && GTK_WIDGET_CAN_DEFAULT (data->ui->edit_button))
 		gtk_window_set_default (window, data->ui->edit_button);
 	if ((widget = data->ui->search_entry) && GTK_WIDGET_VISIBLE (widget))
 		gtk_window_set_focus (window, data->ui->search_entry);
 
-	/* better clear some things up now? */
-	if (data->contact)
-		g_object_unref (data->contact);
-
-	g_debug ("hide edit pane\n");
 }
 
 static void
@@ -1202,23 +1197,27 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		gtk_widget_set_sensitive (widget, FALSE);
 
 	/* Connect delete menu item */
-	widget = data->ui->contact_delete;
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
-					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_edit_delete_cb,
-					      NULL);
-	g_signal_connect (G_OBJECT (widget), "activate", 
-			  G_CALLBACK (contacts_edit_delete_cb), data);
-			  
+	if ((widget = data->ui->contact_delete))
+	{
+		g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+						      G_SIGNAL_MATCH_FUNC, 0, 0,
+						      NULL, contacts_edit_delete_cb,
+						      NULL);
+		g_signal_connect (G_OBJECT (widget), "activate", 
+				  G_CALLBACK (contacts_edit_delete_cb), data);
+	}
+
 	/* Connect export menu item */
-	widget = data->ui->contact_export;
-	g_signal_handlers_disconnect_matched (G_OBJECT (widget),
-					      G_SIGNAL_MATCH_FUNC, 0, 0,
-					      NULL, contacts_export_cb,
-					      NULL);
-	g_signal_connect (G_OBJECT (widget), "activate", 
-			  G_CALLBACK (contacts_export_cb), data);
-			  
+	if ((widget = data->ui->contact_export))
+	{
+		g_signal_handlers_disconnect_matched (G_OBJECT (widget),
+						      G_SIGNAL_MATCH_FUNC, 0, 0,
+						      NULL, contacts_export_cb,
+						      NULL);
+		g_signal_connect (G_OBJECT (widget), "activate", 
+				  G_CALLBACK (contacts_export_cb), data);
+	}
+
 	/* Connect add field button */
 	if ((widget = data->ui->add_field_button))
 	{

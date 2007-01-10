@@ -40,12 +40,12 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	gchar *name_markup, *groups_text = NULL;
 	GValue *can_focus = g_new0 (GValue, 1);
 
-	if (!E_IS_CONTACT (contact))
-		return;
-
 	if (gtk_notebook_get_current_page (GTK_NOTEBOOK (data->ui->main_notebook))
 			== CONTACTS_EDIT_PAGE)
 		contacts_edit_pane_hide (data);
+
+	if (!E_IS_CONTACT (contact))
+		return;
 
 	/* Retrieve contact name and groups */
 	widget = data->ui->summary_name_label;
