@@ -23,8 +23,12 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glib.h>
+#include <libmokoui/moko-application.h>
+#include <libmokoui/moko-details-window.h>
+#include <libmokoui/moko-dialog-window.h>
 #include <libmokoui/moko-paned-window.h>
 #include <libmokoui/moko-tool-box.h>
+#include <libmokoui/moko-navigation-list.h>
 #include "contacts-callbacks-ui.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
@@ -40,15 +44,16 @@ create_main_window (ContactsData *contacts_data)
 	GtkWidget *contacts_import;
 	GtkWidget *separatormenuitem1;
 	GtkWidget *contacts_quit;
-	GtkWidget *scrolledwindow2;
-	GtkWidget *contacts_treeview;
 	GtkWidget *scrolledwindow3;
-	GtkWidget *viewport;
 	GtkAccelGroup *accel_group;
 	GtkWidget *moko_tool_box;
 	ContactsUI *ui = contacts_data->ui;
 
 	accel_group = gtk_accel_group_new ();
+
+	//? MokoApplication* app = MOKO_APPLICATION(moko_application_get_instance());
+
+	g_set_application_name ("Phone Book");
 
 	ui->main_window = moko_paned_window_new ();
 	gtk_window_set_title (GTK_WINDOW (ui->main_window), _("Contacts"));
@@ -89,17 +94,26 @@ create_main_window (ContactsData *contacts_data)
 	filter_menu = (GtkMenu*) gtk_menu_new ();
 	moko_paned_window_set_filter_menu (MOKO_PANED_WINDOW (ui->main_window), GTK_MENU(filter_menu));
 
-	/* contacts list vbox */
-	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), scrolledwindow2);
-	GTK_WIDGET_UNSET_FLAGS (scrolledwindow2, GTK_CAN_FOCUS);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_SHADOW_IN);
+	/*** contacts list ***/
 
-	contacts_treeview = gtk_tree_view_new ();
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2), contacts_treeview);
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (contacts_treeview), FALSE);
-	gtk_tree_view_set_enable_search (GTK_TREE_VIEW (contacts_treeview), FALSE);
+	MokoNavigationList *moko_navigation_list = moko_navigation_list_new ();
+	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
+	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET (moko_navigation_list));
+
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	GtkTreeViewColumn *column =
+		gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
+							"text", CONTACT_NAME_COL, NULL);
+	gtk_tree_view_column_set_min_width(column, 142);
+	gtk_tree_view_column_set_sort_column_id(column, 0);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (ui->contacts_treeview), column);
+
+	renderer = gtk_cell_renderer_text_new ();
+	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
+							"text", CONTACT_CELLPHONE_COL, NULL);
+	gtk_tree_view_column_set_min_width(column, 156);
+	gtk_tree_view_column_set_sort_column_id(column, 1);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (ui->contacts_treeview), column);
 
 	/* tool box */
 	moko_tool_box = moko_tool_box_new_with_search ();
@@ -109,34 +123,29 @@ create_main_window (ContactsData *contacts_data)
 
 	/* FIXME? We seem to have to add these in reverse order at the moment */
 	ui->delete_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->delete_button), "gtk-delete");
+	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->delete_button), "openmoko-action-button-concant-delete-icon");
 
 	ui->edit_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->edit_button), "gtk-edit");
+	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->edit_button), "openmoko-action-button-concant-mode-icon");
 
 	ui->new_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->new_button), "gtk-new");
+	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->new_button), "openmoko-action-button-new-concant-icon");
 
 
 	/*** contacts display ***/
 
 	/* note book for switching between view/edit mode */
 	ui->main_notebook = gtk_notebook_new ();
-	moko_paned_window_set_lower_pane (MOKO_PANED_WINDOW (ui->main_window), ui->main_notebook);
+	scrolledwindow3 = (GtkWidget*) moko_details_window_new();
+	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_WIDGET (ui->main_notebook));
+	moko_paned_window_set_lower_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET(moko_details_window_put_in_box (MOKO_DETAILS_WINDOW (scrolledwindow3))));
 	GTK_WIDGET_UNSET_FLAGS (ui->main_notebook, GTK_CAN_FOCUS);
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (ui->main_notebook), FALSE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (ui->main_notebook), FALSE);
 
 	/*** view mode ****/
-	scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), scrolledwindow3, NULL);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-	viewport = gtk_viewport_new (NULL, NULL);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow3), viewport);
-
 	ui->summary_vbox = gtk_vbox_new (FALSE, 6);
-	gtk_container_add (GTK_CONTAINER (viewport), ui->summary_vbox);
+	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->summary_vbox, NULL);
 	g_object_set (ui->summary_vbox, "border-width", 12, NULL);
 
 	ui->preview_header_hbox = gtk_hbox_new (FALSE, 0);
@@ -163,19 +172,8 @@ create_main_window (ContactsData *contacts_data)
 	gtk_table_set_col_spacings (GTK_TABLE (ui->summary_table), 6);
 
 	/*** edit mode ***/
-	GtkWidget *vbox4 = gtk_vbox_new (FALSE, 6);
-	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), vbox4, NULL);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox4), 0);
-
-	GtkWidget *scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_box_pack_start (GTK_BOX (vbox4), scrolledwindow4, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-	GtkWidget *viewport2 = gtk_viewport_new (NULL, NULL);
-	gtk_container_add (GTK_CONTAINER (scrolledwindow4), viewport2);
-
 	ui->edit_table = gtk_table_new (1, 2, FALSE);
-	gtk_container_add (GTK_CONTAINER (viewport2), ui->edit_table);
+	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->edit_table, NULL);
 	gtk_container_set_border_width (GTK_CONTAINER (ui->edit_table), 6);
 	gtk_table_set_row_spacings (GTK_TABLE (ui->edit_table), 6);
 
@@ -186,7 +184,7 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) contacts_quit, "activate",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
-	g_signal_connect_data ((gpointer) contacts_treeview, "key_press_event",
+	g_signal_connect_data ((gpointer) ui->contacts_treeview, "key_press_event",
 			G_CALLBACK (contacts_treeview_search_cb),
 			GTK_OBJECT (ui->search_entry),
 			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
@@ -199,7 +197,7 @@ create_main_window (ContactsData *contacts_data)
 			  G_CALLBACK (contacts_new_cb), contacts_data);
 	g_signal_connect (G_OBJECT (ui->edit_button), "clicked",
 			  G_CALLBACK (contacts_edit_cb), contacts_data);
-	g_signal_connect (G_OBJECT (contacts_treeview), "row_activated",
+	g_signal_connect (G_OBJECT (ui->contacts_treeview), "row_activated",
 			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
 	g_signal_connect (G_OBJECT (ui->delete_button), "clicked",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
@@ -220,7 +218,7 @@ create_main_window (ContactsData *contacts_data)
 
 	ui->contacts_import = contacts_import;
 	ui->contacts_menu = NULL;//contacts_menu;
-	ui->contacts_treeview = contacts_treeview;
+	//ui->contacts_treeview = contacts_treeview;
 
 	ui->copy_menuitem = NULL;//copy;
 	ui->cut_menuitem = NULL;//cut;
@@ -246,6 +244,7 @@ create_main_window (ContactsData *contacts_data)
 			"gtk-menu-images", FALSE,
 			"gtk-theme-name", "openmoko-standard",
 			NULL);
+
 
 	gtk_widget_show_all (ui->main_window);
 }
@@ -366,14 +365,16 @@ contacts_ui_update_groups_list (ContactsData *data)
 	/* update filter menu */
 	gtk_container_foreach (GTK_CONTAINER (filter_menu), (GtkCallback)remove_menu_item, filter_menu);
 
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
+			gtk_menu_item_new_with_label (_("All")));
+	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
+			gtk_separator_menu_item_new ());
 	g_list_foreach (data->contacts_groups, (GFunc)add_menu_item,
 			filter_menu);
 	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
 			gtk_separator_menu_item_new ());
 	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
 			gtk_menu_item_new_with_label (_("Search Results")));
-	gtk_menu_shell_append (GTK_MENU_SHELL (filter_menu),
-			gtk_menu_item_new_with_label (_("All")));
 
 	gtk_widget_show_all (GTK_WIDGET (filter_menu));
 

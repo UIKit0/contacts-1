@@ -221,20 +221,13 @@ contacts_setup_ui (ContactsData *data)
 {
 	GtkTreeView *contacts_treeview;
 	GtkTreeSelection *selection;
-	GtkCellRenderer *renderer;
 
 	/* these are defined in the frontend header */
 	contacts_create_ui (data);
 
 	/* Add the column to the GtkTreeView */
 	contacts_treeview = GTK_TREE_VIEW (data->ui->contacts_treeview);
-	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, "ypad", 0, NULL);
-	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW
-						     (contacts_treeview),
-						     -1, NULL, renderer,
-						     "text", CONTACT_NAME_COL,
-						     NULL);
+
 
 	/* Create model and groups/search filter for contacts list */
 	data->contacts_liststore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);

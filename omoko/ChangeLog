@@ -1,5 +1,14 @@
 2007-01-10  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-defs.h:
+	* src/contacts-omoko.c: (create_main_window),
+	(contacts_ui_update_groups_list):
+	* src/contacts-ui.c: (contacts_setup_ui):
+
+	More OpenMoko work (widget, icons, design, etc.)
+
+2007-01-10  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-omoko.c: (create_main_window): Clean up
 
 	* src/contacts-edit-pane.c: (contacts_edit_pane_hide),
