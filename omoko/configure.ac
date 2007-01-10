@@ -56,7 +56,7 @@ if test "$want_gconf" = "yes"; then
 fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
  
-AC_ARG_ENABLE(frontend, [  --enable-frontend       Frontend to use. ], [want_frontend="$enableval"])
+AC_ARG_ENABLE(frontend, [AS_HELP_STRING([--enable-frontend], [Frontend to use (gtk,omoko)])], [want_frontend="$enableval"])
 
 if test "$want_frontend" = "omoko"; then
 	FRONTEND="omoko"

@@ -1,3 +1,8 @@
+2007-01-10  Ross Burton  <ross@openedhand.com>
+
+	* configure.ac:
+	Use AS_HELP_STRING and list frontends.
+
 2007-01-09  Thomas Wood  <thomas@opendhand.com>
 
 	* src/contacts-callbacks-ui.c:
