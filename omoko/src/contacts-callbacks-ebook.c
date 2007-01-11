@@ -65,6 +65,12 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
 			name = "Unnamed";
+
+
+		const gchar * cell = e_contact_get_const (contact, E_CONTACT_PHONE_MOBILE);
+		if ((!cell) || (g_utf8_strlen (cell, -1) <= 0))
+			cell = "";
+
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		hash->contact = g_object_ref (contact);
 		hash->contacts_data = data;
@@ -73,6 +79,7 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		gtk_list_store_insert_with_values (model, &hash->iter, 0,
 						   CONTACT_NAME_COL, name,
 						   CONTACT_UID_COL, uid,
+						   CONTACT_CELLPHONE_COL, cell,
 						   -1);
 
 		/* Check for groups and add them to group list */

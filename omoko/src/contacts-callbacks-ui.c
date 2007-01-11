@@ -34,6 +34,8 @@
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
 
+#include FRONTEND_HEADER
+
 void
 contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 {
@@ -132,7 +134,7 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 void
 contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
-	data->contact = e_contact_new ();	
+	data->contact = e_contact_new ();
 	contacts_edit_pane_show (data, TRUE);
 }
 
@@ -143,8 +145,8 @@ contacts_edit_cb (GtkWidget *source, ContactsData *data)
 	data->contact = contacts_get_selected_contact (data,
 						       data->contacts_table);
 	if (data->contact) {
-		contacts_set_available_options (data, FALSE, FALSE, FALSE);
-		data->changed = FALSE;		
+		//contacts_set_available_options (data, FALSE, FALSE, FALSE);
+		data->changed = FALSE;
 		contacts_edit_pane_show (data, FALSE);
 	}
 }

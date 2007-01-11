@@ -1,3 +1,16 @@
+2007-01-11  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
+	* src/contacts-callbacks-ui.c: (contacts_edit_cb):
+	* src/contacts-edit-pane.c: (contacts_edit_pane_show):
+	* src/contacts-omoko.c: (create_main_window), (contacts_ui_create):
+	* src/contacts-omoko.h:
+	* src/contacts-ui.c: (contacts_setup_ui):
+	* src/contacts-utils.c:
+
+	- Add mobile number to main contacts list
+	- Arrange edit view to match details view
+
 2007-01-10  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-defs.h:

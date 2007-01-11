@@ -100,21 +100,6 @@ create_main_window (ContactsData *contacts_data)
 	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
 	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET (moko_navigation_list));
 
-	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
-	GtkTreeViewColumn *column =
-		gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
-							"text", CONTACT_NAME_COL, NULL);
-	gtk_tree_view_column_set_min_width(column, 142);
-	gtk_tree_view_column_set_sort_column_id(column, 0);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (ui->contacts_treeview), column);
-
-	renderer = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
-							"text", CONTACT_CELLPHONE_COL, NULL);
-	gtk_tree_view_column_set_min_width(column, 156);
-	gtk_tree_view_column_set_sort_column_id(column, 1);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (ui->contacts_treeview), column);
-
 	/* tool box */
 	moko_tool_box = moko_tool_box_new_with_search ();
 
@@ -333,13 +318,6 @@ create_chooser_dialog (ContactsData *data)
 
 }
 
-void
-contacts_create_ui (ContactsData *data)
-{
-	create_main_window (data);
-	create_chooser_dialog (data);
-}
-
 static void
 moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data)
 {
@@ -348,6 +326,12 @@ moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data)
 	contacts_update_treeview (data);
 }
 
+void
+contacts_ui_create (ContactsData *data)
+{
+	create_main_window (data);
+	create_chooser_dialog (data);
+}
 
 void
 contacts_ui_update_groups_list (ContactsData *data)

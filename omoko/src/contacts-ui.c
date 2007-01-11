@@ -223,14 +223,15 @@ contacts_setup_ui (ContactsData *data)
 	GtkTreeSelection *selection;
 
 	/* these are defined in the frontend header */
-	contacts_create_ui (data);
+	contacts_ui_create (data);
 
 	/* Add the column to the GtkTreeView */
 	contacts_treeview = GTK_TREE_VIEW (data->ui->contacts_treeview);
 
 
 	/* Create model and groups/search filter for contacts list */
-	data->contacts_liststore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+	data->contacts_liststore = gtk_list_store_new (3, G_TYPE_STRING,
+							G_TYPE_STRING, G_TYPE_STRING);
 	data->contacts_filter =
 	    GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new
 				   (GTK_TREE_MODEL (data->contacts_liststore), NULL));
@@ -241,6 +242,21 @@ contacts_setup_ui (ContactsData *data)
 						NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (contacts_treeview),
 				 GTK_TREE_MODEL (data->contacts_filter));
+	/* add columns to treeview */
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	GtkTreeViewColumn *column =
+		gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
+							"text", CONTACT_NAME_COL, NULL);
+	gtk_tree_view_column_set_min_width(column, 142);
+	gtk_tree_view_column_set_sort_column_id(column, 0);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (data->ui->contacts_treeview), column);
+
+	renderer = gtk_cell_renderer_text_new ();
+	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
+							"text", CONTACT_CELLPHONE_COL, NULL);
+	gtk_tree_view_column_set_min_width(column, 156);
+	gtk_tree_view_column_set_sort_column_id(column, 1);
+	gtk_tree_view_append_column (GTK_TREE_VIEW (data->ui->contacts_treeview), column);
 
 	/* Alphabetise the list */
 	gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (data->contacts_liststore),

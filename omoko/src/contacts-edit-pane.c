@@ -950,6 +950,8 @@ contacts_widgets_list_sort (GtkWidget *a, GtkWidget *b)
 	return field1->priority - field2->priority;
 }
 
+#if 0
+/* don't need this right now ... */
 static gint
 contacts_widgets_list_find (GtkWidget *a, guint *b)
 {
@@ -959,6 +961,7 @@ contacts_widgets_list_find (GtkWidget *a, guint *b)
 	
 	return field1->priority - *b;
 }
+#endif
 
 static void
 contacts_edit_choose_photo (GtkWidget *button, ContactsData *data)
@@ -970,13 +973,12 @@ contacts_edit_choose_photo (GtkWidget *button, ContactsData *data)
 void
 contacts_edit_pane_show (ContactsData *data, gboolean new)
 {
-	GtkWidget *align, *button, *widget/*, *glabel, *gbutton*/;
+	GtkWidget *align, *button, *widget, *table/*, *glabel, *gbutton*/;
 	EVCardAttribute *groups_attr = NULL;
 	ContactsGroupChangeData *gdata;
-	guint row, i;
+	guint row;
 	GList *attributes, *c, *d, *label_widgets, *edit_widgets;
 	EContact *contact = data->contact;
-	const ContactsField *contacts_fields = contacts_get_contacts_fields ();
 
 #ifdef DEBUG
 	/* Prints out all contact data */
@@ -1047,12 +1049,18 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		const gchar *name = e_vcard_attribute_get_name (a);
 		const ContactsField *field = contacts_get_contacts_field (name);
-		
+
+		/* skip these, we add them later */
+		if (str_equal ("FN", name))
+			continue;
+		if (str_equal ("ORG", name))
+			continue;
+
 		if (field) {
 			GtkWidget *label, *edit;
 			const gchar *pretty_name = 
 				contacts_field_pretty_name (field);
-			
+
 			label = contacts_label_widget_new (contact, a,
 							   pretty_name,
 							   field->multi_line,
@@ -1085,6 +1093,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	}
 	
 	/* Add any missing widgets */
+#if 0
 	for (i = 0; contacts_fields[i].vcard_field != NULL; i++) {
 		if ((contacts_fields[i].priority >= REQUIRED) ||
 		    ((!contacts_fields[i].unique) && (!new)))
@@ -1115,6 +1124,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 			}
 		}
 	}
+#endif
 	
 	/* Sort widgets into order and display */
 	widget = data->ui->edit_table;
@@ -1122,7 +1132,7 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 		(GCompareFunc)contacts_widgets_list_sort);
 	edit_widgets = g_list_sort (edit_widgets,
 		(GCompareFunc)contacts_widgets_list_sort);
-	g_object_set (widget, "n-rows", 1, NULL);
+	g_object_set (widget, "n-rows", 3, NULL);
 	g_object_set (widget, "n-columns", 2, NULL);
 	for (c = label_widgets, d = edit_widgets, row = 0; (c) && (d);
 	     c = c->next, d = d->next, row++) {
@@ -1146,7 +1156,11 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 				data->ui->main_window),
 				d->data);
 	}
+
+	/* Add fixed widgets at top (Photo, Name, Organisation) */
+	table = gtk_table_new(3, 2, FALSE);
 	
+
 	/* Add photo */
 	align = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (align);
@@ -1154,8 +1168,36 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0, 6, 6);
 	g_object_set (widget, "n-rows", 3, NULL);
 	g_object_set (widget, "n-columns", 3, NULL);
-	gtk_table_attach (GTK_TABLE (widget), align, 2, 3,
-			  1, 3, 0, 0, 0, 0);
+	gtk_table_attach (GTK_TABLE (table), align, 0, 1,
+			  0, 2, 0, 0, 0, 0);
+
+	/* Add Name */
+	EVCardAttribute *attr = e_vcard_get_attribute (E_VCARD (contact), EVC_FN);
+	if (!attr)
+		attr = contacts_add_attr (E_VCARD (contact), EVC_FN);
+	if (attr)
+	{
+	widget = contacts_edit_widget_new (contact, attr, FALSE, &data->changed);
+	gtk_table_attach (GTK_TABLE (table), widget, 1, 2, 0, 1,
+			GTK_FILL|GTK_EXPAND, 0, 0, 0);
+	gtk_widget_show (widget);
+	}
+
+	/* Add Organisation */
+	attr = e_vcard_get_attribute (E_VCARD (contact), EVC_ORG);
+	if (!attr)
+		attr = contacts_add_attr (E_VCARD (contact), EVC_ORG);
+	if (attr)
+	{
+	widget = contacts_edit_widget_new (contact, attr, FALSE, &data->changed);
+	gtk_table_attach (GTK_TABLE (table), widget, 1, 2, 1, 2,
+			GTK_FILL|GTK_EXPAND, 0, 0, 0);
+	gtk_widget_show (widget);
+	}
+	gtk_table_attach (GTK_TABLE (data->ui->edit_table), table, 0, 3, 0, 3,
+	GTK_EXPAND|GTK_FILL,0, 0, 0);
+	gtk_widget_show (table);
+
 	/* Add groups-editing button */
 /*	contacts_append_to_edit_table (GTK_TABLE (widget),
 				       glabel, gbutton);*/
