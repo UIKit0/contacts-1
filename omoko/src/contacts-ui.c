@@ -219,14 +219,6 @@ contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
 void
 contacts_setup_ui (ContactsData *data)
 {
-	GtkTreeView *contacts_treeview;
-	GtkTreeSelection *selection;
-
-	/* these are defined in the frontend header */
-	contacts_ui_create (data);
-
-	/* Add the column to the GtkTreeView */
-	contacts_treeview = GTK_TREE_VIEW (data->ui->contacts_treeview);
 
 
 	/* Create model and groups/search filter for contacts list */
@@ -240,46 +232,29 @@ contacts_setup_ui (ContactsData *data)
 						 contacts_is_row_visible_cb,
 						data->contacts_table,
 						NULL);
-	gtk_tree_view_set_model (GTK_TREE_VIEW (contacts_treeview),
-				 GTK_TREE_MODEL (data->contacts_filter));
-	/* add columns to treeview */
-	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
-	GtkTreeViewColumn *column =
-		gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
-							"text", CONTACT_NAME_COL, NULL);
-	gtk_tree_view_column_set_min_width(column, 142);
-	gtk_tree_view_column_set_sort_column_id(column, 0);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (data->ui->contacts_treeview), column);
 
-	renderer = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
-							"text", CONTACT_CELLPHONE_COL, NULL);
-	gtk_tree_view_column_set_min_width(column, 156);
-	gtk_tree_view_column_set_sort_column_id(column, 1);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (data->ui->contacts_treeview), column);
 
 	/* Alphabetise the list */
+
 	gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (data->contacts_liststore),
 						 contacts_sort_treeview_cb,
 						 NULL, NULL);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (data->contacts_liststore),
 				      GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
 				      GTK_SORT_ASCENDING);
-	g_object_unref (data->contacts_liststore);
+	//g_object_unref (data->contacts_liststore);
 
-
-	/* Connect signal for selection changed event */
-	selection = gtk_tree_view_get_selection (contacts_treeview);
-	g_signal_connect (G_OBJECT (selection), "changed",
-			  G_CALLBACK (contacts_selection_cb), data);
-
-	/* Enable multiple select (for delete) */
-	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+	/* these are defined in the frontend header */
+	/* create the ui */
+	contacts_ui_create (data);
 
 	/* Set transient parent for chooser */
-	gtk_window_set_transient_for (
-		GTK_WINDOW (data->ui->chooser_dialog),
-		GTK_WINDOW (data->ui->main_window));
+	if (data->ui->chooser_dialog)
+	{
+		gtk_window_set_transient_for (
+			GTK_WINDOW (data->ui->chooser_dialog),
+			GTK_WINDOW (data->ui->main_window));
+	}
 
 	/* Remove selectable label from focus chain */
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (data->ui->preview_header_hbox));

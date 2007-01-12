@@ -1,3 +1,15 @@
+2007-01-12  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-omoko.c: (create_main_window),
+	(moko_open_groups_editor), (create_chooser_dialog),
+	(moko_filter_changed), (contacts_ui_create),
+	(contacts_ui_update_groups_list):
+	* src/contacts-ui.c: (contacts_setup_ui):
+
+	- Move treeview creation into frontend specific file
+	- Start updating the groups editing dialog
+	- Add four toolbox buttons as per specification
+
 2007-01-11  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
