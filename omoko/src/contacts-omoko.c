@@ -34,6 +34,40 @@ static void moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *d
 /* these are specific to the omoko frontend */
 static GtkMenu *filter_menu;
 
+
+GtkWidget *
+create_contacts_list (ContactsData *data)
+{
+	MokoNavigationList *moko_navigation_list = moko_navigation_list_new ();
+	GtkTreeView *treeview = moko_navigation_list_get_tree_view (moko_navigation_list);
+
+	gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
+				 GTK_TREE_MODEL (data->contacts_filter));
+
+
+	/* add columns to treeview */
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	/* name column */
+	renderer = gtk_cell_renderer_text_new ();
+	column = gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
+							"text", CONTACT_NAME_COL, NULL);
+	gtk_tree_view_column_set_min_width (column, 142);
+	gtk_tree_view_column_set_sort_column_id (column, CONTACT_NAME_COL);
+	moko_navigation_list_append_column (moko_navigation_list, column);
+
+	/* mobile column */
+	renderer = gtk_cell_renderer_text_new ();
+	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
+							"text", CONTACT_CELLPHONE_COL, NULL);
+	gtk_tree_view_column_set_min_width (column, 156);
+	gtk_tree_view_column_set_sort_column_id (column, CONTACT_CELLPHONE_COL);
+	moko_navigation_list_append_column (moko_navigation_list, column);
+
+	return moko_navigation_list;
+}
+
 void
 create_main_window (ContactsData *contacts_data)
 {
@@ -89,35 +123,11 @@ create_main_window (ContactsData *contacts_data)
 
 	/*** contacts list ***/
 
-	MokoNavigationList *moko_navigation_list = moko_navigation_list_new ();
-	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
-	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET (moko_navigation_list));
-
-	gtk_tree_view_set_model (GTK_TREE_VIEW (ui->contacts_treeview),
-				 GTK_TREE_MODEL (contacts_data->contacts_filter));
-
+	GtkWidget *moko_navigation_list = create_contacts_list (contacts_data);
 	g_object_unref (contacts_data->contacts_liststore);
 
-	/* add columns to treeview */
-	GtkCellRenderer *renderer;
-	GtkTreeViewColumn *column;
-
-	/* name column */
-	renderer = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
-							"text", CONTACT_NAME_COL, NULL);
-	gtk_tree_view_column_set_min_width (column, 142);
-	gtk_tree_view_column_set_sort_column_id (column, CONTACT_NAME_COL);
-	moko_navigation_list_append_column (moko_navigation_list, column);
-
-	/* mobile column */
-	renderer = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
-							"text", CONTACT_CELLPHONE_COL, NULL);
-	gtk_tree_view_column_set_min_width (column, 156);
-	gtk_tree_view_column_set_sort_column_id (column, CONTACT_CELLPHONE_COL);
-	moko_navigation_list_append_column (moko_navigation_list, column);
-
+	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET (moko_navigation_list));
+	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
 
 	/* Connect signal for selection changed event */
 	GtkTreeSelection *selection;

@@ -36,4 +36,5 @@
 void contacts_ui_create (ContactsData *data);
 void contacts_ui_update_groups_list (ContactsData *data);
 
+GtkWidget * create_contacts_list (ContactsData *data);
 #endif
