@@ -1,3 +1,16 @@
+2007-01-15  Thomas Wood  <thomas@openedhand.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/contacts-omoko-groups-editor.c:
+	* src/contacts-omoko-groups-editor.h:
+	* src/contacts-omoko.c:
+	* src/contacts-omoko.h:
+	* src/contacts-ui.h:
+
+	- Started work on groups editor interface
+	- Remove frontend configure option
+
 2007-01-12  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-omoko.c: (create_main_window),

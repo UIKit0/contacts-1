@@ -1,5 +1,5 @@
 /*
- * contacts-gtk.c
+ * contacts-omoko.c
  * This file is part of Contacts
  *
  * Copyright (C) 2006 - OpenedHand Ltd
@@ -20,25 +20,16 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <string.h>
-#include <gtk/gtk.h>
-#include <glib.h>
-#include <libmokoui/moko-application.h>
-#include <libmokoui/moko-details-window.h>
-#include <libmokoui/moko-dialog-window.h>
-#include <libmokoui/moko-paned-window.h>
-#include <libmokoui/moko-tool-box.h>
-#include <libmokoui/moko-navigation-list.h>
-#include <libmokoui/moko-dialog-window.h>
 #include "contacts-callbacks-ui.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
 #include "contacts-ui.h"
 #include "contacts-omoko.h"
+#include "contacts-omoko-groups-editor.h"
+
+
 
 static void moko_filter_changed (GtkWidget *widget, gchar *text, ContactsData *data);
-static void moko_open_groups_editor (GtkWidget *widget, ContactsData *data);
-static void create_chooser_dialog (ContactsData *data);
 
 /* these are specific to the omoko frontend */
 static GtkMenu *filter_menu;
@@ -296,91 +287,6 @@ create_main_window (ContactsData *contacts_data)
 
 
 	gtk_widget_show_all (ui->main_window);
-}
-
-static void
-moko_open_groups_editor (GtkWidget *widget, ContactsData *data)
-{
-	if (!MOKO_IS_DIALOG_WINDOW (data->ui->chooser_dialog))
-		create_chooser_dialog (data);
-	moko_dialog_window_run (MOKO_DIALOG_WINDOW (data->ui->chooser_dialog));
-}
-
-static void
-create_chooser_dialog (ContactsData *data)
-{
-	GtkWidget *chooser_dialog;
-	GtkWidget *chooser_vbox;
-	GtkWidget *chooser_label;
-	GtkWidget *chooser_add_hbox;
-	GtkWidget *chooser_entry;
-	GtkWidget *add_type_button;
-	GtkWidget *scrolledwindow5;
-	GtkWidget *chooser_treeview;
-	GtkWidget *dialog_action_area1;
-	GtkWidget *chooser_cancel_button;
-	GtkWidget *chooser_ok_button;
-
-	chooser_dialog = GTK_WIDGET (moko_dialog_window_new ());
-	moko_dialog_window_set_title (MOKO_DIALOG_WINDOW (chooser_dialog), _("Group Membership") );
-
-
-	chooser_vbox = gtk_vbox_new (FALSE, 0);
-	moko_dialog_window_set_contents (MOKO_DIALOG_WINDOW (chooser_dialog), chooser_vbox);
-
-	chooser_label = gtk_label_new (_("<span><b>Make a choice:</b></span>"));
-	gtk_box_pack_start (GTK_BOX (chooser_vbox), chooser_label, FALSE, FALSE, 6);
-	gtk_label_set_use_markup (GTK_LABEL (chooser_label), TRUE);
-	gtk_misc_set_alignment (GTK_MISC (chooser_label), 0, 0.5);
-	gtk_misc_set_padding (GTK_MISC (chooser_label), 6, 0);
-
-	chooser_add_hbox = gtk_hbox_new (FALSE, 6);
-	gtk_box_pack_start (GTK_BOX (chooser_vbox), chooser_add_hbox, FALSE, TRUE, 6);
-
-	chooser_entry = gtk_entry_new ();
-	gtk_box_pack_start (GTK_BOX (chooser_add_hbox), chooser_entry, TRUE, TRUE, 0);
-	gtk_entry_set_activates_default (GTK_ENTRY (chooser_entry), TRUE);
-
-	add_type_button = gtk_button_new_from_stock ("gtk-add");
-	gtk_box_pack_start (GTK_BOX (chooser_add_hbox), add_type_button, FALSE, FALSE, 0);
-	GTK_WIDGET_SET_FLAGS (add_type_button, GTK_CAN_DEFAULT);
-	gtk_button_set_focus_on_click (GTK_BUTTON (add_type_button), FALSE);
-
-	scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_box_pack_start (GTK_BOX (chooser_vbox), scrolledwindow5, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
-
-	chooser_treeview = gtk_tree_view_new ();
-	gtk_container_add (GTK_CONTAINER (scrolledwindow5), chooser_treeview);
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (chooser_treeview), FALSE);
-
-	dialog_action_area1 = GTK_DIALOG (chooser_dialog)->action_area;
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1), GTK_BUTTONBOX_END);
-
-	chooser_cancel_button = gtk_button_new_from_stock ("gtk-cancel");
-	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), chooser_cancel_button, GTK_RESPONSE_CANCEL);
-	GTK_WIDGET_SET_FLAGS (chooser_cancel_button, GTK_CAN_DEFAULT);
-
-	chooser_ok_button = gtk_button_new_from_stock ("gtk-ok");
-	gtk_dialog_add_action_widget (GTK_DIALOG (chooser_dialog), chooser_ok_button, GTK_RESPONSE_OK);
-	GTK_WIDGET_SET_FLAGS (chooser_ok_button, GTK_CAN_DEFAULT);
-
-	gtk_widget_grab_focus (chooser_entry);
-	gtk_widget_grab_default (add_type_button);
-
-	/* connect signals */
-	g_signal_connect ((gpointer) add_type_button, "clicked",
-			G_CALLBACK (contacts_chooser_add_cb),
-			data);
-	gtk_widget_show_all (GTK_WIDGET (chooser_vbox));
-
-	data->ui->chooser_add_hbox = chooser_add_hbox;
-	data->ui->chooser_dialog = chooser_dialog;
-	data->ui->chooser_entry = chooser_entry;
-	data->ui->chooser_label = chooser_label;
-	data->ui->chooser_treeview = chooser_treeview;
-
 }
 
 static void

@@ -24,8 +24,10 @@ contacts_SOURCES =  bacon-message-connection.c \
                     contacts-utils.h \
                     contacts-ui.c \
                     contacts-ui.h \
-                    contacts-@FRONTEND@.c \
-                    contacts-@FRONTEND@.h
+                    contacts-omoko.c \
+                    contacts-omoko.h \
+		    contacts-omoko-groups-editor.c \
+		    contacts-omoko-groups-editor.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
 contacts_LDFLAGS = @CONTACTS_LIBS@

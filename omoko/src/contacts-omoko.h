@@ -19,7 +19,21 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, 
  * Boston, MA  02110-1301  USA
  */
- 
- 
+
+#ifndef OMOKO_H
+#define OMOKO_H
+
+#include <string.h>
+#include <gtk/gtk.h>
+#include <glib.h>
+#include <libmokoui/moko-application.h>
+#include <libmokoui/moko-details-window.h>
+#include <libmokoui/moko-dialog-window.h>
+#include <libmokoui/moko-paned-window.h>
+#include <libmokoui/moko-tool-box.h>
+#include <libmokoui/moko-navigation-list.h>
+
 void contacts_ui_create (ContactsData *data);
 void contacts_ui_update_groups_list (ContactsData *data);
+
+#endif
