@@ -5,6 +5,7 @@
 #include "contacts-ui.h"
 #include "contacts-utils.h"
 #include "contacts-edit-pane.h"
+#include "contacts-omoko.h"
 
 #define CONTACTS_VIEW_PAGE 0
 #define CONTACTS_EDIT_PAGE 1

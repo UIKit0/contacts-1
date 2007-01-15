@@ -34,8 +34,6 @@
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
 
-#include FRONTEND_HEADER
-
 void
 contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 {

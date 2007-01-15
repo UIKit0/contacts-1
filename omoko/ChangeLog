@@ -1,5 +1,13 @@
 2007-01-15  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-omoko.h:
+	* src/contacts-ui.c:
+
+	Fix build
+
+2007-01-15  Thomas Wood  <thomas@openedhand.com>
+
 	* configure.ac:
 	* src/Makefile.am:
 	* src/contacts-omoko-groups-editor.c:
