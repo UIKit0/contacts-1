@@ -1,6 +1,14 @@
 2007-01-16  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-omoko-groups-editor.c: (groups_checkbutton_cb),
+	(groups_contact_selection_cb), (groups_new_group_cb),
+	(groups_create_dialog):
+
+	Add "New Group" function
+
+2007-01-16  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-omoko-groups-editor.c: (groups_checkbutton_cb),
 	(groups_contact_selection_cb), (groups_create_dialog):
 	* src/contacts-omoko.c: (create_contacts_list):
 
