@@ -39,7 +39,7 @@ GtkWidget *
 create_contacts_list (ContactsData *data)
 {
 	MokoNavigationList *moko_navigation_list = moko_navigation_list_new ();
-	GtkTreeView *treeview = moko_navigation_list_get_tree_view (moko_navigation_list);
+	GtkWidget *treeview = moko_navigation_list_get_tree_view (moko_navigation_list);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
 				 GTK_TREE_MODEL (data->contacts_filter));
@@ -65,7 +65,7 @@ create_contacts_list (ContactsData *data)
 	gtk_tree_view_column_set_sort_column_id (column, CONTACT_CELLPHONE_COL);
 	moko_navigation_list_append_column (moko_navigation_list, column);
 
-	return moko_navigation_list;
+	return GTK_WIDGET (moko_navigation_list);
 }
 
 void

@@ -28,6 +28,8 @@
 static GtkWidget *groups_create_dialog (ContactsData *data);
 
 static GHashTable *groups_widgets_hash;
+static GtkWidget *contact_label;
+static GtkWidget *treeview;
 
 void
 moko_open_groups_editor (GtkWidget *widget, ContactsData *data)
@@ -42,11 +44,51 @@ moko_open_groups_editor (GtkWidget *widget, ContactsData *data)
 }
 
 static void
+groups_checkbutton_cb (GtkWidget *checkbutton, ContactsData *data)
+{
+	EContact *contact;
+	GtkTreeSelection *selection;
+	GList *current_groups, *g = NULL;
+	gchar *new_group;
+
+	if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (checkbutton), "updating")))
+	{
+		g_object_set_data (G_OBJECT(checkbutton), "updating", GINT_TO_POINTER (FALSE));
+		return;
+	}
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+
+	contact = contacts_contact_from_selection (selection,
+						   data->contacts_table);
+	current_groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
+
+	/* TODO: probably ought to do something better here */
+	new_group = g_strdup(gtk_button_get_label (GTK_BUTTON (checkbutton)));
+
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton)))
+	{
+		/* add this to the contact */
+		current_groups = g_list_append (current_groups, new_group);
+	}
+	else
+	{
+		/* make sure this isn't in the list */
+		g = g_list_find_custom (current_groups, new_group, (GCompareFunc) strcmp);
+		if (g)
+			current_groups = g_list_remove (current_groups, g->data);
+	}
+
+	e_contact_set (contact, E_CONTACT_CATEGORY_LIST, current_groups);
+}
+
+static void
 groups_contact_selection_cb  (GtkTreeSelection * selection, ContactsData *data)
 {
 	GtkWidget *widget;
 	EContact *contact;
 	GList *groups, *g;
+	gchar *fullname, *markup;
 
 	/* Get the currently selected contact and update the contact summary */
 	contact = contacts_contact_from_selection (selection,
@@ -54,17 +96,34 @@ groups_contact_selection_cb  (GtkTreeSelection * selection, ContactsData *data)
 	if (!contact)
 		return;
 
+	fullname = e_contact_get (contact, E_CONTACT_FULL_NAME);
+	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", fullname);
+	g_free (fullname);
+	gtk_label_set_markup (GTK_LABEL (contact_label), markup);
+	g_free (markup);
+
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	for (g = data->contacts_groups; g; g = g_list_next (g))
 	{
 		widget = g_hash_table_lookup (groups_widgets_hash, g->data);
+		gtk_widget_set_sensitive (GTK_WIDGET (widget), TRUE);
 		if (g_list_find_custom (groups, g->data, (GCompareFunc) strcmp))
 		{
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+			/* make sure we don't set updating flag unless it is actually going to change */
+			if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+			{
+				g_object_set_data (G_OBJECT (widget), "updating", GINT_TO_POINTER (TRUE));
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+			}
 		}
 		else
 		{
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), FALSE);
+			/* make sure we don't set updating flag unless it is actually going to change */
+			if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+			{
+				g_object_set_data (G_OBJECT (widget), "updating", GINT_TO_POINTER (TRUE));
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), FALSE);
+			}
 		}
 	}
 
@@ -93,13 +152,13 @@ groups_create_dialog (ContactsData *data)
 	gtk_container_add (GTK_CONTAINER (widget), details_vbox);
 
 
-	GtkWidget *contact_label = gtk_label_new ("<span size=\"large\"><b>Contact Name</b></span>");
+	contact_label = gtk_label_new ("<span size=\"large\"><b>Contact Name</b></span>");
 	gtk_box_pack_start (GTK_BOX (details_vbox), contact_label, FALSE, FALSE, 12);
 	gtk_label_set_use_markup (GTK_LABEL (contact_label), TRUE);
 	gtk_misc_set_alignment (GTK_MISC (contact_label), 0, 0);
 
 	widget = gtk_hseparator_new ();
-	gtk_box_pack_start (GTK_BOX (details_vbox), widget, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (details_vbox), widget, FALSE, FALSE, 0);
 
 	groups_vbox = gtk_vbox_new (FALSE, 0);
 	widget = gtk_scrolled_window_new (NULL, NULL);
@@ -114,6 +173,8 @@ groups_create_dialog (ContactsData *data)
 		widget = gtk_check_button_new_with_label (cur->data);
 		gtk_box_pack_start (GTK_BOX (groups_vbox), widget, TRUE, TRUE, 6);
 		g_hash_table_insert (groups_widgets_hash, cur->data, widget);
+		g_signal_connect (G_OBJECT (widget), "toggled", G_CALLBACK (groups_checkbutton_cb), data);
+		gtk_widget_set_sensitive (GTK_WIDGET (widget), FALSE);
 	}
 
 	/* contacts list */
@@ -121,9 +182,9 @@ groups_create_dialog (ContactsData *data)
 	gtk_box_pack_start (GTK_BOX(vbox), list, FALSE, FALSE, 0);
 	
 	/* Connect signal for selection changed event */
-	widget = GTK_WIDGET (moko_navigation_list_get_tree_view (MOKO_NAVIGATION_LIST (list)));
+	treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (list));
 	GtkTreeSelection *selection;
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
 	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (groups_contact_selection_cb), data);
 
