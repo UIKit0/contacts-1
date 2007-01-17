@@ -1,3 +1,20 @@
+2007-01-17  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c: (contacts_selection_cb),
+	(contacts_view_cb):
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-defs.h:
+	* src/contacts-omoko-groups-editor.c: (contacts_groups_pane_show),
+	(contacts_groups_pane_update_selection),
+	(contacts_groups_pane_hide), (contacts_groups_new_group_cb),
+	(groups_checkbutton_cb):
+	* src/contacts-omoko-groups-editor.h:
+	* src/contacts-omoko.c: (create_contacts_list),
+	(create_main_window):
+	* src/contacts-ui.h:
+
+	Move group editing into lower pane, rather than in a seperate dialog.
+
 2007-01-16  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-omoko-groups-editor.c: (groups_checkbutton_cb),

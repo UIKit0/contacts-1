@@ -45,6 +45,12 @@ enum {
 	CHOOSER_NAME_COL
 };
 
+enum {
+	CONTACTS_VIEW_PANE = 0,
+	CONTACTS_EDIT_PANE,
+	CONTACTS_GROUPS_PANE
+};
+
 typedef struct {
 	GtkWidget *chooser_add_hbox;
 	GtkWidget *chooser_dialog;
@@ -70,7 +76,6 @@ typedef struct {
 	GtkWidget *edit_done_button;
 	GtkWidget *edit_groups;
 	GtkWidget *edit_menu;
-	GtkWidget *edit_table;
 	GtkWidget *main_menubar;
 	GtkWidget *main_notebook;
 	GtkWidget *main_window;
@@ -78,6 +83,9 @@ typedef struct {
 	GtkWidget *paste_menuitem;
 	GtkWidget *photo_image;
 	GtkWidget *preview_header_hbox;
+
+	GtkWidget *edit_table;
+	GtkWidget *groups_vbox;
 
 	GtkWidget *add_field_button;
 	GtkWidget *remove_field_button;

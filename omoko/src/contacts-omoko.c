@@ -39,7 +39,7 @@ GtkWidget *
 create_contacts_list (ContactsData *data)
 {
 	MokoNavigationList *moko_navigation_list = moko_navigation_list_new ();
-	GtkWidget *treeview = moko_navigation_list_get_tree_view (moko_navigation_list);
+	GtkWidget *treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
 				 GTK_TREE_MODEL (data->contacts_filter));
@@ -127,7 +127,7 @@ create_main_window (ContactsData *contacts_data)
 	g_object_unref (contacts_data->contacts_liststore);
 
 	moko_paned_window_set_upper_pane (MOKO_PANED_WINDOW (ui->main_window), GTK_WIDGET (moko_navigation_list));
-	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (moko_navigation_list));
+	ui->contacts_treeview = GTK_WIDGET (moko_navigation_list_get_tree_view (MOKO_NAVIGATION_LIST (moko_navigation_list)));
 
 	/* Connect signal for selection changed event */
 	GtkTreeSelection *selection;
@@ -158,7 +158,7 @@ create_main_window (ContactsData *contacts_data)
 	moko_pixmap_button_set_center_stock (
 			MOKO_PIXMAP_BUTTON (groups_button),
 			"openmoko-action-button-group-icon");
-	g_signal_connect (G_OBJECT (groups_button), "clicked", G_CALLBACK (moko_open_groups_editor), contacts_data);
+	g_signal_connect (G_OBJECT (groups_button), "clicked", G_CALLBACK (contacts_groups_pane_show), contacts_data);
 
 	/* mode button */
 	GtkWidget * mode_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
@@ -169,12 +169,15 @@ create_main_window (ContactsData *contacts_data)
 	/* mode menu */
 	GtkWidget *mode_menu = gtk_menu_new ();
 	GtkWidget *menuitem;
+	menuitem = gtk_menu_item_new_with_label (_("View"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
+	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_view_cb), contacts_data);
 	menuitem = gtk_menu_item_new_with_label (_("Edit"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
 	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_edit_cb), contacts_data);
 	menuitem = gtk_menu_item_new_with_label (_("Group Membership"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
-	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (moko_open_groups_editor), contacts_data);
+	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_groups_pane_show), contacts_data);
 	menuitem = gtk_menu_item_new_with_label (_("History"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
 	moko_pixmap_button_set_menu (MOKO_PIXMAP_BUTTON (mode_button), GTK_MENU (mode_menu));
@@ -183,7 +186,6 @@ create_main_window (ContactsData *contacts_data)
 	/* new contact button */
 	ui->new_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
 	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->new_button), "openmoko-action-button-new-concant-icon");
-
 
 
 	/*** contacts display ***/
@@ -230,6 +232,11 @@ create_main_window (ContactsData *contacts_data)
 	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->edit_table, NULL);
 	gtk_container_set_border_width (GTK_CONTAINER (ui->edit_table), 6);
 	gtk_table_set_row_spacings (GTK_TABLE (ui->edit_table), 6);
+
+	/*** groups mode ***/
+	ui->groups_vbox = gtk_vbox_new (TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (ui->groups_vbox), 12);
+	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->groups_vbox, NULL);
 
 	/*** connect signals ***/
 	g_signal_connect ((gpointer) ui->main_window, "destroy",

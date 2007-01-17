@@ -116,16 +116,28 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 {
 	GtkWidget *widget;
 	EContact *contact;
+	gint current_pane;
 
-	/* Get the currently selected contact and update the contact summary */
-	contact = contacts_contact_from_selection (selection,
-						   data->contacts_table);
-	if (contact) {
-		contacts_display_summary (contact, data);
-	} else {
-		contacts_set_available_options (data, TRUE, FALSE, FALSE);
-		widget = data->ui->summary_vbox;
-		gtk_widget_hide (widget);
+	current_pane = gtk_notebook_get_current_page (GTK_NOTEBOOK (data->ui->main_notebook));
+
+	if (current_pane == CONTACTS_VIEW_PANE)
+	{
+		/* Get the currently selected contact and update the contact summary */
+		contact = contacts_contact_from_selection (selection,
+							   data->contacts_table);
+		if (contact) {
+			contacts_display_summary (contact, data);
+		} else {
+			contacts_set_available_options (data, TRUE, FALSE, FALSE);
+			widget = data->ui->summary_vbox;
+			gtk_widget_hide (widget);
+		}
+	}
+	else if (current_pane == CONTACTS_GROUPS_PANE)
+	{
+		contacts_groups_pane_update_selection (
+				gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview)),
+				data);
 	}
 }
 
@@ -134,6 +146,12 @@ contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
 	data->contact = e_contact_new ();
 	contacts_edit_pane_show (data, TRUE);
+}
+
+void
+contacts_view_cb (GtkWidget *source, ContactsData *data)
+{
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_VIEW_PANE);
 }
 
 void

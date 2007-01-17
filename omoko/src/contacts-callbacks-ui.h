@@ -34,6 +34,8 @@ void contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data);
 
 void contacts_new_cb (GtkWidget *source, ContactsData *data);
 
+void contacts_view_cb (GtkWidget *source, ContactsData *data);
+
 void contacts_edit_cb (GtkWidget *source, ContactsData *data);
 
 void contacts_treeview_edit_cb (GtkTreeView *treeview, GtkTreePath *arg1,
