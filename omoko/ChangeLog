@@ -1,3 +1,18 @@
+2007-01-18  Ross Burton  <ross@openedhand.com>
+
+	* src/Makefile.am:
+	* src/contacts-contact-pane.[ch]:
+	Add new contact viewer/editor widget.  This isn't finished but its
+	a lot cleaner than the old code.
+
+	* src/contacts-omoko.c:
+	* src/contacts-main.c:
+	* src/contacts-defs.h:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-contact-pane.c:
+	* src/contacts-ui.c:
+	Update.
+
 2007-01-18  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-omoko.c: (create_contacts_list),

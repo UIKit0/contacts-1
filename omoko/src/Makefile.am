@@ -16,8 +16,8 @@ contacts_SOURCES =  bacon-message-connection.c \
                     contacts-callbacks-ui.c \
                     contacts-callbacks-ui.h \
                     contacts-defs.h \
-                    contacts-edit-pane.c \
-                    contacts-edit-pane.h \
+                    contacts-contact-pane.c \
+                    contacts-contact-pane.h \
                     contacts-main.c \
                     contacts-main.h \
                     contacts-utils.c \

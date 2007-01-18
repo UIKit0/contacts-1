@@ -31,6 +31,7 @@
 #include "contacts-defs.h"
 #include "contacts-utils.h"
 #include "contacts-main.h"
+#include "contacts-contact-pane.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
@@ -67,6 +68,9 @@ start_query (EBook *book, EBookStatus status, EBookView *book_view,
 	if (status == E_BOOK_ERROR_OK) {
 		g_object_ref (book_view);
 		contacts_data->book_view = book_view;
+		/* Yuck. */
+		contacts_contact_pane_set_book_view
+		  (CONTACTS_CONTACT_PANE (contacts_data->ui->contact_pane), book_view);
 
 		/* Connect signals on EBookView */
 		g_signal_connect (G_OBJECT (book_view), "contacts_added",

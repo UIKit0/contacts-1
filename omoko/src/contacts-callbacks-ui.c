@@ -30,6 +30,7 @@
 #include "contacts-utils.h"
 #include "contacts-ui.h"
 #include "contacts-callbacks-ui.h"
+#include "contacts-contact-pane.h"
 #include "contacts-callbacks-ebook.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
@@ -114,13 +115,12 @@ contacts_chooser_toggle_cb (GtkCellRendererToggle * cell,
 void
 contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 {
-	GtkWidget *widget;
 	EContact *contact;
 	gint current_pane;
 
 	current_pane = gtk_notebook_get_current_page (GTK_NOTEBOOK (data->ui->main_notebook));
 
-	if (current_pane == CONTACTS_VIEW_PANE)
+	if (current_pane == CONTACTS_CONTACT_PANE)
 	{
 		/* Get the currently selected contact and update the contact summary */
 		contact = contacts_contact_from_selection (selection,
@@ -129,8 +129,7 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 			contacts_display_summary (contact, data);
 		} else {
 			contacts_set_available_options (data, TRUE, FALSE, FALSE);
-			widget = data->ui->summary_vbox;
-			gtk_widget_hide (widget);
+			gtk_widget_hide (data->ui->contact_pane);
 		}
 	}
 	else if (current_pane == CONTACTS_GROUPS_PANE)
@@ -144,14 +143,17 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 void
 contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
-	data->contact = e_contact_new ();
-	contacts_edit_pane_show (data, TRUE);
+  data->contact = e_contact_new ();
+  contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
+                                      TRUE);
+  contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane), data->contact);
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
 }
 
 void
 contacts_view_cb (GtkWidget *source, ContactsData *data)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_VIEW_PANE);
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
 }
 
 void
@@ -163,7 +165,11 @@ contacts_edit_cb (GtkWidget *source, ContactsData *data)
 	if (data->contact) {
 		//contacts_set_available_options (data, FALSE, FALSE, FALSE);
 		data->changed = FALSE;
-		contacts_edit_pane_show (data, FALSE);
+		contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
+                                                   data->contact);
+		contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
+                                                   TRUE);
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
 	}
 }
 

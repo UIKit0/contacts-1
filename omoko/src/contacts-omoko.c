@@ -21,6 +21,7 @@
  */
 
 #include "contacts-callbacks-ui.h"
+#include "contacts-contact-pane.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
 #include "contacts-ui.h"
@@ -198,8 +199,11 @@ create_main_window (ContactsData *contacts_data)
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (ui->main_notebook), FALSE);
 
 	/*** view mode ****/
-	ui->summary_vbox = gtk_vbox_new (FALSE, 6);
-	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->summary_vbox, NULL);
+	ui->contact_pane = contacts_contact_pane_new();
+	contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (ui->contact_pane), FALSE);
+	/* The book view is set later when we get it back */
+	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->contact_pane, NULL);
+#if 0
 	g_object_set (ui->summary_vbox, "border-width", 12, NULL);
 
 	ui->preview_header_hbox = gtk_hbox_new (FALSE, 0);
@@ -225,11 +229,7 @@ create_main_window (ContactsData *contacts_data)
 	gtk_table_set_row_spacings (GTK_TABLE (ui->summary_table), 6);
 	gtk_table_set_col_spacings (GTK_TABLE (ui->summary_table), 6);
 
-	/*** edit mode ***/
-	ui->edit_table = gtk_table_new (1, 2, FALSE);
-	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->edit_table, NULL);
-	gtk_container_set_border_width (GTK_CONTAINER (ui->edit_table), 6);
-	gtk_table_set_row_spacings (GTK_TABLE (ui->edit_table), 6);
+#endif
 
 	/*** groups mode ***/
 	ui->groups_vbox = gtk_vbox_new (FALSE, 0);

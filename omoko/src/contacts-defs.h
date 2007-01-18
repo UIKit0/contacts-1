@@ -46,8 +46,7 @@ enum {
 };
 
 enum {
-	CONTACTS_VIEW_PANE = 0,
-	CONTACTS_EDIT_PANE,
+	CONTACTS_CONTACT_PANE = 0,
 	CONTACTS_GROUPS_PANE
 };
 
@@ -84,7 +83,6 @@ typedef struct {
 	GtkWidget *photo_image;
 	GtkWidget *preview_header_hbox;
 
-	GtkWidget *edit_table;
 	GtkWidget *groups_vbox;
 
 	GtkWidget *add_field_button;
@@ -96,10 +94,7 @@ typedef struct {
 	GtkWidget *search_tab_hbox;
 	GtkWidget *symbols_radiobutton;
 
-	GtkWidget *summary_hbuttonbox;
-	GtkWidget *summary_name_label;
-	GtkWidget *summary_table;
-	GtkWidget *summary_vbox;
+	GtkWidget *contact_pane;
 } ContactsUI;
 
 typedef struct {
