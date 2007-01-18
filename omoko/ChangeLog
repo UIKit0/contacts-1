@@ -1,3 +1,22 @@
+2007-01-18  Thomas Wood  <thomas@openedhand.com>
+
+	(contacts_contact_pane_set_contact): Check the previous setting is not
+	the same as the old one
+
+	* src/contacts-callbacks-ui.c: (contacts_selection_cb),
+	(contacts_new_cb):
+	* src/contacts-contact-pane.c:
+	(contacts_contact_pane_set_editable),
+	* src/contacts-groups-editor.c:
+	(contacts_groups_pane_update_selection),
+	(contacts_groups_pane_hide), (contacts_groups_new_cb):
+	* src/contacts-groups-editor.h:
+	* src/contacts-omoko.c: (create_main_window):
+	* src/contacts-omoko.h:
+
+	- Enable adding a new group to a contact
+	- Provide more protection if there is no contact currently selected
+
 2007-01-18  Ross Burton  <ross@openedhand.com>
 
 	* src/contacts-main.c:

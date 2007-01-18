@@ -131,10 +131,11 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 			gtk_widget_hide (data->ui->contact_pane);
 		}
 	}
-	else if (current_pane == CONTACTS_GROUPS_PANE)
+
+	if (current_pane == CONTACTS_GROUPS_PANE)
 	{
 		contacts_groups_pane_update_selection (
-				gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview)),
+				selection,
 				data);
 	}
 }
@@ -149,27 +150,31 @@ contacts_new_cb (GtkWidget *source, ContactsData *data)
   gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
 }
 
+static void
+contacts_show_contact_pane (ContactsData *data, gboolean editable)
+{
+	data->contact = contacts_get_selected_contact (data,
+						       data->contacts_table);
+	if (data->contact) {
+		data->changed = FALSE;
+		contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
+                                                   data->contact);
+		contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
+                                                   editable);
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
+	}
+}
+
 void
 contacts_view_cb (GtkWidget *source, ContactsData *data)
 {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
+	contacts_show_contact_pane (data, FALSE);
 }
 
 void
 contacts_edit_cb (GtkWidget *source, ContactsData *data)
 {
-	/* Disable the new/edit/delete options and get the contact to edit */
-	data->contact = contacts_get_selected_contact (data,
-						       data->contacts_table);
-	if (data->contact) {
-		//contacts_set_available_options (data, FALSE, FALSE, FALSE);
-		data->changed = FALSE;
-		contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
-                                                   data->contact);
-		contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
-                                                   TRUE);
-		gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
-	}
+	contacts_show_contact_pane (data, TRUE);
 }
 
 void

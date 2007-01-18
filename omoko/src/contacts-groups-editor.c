@@ -1,5 +1,5 @@
 /*
- * contacts-omoko-groups-editor.c
+ * contacts-omoko-editor.c
  * This file is part of Contacts
  *
  * Copyright (C) 2006 - OpenedHand Ltd
@@ -62,13 +62,22 @@ contacts_groups_pane_update_selection (GtkTreeSelection *selection, ContactsData
 
 
 	if (!selection)
+	{
+		gtk_widget_set_sensitive (GTK_WIDGET (data->ui->groups_vbox), FALSE);
 		return;
+	}
 
 	/* Get the currently selected contact and update the contact summary */
 	contact = contacts_contact_from_selection (selection,
 						   data->contacts_table);
 	if (!contact)
+	{
+		gtk_widget_set_sensitive (GTK_WIDGET (data->ui->groups_vbox), FALSE);
 		return;
+	}
+
+
+	gtk_widget_set_sensitive (GTK_WIDGET (data->ui->groups_vbox), TRUE);
 
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	for (g = data->contacts_groups; g; g = g_list_next (g))
@@ -107,22 +116,26 @@ contacts_groups_pane_hide ()
 
 
 void
-contacts_groups_new_group_cb (GtkWidget *button, ContactsData *data)
+contacts_groups_new_cb (GtkWidget *button, ContactsData *data)
 {
 	GtkWidget *widget;
 	gchar *text;
 	GtkTreeSelection *selection;
 	GtkWidget *input_dialog;
 
-	input_dialog = gtk_dialog_new_with_buttons ("New Group", NULL, GTK_DIALOG_MODAL,
-							GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+	input_dialog = gtk_dialog_new_with_buttons ("New Group",
+			GTK_WINDOW (data->ui->main_window), GTK_DIALOG_MODAL,
+			GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
 	gtk_dialog_set_has_separator (GTK_DIALOG (input_dialog), FALSE);
 
 	widget = gtk_entry_new ();
 	gtk_container_add (GTK_CONTAINER (GTK_DIALOG (input_dialog)->vbox), widget);
 	gtk_widget_show (widget);
 
-	gtk_dialog_run (GTK_DIALOG (input_dialog));
+	if (gtk_dialog_run (GTK_DIALOG (input_dialog)) != GTK_RESPONSE_ACCEPT)
+		return;
 
 	text = g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
 	gtk_widget_hide (input_dialog);
@@ -149,8 +162,7 @@ contacts_groups_new_group_cb (GtkWidget *button, ContactsData *data)
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 	}
 
-
-	gtk_widget_show (widget);
+	contacts_ui_update_groups_list (data);
 }
 
 static void

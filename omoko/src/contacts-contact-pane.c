@@ -258,10 +258,11 @@ void
 contacts_contact_pane_set_editable (ContactsContactPane *pane, gboolean editable)
 {
   g_return_if_fail (CONTACTS_IS_CONTACT_PANE (pane));
-  
-  pane->priv->editable = editable;
 
-  update_ui (pane);
+  if (pane->priv->editable != editable) {
+    pane->priv->editable = editable;
+    update_ui (pane);
+  }
 }
 
 void
@@ -290,10 +291,24 @@ void
 contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 {
   ContactsContactPanePrivate *priv;
+  gchar *uid1 = NULL, *uid2 = NULL;
 
   g_return_if_fail (CONTACTS_IS_CONTACT_PANE (pane));
 
   priv = pane->priv;
+
+  /* check to see if the contact is the same as the current one */
+  if (priv->contact) {
+    uid1 = e_contact_get (contact, E_CONTACT_UID);
+    uid2 = e_contact_get (priv->contact, E_CONTACT_UID);
+    if (uid1 && uid2 && strcmp (uid1, uid2) == 0) {
+      g_free (uid1);
+      g_free (uid2);
+      return;
+    }
+    g_free (uid1);
+    g_free (uid2);
+  }
 
   if (priv->contact) {
     if (priv->dirty && priv->bookview) {

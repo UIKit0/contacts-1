@@ -1,5 +1,5 @@
 /*
- * contacts-gtk.h
+ * contacts-omoko.h
  * This file is part of contacts
  *
  * Copyright (C) 2006 - OpenedHand Ltd
@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, 
  * Boston, MA  02110-1301  USA
  */
+
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glib.h>
@@ -37,4 +38,5 @@ void contacts_ui_create (ContactsData *data);
 void contacts_ui_update_groups_list (ContactsData *data);
 
 GtkWidget * create_contacts_list (ContactsData *data);
+
 #endif

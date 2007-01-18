@@ -94,8 +94,7 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_new_cb), contacts_data);
 
-	widget = gtk_menu_item_new_with_label ("New Group");
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (gtk_separator_menu_item_new()));
 
 	widget = gtk_menu_item_new_with_label ("Import");
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
@@ -107,12 +106,26 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_export_cb), contacts_data);
 
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (gtk_separator_menu_item_new()));
+
+	widget = gtk_menu_item_new_with_label ("Add Group");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (contacts_groups_new_cb), contacts_data);
+
+	ui->edit_menuitem = gtk_menu_item_new_with_label ("Edit Contact");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (ui->edit_menuitem));
+	g_signal_connect (G_OBJECT (ui->edit_menuitem), "activate",
+			  G_CALLBACK (contacts_edit_cb), contacts_data);
+
 	ui->delete_menuitem = gtk_menu_item_new_with_label ("Delete Contact");
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (ui->delete_menuitem));
 	g_signal_connect (G_OBJECT (ui->delete_menuitem), "activate",
 			  G_CALLBACK (contacts_delete_cb), contacts_data);
 
-	widget = gtk_menu_item_new_with_label ("Exit");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (gtk_separator_menu_item_new()));
+
+	widget = gtk_menu_item_new_with_label ("Close");
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (gtk_main_quit), NULL);
