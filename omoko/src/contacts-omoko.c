@@ -53,7 +53,6 @@ create_contacts_list (ContactsData *data)
 	renderer = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes (_("Name"), renderer,
 							"text", CONTACT_NAME_COL, NULL);
-	gtk_tree_view_column_set_min_width (column, 142);
 	gtk_tree_view_column_set_sort_column_id (column, CONTACT_NAME_COL);
 	moko_navigation_list_append_column (moko_navigation_list, column);
 
@@ -61,7 +60,6 @@ create_contacts_list (ContactsData *data)
 	renderer = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes (_("Cell Phone"), renderer,
 							"text", CONTACT_CELLPHONE_COL, NULL);
-	gtk_tree_view_column_set_min_width (column, 156);
 	gtk_tree_view_column_set_sort_column_id (column, CONTACT_CELLPHONE_COL);
 	moko_navigation_list_append_column (moko_navigation_list, column);
 
@@ -71,9 +69,7 @@ create_contacts_list (ContactsData *data)
 void
 create_main_window (ContactsData *contacts_data)
 {
-	GtkWidget *contacts_menu_menu;
-	GtkWidget *contacts_quit;
-	GtkWidget *scrolledwindow3;
+	GtkWidget *contacts_menu_menu, *scrolledwindow3, *widget;
 	GtkAccelGroup *accel_group;
 	GtkWidget *moko_tool_box;
 	ContactsUI *ui = contacts_data->ui;
@@ -93,27 +89,35 @@ create_main_window (ContactsData *contacts_data)
 	contacts_menu_menu = gtk_menu_new ();
 	moko_paned_window_set_application_menu(MOKO_PANED_WINDOW (ui->main_window), GTK_MENU (contacts_menu_menu));
 
-	ui->new_menuitem = gtk_image_menu_item_new_from_stock ("gtk-new", accel_group);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), ui->new_menuitem);
+	widget = gtk_menu_item_new_with_label ("New Contact");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (contacts_new_cb), contacts_data);
 
-	ui->edit_menuitem = gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), ui->edit_menuitem);
-	gtk_widget_set_sensitive (ui->edit_menuitem, FALSE);
+	widget = gtk_menu_item_new_with_label ("New Group");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
 
-	ui->edit_groups = gtk_menu_item_new_with_mnemonic (_("_Groups"));
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), ui->edit_groups);
+	widget = gtk_menu_item_new_with_label ("Import");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (contacts_import_cb), contacts_data);
 
-	ui->delete_menuitem = gtk_image_menu_item_new_from_stock ("gtk-delete", accel_group);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), ui->delete_menuitem);
-	gtk_widget_set_sensitive (ui->delete_menuitem, FALSE);
+	widget = gtk_menu_item_new_with_label ("Export");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (contacts_export_cb), contacts_data);
 
-	ui->contacts_import = gtk_menu_item_new_with_mnemonic (_("_Import"));
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), ui->contacts_import);
+	ui->delete_menuitem = gtk_menu_item_new_with_label ("Delete Contact");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (ui->delete_menuitem));
+	g_signal_connect (G_OBJECT (ui->delete_menuitem), "activate",
+			  G_CALLBACK (contacts_delete_cb), contacts_data);
 
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), gtk_separator_menu_item_new ());
+	widget = gtk_menu_item_new_with_label ("Exit");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
+	g_signal_connect (G_OBJECT (widget), "activate",
+			  G_CALLBACK (gtk_main_quit), NULL);
 
-	contacts_quit = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), contacts_quit);
+
 	/*** end menu creation ***/
 
 	/*** filter menu ***/
@@ -147,45 +151,39 @@ create_main_window (ContactsData *contacts_data)
 
 	/* FIXME? We seem to have to add these in reverse order at the moment */
 
-	/* delete contact button */
-	ui->delete_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (
-			MOKO_PIXMAP_BUTTON (ui->delete_button),
-			"openmoko-action-button-concant-delete-icon");
+	/* groups button */
+	widget = GTK_WIDGET (moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box)));
+	moko_pixmap_button_set_action_btn_upper_stock (MOKO_PIXMAP_BUTTON (widget),
+						       "openmoko-action-button-group-icon");
+	moko_pixmap_button_set_action_btn_lower_label (MOKO_PIXMAP_BUTTON (widget),
+						       "Group");
+	g_signal_connect (G_OBJECT (widget), "clicked",
+			  G_CALLBACK (contacts_groups_pane_show), contacts_data);
 
-	/* groups editor button */
-	GtkWidget * groups_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (
-			MOKO_PIXMAP_BUTTON (groups_button),
-			"openmoko-action-button-group-icon");
-	g_signal_connect (G_OBJECT (groups_button), "clicked", G_CALLBACK (contacts_groups_pane_show), contacts_data);
+	/* history button */
+	widget = GTK_WIDGET (moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box)));
+	moko_pixmap_button_set_action_btn_upper_stock (MOKO_PIXMAP_BUTTON (widget),
+						       "openmoko-filter-menu-icon");
+	moko_pixmap_button_set_action_btn_lower_label (MOKO_PIXMAP_BUTTON (widget),
+						       "History");
 
-	/* mode button */
-	GtkWidget * mode_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (
-			MOKO_PIXMAP_BUTTON (mode_button),
-			"openmoko-action-button-concant-mode-icon");
+	/* edit button */
+	widget = GTK_WIDGET (moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box)));
+	moko_pixmap_button_set_action_btn_upper_stock (MOKO_PIXMAP_BUTTON (widget),
+						       "openmoko-filter-menu-icon");
+	moko_pixmap_button_set_action_btn_lower_label (MOKO_PIXMAP_BUTTON (widget),
+						       "Edit");
+	g_signal_connect (G_OBJECT (widget), "clicked",
+			  G_CALLBACK (contacts_edit_cb), contacts_data);
 
-	/* mode menu */
-	GtkWidget *mode_menu = gtk_menu_new ();
-	GtkWidget *menuitem;
-	menuitem = gtk_menu_item_new_with_label (_("View"));
-	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
-	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_view_cb), contacts_data);
-	menuitem = gtk_menu_item_new_with_label (_("Edit"));
-	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
-	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_edit_cb), contacts_data);
-	menuitem = gtk_menu_item_new_with_label (_("Group Membership"));
-	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
-	g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (contacts_groups_pane_show), contacts_data);
-	menuitem = gtk_menu_item_new_with_label (_("History"));
-	gtk_menu_shell_append (GTK_MENU_SHELL (mode_menu), menuitem);
-	moko_pixmap_button_set_menu (MOKO_PIXMAP_BUTTON (mode_button), GTK_MENU (mode_menu));
-	gtk_widget_show_all (mode_menu);
-
-	/* new contact button */
-	ui->new_button = (GtkWidget *)moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box));
-	moko_pixmap_button_set_center_stock (MOKO_PIXMAP_BUTTON (ui->new_button), "openmoko-action-button-new-concant-icon");
+	/* view button */
+	widget = GTK_WIDGET (moko_tool_box_add_action_button (MOKO_TOOL_BOX (moko_tool_box)));
+	moko_pixmap_button_set_action_btn_upper_stock (MOKO_PIXMAP_BUTTON (widget),
+						       "openmoko-filter-menu-icon");
+	moko_pixmap_button_set_action_btn_lower_label (MOKO_PIXMAP_BUTTON (widget),
+						       "View");
+	g_signal_connect (G_OBJECT (widget), "clicked",
+			  G_CALLBACK (contacts_view_cb), contacts_data);
 
 
 	/*** contacts display ***/
@@ -242,9 +240,6 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) ui->main_window, "destroy",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
-	g_signal_connect ((gpointer) contacts_quit, "activate",
-			G_CALLBACK (gtk_main_quit),
-			NULL);
 	g_signal_connect_data ((gpointer) ui->contacts_treeview, "key_press_event",
 			G_CALLBACK (contacts_treeview_search_cb),
 			GTK_OBJECT (ui->search_entry),
@@ -252,49 +247,15 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect ((gpointer) ui->search_entry, "changed",
 			G_CALLBACK (contacts_search_changed_cb),
 			contacts_data);
-	g_signal_connect (G_OBJECT (ui->new_button), "clicked",
-			  G_CALLBACK (contacts_new_cb), contacts_data);
-	g_signal_connect (G_OBJECT (ui->new_menuitem), "activate",
-			  G_CALLBACK (contacts_new_cb), contacts_data);
-	//g_signal_connect (G_OBJECT (ui->edit_button), "clicked",
-	//		  G_CALLBACK (contacts_edit_cb), contacts_data);
 	g_signal_connect (G_OBJECT (ui->contacts_treeview), "row_activated",
 			  G_CALLBACK (contacts_treeview_edit_cb), contacts_data);
-	g_signal_connect (G_OBJECT (ui->delete_button), "clicked",
-			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	g_signal_connect (G_OBJECT (ui->delete_menuitem), "activate",
-			  G_CALLBACK (contacts_delete_cb), contacts_data);
-	g_signal_connect (G_OBJECT (ui->contacts_import), "activate",
-			  G_CALLBACK (contacts_import_cb), contacts_data);
+
 	g_signal_connect (G_OBJECT (moko_paned_window_get_menubox (MOKO_PANED_WINDOW (ui->main_window))),
 			"filter_changed", G_CALLBACK (moko_filter_changed), contacts_data);
 	g_signal_connect (G_OBJECT(moko_tool_box), "searchbox_invisible",
 			  G_CALLBACK (contacts_disable_search_cb), contacts_data);
 	g_signal_connect (G_OBJECT(moko_tool_box), "searchbox_visible",
 			  G_CALLBACK (contacts_enable_search_cb), contacts_data);
-
-	ui->contact_delete = NULL;//contact_delete;
-	ui->contact_export = NULL;//contact_export;
-	ui->contact_menu = NULL; //contact_menu;
-
-	ui->contacts_menu = NULL;//contacts_menu;
-
-	ui->copy_menuitem = NULL;//copy;
-	ui->cut_menuitem = NULL;//cut;
-	ui->edit_done_button = NULL;//edit_done_button;
-	ui->edit_menu = NULL;//edit_menu;
-	ui->main_menubar = NULL;//main_menubar;
-	ui->paste_menuitem = NULL;// paste;
-
-	ui->add_field_button = NULL;//add_field_button;
-	ui->remove_field_button = NULL;//remove_field_button;
-
-	ui->search_entry_hbox = NULL;//search_entry_hbox;
-	ui->search_hbox = NULL; //search_hbox;
-	ui->search_tab_hbox = NULL; //search_tab_hbox;
-
-	ui->summary_hbuttonbox = NULL;//summary_hbuttonbox;
-
 
 	/* temporary settings */
 	GtkSettings *settings = gtk_settings_get_default ();
