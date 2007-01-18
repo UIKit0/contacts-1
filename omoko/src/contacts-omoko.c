@@ -25,7 +25,7 @@
 #include "contacts-main.h"
 #include "contacts-ui.h"
 #include "contacts-omoko.h"
-#include "contacts-omoko-groups-editor.h"
+#include "contacts-groups-editor.h"
 
 
 
@@ -234,7 +234,7 @@ create_main_window (ContactsData *contacts_data)
 	gtk_table_set_row_spacings (GTK_TABLE (ui->edit_table), 6);
 
 	/*** groups mode ***/
-	ui->groups_vbox = gtk_vbox_new (TRUE, 0);
+	ui->groups_vbox = gtk_vbox_new (FALSE, 0);
 	gtk_container_set_border_width (GTK_CONTAINER (ui->groups_vbox), 12);
 	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->groups_vbox, NULL);
 

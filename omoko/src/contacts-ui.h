@@ -1,7 +1,7 @@
 #include "contacts-defs.h"
 #include "config.h"
 #include "contacts-omoko.h"
-#include "contacts-omoko-groups-editor.h"
+#include "contacts-groups-editor.h"
 
 void contacts_setup_ui (ContactsData *data);
 void contacts_remove_labels_from_focus_chain (GtkContainer *container);
