@@ -24,7 +24,6 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include "contacts-callbacks-ui.h"
-#include "contacts-edit-pane.h"
 #include "contacts-main.h"
 #ifdef HAVE_GCONF
 #include <gconf/gconf-client.h>

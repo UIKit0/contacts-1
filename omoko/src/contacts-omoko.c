@@ -22,7 +22,6 @@
 
 #include "contacts-callbacks-ui.h"
 #include "contacts-contact-pane.h"
-#include "contacts-edit-pane.h"
 #include "contacts-main.h"
 #include "contacts-ui.h"
 #include "contacts-omoko.h"

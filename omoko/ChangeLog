@@ -1,5 +1,14 @@
 2007-01-18  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-main.c:
+	* src/contacts-omoko.c:
+	* src/contacts-gtk.c:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-ui.c:
+	Remove old include.
+
+2007-01-18  Ross Burton  <ross@openedhand.com>
+
 	* src/Makefile.am:
 	* src/contacts-contact-pane.[ch]:
 	Add new contact viewer/editor widget.  This isn't finished but its

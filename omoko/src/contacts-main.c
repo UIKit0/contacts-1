@@ -34,7 +34,6 @@
 #include "contacts-contact-pane.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-callbacks-ebook.h"
-#include "contacts-edit-pane.h"
 #include "contacts-ui.h"
 
 void
