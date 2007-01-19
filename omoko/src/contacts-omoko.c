@@ -291,7 +291,6 @@ void
 contacts_ui_create (ContactsData *data)
 {
 	create_main_window (data);
-	//create_chooser_dialog (data);
 }
 
 void
@@ -322,6 +321,21 @@ contacts_ui_update_groups_list (ContactsData *data)
 			gtk_menu_item_new_with_label (_("Search Results")));
 
 	gtk_widget_show_all (GTK_WIDGET (filter_menu));
+
+	/* add group editor checkboxes */
+	GtkWidget *widget;
+	GList *cur;
+	for (cur = data->contacts_groups; cur; cur = g_list_next (cur))
+	{
+		if (g_hash_table_lookup (data->groups_widgets_hash, cur->data))
+			continue;
+		widget = gtk_check_button_new_with_label (cur->data);
+		gtk_box_pack_start (GTK_BOX (data->ui->groups_vbox), widget, FALSE, FALSE, 0);
+		g_hash_table_insert (data->groups_widgets_hash, cur->data, widget);
+		g_signal_connect (G_OBJECT (widget), "toggled", G_CALLBACK (groups_checkbutton_cb), data);
+		gtk_widget_show (widget);
+	}
+
 
 }
 

@@ -196,6 +196,8 @@ main (int argc, char **argv)
 						(GDestroyNotify)
 						 contacts_free_list_hash);
 
+	contacts_data->groups_widgets_hash = g_hash_table_new (NULL, NULL);
+
 	/* Setup the ui */
 	contacts_setup_ui (contacts_data);
 
@@ -246,8 +248,9 @@ main (int argc, char **argv)
 	g_free (contacts_data->ui);
 	g_free (contacts_data->selected_group);
 	g_free (contacts_data->search_string);
-	//g_list_free (contacts_data->contacts_groups);
+	g_list_free (contacts_data->contacts_groups);
 	//g_hash_table_destroy (contacts_data->contacts_table);
+	g_hash_table_destroy (contacts_data->groups_widgets_hash);
 
 
 	return 0;

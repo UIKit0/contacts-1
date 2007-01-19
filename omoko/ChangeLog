@@ -1,3 +1,19 @@
+2007-01-19  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-contact-pane.c: (contacts_contact_pane_set_contact): Use
+	e_contact_get_const() when comparing UID fields
+
+	* src/contacts-defs.h:
+	* src/contacts-groups-editor.c:
+	(contacts_groups_pane_update_selection), (contacts_groups_new_cb):
+	* src/contacts-groups-editor.h:
+	* src/contacts-main.c: (main):
+	* src/contacts-omoko.c: (contacts_ui_create),
+	(contacts_ui_update_groups_list):
+	* src/contacts-ui.c: (contacts_setup_ui):
+
+	Cleanup groups code
+
 2007-01-18  Thomas Wood  <thomas@openedhand.com>
 
 	(contacts_contact_pane_set_contact): Check the previous setting is not

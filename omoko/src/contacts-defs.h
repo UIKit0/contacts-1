@@ -104,6 +104,7 @@ typedef struct {
 	ContactsUI *ui;
 	GHashTable *contacts_table;
 	GList *contacts_groups;
+	GHashTable *groups_widgets_hash;
 	gchar *selected_group;
 	gboolean changed;
 	gchar *file;

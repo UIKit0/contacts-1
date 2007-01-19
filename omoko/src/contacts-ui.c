@@ -5,6 +5,7 @@
 #include "contacts-ui.h"
 #include "contacts-utils.h"
 #include "contacts-contact-pane.h"
+#include "contacts-groups-editor.h"
 #include "contacts-omoko.h"
 
 #define CONTACTS_VIEW_PAGE 0
@@ -87,7 +88,6 @@ contacts_setup_ui (ContactsData *data)
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (data->contacts_liststore),
 				      GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
 				      GTK_SORT_ASCENDING);
-	//g_object_unref (data->contacts_liststore);
 
 	/* these are defined in the frontend header */
 	/* create the ui */
@@ -100,8 +100,5 @@ contacts_setup_ui (ContactsData *data)
 			GTK_WINDOW (data->ui->chooser_dialog),
 			GTK_WINDOW (data->ui->main_window));
 	}
-
-	/* Remove selectable label from focus chain */
-	//contacts_remove_labels_from_focus_chain (GTK_CONTAINER (data->ui->preview_header_hbox));
 
 }

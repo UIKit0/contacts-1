@@ -21,35 +21,14 @@
  */
 
 #include "contacts-defs.h"
-#include "contacts-omoko.h"
+#include "contacts-ui.h"
 #include "contacts-main.h"
 #include "contacts-utils.h"
-
-static void groups_checkbutton_cb (GtkWidget *checkbutton, ContactsData *data);
-void contacts_groups_pane_update_selection (GtkTreeSelection *selection, ContactsData *data);
-
-/* TODO: put these in a struct and stop using global variables */
-static GHashTable *groups_widgets_hash;
 
 void
 contacts_groups_pane_show (GtkWidget *button, ContactsData *data)
 {
-	GtkWidget *widget;
-	GList *cur;
-	if (!groups_widgets_hash)
-	{
-		groups_widgets_hash = g_hash_table_new (NULL, NULL);
-		for (cur = data->contacts_groups; cur; cur = g_list_next (cur))
-		{
-			widget = gtk_check_button_new_with_label (cur->data);
-			gtk_box_pack_start (GTK_BOX (data->ui->groups_vbox), widget, FALSE, FALSE, 6);
-			g_hash_table_insert (groups_widgets_hash, cur->data, widget);
-			g_signal_connect (G_OBJECT (widget), "toggled", G_CALLBACK (groups_checkbutton_cb), data);
-			gtk_widget_show (widget);
-		}
-	}
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_GROUPS_PANE);
-
 	contacts_groups_pane_update_selection (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview)), data);
 }
 
@@ -82,7 +61,7 @@ contacts_groups_pane_update_selection (GtkTreeSelection *selection, ContactsData
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	for (g = data->contacts_groups; g; g = g_list_next (g))
 	{
-		widget = g_hash_table_lookup (groups_widgets_hash, g->data);
+		widget = g_hash_table_lookup (data->groups_widgets_hash, g->data);
 		gtk_widget_set_sensitive (GTK_WIDGET (widget), TRUE);
 
 		if (g_list_find_custom (groups, g->data, (GCompareFunc) strcmp))
@@ -109,13 +88,6 @@ contacts_groups_pane_update_selection (GtkTreeSelection *selection, ContactsData
 }
 
 void
-contacts_groups_pane_hide ()
-{
-	g_hash_table_destroy (groups_widgets_hash);
-}
-
-
-void
 contacts_groups_new_cb (GtkWidget *button, ContactsData *data)
 {
 	GtkWidget *widget;
@@ -123,7 +95,7 @@ contacts_groups_new_cb (GtkWidget *button, ContactsData *data)
 	GtkTreeSelection *selection;
 	GtkWidget *input_dialog;
 
-	input_dialog = gtk_dialog_new_with_buttons ("New Group",
+	input_dialog = gtk_dialog_new_with_buttons ("Add Group",
 			GTK_WINDOW (data->ui->main_window), GTK_DIALOG_MODAL,
 			GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -140,15 +112,23 @@ contacts_groups_new_cb (GtkWidget *button, ContactsData *data)
 	text = g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
 	gtk_widget_hide (input_dialog);
 
+	if (!text || !strcmp (text, ""))
+		return;
+
 	/* add the group to the list of groups */
-	data->contacts_groups = g_list_append (data->contacts_groups, text);
+	if (!g_list_find_custom (data->contacts_groups, text, (GCompareFunc) strcmp))
+		data->contacts_groups = g_list_append (data->contacts_groups, text);
 
-	/* FIXME: need to make sure update groups is called here */
 
-	widget = gtk_check_button_new_with_label (text);
-	gtk_box_pack_start (GTK_BOX (data->ui->groups_vbox), widget, FALSE, FALSE, 0);
-	g_hash_table_insert (groups_widgets_hash, text, widget);
-	g_signal_connect (G_OBJECT (widget), "toggled", G_CALLBACK (groups_checkbutton_cb), data);
+	/* add a group checkbutton */
+	if (!(widget = g_hash_table_lookup (data->groups_widgets_hash, text)))
+	{
+		widget = gtk_check_button_new_with_label (text);
+		gtk_box_pack_start (GTK_BOX (data->ui->groups_vbox), widget, FALSE, FALSE, 0);
+		g_signal_connect (G_OBJECT (widget), "toggled", G_CALLBACK (groups_checkbutton_cb), data);
+		gtk_widget_show (widget);
+		g_hash_table_insert (data->groups_widgets_hash, text, widget);
+	}
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview));
 	if (gtk_tree_selection_count_selected_rows (selection) == 0)
@@ -162,10 +142,12 @@ contacts_groups_new_cb (GtkWidget *button, ContactsData *data)
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 	}
 
+	/* update groups */
 	contacts_ui_update_groups_list (data);
+
 }
 
-static void
+void
 groups_checkbutton_cb (GtkWidget *checkbutton, ContactsData *data)
 {
 	EContact *contact;

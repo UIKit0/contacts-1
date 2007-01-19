@@ -291,7 +291,6 @@ void
 contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 {
   ContactsContactPanePrivate *priv;
-  gchar *uid1 = NULL, *uid2 = NULL;
 
   g_return_if_fail (CONTACTS_IS_CONTACT_PANE (pane));
 
@@ -299,15 +298,10 @@ contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 
   /* check to see if the contact is the same as the current one */
   if (priv->contact) {
-    uid1 = e_contact_get (contact, E_CONTACT_UID);
-    uid2 = e_contact_get (priv->contact, E_CONTACT_UID);
-    if (uid1 && uid2 && strcmp (uid1, uid2) == 0) {
-      g_free (uid1);
-      g_free (uid2);
+    if (strcmp (e_contact_get_const (contact, E_CONTACT_UID),
+                e_contact_get_const (priv->contact, E_CONTACT_UID)) == 0) {
       return;
     }
-    g_free (uid1);
-    g_free (uid2);
   }
 
   if (priv->contact) {

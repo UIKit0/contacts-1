@@ -27,4 +27,5 @@ void contacts_groups_pane_update_selection (GtkTreeSelection *selection, Contact
 void contacts_groups_pane_show (GtkWidget *button, ContactsData *data);
 void contacts_groups_new_cb (GtkWidget *button, ContactsData *data);
 
+void groups_checkbutton_cb (GtkWidget *checkbutton, ContactsData *data);
 #endif
