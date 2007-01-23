@@ -42,6 +42,7 @@ typedef struct {
   char *display_name; /* Human-readable name for display */
   char *icon; /* Icon name for the menu */
   gboolean unique; /* If there can be only one of this field */
+  char *format; /* format string */
   /* TODO: add an extra changed callback so that N handler can update FN, etc */
 } FieldInfo;
 
@@ -49,9 +50,10 @@ static GQuark attr_quark = 0;
 static GQuark field_quark = 0;
 
 static const FieldInfo fields[] = {
-  { EVC_FN, "Name", NULL, TRUE },
-  { EVC_EMAIL, "Email", "stock_mail", FALSE },
-  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE },
+  { EVC_FN, "Name", NULL, TRUE, "<big><b>%s</b></big>" },
+  { EVC_ORG, "Organization", NULL, TRUE, "<span size=\"x-small\">%s</span>" },
+  { EVC_EMAIL, "E-Mail", "stock_mail", FALSE, NULL },
+  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE, NULL },
 };
 
 /*
@@ -113,18 +115,26 @@ static GtkWidget *
 make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *info, GtkSizeGroup *size)
 {
   GtkWidget *box, *type_label, *image, *value;
+  gchar *attr_value = NULL, *escaped_str, *group;
 
   box = gtk_hbox_new (FALSE, 4);
 
-  /* The label */
-  type_label = gtk_label_new (g_strconcat (info->display_name, ":", NULL));
-  if (size)
-    gtk_size_group_add_widget (size, type_label);
-  gtk_box_pack_start (GTK_BOX (box), type_label, FALSE, FALSE, 4);
+  group = e_vcard_attribute_get_group (attr);
+  if (group == NULL)
+    group = "Work"; /* FIXME: default group should be defined somewhere else */
 
+  /* The label (if required) */
+  if (!info->unique) {
+    type_label = gtk_label_new (group);
+    if (size)
+      gtk_size_group_add_widget (size, type_label);
+    gtk_box_pack_start (GTK_BOX (box), type_label, FALSE, FALSE, 4);
+  }
+
+  /* Field category selector */
   if (pane->priv->editable || info->icon) {
     /* TODO: hook up an event box for clicks */
-    if (pane->priv->editable) {
+    if (pane->priv->editable && !info->unique) {
       /* TODO: use the correct image */
       image = gtk_image_new_from_icon_name (GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
     } else {
@@ -134,19 +144,42 @@ make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *
   }
   
   /* The value field itself */
+
+  /* FIXME: fix this for multivalued attributes */
+  attr_value = e_vcard_attribute_get_value (attr);
+
   if (pane->priv->editable) {
     value = gtk_entry_new ();
-    gtk_entry_set_text (GTK_ENTRY (value), e_vcard_attribute_get_value (attr));
+    if (attr_value)
+      gtk_entry_set_text (GTK_ENTRY (value), attr_value);
+    else
+    {
+      /* this is a field that doesn't have a value yet */
+      GdkColor gray;
+      gdk_color_parse ("LightGray", &gray);
+      gtk_entry_set_text (GTK_ENTRY (value), info->display_name);
+      gtk_widget_modify_text (GTK_WIDGET (value), GTK_STATE_NORMAL, &gray);
+    }
+
     g_object_set_qdata (G_OBJECT (value), attr_quark, attr);
     g_object_set_qdata (G_OBJECT (value), field_quark, (gpointer)info);
     g_signal_connect (value, "changed", G_CALLBACK (field_changed), pane);
   } else {
-    value = gtk_label_new (e_vcard_attribute_get_value (attr));
+    if (info->format)
+    {
+      escaped_str = g_markup_printf_escaped (info->format, attr_value);
+      value = gtk_label_new (NULL);
+      gtk_label_set_markup (GTK_LABEL (value), escaped_str);
+      g_free (escaped_str);
+    }
+    else
+      value = gtk_label_new (attr_value);
     gtk_misc_set_alignment (GTK_MISC (value), 0.0, 0.5);
   }
   gtk_box_pack_start (GTK_BOX (box), value, TRUE, TRUE, 4);
 
   gtk_widget_show_all (box);
+  g_free (attr_value);
   return box;
 }
 
@@ -186,6 +219,8 @@ update_ui (ContactsContactPane *pane)
     if (info->unique) {
       /* Fast path unique fields, no need to search the entire contact */
       attr = e_vcard_get_attribute (E_VCARD (pane->priv->contact), info->vcard_field);
+      if (!attr && pane->priv->editable)
+         attr = e_vcard_attribute_new ("", info->vcard_field);
       if (attr) {
         w = make_widget (pane, attr, info, size);
         gtk_box_pack_start (GTK_BOX (pane), w, FALSE, FALSE, 4);

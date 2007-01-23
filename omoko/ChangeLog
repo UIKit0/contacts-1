@@ -1,5 +1,17 @@
 2007-01-23  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-contact-pane.c: (make_widget), (update_ui):
+
+	- Added ORG field to list of handled types
+	- Make unique value fields appear in the editor regardless of if they
+	have an existing value
+	- Display group name in field label, rather than field type
+	- Allow blank fields in contact editor
+	- Add optional formatting to field display
+
+
+2007-01-23  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-contact-pane.c:
 	* src/contacts-contact-pane.h:
 	* src/contacts-groups-editor.c:
