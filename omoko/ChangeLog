@@ -1,3 +1,14 @@
+2007-01-23  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-contact-pane.c:
+	* src/contacts-contact-pane.h:
+	* src/contacts-groups-editor.c:
+	* src/contacts-groups-editor.h:
+	* src/contacts-omoko.c:
+	* src/contacts-omoko.h:
+
+	Add OpenMoko copyright/license header comments
+
 2007-01-19  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-contact-pane.c: (contacts_contact_pane_set_contact): Use
