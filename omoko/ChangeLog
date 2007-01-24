@@ -1,3 +1,9 @@
+2007-01-24  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-contact-pane.c: Add a popupmenu to the attribute type
+	selector, and save the new type chosen by the user. Also added TEL to
+	list of handled attributes.
+
 2007-01-23  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-contact-pane.c: (make_widget), (update_ui):

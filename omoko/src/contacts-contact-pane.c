@@ -37,12 +37,29 @@ struct _ContactsContactPanePrivate
   gboolean editable;
 };
 
+static gchar *email_types[] = {
+  "Work",
+  "Home",
+  "Other",
+  NULL
+};
+
+static gchar *phone_types[] = {
+  "Work",
+  "Home",
+  "Mobile",
+  "Fax",
+  "Other",
+  NULL
+};
+
 typedef struct {
   char *vcard_field; /* vCard field name */
   char *display_name; /* Human-readable name for display */
   char *icon; /* Icon name for the menu */
   gboolean unique; /* If there can be only one of this field */
   char *format; /* format string */
+  gchar **types;
   /* TODO: add an extra changed callback so that N handler can update FN, etc */
 } FieldInfo;
 
@@ -50,10 +67,11 @@ static GQuark attr_quark = 0;
 static GQuark field_quark = 0;
 
 static const FieldInfo fields[] = {
-  { EVC_FN, "Name", NULL, TRUE, "<big><b>%s</b></big>" },
-  { EVC_ORG, "Organization", NULL, TRUE, "<span size=\"x-small\">%s</span>" },
-  { EVC_EMAIL, "E-Mail", "stock_mail", FALSE, NULL },
-  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE, NULL },
+  { EVC_FN, "Name", NULL, TRUE, "<big><b>%s</b></big>", NULL },
+  { EVC_ORG, "Organization", NULL, TRUE, "<span size=\"x-small\">%s</span>", NULL },
+  { EVC_EMAIL, "E-Mail", "stock_mail", FALSE, NULL, email_types },
+  { EVC_TEL, "Telephone", NULL, FALSE, NULL, phone_types },
+  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE, NULL, NULL },
 };
 
 /*
@@ -111,36 +129,113 @@ field_changed (GtkWidget *entry, ContactsContactPane *pane)
   pane->priv->dirty = TRUE;
 }
 
+static void
+show_menu (GtkWidget *widget, GdkEventButton *event, GtkMenu *menu)
+{
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+}
+
+static void
+set_type (EVCardAttribute *attr, gchar *type)
+{
+  GList *params;
+  EVCardAttributeParam *p = NULL;
+
+  
+  for (params = e_vcard_attribute_get_params (attr); params;
+      params = g_list_next (params))
+    if (!strcmp (e_vcard_attribute_param_get_name (params->data), "TYPE"))
+    {
+      p = params->data;
+      break;
+    }
+
+  /* if we didn't find the type param */
+  if (p == NULL)
+  {
+    p = e_vcard_attribute_param_new ("TYPE");
+    e_vcard_attribute_add_param (attr, p);
+  }
+
+  /* FIXME: we can only deal with one attribute type value at the moment */
+  e_vcard_attribute_param_remove_values (p);
+  e_vcard_attribute_param_add_value (p, type);
+}
+
+static gchar*
+get_type (EVCardAttribute *attr)
+{
+  GList *list;
+  list = e_vcard_attribute_get_param (attr, "TYPE");
+  /* FIXME: we can only deal with one attribute type value at the moment */
+  return (list) ? list->data : NULL;
+}
+
+static void
+set_type_menu_cb (GtkWidget *widget, EVCardAttribute *attr)
+{
+  gchar *new_type = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-value");
+  ContactsContactPane *pane = g_object_get_data (G_OBJECT (widget), "contact-pane");
+  GtkLabel *label = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-label");
+
+  set_type (attr, new_type);
+  gtk_label_set_text (label, new_type);
+  pane->priv->dirty = TRUE;
+}
+
 static GtkWidget *
 make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *info, GtkSizeGroup *size)
 {
-  GtkWidget *box, *type_label, *image, *value;
-  gchar *attr_value = NULL, *escaped_str, *group;
+  GtkWidget *box, *type_label = NULL, *image, *event_box, *value, *menu;
+  gchar *attr_value = NULL, *escaped_str, *type, *s;
+  gint i;
 
   box = gtk_hbox_new (FALSE, 4);
 
-  group = e_vcard_attribute_get_group (attr);
-  if (group == NULL)
-    group = "Work"; /* FIXME: default group should be defined somewhere else */
+  type = get_type (attr);
+  if (type == NULL && info->types != NULL)
+    type = info->types[0];
 
   /* The label (if required) */
   if (!info->unique) {
-    type_label = gtk_label_new (group);
+    type_label = gtk_label_new (type);
     if (size)
       gtk_size_group_add_widget (size, type_label);
     gtk_box_pack_start (GTK_BOX (box), type_label, FALSE, FALSE, 4);
   }
 
-  /* Field category selector */
+  /* Field type selector */
   if (pane->priv->editable || info->icon) {
-    /* TODO: hook up an event box for clicks */
     if (pane->priv->editable && !info->unique) {
       /* TODO: use the correct image */
       image = gtk_image_new_from_icon_name (GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
     } else {
       image = gtk_image_new_from_icon_name (info->icon, GTK_ICON_SIZE_MENU);
     }
-    gtk_box_pack_start (GTK_BOX (box), image, FALSE, FALSE, 4);
+    event_box = gtk_event_box_new ();
+    gtk_container_add (GTK_CONTAINER (event_box), GTK_WIDGET (image));
+    gtk_box_pack_start (GTK_BOX (box), event_box, FALSE, FALSE, 4);
+
+    /* build selecter menu */
+    if (info->types && pane->priv->editable)
+    {
+      menu = gtk_menu_new ();
+      i = 0;
+      for (s = info->types[i]; (s = info->types[i]); i++)
+      {
+        GtkWidget *menu_item = gtk_menu_item_new_with_label (s);
+        g_object_set_data (G_OBJECT (menu_item), "contact-attribute-type-value", s);
+        if (type_label)
+          g_object_set_data (G_OBJECT (menu_item), "contact-attribute-type-label", type_label);
+          /* there should be a better way to pass the pane to the callback... */
+          g_object_set_data (G_OBJECT (menu_item), "contact-pane", pane);
+        gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+        g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (set_type_menu_cb), attr);
+      }
+      g_signal_connect (event_box, "button-release-event", G_CALLBACK (show_menu), menu);
+      gtk_widget_show_all (menu);
+
+    }
   }
   
   /* The value field itself */
