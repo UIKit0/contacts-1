@@ -138,6 +138,7 @@ contacts_bacon_cb (const char *message, gpointer user_data)
 int
 main (int argc, char **argv)
 {
+	GError *error = NULL;
 	BaconMessageConnection *mc;
 #ifdef HAVE_GCONF
 	const char *search;
@@ -157,9 +158,9 @@ main (int argc, char **argv)
 	};
 
         /* Initialise the i18n support code */
-        bindtextdomain (GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
-        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-        textdomain (GETTEXT_PACKAGE);
+	bindtextdomain (GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
 	context = g_option_context_new (" - A light-weight address-book");
 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
@@ -184,9 +185,11 @@ main (int argc, char **argv)
 	//g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	/* Load the system addressbook */
-	contacts_data->book = e_book_new_system_addressbook (NULL);
-	if (!contacts_data->book)
-		g_critical ("Could not load system addressbook");
+	contacts_data->book = e_book_new_system_addressbook (&error);
+	if (!contacts_data->book) {
+		g_critical ("Could not load system addressbook: %s", error->message);
+		g_error_free (error);
+	}
 
 	contacts_data->contacts_table = g_hash_table_new_full (g_str_hash,
 						g_str_equal, NULL, 
