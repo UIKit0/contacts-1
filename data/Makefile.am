@@ -11,6 +11,8 @@ icon_DATA = oh-contacts.png
 schemadir = $(GCONF_SCHEMA_FILE_DIR)
 schema_DATA = contacts.schemas
 
+man1_MANS = contacts.1
+
 if HAVE_GCONF
 install-data-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) \

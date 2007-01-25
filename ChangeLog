@@ -1,5 +1,11 @@
 2007-01-25  Ross Burton  <ross@openedhand.com>
 
+	* data/contacts.1:
+	* data/Makefile.am:
+	Add basic manpage by Kęstutis Biliūnas.
+
+2007-01-25  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-main.c:
 	Pass a GError when creating the address book.
 
