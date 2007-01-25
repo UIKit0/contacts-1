@@ -299,6 +299,10 @@ update_ui (ContactsContactPane *pane)
       g_warning (G_STRLOC ": TODO: create blank contact if new=true");
       return;
     } else {
+      GtkWidget *w;
+      w = gtk_label_new ("No contact to display");
+      gtk_widget_show (w);
+      gtk_box_pack_start (GTK_BOX (pane), w, TRUE, TRUE, 0);
       return;
     }
   }
@@ -442,12 +446,10 @@ contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 {
   ContactsContactPanePrivate *priv;
 
-  g_return_if_fail (CONTACTS_IS_CONTACT_PANE (pane));
-
   priv = pane->priv;
 
   /* check to see if the contact is the same as the current one */
-  if (priv->contact) {
+  if (priv->contact && contact) {
     if (strcmp (e_contact_get_const (contact, E_CONTACT_UID),
                 e_contact_get_const (priv->contact, E_CONTACT_UID)) == 0) {
       return;

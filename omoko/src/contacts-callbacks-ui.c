@@ -128,7 +128,7 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 			contacts_display_summary (contact, data);
 		} else {
 			contacts_set_available_options (data, TRUE, FALSE, FALSE);
-			gtk_widget_hide (data->ui->contact_pane);
+			contacts_display_summary (contact, data);
 		}
 	}
 

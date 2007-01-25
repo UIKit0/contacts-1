@@ -1,3 +1,11 @@
+2007-01-25  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c: (contacts_selection_cb):
+	* src/contacts-contact-pane.c: (update_ui), (on_commit_cb),
+	(contacts_contact_pane_set_contact):
+
+	Set a message when no contact is selected
+
 2007-01-24  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-contact-pane.c: Add a popupmenu to the attribute type
