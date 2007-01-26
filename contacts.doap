@@ -1,0 +1,69 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns="http://usefulinc.com/ns/doap#">
+
+  <name>Contacts</name>
+  <shortname>contacts</shortname>
+  <created>2005-08-08</created>
+
+  <shortdesc xml:lang="en"> Contacts is a small, lightweight address book.
+  </shortdesc>
+
+  <description xml:lang="en">
+    Contacts is a small, lightweight addressbook that
+    uses libebook, part of EDS. This is the same library that GNOME Evolution
+    uses, so all contact data that exists in your Evolution addressbook is
+    accessible via Contacts. Contacts features advanced vCard field type handling
+    and is designed for use on hand-held devices, such as the Nokia 770 or the
+    Sharp Zaurus series of PDAs.
+  </description>
+
+  <license rdf:resource="http://usefulinc.com/doap/licenses/gpl" />
+
+  <os>Linux</os>
+  <programming-language>C</programming-language>
+
+  <category rdf:resource="http://labs.o-hand.com/doap/category/application"/>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Chris Lord</foaf:name>
+      <foaf:mbox rdf:resource="mailto:chris@o-hand.com"/>
+    </foaf:Person>
+  </maintainer>
+
+  <author>
+     <foaf:Person>
+      <foaf:name>Chris Lord</foaf:name>
+      <foaf:mbox rdf:resource="mailto:chris@o-hand.com"/>
+    </foaf:Person>
+  </author>
+
+  <repository>
+    <SVNRepository>
+      <browse rdf:resource="http://svn.o-hand.com/view/contacts/trunk"/>
+      <location rdf:resource="https://svn.o-hand.com/repos/contacts/trunk/"/>
+    </SVNRepository>
+  </repository>
+
+  <release>
+    <Version>
+      <name>Contacts 0.1</name>
+      <created>2006-07-17</created>
+      <revision>0.1</revision>
+           <file-release
+            rdf:resource="http://projects.o-hand.com/sources/contacts/contacts-0.1.tar.gz" />
+    </Version>
+  </release>
+
+  <release>
+    <Version>
+      <name>Contacts 0.2</name>
+      <created>2006-11-17</created>
+      <revision>0.2</revision>
+           <file-release
+           rdf:resource="http://projects.o-hand.com/sources/contacts/contacts-0.2.tar.gz" />
+    </Version>
+  </release>
+
+
+</Project>
