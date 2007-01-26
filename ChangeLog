@@ -1,3 +1,10 @@
+2007-01-26  Ross Burton  <ross@openedhand.com>
+
+	* configure.ac
+	* po/LINGUAS:
+	Modified the intltool part to make use of a LINGUAS file (thanks
+	Olivier Le Thanh Duong <olivier@lethanh.be>)
+
 2007-01-26  Thomas Wood  <thomas@openedhand.com>
 
 	* contacts.doap: Added
