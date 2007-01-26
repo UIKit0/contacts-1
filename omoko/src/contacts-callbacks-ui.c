@@ -143,10 +143,9 @@ contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 void
 contacts_new_cb (GtkWidget *source, ContactsData *data)
 {
-  data->contact = e_contact_new ();
+  contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane), NULL);
   contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (data->ui->contact_pane),
                                       TRUE);
-  contacts_contact_pane_set_contact (CONTACTS_CONTACT_PANE (data->ui->contact_pane), data->contact);
   gtk_notebook_set_current_page (GTK_NOTEBOOK (data->ui->main_notebook), CONTACTS_CONTACT_PANE);
 }
 

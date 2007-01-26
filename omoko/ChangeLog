@@ -1,3 +1,21 @@
+2007-01-26  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-contact-pane.c: (contact_get_attributes),
+	(strip_empty_attributes), (field_set_blank), (field_changed),
+	(field_focus_in), (field_focus_out), (show_menu), (set_type),
+	(get_type), (set_type_menu_cb), (make_widget), (update_ui),
+	(contacts_contact_pane_get_property),
+	(contacts_contact_pane_set_property),
+	(contacts_contact_pane_dispose), (contacts_contact_pane_finalize),
+	(contacts_contact_pane_class_init), (contacts_contact_pane_init),
+	(contacts_contact_pane_new), (contacts_contact_pane_set_editable),
+	(contacts_contact_pane_set_book_view), (on_commit_cb),
+	(contacts_contact_pane_set_contact):
+
+	- Add empty fields for any attribute categories without a value yet
+	- Implement UI spec with respect to blank fields.
+
 2007-01-25  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_selection_cb):

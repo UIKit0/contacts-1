@@ -49,6 +49,7 @@ static gchar *phone_types[] = {
   "Home",
   "Mobile",
   "Fax",
+  "Pager",
   "Other",
   NULL
 };
@@ -66,12 +67,12 @@ typedef struct {
 static GQuark attr_quark = 0;
 static GQuark field_quark = 0;
 
-static const FieldInfo fields[] = {
+static FieldInfo fields[] = {
   { EVC_FN, "Name", NULL, TRUE, "<big><b>%s</b></big>", NULL },
   { EVC_ORG, "Organization", NULL, TRUE, "<span size=\"x-small\">%s</span>", NULL },
   { EVC_EMAIL, "E-Mail", "stock_mail", FALSE, NULL, email_types },
   { EVC_TEL, "Telephone", NULL, FALSE, NULL, phone_types },
-  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE, NULL, NULL },
+  { EVC_X_JABBER, "Jabber", GTK_STOCK_MISSING_IMAGE, FALSE, NULL, email_types },
 };
 
 /*
@@ -107,6 +108,53 @@ contact_get_attributes (EContact *contact, const char *name)
   return g_list_reverse (attrs);
 }
 
+/*
+ * Strip empty attributes from a vcard
+ */
+static void
+strip_empty_attributes (EVCard *card)
+{
+  GList *attrs, *values;
+  gboolean remove;
+  EVCardAttribute *attribute;
+
+  attrs = e_vcard_get_attributes (card);
+  while (attrs) {
+    attribute = attrs->data;
+    remove = TRUE;
+    values = e_vcard_attribute_get_values (attrs->data);
+
+    while (values) {
+      if (g_utf8_strlen (values->data, -1) > 0) {
+        remove = FALSE;
+        break;
+      }
+      values = g_list_next (values);
+    }
+
+    attrs = g_list_next (attrs);
+    if (remove)
+      e_vcard_remove_attribute (card, attribute);
+  }
+}
+
+/*
+ * Set the entry to display as a blank field (i.e. with the display name in the
+ * "background" of the widget)
+ */
+static void
+field_set_blank (GtkEntry *entry, FieldInfo *info)
+{
+  /* TODO: use some colour from the theme */
+  GdkColor gray;
+  gdk_color_parse ("LightGray", &gray);
+  gtk_entry_set_text (GTK_ENTRY (entry), info->display_name);
+  gtk_widget_modify_text (GTK_WIDGET (entry), GTK_STATE_NORMAL, &gray);
+}
+
+/*
+ * Callback for when a field entry is modified
+ */
 static void
 field_changed (GtkWidget *entry, ContactsContactPane *pane)
 {
@@ -120,7 +168,12 @@ field_changed (GtkWidget *entry, ContactsContactPane *pane)
   info = g_object_get_qdata (G_OBJECT (entry), field_quark);
   g_assert (info);
 
+
   value = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  /* don't save the value if we're just displaying the field name */
+  if (value && !strcmp (info->display_name, value))
+    return;
   
   /* TODO: this only handles single-valued attributes at the moment */
   e_vcard_attribute_remove_values (attr);
@@ -129,12 +182,48 @@ field_changed (GtkWidget *entry, ContactsContactPane *pane)
   pane->priv->dirty = TRUE;
 }
 
+/*
+ * Callback for when a field entry recieves focus
+ */
+static gboolean
+field_focus_in (GtkWidget *entry, GdkEventFocus *event, FieldInfo *info)
+{
+  if (!strcmp (gtk_entry_get_text (GTK_ENTRY (entry)), info->display_name)) {
+    /* TODO: use some colour from the theme */
+    GdkColor gray;
+    gdk_color_parse ("Black", &gray);
+    gtk_entry_set_text (GTK_ENTRY (entry), info->display_name);
+    gtk_widget_modify_text (GTK_WIDGET (entry), GTK_STATE_NORMAL, &gray);
+
+    gtk_entry_set_text (GTK_ENTRY (entry), "");
+  }
+  return FALSE;
+}
+
+/*
+ * Callback for when a field entry looses focus
+ */
+static gboolean
+field_focus_out (GtkWidget *entry, GdkEventFocus *event, FieldInfo *info)
+{
+  if (!strcmp (gtk_entry_get_text (GTK_ENTRY (entry)), "")) {
+    field_set_blank (GTK_ENTRY (entry), info);
+  }
+  return FALSE;
+}
+
+/*
+ * Callback for when the type menu needs to be shown
+ */
 static void
 show_menu (GtkWidget *widget, GdkEventButton *event, GtkMenu *menu)
 {
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
 }
 
+/*
+ * Convenience function to set the type property of a vcard attribute
+ */
 static void
 set_type (EVCardAttribute *attr, gchar *type)
 {
@@ -162,6 +251,9 @@ set_type (EVCardAttribute *attr, gchar *type)
   e_vcard_attribute_param_add_value (p, type);
 }
 
+/*
+ * Convenience function to get the type property of a vcard attribute
+ */
 static gchar*
 get_type (EVCardAttribute *attr)
 {
@@ -171,9 +263,13 @@ get_type (EVCardAttribute *attr)
   return (list) ? list->data : NULL;
 }
 
+/*
+ * Callback for when a menuitem in the attribute type menu is activated
+ */
 static void
 set_type_menu_cb (GtkWidget *widget, EVCardAttribute *attr)
 {
+  /* TODO: use quarks here */
   gchar *new_type = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-value");
   ContactsContactPane *pane = g_object_get_data (G_OBJECT (widget), "contact-pane");
   GtkLabel *label = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-label");
@@ -184,7 +280,7 @@ set_type_menu_cb (GtkWidget *widget, EVCardAttribute *attr)
 }
 
 static GtkWidget *
-make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *info, GtkSizeGroup *size)
+make_widget (ContactsContactPane *pane, EVCardAttribute *attr, FieldInfo *info, GtkSizeGroup *size)
 {
   GtkWidget *box, *type_label = NULL, *image, *event_box, *value, *menu;
   gchar *attr_value = NULL, *escaped_str, *type, *s;
@@ -224,11 +320,11 @@ make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *
       for (s = info->types[i]; (s = info->types[i]); i++)
       {
         GtkWidget *menu_item = gtk_menu_item_new_with_label (s);
+        /* TODO: use quarks here */
         g_object_set_data (G_OBJECT (menu_item), "contact-attribute-type-value", s);
         if (type_label)
           g_object_set_data (G_OBJECT (menu_item), "contact-attribute-type-label", type_label);
-          /* there should be a better way to pass the pane to the callback... */
-          g_object_set_data (G_OBJECT (menu_item), "contact-pane", pane);
+        g_object_set_data (G_OBJECT (menu_item), "contact-pane", pane);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
         g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (set_type_menu_cb), attr);
       }
@@ -250,15 +346,14 @@ make_widget (ContactsContactPane *pane, EVCardAttribute *attr, const FieldInfo *
     else
     {
       /* this is a field that doesn't have a value yet */
-      GdkColor gray;
-      gdk_color_parse ("LightGray", &gray);
-      gtk_entry_set_text (GTK_ENTRY (value), info->display_name);
-      gtk_widget_modify_text (GTK_WIDGET (value), GTK_STATE_NORMAL, &gray);
+      field_set_blank (GTK_ENTRY (value), info);
     }
 
     g_object_set_qdata (G_OBJECT (value), attr_quark, attr);
     g_object_set_qdata (G_OBJECT (value), field_quark, (gpointer)info);
     g_signal_connect (value, "changed", G_CALLBACK (field_changed), pane);
+    g_signal_connect (value, "focus-in-event", G_CALLBACK (field_focus_in), info);
+    g_signal_connect (value, "focus-out-event", G_CALLBACK (field_focus_out), info);
   } else {
     if (info->format)
     {
@@ -297,6 +392,7 @@ update_ui (ContactsContactPane *pane)
   if (pane->priv->contact == NULL) {
     if (pane->priv->editable) {
       g_warning (G_STRLOC ": TODO: create blank contact if new=true");
+      pane->priv->contact = e_contact_new ();
       return;
     } else {
       GtkWidget *w;
@@ -310,7 +406,7 @@ update_ui (ContactsContactPane *pane)
   size = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   for (i = 0; i < G_N_ELEMENTS (fields); i++) {
-    const FieldInfo *info;
+    FieldInfo *info;
     EVCardAttribute *attr;
     GtkWidget *w;
 
@@ -318,8 +414,10 @@ update_ui (ContactsContactPane *pane)
     if (info->unique) {
       /* Fast path unique fields, no need to search the entire contact */
       attr = e_vcard_get_attribute (E_VCARD (pane->priv->contact), info->vcard_field);
-      if (!attr && pane->priv->editable)
+      if (!attr && pane->priv->editable) {
          attr = e_vcard_attribute_new ("", info->vcard_field);
+         e_vcard_add_attribute (E_VCARD (pane->priv->contact), attr);
+      }
       if (attr) {
         w = make_widget (pane, attr, info, size);
         gtk_box_pack_start (GTK_BOX (pane), w, FALSE, FALSE, 4);
@@ -327,10 +425,17 @@ update_ui (ContactsContactPane *pane)
     } else {
       GList *attrs, *l;
       attrs = contact_get_attributes (pane->priv->contact, info->vcard_field);
+      if (g_list_length (attrs) < 1 && pane->priv->editable) {
+        attr = e_vcard_attribute_new ("", info->vcard_field);
+        e_vcard_add_attribute (E_VCARD (pane->priv->contact), attr);
+        w = make_widget (pane, attr, info, size);
+        gtk_box_pack_start (GTK_BOX (pane), w, FALSE, FALSE, 4);
+      }
+      else
       for (l = attrs; l ; l = g_list_next (l)) {
         EVCardAttribute *attr = l->data;
         w = make_widget (pane, attr, info, size);
-        gtk_box_pack_start (GTK_BOX (pane), w, FALSE, FALSE, 4);        
+        gtk_box_pack_start (GTK_BOX (pane), w, FALSE, FALSE, 4);
       }
     }
   }
@@ -415,6 +520,11 @@ contacts_contact_pane_set_editable (ContactsContactPane *pane, gboolean editable
 
   if (pane->priv->editable != editable) {
     pane->priv->editable = editable;
+
+    /* strip empty attributes */
+    if (editable == FALSE && pane->priv->contact)
+      strip_empty_attributes (E_VCARD (pane->priv->contact));
+
     update_ui (pane);
   }
 }
@@ -445,7 +555,6 @@ void
 contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 {
   ContactsContactPanePrivate *priv;
-
   priv = pane->priv;
 
   /* check to see if the contact is the same as the current one */
@@ -457,6 +566,7 @@ contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
   }
 
   if (priv->contact) {
+    strip_empty_attributes (E_VCARD (priv->contact));
     if (priv->dirty && priv->bookview) {
       e_book_async_commit_contact (e_book_view_get_book (priv->bookview),
                                    priv->contact,
