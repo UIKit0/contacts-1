@@ -1,3 +1,8 @@
+2007-01-29  Thomas Wood  <thonas@openedhand.com>
+
+	* src/contacts-contact-pane.c: (make_widget): Add add/remove buttons to
+	editor UI, and use a combobox for the type selector.
+
 2007-01-26  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c:

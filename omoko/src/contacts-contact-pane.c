@@ -267,15 +267,13 @@ get_type (EVCardAttribute *attr)
  * Callback for when a menuitem in the attribute type menu is activated
  */
 static void
-set_type_menu_cb (GtkWidget *widget, EVCardAttribute *attr)
+set_type_cb (GtkWidget *widget, EVCardAttribute *attr)
 {
   /* TODO: use quarks here */
-  gchar *new_type = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-value");
+  gchar *new_type = gtk_combo_box_get_active_text (GTK_COMBO_BOX (widget));
   ContactsContactPane *pane = g_object_get_data (G_OBJECT (widget), "contact-pane");
-  GtkLabel *label = g_object_get_data (G_OBJECT (widget), "contact-attribute-type-label");
 
   set_type (attr, new_type);
-  gtk_label_set_text (label, new_type);
   pane->priv->dirty = TRUE;
 }
 
@@ -284,22 +282,62 @@ make_widget (ContactsContactPane *pane, EVCardAttribute *attr, FieldInfo *info, 
 {
   GtkWidget *box, *type_label = NULL, *image, *event_box, *value, *menu;
   gchar *attr_value = NULL, *escaped_str, *type, *s;
-  gint i;
+  gint i = 0;
 
-  box = gtk_hbox_new (FALSE, 4);
+  box = gtk_hbox_new (FALSE, 0);
 
   type = get_type (attr);
   if (type == NULL && info->types != NULL)
     type = info->types[0];
 
+  /* insert add/remove buttons */
+  if (pane->priv->editable && !info->unique)
+  {
+    /* need to use an alignment here to stop the button expanding vertically */
+    GtkWidget *btn, *alignment;
+    btn = gtk_button_new ();
+    gtk_widget_set_name (btn, "addbutton");
+    alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
+    gtk_widget_set_size_request (btn, 24, 21);
+    gtk_container_add (GTK_CONTAINER (alignment), btn);
+    gtk_box_pack_start (GTK_BOX (box), alignment, FALSE, FALSE, 0);
+
+    btn = gtk_button_new ();
+    gtk_widget_set_name (btn, "removebutton");
+    gtk_widget_set_size_request (btn, 24, 21);
+    alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
+    gtk_container_add (GTK_CONTAINER (alignment), btn);
+    gtk_box_pack_start (GTK_BOX (box), alignment, FALSE, FALSE, 0);
+  }
+
+
   /* The label (if required) */
-  if (!info->unique) {
+  if (!info->unique && !pane->priv->editable) {
     type_label = gtk_label_new (type);
     if (size)
       gtk_size_group_add_widget (size, type_label);
     gtk_box_pack_start (GTK_BOX (box), type_label, FALSE, FALSE, 4);
   }
+  if (info->types && pane->priv->editable)
+  {
+    GtkWidget *combo;
+    combo = gtk_combo_box_new_text ();
+    gtk_widget_set_size_request (combo, -1, 46);
+    i = 0;
+    for (s = info->types[i]; (s = info->types[i]); i++) {
+      gtk_combo_box_append_text (combo, s);
+      if (!strcmp (s, type))
+        gtk_combo_box_set_active (combo, i);
+    }
+    g_object_set_data (G_OBJECT (combo), "contact-pane", pane);
+    g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (set_type_cb), attr);
+    if (size)
+      gtk_size_group_add_widget (size, combo);
+    gtk_box_pack_start (GTK_BOX (box), combo, FALSE, FALSE, 4);
+  }
 
+
+#if 0
   /* Field type selector */
   if (pane->priv->editable || info->icon) {
     if (pane->priv->editable && !info->unique) {
@@ -333,6 +371,7 @@ make_widget (ContactsContactPane *pane, EVCardAttribute *attr, FieldInfo *info, 
 
     }
   }
+#endif
   
   /* The value field itself */
 
