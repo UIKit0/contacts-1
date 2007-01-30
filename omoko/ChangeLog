@@ -1,3 +1,8 @@
+2007-01-30  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-contact-pane.c: (field_button_add_cb),
+	(field_button_remove_cb), (make_widget): Implement add/remove buttons
+
 2007-01-29  Thomas Wood  <thonas@openedhand.com>
 
 	* src/contacts-contact-pane.c: (make_widget): Add add/remove buttons to
