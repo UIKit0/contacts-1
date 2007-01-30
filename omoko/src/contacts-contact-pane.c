@@ -112,16 +112,19 @@ contact_get_attributes (EContact *contact, const char *name)
 
 /*
  * Strip empty attributes from a vcard
+ * Returns: the number of attributes left on the card
  */
-static void
+static gint
 strip_empty_attributes (EVCard *card)
 {
   GList *attrs, *values;
   gboolean remove;
   EVCardAttribute *attribute;
+  gint count = 0;
 
   attrs = e_vcard_get_attributes (card);
   while (attrs) {
+    count++;
     attribute = attrs->data;
     remove = TRUE;
     values = e_vcard_attribute_get_values (attrs->data);
@@ -135,9 +138,12 @@ strip_empty_attributes (EVCard *card)
     }
 
     attrs = g_list_next (attrs);
-    if (remove)
+    if (remove) {
       e_vcard_remove_attribute (card, attribute);
+      count--;
+    }
   }
+  return count;
 }
 
 /*
@@ -478,9 +484,9 @@ update_ui (ContactsContactPane *pane)
 
   if (pane->priv->contact == NULL) {
     if (pane->priv->editable) {
-      g_warning (G_STRLOC ": TODO: create blank contact if new=true");
       pane->priv->contact = e_contact_new ();
-      return;
+      /* TODO: check for error here */
+      e_book_add_contact (e_book_view_get_book (pane->priv->bookview), pane->priv->contact, NULL);
     } else {
       GtkWidget *w;
       w = gtk_label_new ("No contact to display");
@@ -643,6 +649,7 @@ contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
 {
   ContactsContactPanePrivate *priv;
   priv = pane->priv;
+  gint attr_count;
 
   /* check to see if the contact is the same as the current one */
   if (priv->contact && contact) {
@@ -653,7 +660,11 @@ contacts_contact_pane_set_contact (ContactsContactPane *pane, EContact *contact)
   }
 
   if (priv->contact) {
-    strip_empty_attributes (E_VCARD (priv->contact));
+    attr_count = strip_empty_attributes (E_VCARD (priv->contact));
+    if (attr_count == 1)
+      e_book_remove_contact (e_book_view_get_book (priv->bookview),
+                             e_contact_get_const (priv->contact, E_CONTACT_UID),
+                             NULL);
     if (priv->dirty && priv->bookview) {
       e_book_async_commit_contact (e_book_view_get_book (priv->bookview),
                                    priv->contact,

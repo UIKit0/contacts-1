@@ -1,5 +1,11 @@
 2007-01-30  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-contact-pane.c: (strip_empty_attributes),
+	(update_ui), (on_commit_cb), (contacts_contact_pane_set_contact): Fix
+	new contact function
+
+2007-01-30  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-contact-pane.c: (field_button_add_cb),
 	(field_button_remove_cb), (make_widget): Implement add/remove buttons
 
