@@ -55,6 +55,8 @@ contacts_set_available_options (ContactsData *data, gboolean new, gboolean open,
 		gtk_widget_set_sensitive (widget, open);
 	if ((widget = data->ui->edit_button))
 		gtk_widget_set_sensitive (widget, open);
+	if ((widget = data->ui->contact_export))
+		gtk_widget_set_sensitive (widget, open);
 
 	if ((widget = data->ui->delete_menuitem))
 		gtk_widget_set_sensitive (widget, delete);

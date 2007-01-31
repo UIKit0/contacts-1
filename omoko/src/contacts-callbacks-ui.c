@@ -114,22 +114,18 @@ contacts_chooser_toggle_cb (GtkCellRendererToggle * cell,
 void
 contacts_selection_cb (GtkTreeSelection * selection, ContactsData *data)
 {
-	EContact *contact;
 	gint current_pane;
 
 	current_pane = gtk_notebook_get_current_page (GTK_NOTEBOOK (data->ui->main_notebook));
 
+	/* Get the currently selected contact and update the contact summary */
+	data->contact = contacts_contact_from_selection (selection, data->contacts_table);
+
+	contacts_set_available_options (data, TRUE, (data->contact), (data->contact));
+
 	if (current_pane == CONTACTS_CONTACT_PANE)
 	{
-		/* Get the currently selected contact and update the contact summary */
-		contact = contacts_contact_from_selection (selection,
-							   data->contacts_table);
-		if (contact) {
-			contacts_display_summary (contact, data);
-		} else {
-			contacts_set_available_options (data, TRUE, FALSE, FALSE);
-			contacts_display_summary (contact, data);
-		}
+		contacts_display_summary (data->contact, data);
 	}
 
 	if (current_pane == CONTACTS_GROUPS_PANE)

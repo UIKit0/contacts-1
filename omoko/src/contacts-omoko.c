@@ -100,9 +100,9 @@ create_main_window (ContactsData *contacts_data)
 	g_signal_connect (G_OBJECT (widget), "activate",
 			  G_CALLBACK (contacts_import_cb), contacts_data);
 
-	widget = gtk_menu_item_new_with_label ("Export");
-	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (widget));
-	g_signal_connect (G_OBJECT (widget), "activate",
+	ui->contact_export = gtk_menu_item_new_with_label ("Export");
+	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (ui->contact_export));
+	g_signal_connect (G_OBJECT (ui->contact_export), "activate",
 			  G_CALLBACK (contacts_export_cb), contacts_data);
 
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), GTK_WIDGET (gtk_separator_menu_item_new()));
@@ -214,33 +214,7 @@ create_main_window (ContactsData *contacts_data)
 	contacts_contact_pane_set_editable (CONTACTS_CONTACT_PANE (ui->contact_pane), FALSE);
 	/* The book view is set later when we get it back */
 	gtk_notebook_append_page (GTK_NOTEBOOK (ui->main_notebook), ui->contact_pane, NULL);
-#if 0
-	g_object_set (ui->summary_vbox, "border-width", 12, NULL);
 
-	ui->preview_header_hbox = gtk_hbox_new (FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (ui->summary_vbox), ui->preview_header_hbox, FALSE, TRUE, 0);
-
-	ui->photo_image = gtk_image_new ();
-	gtk_box_pack_start (GTK_BOX (ui->preview_header_hbox), ui->photo_image, FALSE, TRUE, 6);
-	gtk_misc_set_padding (GTK_MISC (ui->photo_image), 1, 0);
-
-	ui->summary_name_label = gtk_label_new (NULL);
-	gtk_box_pack_start (GTK_BOX (ui->preview_header_hbox), ui->summary_name_label, TRUE, TRUE, 0);
-	GTK_WIDGET_SET_FLAGS (ui->summary_name_label, GTK_CAN_FOCUS);
-	gtk_label_set_use_markup (GTK_LABEL (ui->summary_name_label), TRUE);
-	gtk_label_set_selectable (GTK_LABEL (ui->summary_name_label), TRUE);
-	gtk_misc_set_alignment (GTK_MISC (ui->summary_name_label), 0, 0.5);
-	gtk_misc_set_padding (GTK_MISC (ui->summary_name_label), 6, 0);
-	gtk_label_set_ellipsize (GTK_LABEL (ui->summary_name_label), PANGO_ELLIPSIZE_END);
-
-	gtk_box_pack_start (GTK_BOX (ui->summary_vbox), gtk_hseparator_new (), FALSE, TRUE, 0);
-
-	ui->summary_table = gtk_table_new (1, 2, FALSE);
-	gtk_box_pack_start (GTK_BOX (ui->summary_vbox), ui->summary_table, FALSE, TRUE, 6);
-	gtk_table_set_row_spacings (GTK_TABLE (ui->summary_table), 6);
-	gtk_table_set_col_spacings (GTK_TABLE (ui->summary_table), 6);
-
-#endif
 
 	/*** groups mode ***/
 	ui->groups_vbox = gtk_vbox_new (FALSE, 0);
