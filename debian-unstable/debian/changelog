@@ -1,3 +1,10 @@
+contacts (0.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - Has a man page (Closes: #402183)
+
+ -- Ross Burton <ross@debian.org>  Fri,  2 Feb 2007 10:28:23 +0000
+
 contacts (0.2-1) unstable; urgency=low
 
   * New upstream release
