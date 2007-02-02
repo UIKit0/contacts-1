@@ -1,0 +1,14 @@
+Source: contacts
+Section: gnome
+Priority: optional
+Maintainer: Ross Burton <ross@debian.org>
+Build-Depends: debhelper (>= 4.1.0), cdbs, intltool, libgtk2.0-dev, libebook1.2-dev
+Standards-Version: 3.7.2
+
+Package: contacts
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, evolution-data-server
+Description: lightweight addressbook
+ Contacts is a small, lightweight addressbook that features advanced vCard field
+ type handling and is designed for use on hand-held devices, such as the Nokia
+ 770 or the Sharp Zaurus series of PDAs.
