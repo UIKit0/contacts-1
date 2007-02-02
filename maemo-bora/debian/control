@@ -1,0 +1,15 @@
+Source: contacts
+Section: user/office
+Priority: optional
+Maintainer: Ross Burton <ross@openedhand.com>
+Build-Depends: debhelper (>= 4.1.0), cdbs, intltool, libgtk2.0-dev, libebook-dev
+Standards-Version: 3.7.2
+
+Package: contacts
+Architecture: any
+Pre-Depends: maemo-select-menu-location
+Depends: ${shlibs:Depends}, ${misc:Depends}, evolution-data-server
+Description: lightweight addressbook
+ Contacts is a small, lightweight addressbook that features advanced vCard field
+ type handling and is designed for use on hand-held devices, such as the Nokia
+ 770/N800 or the Sharp Zaurus series of PDAs.

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    configure)
+        # TODO: only run this on first install, not upgrade.
+        maemo-select-menu-location contacts.desktop
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+    ;;
+esac
+
+#DEBHELPER#
