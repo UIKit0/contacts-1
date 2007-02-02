@@ -239,6 +239,10 @@ main (int argc, char **argv)
 
 	gtk_main ();
 
+	/* if we have modified the current contact, but not saved it, do so now */
+	if (data->changed)
+		e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+
 	/* Unload the addressbook */
 	e_book_view_stop (contacts_data->book_view);
 	g_object_unref (contacts_data->book_view);

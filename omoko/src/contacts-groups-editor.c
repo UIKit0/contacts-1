@@ -182,5 +182,5 @@ groups_checkbutton_cb (GtkWidget *checkbutton, ContactsData *data)
 	}
 
 	e_contact_set (contact, E_CONTACT_CATEGORY_LIST, current_groups);
-	e_book_async_commit_contact (data->book, contact, NULL, NULL);
+	data->changed = TRUE;
 }
