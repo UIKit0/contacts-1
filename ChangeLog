@@ -1,5 +1,15 @@
 2007-02-02  Ross Burton  <ross@openedhand.com>
 
+	* configure.ac:
+	* NEWS:
+	Version 0.3.
+
+	* src/Makefile.am:
+	* data/Makefile.am:
+	Fix dist.
+	
+2007-02-02  Ross Burton  <ross@openedhand.com>
+
 	* data/contacts.glade:
 	Actually remove the glade.
 

@@ -28,4 +28,4 @@ CLEANFILES = $(desktop_DATA)
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(desktop_in_files) $(icon_DATA) $(schema_DATA)
+EXTRA_DIST = $(desktop_in_files) $(icon_DATA) $(schema_DATA) $(man1_MANS)

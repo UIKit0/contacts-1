@@ -1,3 +1,12 @@
+Overview of Changes in 0.3 (since 0.2)
+======================================
+
+* Refactor of the source to be a little saner
+* No more Glade dependency
+* Man page (Kęstutis Biliūnas)
+* Translations: it, fi, de, nl
+
+
 Overview of Changes in 0.2 (since 0.1)
 ======================================
 

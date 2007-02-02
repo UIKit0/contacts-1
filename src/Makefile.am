@@ -9,7 +9,8 @@ AM_CFLAGS = -Wall -export-dynamic $(CONTACTS_CFLAGS)
 
 bin_PROGRAMS = contacts
 
-contacts_SOURCES =  bacon-message-connection.c \
+contacts_SOURCES = \
+                    bacon-message-connection.c \
                     bacon-message-connection.h \
                     contacts-callbacks-ebook.c \
                     contacts-callbacks-ebook.h \
@@ -22,10 +23,10 @@ contacts_SOURCES =  bacon-message-connection.c \
                     contacts-main.h \
                     contacts-utils.c \
                     contacts-utils.h \
-		    contacts-ui.c \
-		    contacts-ui.h \
-		    contacts-@FRONTEND@.c \
-		    comtacts-@FRONTEND@.h
+                    contacts-ui.c \
+                    contacts-ui.h \
+                    contacts-@FRONTEND@.c \
+                    contacts-@FRONTEND@.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
 contacts_LDFLAGS = @CONTACTS_LIBS@
