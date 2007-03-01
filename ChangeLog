@@ -1,3 +1,9 @@
+2007-03-01  Thomas Wood  <thomas@openedhand.com>
+
+	* po/LINGUAS: Added new translations
+	* po/bg.po: New Bulgarian translation from Yavor Doganov <yavor@doganov.org> (Bug 208)
+	* po/da.po: New Danish translation from Kristian Poul Herkild <kristian@herkild.dk> (Bug 212)
+
 2007-02-02  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:
