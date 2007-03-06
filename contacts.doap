@@ -38,6 +38,8 @@ xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns="http://usefulinc.com/ns/doap#">
     </foaf:Person>
   </author>
 
+  <bug-database rdf:resource="http://bugzilla.openedhand.com/"/>
+
   <repository>
     <SVNRepository>
       <browse rdf:resource="http://svn.o-hand.com/view/contacts/trunk"/>
