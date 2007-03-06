@@ -733,11 +733,12 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	
 	if (contacts_chooser (data->contacts_data, _("Change groups"), _("<b>Choose groups"
 		"</b>"), data->contacts_groups, bools, TRUE, &results)) {
-/*		gchar *new_groups = results ?
-			contacts_string_list_as_string (results, ", ") :
+
+		gchar *new_groups = results ?
+			contacts_string_list_as_string (results, ", ", FALSE) :
 			g_strdup ("None");
-		gtk_button_set_label (GTK_BUTTON (widget), new_groups);
-		g_free (new_groups);*/
+		g_free (new_groups);
+
 		e_vcard_attribute_remove_values (data->attr);
 		for (g = results; g; g = g->next) {
 			e_vcard_attribute_add_value (data->attr, g->data);

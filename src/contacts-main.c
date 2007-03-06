@@ -224,12 +224,11 @@ main (int argc, char **argv)
 		g_signal_connect (G_OBJECT (plug_widget), "destroy",
 				  G_CALLBACK (gtk_main_quit), NULL);
 		widget = contacts_data->ui->main_menubar;
-		gtk_widget_hide (widget);
 		gtk_widget_show (plug_widget);
 	} else {
 		g_signal_connect (G_OBJECT (widget), "destroy",
 				  G_CALLBACK (gtk_main_quit), NULL);
-		gtk_widget_show (widget);
+		gtk_widget_show_all (widget);
 	}
 
 	/* fix icon sizes to 16x16 for the moment... */

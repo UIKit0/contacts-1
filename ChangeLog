@@ -1,3 +1,11 @@
+2007-03-06  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-edit-pane.c: (contacts_change_groups_cb): Fix group editing/management (fixes bug 217)
+
+	* src/contacts-gtk.c: (create_main_window):
+	* src/contacts-main.c: (main):
+	Tweaks to make UI more stable and consistent
+
 2007-03-01  Thomas Wood  <thomas@openedhand.com>
 
 	* po/LINGUAS: Added new translations
