@@ -66,7 +66,6 @@ contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 void
 contacts_search_changed_cb (GtkWidget *widget, ContactsData *data)
 {
-	gtk_widget_grab_focus (data->ui->search_entry);
 	contacts_update_treeview (data);
 }
 
@@ -587,7 +586,7 @@ contacts_treeview_search_cb (GtkWidget *search_entry, GdkEventKey *event,
 	GtkTreeView *treeview)
 {
 	gtk_widget_event (search_entry, (GdkEvent *)event);
-	gtk_entry_set_position (GTK_ENTRY (search_entry), -1);
+	gtk_editable_set_position (GTK_EDITABLE (search_entry), -1);
 	
 	return FALSE;
 }
