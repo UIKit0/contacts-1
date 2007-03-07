@@ -167,7 +167,7 @@ create_main_window (ContactsData *data)
 
 	main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (main_window), _("Contacts"));
-	gtk_window_set_icon_name (GTK_WINDOW (main_window), "stock_contact");
+	gtk_window_set_icon_name (GTK_WINDOW (main_window), "contacts");
 	gtk_window_set_default_size (GTK_WINDOW (main_window), 320, 240);
 
 	vbox7 = gtk_vbox_new (FALSE, 0);

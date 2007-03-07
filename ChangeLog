@@ -1,3 +1,13 @@
+2007-03-07  Thomas Wood  <thomas@openedhand.com>
+
+	* data/Makefile.am:
+	* data/contacts.desktop.in:
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-gtk.c: (create_main_window):
+
+	Install the application icon into the hicolor icon theme and use the icon
+	theme within the application.
+
 2007-03-06  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c: (contacts_search_changed_cb): Prevent

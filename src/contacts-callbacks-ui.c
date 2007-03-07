@@ -564,21 +564,17 @@ contacts_about_cb (GtkWidget *parent)
 	/* Translators: please translate this as your own name and optionally email
 	   like so: "Your Name <your@email.com>" */
 	const gchar *translator_credits = _("translator-credits");
-	GdkPixbuf *icon;
 
-	icon = gdk_pixbuf_new_from_file (DATADIR"/pixmaps/oh-contacts.png", NULL);
 	gtk_show_about_dialog (GTK_WINDOW (parent),
 		"name", GETTEXT_PACKAGE,
 		"version", VERSION,
 		"authors", authors,
-		"logo", icon,
+		"logo-icon-name", "contacts",
 		"website", "http://projects.o-hand.com/contacts/",
 		"copyright", "(c) 2006 OpenedHand Ltd",
 		"translator-credits", translator_credits,
 		NULL);
 
-	if (icon != NULL)
-		g_object_unref (icon);
 }
 
 gboolean
