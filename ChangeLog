@@ -1,5 +1,17 @@
 2007-03-13  Thomas Wood  <thomas@openedhand.com>
 
+	* data/contacts.schemas: Add information for width and height keys
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-callbacks-ui.h:
+	* src/contacts-defs.h:
+	* src/contacts-gtk.c: (create_main_window):
+	* src/contacts-gtk.h:
+
+	Add support for saving and restoring window size on application exit
+	and start up. Fixes bug 240.
+
+2007-03-13  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-utils.c: (contacts_chooser_treeview_row_activated),
 	(contacts_chooser): Allow double click in the chooser window if it is
 	single select. Closes bug 176.

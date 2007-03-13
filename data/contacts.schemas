@@ -13,5 +13,32 @@
 		either "entry" or "alphatab".</long>
 	</locale>
 </schema>
+
+<schema>
+	<key>/schemas/apps/contacts/height</key>
+	<applyto>/apps/contacts/height</applyto>
+	<type>int</type>
+	<owner>contacts</owner>
+	<default>-1</default>
+	<locale name="C">
+		<short>Default height of the main contacts window</short>
+		<long>Default height of the main contacts window in pixels. A
+		value of -1 unsets the default height.</long>
+	</locale>
+</schema>
+
+<schema>
+	<key>/schemas/apps/contacts/width</key>
+	<applyto>/apps/contacts/width</applyto>
+	<type>int</type>
+	<owner>contacts</owner>
+	<default>-1</default>
+	<locale name="C">
+		<short>Default width of the main contacts window</short>
+		<long>Default width of the main contacts window in pixels. A
+		value of -1 unsets the default width.</long>
+	</locale>
+</schema>
+
 </schemalist>
 </gconfschemafile>

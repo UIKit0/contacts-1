@@ -67,3 +67,5 @@ gboolean contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 
 gint contacts_sort_treeview_cb (GtkTreeModel * model, GtkTreeIter * a,
 				GtkTreeIter * b, gpointer user_data);
+
+gboolean contacts_main_window_delete_event_cb (GtkWidget *main_window, gpointer data);

@@ -23,6 +23,10 @@
 #ifndef DEFS_H
 #define DEFS_H
 
+#define GCONF_PATH "/apps/contacts"
+#define GCONF_KEY_SEARCH "/apps/contacts/search_type"
+
+
 enum {
 	ADR_POBOX = 0,
 	ADR_EXT,	/* Multiple line */

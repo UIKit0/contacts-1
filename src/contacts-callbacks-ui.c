@@ -714,3 +714,17 @@ contacts_sort_treeview_cb (GtkTreeModel * model, GtkTreeIter * a, GtkTreeIter * 
 	return returnval;
 }
 
+gboolean
+contacts_main_window_delete_event_cb (GtkWidget *main_window, gpointer data)
+{
+#ifdef HAVE_GCONF
+	GConfClient *client;
+	gint width, height;
+	client = gconf_client_get_default ();
+	gtk_window_get_size (main_window, &width, &height);
+	gconf_client_set_int (client, GCONF_PATH "/width", width, NULL);
+	gconf_client_set_int (client, GCONF_PATH "/height", height, NULL);
+	g_object_unref (G_OBJECT (client));
+#endif
+	return FALSE;
+}

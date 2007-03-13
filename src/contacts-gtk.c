@@ -23,6 +23,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glib.h>
+#include "config.h"
 #include "contacts-callbacks-ui.h"
 #include "contacts-edit-pane.h"
 #include "contacts-main.h"
@@ -30,8 +31,6 @@
 #include <gconf/gconf-client.h>
 #endif
 
-#define GCONF_PATH "/apps/contacts"
-#define GCONF_KEY_SEARCH "/apps/contacts/search_type"
 
 static GtkWidget *groups_combobox;
 
@@ -162,6 +161,12 @@ create_main_window (ContactsData *data)
 	GtkAccelGroup *accel_group;
 	ContactsUI *ui = data->ui;
 	GtkSizeGroup *size_group;
+
+#ifdef HAVE_GCONF
+	GConfClient *client;
+	gchar *search;
+	gint width, height;
+#endif
 
 	accel_group = gtk_accel_group_new ();
 
@@ -431,6 +436,9 @@ create_main_window (ContactsData *data)
 
 
 	/* connect signals */
+	g_signal_connect (G_OBJECT (main_window), "delete-event",
+			G_CALLBACK (contacts_main_window_delete_event_cb), data);
+
 	g_signal_connect ((gpointer) main_window, "destroy",
 			G_CALLBACK (gtk_main_quit),
 			NULL);
@@ -558,7 +566,11 @@ create_main_window (ContactsData *data)
 	gconf_client_add_dir (client, GCONF_PATH, GCONF_CLIENT_PRELOAD_NONE,
 		NULL);
 	gconf_client_notify_add (client, GCONF_KEY_SEARCH,
-		contacts_gconf_search_cb, xml, NULL, NULL);
+		contacts_gconf_search_cb, data, NULL, NULL);
+
+	width = gconf_client_get_int (client, GCONF_PATH "/width", NULL);
+	height = gconf_client_get_int (client, GCONF_PATH "/height", NULL);
+	gtk_window_set_default_size (GTK_WINDOW (main_window), width, height);
 #endif
 
 }

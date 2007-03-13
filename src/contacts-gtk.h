@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, 
  * Boston, MA  02110-1301  USA
  */
- 
- 
+
 void contacts_create_ui (ContactsData *data);
 void contacts_ui_update_groups_list (ContactsData *data);
