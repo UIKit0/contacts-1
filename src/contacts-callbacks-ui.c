@@ -560,7 +560,11 @@ contacts_paste_cb (GtkWindow *main_window)
 void
 contacts_about_cb (GtkWidget *parent)
 {
-	gchar *authors[] = {"Chris Lord <chris@o-hand.com>", NULL};
+	gchar *authors[] = {"Chris Lord <chris@openedhand.com>",
+			    "Ross Burton <ross@openedhand.com>",
+			    "Matthew Allum <mallum@openedhand.com>",
+			    "Thomas Wood <thomas@openedhand.com>",
+			    NULL};
 	/* Translators: please translate this as your own name and optionally email
 	   like so: "Your Name <your@email.com>" */
 	const gchar *translator_credits = _("translator-credits");
