@@ -1,3 +1,9 @@
+contacts (0.4-1) bora; urgency=low
+
+  * New upstream release.
+
+ -- Ross Burton <ross@openedhand.com>  Tue, 13 Mar 2007 14:55:28 +0000
+
 contacts (0.3-1) bora; urgency=low
 
   * Re-package for Bora.
