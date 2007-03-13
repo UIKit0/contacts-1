@@ -1,3 +1,15 @@
+Overview of Changes in 0.4 (since 0.3)
+======================================
+
+* Add support for saving and restoring window size on application exit and
+  start up. (bug 240)
+* Allow double click in the chooser window if it is single select. (bug 176)
+* Use the icon theme for the application icon
+* Prevent the search entry selecting text on backspace. (bug 53)
+* Fix group editing/management (bug 217)
+* New translations: Bulgarian and Danish
+
+
 Overview of Changes in 0.3 (since 0.2)
 ======================================
 

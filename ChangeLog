@@ -1,5 +1,12 @@
 2007-03-13  Thomas Wood  <thomas@openedhand.com>
 
+	* NEWS:
+	* configure.ac:
+
+	Updated for 0.4 release
+
+2007-03-13  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-callbacks-ui.c: Add more developers to the about dialog.
 
 2007-03-13  Thomas Wood  <thomas@openedhand.com>
