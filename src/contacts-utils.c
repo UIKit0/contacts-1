@@ -665,6 +665,13 @@ contacts_entries_get_values (GtkWidget *widget, GList *list) {
 	return list;
 }
 
+static void
+contacts_chooser_treeview_row_activated (GtkTreeView *tree, gpointer data)
+{
+	GtkWidget *dialog = g_object_get_data (G_OBJECT (tree), "parent_dialog");
+	gtk_dialog_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+}
+
 gboolean
 contacts_chooser (ContactsData *data, const gchar *title, const gchar *label_markup,
 		  GList *choices, GList *chosen, gboolean allow_custom,
@@ -726,6 +733,18 @@ contacts_chooser (ContactsData *data, const gchar *title, const gchar *label_mar
 	
 	widgets = contacts_set_widgets_desensitive (
 		data->ui->main_window);
+
+	/*
+	 * Set the parent dialog as data on the treeview.
+	 * Passing the dialog through the user data callback causes problems
+	 * because of the interaction between the application and the dialog
+	 * main loops.
+	 */
+	g_object_set_data (G_OBJECT (tree), "parent_dialog", dialog);
+
+	if (!multiple_choice)
+		g_signal_connect (G_OBJECT(tree), "row-activated", (GCallback) contacts_chooser_treeview_row_activated, NULL);
+
 	dialog_code = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_hide (dialog);
 	if (dialog_code == GTK_RESPONSE_OK) {
