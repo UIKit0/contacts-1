@@ -1,3 +1,10 @@
+2007-03-19  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb): Move update listview and update groups to
+	sequence-complete callback. Fixes a bug where the groups list menu was never
+	initialised when there were no groups defined.
+
 2007-03-13  Thomas Wood  <thomas@openedhand.com>
 
 	* NEWS:

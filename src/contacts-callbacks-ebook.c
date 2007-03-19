@@ -89,15 +89,11 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 				{
 					data->contacts_groups = g_list_prepend
 					   (data->contacts_groups, group->data);
-					contacts_ui_update_groups_list (data);
 				}
 			}
 			g_list_free (contact_groups);
 		}
 	}
-	
-	/* Update view */
-	contacts_update_treeview (data);
 }
 
 void
@@ -167,7 +163,6 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 				{
 					data->contacts_groups = g_list_prepend 
 					   (data->contacts_groups, group->data);
-					contacts_ui_update_groups_list (data);
 				}
 			}
 			g_list_free (contact_groups);
@@ -175,9 +170,6 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 	}
 	
 	if (current_contact) g_object_unref (current_contact);
-
-	/* Update view */
-	contacts_update_treeview (data);
 }
 
 /* TODO: Remove groups that no longer contain contacts */
@@ -190,9 +182,6 @@ contacts_removed_cb (EBookView *book_view, const GList *ids, ContactsData *data)
 		const gchar *uid = (const gchar *)i->data;
 		g_hash_table_remove (data->contacts_table, uid);
 	}
-
-	/* Update view */
-	contacts_update_treeview (data);
 }
 
 void
@@ -214,4 +203,11 @@ contacts_sequence_complete_cb (EBookView *book_view, const GList *ids, ContactsD
 		data->initialising = FALSE;
 		gtk_tree_view_scroll_to_point (GTK_TREE_VIEW (data->ui->contacts_treeview), 0, 0);
 	}
+
+	/* Update view */
+	contacts_update_treeview (data);
+
+	/* Update filter menu */
+	contacts_ui_update_groups_list (data);
+
 }
