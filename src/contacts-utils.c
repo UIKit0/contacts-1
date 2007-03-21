@@ -674,12 +674,11 @@ contacts_chooser_treeview_row_activated (GtkTreeView *tree, gpointer data)
 
 gboolean
 contacts_chooser (ContactsData *data, const gchar *title, const gchar *label_markup,
-		  GList *choices, GList *chosen, gboolean allow_custom,
+		  GList *choices, GList *chosen, gboolean allow_custom,gboolean multiple_choice,
 		  GList **results)
 {
 	GList *c, *d, *widgets;
 	GtkWidget *label_widget;
-	gboolean multiple_choice = chosen ? TRUE : FALSE;
 	GtkWidget *dialog = data->ui->chooser_dialog;
 	GtkTreeView *tree = GTK_TREE_VIEW (data->ui->chooser_treeview);
 	GtkTreeModel *model = gtk_tree_view_get_model (tree);

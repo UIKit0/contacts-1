@@ -732,7 +732,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	}
 	
 	if (contacts_chooser (data->contacts_data, _("Change groups"), _("<b>Choose groups"
-		"</b>"), data->contacts_groups, bools, TRUE, &results)) {
+		"</b>"), data->contacts_groups, bools, TRUE, TRUE, &results)) {
 
 		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ", FALSE) :
@@ -745,6 +745,11 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 		}
 		g_list_free (results);
 		data->contacts_data->changed = TRUE;
+
+		/* this commit updates our internal list of available groups so that any new groups 
+		 * are available next time the dialog is opened
+		 */
+		e_book_commit_contact (data->contacts_data->book, data->contacts_data->contact, NULL);
 	}
 }
 
@@ -795,7 +800,7 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 	if (contacts_chooser (data, _("Add field"),
                               /* TODO: make nicer for i18n */
 			      _("<b>Choose a field</b>"), fields,
-			      NULL, FALSE, &field)) {
+			      NULL, FALSE, FALSE, &field)) {
 		GtkWidget *label, *edit, *table;
 		const ContactsField *cfield;
 		EVCardAttribute *attr;

@@ -75,7 +75,7 @@ GList *contacts_entries_get_values (GtkWidget *widget, GList *list);
 
 gboolean contacts_chooser (ContactsData *data, const gchar *title,
 			   const gchar *label_markup, GList *choices,
-			   GList *chosen, gboolean allow_custom,
+			   GList *chosen, gboolean allow_custom, gboolean multiple_choice,
 			   GList **results);
 
 GList *contacts_set_widgets_desensitive (GtkWidget *widget);

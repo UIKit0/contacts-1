@@ -1,3 +1,16 @@
+2007-03-21  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-edit-pane.c: (contacts_change_groups_cb),
+	(contacts_add_field_cb):
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+
+	Make sure the chooser is always multiselect when required. Fixes a problem
+	when adding the first ever group.
+
+	Commit the contact when closing the groups chooser so that new groups are
+	available when re-opening the groups chooser but before closing the contact
+
 2007-03-19  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
