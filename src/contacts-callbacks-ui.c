@@ -560,14 +560,29 @@ contacts_paste_cb (GtkWindow *main_window)
 void
 contacts_about_cb (GtkWidget *parent)
 {
-	gchar *authors[] = {"Chris Lord <chris@openedhand.com>",
+	const char *authors[] = {"Chris Lord <chris@openedhand.com>",
 			    "Ross Burton <ross@openedhand.com>",
 			    "Matthew Allum <mallum@openedhand.com>",
 			    "Thomas Wood <thomas@openedhand.com>",
 			    NULL};
+	const char *license = {
+	  N_(
+	     "Contacts is free software; you can redistribute it and/or modify "
+	     "it under the terms of the GNU General Public License as published by "
+	     "the Free Software Foundation; either version 2 of the License, or "
+	     "(at your option) any later version.\n\n"
+	     "Contacts is distributed in the hope that it will be useful, "
+	     "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+	     "GNU General Public License for more details.\n\n"
+	     "You should have received a copy of the GNU General Public License "
+	     "along with Contacts; if not, write to the Free Software Foundation, Inc., "
+	     "51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+	     )
+	};
 	/* Translators: please translate this as your own name and optionally email
 	   like so: "Your Name <your@email.com>" */
-	const gchar *translator_credits = _("translator-credits");
+	const char *translator_credits = _("translator-credits");
 
 	gtk_show_about_dialog (GTK_WINDOW (parent),
 		"name", GETTEXT_PACKAGE,
@@ -575,8 +590,10 @@ contacts_about_cb (GtkWidget *parent)
 		"authors", authors,
 		"logo-icon-name", "contacts",
 		"website", "http://projects.o-hand.com/contacts/",
-		"copyright", "(c) 2006 OpenedHand Ltd",
+		"copyright", "\302\251 2006 OpenedHand Ltd",
 		"translator-credits", translator_credits,
+		"license", license,
+		"wrap-license", TRUE,
 		NULL);
 
 }
