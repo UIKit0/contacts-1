@@ -462,7 +462,7 @@ create_main_window (ContactsData *data)
 			GTK_OBJECT (main_window));
 	g_signal_connect_swapped ((gpointer) about1, "activate",
 			G_CALLBACK (contacts_about_cb),
-			NULL);
+			main_window);
 	g_signal_connect_swapped ((gpointer) groups_combobox, "changed",
 			G_CALLBACK (contacts_update_treeview),
 			data);

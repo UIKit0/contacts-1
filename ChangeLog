@@ -1,5 +1,10 @@
 2007-03-26  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-gtk.c:
+	Pass the parent window to the about callback (#256).
+	
+2007-03-26  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-callbacks-ui.c:
 	Add the license field (#257).
 
