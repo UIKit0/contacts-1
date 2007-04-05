@@ -260,6 +260,9 @@ contacts_setup_ui (ContactsData *data)
 	/* Enable multiple select (for delete) */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
+	/* Make sure we have an initial groups menu */
+	contacts_ui_update_groups_list (data);
+
 	/* Set transient parent for chooser */
 	gtk_window_set_transient_for (
 		GTK_WINDOW (data->ui->chooser_dialog),

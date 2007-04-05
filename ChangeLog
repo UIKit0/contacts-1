@@ -1,3 +1,8 @@
+2007-04-05  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-ui.c: (contacts_setup_ui): Make sure we always have an initial
+	groups list.
+
 2007-03-26  Ross Burton  <ross@openedhand.com>
 
 	* src/contacts-gtk.c:
