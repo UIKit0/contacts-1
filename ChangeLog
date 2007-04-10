@@ -1,3 +1,9 @@
+2007-04-10  Thomas Wood  <thomas@openedhand.com>
+
+	* data/contacts.png:
+	* data/contacts.svg:
+	Add new contacts icon, including svg version.
+
 2007-04-05  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-ui.c: (contacts_setup_ui): Make sure we always have an initial
