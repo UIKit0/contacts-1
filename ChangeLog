@@ -1,3 +1,8 @@
+2007-04-16  Ross Burton  <ross@openedhand.com>
+
+	* data/contacts.desktop.in:
+	Remove Application and PIM, they are not registered categories.
+
 2007-04-10  Thomas Wood  <thomas@openedhand.com>
 
 	* data/contacts.png:
