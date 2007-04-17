@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-02 21:52+0100\n"
-"PO-Revision-Date: 2007-03-02 22:17+0100\n"
+"POT-Creation-Date: 2007-04-16 21:47+0200\n"
+"PO-Revision-Date: 2007-04-16 22:00+0100\n"
 "Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
 "Language-Team: Polish <dominikowski@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -23,47 +23,47 @@ msgstr "Książka adresowa"
 
 #: ../data/contacts.desktop.in.h:2
 #: ../src/contacts-edit-pane.c:84
-#: ../src/contacts-gtk.c:169
+#: ../src/contacts-gtk.c:174
 msgid "Contacts"
 msgstr "Kontakty"
 
-#: ../src/contacts-callbacks-ui.c:162
+#: ../src/contacts-callbacks-ui.c:161
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: ../src/contacts-callbacks-ui.c:166
+#: ../src/contacts-callbacks-ui.c:165
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
 msgstr "Czy na pewno usunąć \"%s\"?"
 
-#: ../src/contacts-callbacks-ui.c:170
+#: ../src/contacts-callbacks-ui.c:169
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
 msgstr "Czy na pewno usunąć %d kontaktów?"
 
-#: ../src/contacts-callbacks-ui.c:251
+#: ../src/contacts-callbacks-ui.c:250
 #, c-format
 msgid "Would you like to import contact '%s'?"
 msgstr "Czy zaimportować kontakt \"%s\"?"
 
-#: ../src/contacts-callbacks-ui.c:256
+#: ../src/contacts-callbacks-ui.c:255
 msgid "_Show contact"
 msgstr "_Wyświetl kontakt"
 
-#: ../src/contacts-callbacks-ui.c:257
+#: ../src/contacts-callbacks-ui.c:256
 msgid "_Import contact"
 msgstr "_Importuj kontakt"
 
-#: ../src/contacts-callbacks-ui.c:311
+#: ../src/contacts-callbacks-ui.c:310
 msgid "Import Contact"
 msgstr "Importowanie kontaktu"
 
-#: ../src/contacts-callbacks-ui.c:379
+#: ../src/contacts-callbacks-ui.c:378
 msgid "Export Contact"
 msgstr "Eksportowanie kontaktu"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:416
+#: ../src/contacts-callbacks-ui.c:415
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
@@ -72,17 +72,31 @@ msgstr ""
 "<big><b>Plik \"%s\" już istnieje.\n"
 "Czy go zastąpić?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:422
+#: ../src/contacts-callbacks-ui.c:421
 msgid "Replacing it will overwrite its contents."
 msgstr "Zastąpienie go nadpisze jego zawartość."
 
-#: ../src/contacts-callbacks-ui.c:426
+#: ../src/contacts-callbacks-ui.c:425
 msgid "_Replace"
 msgstr "_Zastąp"
 
+#: ../src/contacts-callbacks-ui.c:570
+msgid ""
+"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+msgstr ""
+"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:567
+#: ../src/contacts-callbacks-ui.c:585
 msgid "translator-credits"
 msgstr "Tomasz Dominikowski <dominikowski@gmail.com>"
 
@@ -107,16 +121,16 @@ msgstr "Zmień grupy"
 msgid "<b>Choose groups</b>"
 msgstr "<b>Wybierz grupy</b>"
 
-#: ../src/contacts-edit-pane.c:794
+#: ../src/contacts-edit-pane.c:800
 msgid "Add field"
 msgstr "Dodaj pole"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:796
+#: ../src/contacts-edit-pane.c:802
 msgid "<b>Choose a field</b>"
 msgstr "<b>Wybierz pole</b>"
 
-#: ../src/contacts-edit-pane.c:1165
+#: ../src/contacts-edit-pane.c:1171
 msgid "Edit contact"
 msgstr "Modyfikuj kontakt"
 
@@ -176,75 +190,74 @@ msgstr "Otwórz obraz"
 msgid "No image"
 msgstr "Bez obrazu"
 
-#: ../src/contacts-gtk.c:179
+#: ../src/contacts-gtk.c:184
 msgid "_Contacts"
 msgstr "_Kontakty"
 
-#: ../src/contacts-gtk.c:196
+#: ../src/contacts-gtk.c:201
 msgid "_Import"
 msgstr "_Importuj"
 
-#: ../src/contacts-gtk.c:206
+#: ../src/contacts-gtk.c:211
 msgid "_Contact"
 msgstr "_Kontakt"
 
-#: ../src/contacts-gtk.c:215
+#: ../src/contacts-gtk.c:221
 msgid "_Groups"
 msgstr "_Grupy"
 
-#: ../src/contacts-gtk.c:218
+#: ../src/contacts-gtk.c:224
 msgid "_Export"
 msgstr "_Eksportuj"
 
-#: ../src/contacts-gtk.c:228
+#: ../src/contacts-gtk.c:234
 msgid "_Edit"
 msgstr "_Modyfikuj"
 
-#: ../src/contacts-gtk.c:243
+#: ../src/contacts-gtk.c:249
 msgid "_Help"
 msgstr "P_omoc"
 
-#: ../src/contacts-gtk.c:296
+#: ../src/contacts-gtk.c:301
 msgid "_Search:"
 msgstr "Wy_szukaj:"
 
-#: ../src/contacts-gtk.c:304
+#: ../src/contacts-gtk.c:310
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:309
+#: ../src/contacts-gtk.c:315
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:315
+#: ../src/contacts-gtk.c:321
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:320
+#: ../src/contacts-gtk.c:326
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:325
+#: ../src/contacts-gtk.c:331
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:340
-msgid "<span><big><b>Welcome to Contacts</b></big></span>"
-msgstr "<span><big><b>Witaj w Kontaktach</b></big></span>"
-
-#: ../src/contacts-gtk.c:404
+#: ../src/contacts-gtk.c:412
 msgid "_Add Field"
 msgstr "Dod_aj pole"
 
-#: ../src/contacts-gtk.c:408
+#: ../src/contacts-gtk.c:416
 msgid "_Remove Field"
 msgstr "_Usuń pole"
 
-#: ../src/contacts-gtk.c:585
+#: ../src/contacts-gtk.c:595
 msgid "Edit Types"
 msgstr "Modyfikuj typy"
 
-#: ../src/contacts-gtk.c:597
+#: ../src/contacts-gtk.c:607
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Dokonaj wyboru:</b></span>"
+
+#~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
+#~ msgstr "<span><big><b>Witaj w Kontaktach</b></big></span>"
 
