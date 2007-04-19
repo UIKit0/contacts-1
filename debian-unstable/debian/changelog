@@ -1,3 +1,9 @@
+contacts (0.4-2) unstable; urgency=low
+
+  * Enable GConf.
+
+ -- Ross Burton <ross@debian.org>  Thu, 19 Apr 2007 20:35:24 +0100
+
 contacts (0.4-1) unstable; urgency=low
 
   * New upstream release.
