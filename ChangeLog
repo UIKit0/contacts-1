@@ -1,3 +1,7 @@
+2007-04-19  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-utils.c: Add birthday field. Closes bug 201.
+
 2007-04-16  Ross Burton  <ross@openedhand.com>
 
 	* data/contacts.desktop.in:
