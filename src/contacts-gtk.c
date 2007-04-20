@@ -559,9 +559,12 @@ create_main_window (ContactsData *data)
 	if (!search) {
 		gconf_client_set_string (
 			client, GCONF_KEY_SEARCH, "entry", NULL);
-	} else if (strcmp (search, "alphatab") == 0) {
-		gtk_widget_hide (search_entry_hbox);
-		gtk_widget_show (search_tab_hbox);
+	} else {
+		if (strcmp (search, "alphatab") == 0) {
+			gtk_widget_hide (search_entry_hbox);
+			gtk_widget_show (search_tab_hbox);
+		}
+		g_free (search);
 	}
 	gconf_client_add_dir (client, GCONF_PATH, GCONF_CLIENT_PRELOAD_NONE,
 		NULL);

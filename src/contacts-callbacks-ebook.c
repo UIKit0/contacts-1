@@ -88,9 +88,10 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 							 (GCompareFunc) strcmp))
 				{
 					data->contacts_groups = g_list_prepend
-					   (data->contacts_groups, group->data);
+					   (data->contacts_groups, g_strdup (group->data));
 				}
 			}
+			g_list_foreach (contact_groups, (GFunc) g_free, NULL);
 			g_list_free (contact_groups);
 		}
 	}

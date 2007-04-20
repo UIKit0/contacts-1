@@ -1,3 +1,17 @@
+2007-04-20  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
+	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
+	* src/contacts-edit-pane.c: (contacts_edit_widget_new),
+	(contacts_edit_add_focus_events), (contacts_add_field_cb):
+	* src/contacts-gtk.c: (create_main_window):
+	* src/contacts-main.c: (main):
+	* src/contacts-ui.c: (contacts_display_summary):
+	* src/contacts-utils.c: (contacts_contact_from_tree_path),
+	(contacts_string_list_as_string), (contacts_chooser):
+
+	Plug a dozen memory leaks, and a few compiler warnings
+
 2007-04-19  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-utils.c: Add birthday field. Closes bug 201.

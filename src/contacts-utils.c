@@ -270,11 +270,12 @@ contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path, GHashTa
 {
 	GtkTreeIter iter;
 	if (gtk_tree_model_get_iter (model, &iter, path)) {
-		const gchar *uid;
+		gchar *uid;
 		EContactListHash *hash;
 		gtk_tree_model_get (model, &iter, CONTACT_UID_COL, &uid, -1);
 		if (uid) {
 			hash = g_hash_table_lookup (contacts_table, uid);
+			g_free (uid);
 			if (hash)
 				return hash->contact;
 		}
@@ -468,7 +469,7 @@ gchar *
 contacts_string_list_as_string (GList *list, const gchar *separator,
 				gboolean include_empty)
 {
-	gchar *old_string, *new_string;
+	gchar *old_string, *new_string = NULL;
 	GList *c;
 	
 	if (!include_empty)
@@ -781,14 +782,15 @@ contacts_chooser (ContactsData *data, const gchar *title, const gchar *label_mar
 			} else {
 				gtk_tree_model_get (model, &iter,
 					CHOOSER_NAME_COL, &selection_name, -1);
-				*results = g_list_append (NULL, selection_name);				
+				*results = g_list_append (NULL, selection_name);
 				returnval = TRUE;
 			}
 		}
 	}
 	
 	contacts_set_widgets_sensitive (widgets);
-	
+	g_list_free (widgets);
+
 	return returnval;
 }
 

@@ -498,7 +498,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		}
 	} else if (multi_line) {
 		/* Handle single-valued fields that span multiple lines */
-		const gchar *string = e_vcard_attribute_get_value (attr);
+		gchar *string = e_vcard_attribute_get_value (attr);
 		
 		GtkWidget *container = NULL;
 		GtkTextView *view = GTK_TEXT_VIEW (gtk_text_view_new ());
@@ -507,7 +507,8 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		gtk_widget_set_name (GTK_WIDGET (view), attr_name);
 		gtk_text_buffer_set_text (buffer, string ? string : "", -1);
 		gtk_text_view_set_editable (view, TRUE);
-		
+		g_free (string);
+
 		container = gtk_frame_new (NULL);
 		gtk_frame_set_shadow_type (
 			GTK_FRAME (container), GTK_SHADOW_IN);
@@ -533,13 +534,14 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				  (contacts_entry_changed), data);
 	} else {
 		/* Handle simple single-valued single-line fields */
-		const gchar *string = e_vcard_attribute_get_value (attr);
+		gchar *string = e_vcard_attribute_get_value (attr);
 		GtkWidget *entry, *container = NULL;
 
 		entry = gtk_entry_new ();
 		gtk_entry_set_text (GTK_ENTRY (entry),
 				    string ? string : "");
 		gtk_widget_set_name (entry, attr_name);
+		g_free (string);
 
 /*		if (type_edit) {
 			gtk_widget_show (type_edit);
@@ -630,6 +632,7 @@ contacts_edit_add_focus_events (GtkWidget *widget, GtkWidget *ebox,
 			contacts_edit_add_focus_events (GTK_WIDGET (c->data),
 				ebox, widgets);
 		}
+		g_list_free (children);
 	} else if (GTK_IS_WIDGET (widget)) {	
 		GList *w;
 		g_signal_connect (G_OBJECT (widget), "focus-in-event",
@@ -821,6 +824,7 @@ contacts_add_field_cb (GtkWidget *button, ContactsData *data)
 		contacts_append_to_edit_table (GTK_TABLE (table), label, edit,
 			TRUE);
 		
+		g_list_foreach (field, (GFunc) g_free, NULL);
 		g_list_free (field);
 	}
 	

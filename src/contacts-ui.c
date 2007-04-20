@@ -60,6 +60,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 
 	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
 	if (groups) {
+		g_list_foreach (groups, (GFunc) g_free, NULL);
 		g_list_free (groups);
 		g_free (groups_text);
 	}

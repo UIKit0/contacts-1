@@ -140,10 +140,6 @@ main (int argc, char **argv)
 {
 	GError *error = NULL;
 	BaconMessageConnection *mc;
-#ifdef HAVE_GCONF
-	const char *search;
-	GConfClient *client;
-#endif
 	ContactsData *contacts_data;	/* Variable for passing around data -
 					 * see contacts-defs.h.
 					 */

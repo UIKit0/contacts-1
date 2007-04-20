@@ -201,9 +201,11 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 		default:
 			break;
 	}
+	g_list_foreach (contact_list, (GFunc) g_free, NULL);
 	g_list_free (contact_list);
 	gtk_widget_destroy (dialog);
 	contacts_set_widgets_sensitive (widgets);
+	g_list_free (widgets);
 }
 
 void
@@ -615,7 +617,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	gboolean result = FALSE;
 	gchar *group = NULL;
 	GList *groups, *g;
-	const gchar *uid;
+	gchar *uid;
 	EContactListHash *hash;
 	const gchar *search_string;
 	ContactsData *data;
@@ -624,6 +626,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	gtk_tree_model_get (model, iter, CONTACT_UID_COL, &uid, -1);
 	if (!uid) return FALSE;
 	hash = g_hash_table_lookup (contacts_table, uid);
+	g_free (uid);
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 
@@ -742,7 +745,7 @@ contacts_main_window_delete_event_cb (GtkWidget *main_window, gpointer data)
 	GConfClient *client;
 	gint width, height;
 	client = gconf_client_get_default ();
-	gtk_window_get_size (main_window, &width, &height);
+	gtk_window_get_size (GTK_WINDOW (main_window), &width, &height);
 	gconf_client_set_int (client, GCONF_PATH "/width", width, NULL);
 	gconf_client_set_int (client, GCONF_PATH "/height", height, NULL);
 	g_object_unref (G_OBJECT (client));
