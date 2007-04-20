@@ -265,6 +265,26 @@ contacts_field_pretty_name (const ContactsField *field)
 		return NULL;
 }
 
+gint
+contacts_compare_attributes (EVCardAttribute *attrA, EVCardAttribute *attrB)
+{
+	gint a = 0, b = 0, i;
+	const gchar *nameA, *nameB;
+
+	nameA = e_vcard_attribute_get_name (attrA);
+	nameB = e_vcard_attribute_get_name (attrB);
+
+	for (i = 0; contacts_fields[i].vcard_field; i++)
+	{
+		if (strcmp (nameA, contacts_fields[i].vcard_field))
+			a = contacts_fields[i].priority;
+		if (strcmp (nameB, contacts_fields[i].vcard_field))
+			b = contacts_fields[i].priority;
+	}
+
+	return b - a;
+}
+
 EContact *
 contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path, GHashTable *contacts_table)
 {

@@ -91,6 +91,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	g_object_set (widget, "n-rows", 1, NULL);
 	g_object_set (widget, "n-columns", 2, NULL);
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
+	attributes = g_list_sort (attributes, (GCompareFunc) contacts_compare_attributes);
 	g_value_init (can_focus, G_TYPE_BOOLEAN);
 	g_value_set_boolean (can_focus, FALSE);
 	for (a = attributes; a; a = a->next) {
@@ -103,7 +104,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		const ContactsField *field = contacts_get_contacts_field (
 			e_vcard_attribute_get_name (attr));
 			
-		if (!field || field->priority >= REQUIRED)
+		if (!field)
 			continue;
 		
 		values = e_vcard_attribute_get_values (attr);

@@ -42,6 +42,7 @@ const ContactsField *contacts_get_contacts_fields ();
 
 const gchar *contacts_field_pretty_name (const ContactsField *field);
 
+gint contacts_compare_attributes (EVCardAttribute *attrA, EVCardAttribute *attrB);
 EContact *
 contacts_contact_from_tree_path (GtkTreeModel *model, GtkTreePath *path,
 				GHashTable *contacts_table);

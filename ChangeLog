@@ -1,5 +1,12 @@
 2007-04-20  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-ui.c: (contacts_display_summary):
+	* src/contacts-utils.c: (contacts_field_pretty_name):
+	* src/contacts-utils.h:
+	Don't hide any fields in view mode, and try and sort them by priority.
+
+2007-04-20  Thomas Wood  <thomas@openedhand.com>
+
 	Patch by: Diego Escalante Urrelo
 
 	* src/contacts-edit-pane.c: (contacts_edit_ok_cb),
