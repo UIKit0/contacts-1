@@ -716,7 +716,6 @@ contacts_append_to_edit_table (GtkTable *table, GtkWidget *label,
 
 typedef struct {
 	EVCardAttribute *attr;
-	GList *contacts_groups;
 	ContactsData *contacts_data;
 } ContactsGroupChangeData;
 
@@ -727,7 +726,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	GList *results = NULL;
 	GList *values = e_vcard_attribute_get_values (data->attr);
 
-	for (g = data->contacts_groups; g; g = g->next) {
+	for (g = data->contacts_data->contacts_groups; g; g = g->next) {
 		if (g_list_find_custom (values, g->data, (GCompareFunc)strcmp))
 			bools = g_list_append (bools, GINT_TO_POINTER (TRUE));
 		else
@@ -735,7 +734,7 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 	}
 	
 	if (contacts_chooser (data->contacts_data, _("Change groups"), _("<b>Choose groups"
-		"</b>"), data->contacts_groups, bools, TRUE, TRUE, &results)) {
+		"</b>"), data->contacts_data->contacts_groups, bools, TRUE, TRUE, &results)) {
 
 		gchar *new_groups = results ?
 			contacts_string_list_as_string (results, ", ", FALSE) :
@@ -745,14 +744,10 @@ contacts_change_groups_cb (GtkWidget *widget, ContactsGroupChangeData *data)
 		e_vcard_attribute_remove_values (data->attr);
 		for (g = results; g; g = g->next) {
 			e_vcard_attribute_add_value (data->attr, g->data);
+			if (!g_list_find_custom (data->contacts_data->contacts_groups, g->data, (GCompareFunc) strcmp))
+					data->contacts_data->contacts_groups = g_list_prepend (data->contacts_data->contacts_groups, g_strdup (g->data));
 		}
-		g_list_free (results);
 		data->contacts_data->changed = TRUE;
-
-		/* this commit updates our internal list of available groups so that any new groups 
-		 * are available next time the dialog is opened
-		 */
-		e_book_commit_contact (data->contacts_data->book, data->contacts_data->contact, NULL);
 	}
 }
 
@@ -1179,7 +1174,6 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	gdata = g_new (ContactsGroupChangeData, 1);
 	gdata->contacts_data = data;
 	gdata->attr = groups_attr;
-	gdata->contacts_groups = data->contacts_groups;
 	/* Remove any old signals and replace with new ones with the correct
 	 * user data.
 	 */
