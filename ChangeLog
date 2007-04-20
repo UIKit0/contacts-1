@@ -1,5 +1,13 @@
 2007-04-20  Thomas Wood  <thomas@openedhand.com>
 
+	Patch by: Diego Escalante Urrelo
+
+	* src/contacts-edit-pane.c: (contacts_edit_ok_cb),
+	(contacts_edit_ok_new_cb): Display a GtkMessageDialog on errores
+	adding/editing contacts. Closes bug 248.
+
+2007-04-20  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-edit-pane.c: (contacts_change_groups_cb),
 	(contacts_edit_pane_show): Remove the need to commit the contact after
 	changing the groups. Prevents the window from switching back to view mode.

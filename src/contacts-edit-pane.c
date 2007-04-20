@@ -130,7 +130,24 @@ contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 		/* Commit changes */
 		e_book_commit_contact(data->book, data->contact, &error);
 		if (error) {
-			/* TODO: show dialog */
+			GtkWidget *dialog;
+			GtkWidget *toplevel = gtk_widget_get_toplevel (button);
+			dialog = gtk_message_dialog_new (
+					GTK_WINDOW (toplevel),
+					GTK_DIALOG_MODAL,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_OK,
+					_("Couldn't update contact")
+					);
+
+			gtk_message_dialog_format_secondary_text (
+					GTK_MESSAGE_DIALOG (dialog),
+					_("Information couldn't be updated, error was: %s"), 
+					error->message 
+					);
+
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);		
 			g_warning ("Cannot commit contact: %s", error->message);
 			g_error_free (error);
 		}
@@ -153,7 +170,24 @@ contacts_edit_ok_new_cb (GtkWidget *button, ContactsData *data)
 			GError *error = NULL;
 			e_book_add_contact(data->book, data->contact, &error);
 			if (error) {
-				/* TODO: show dialog */
+				GtkWidget *dialog;
+				GtkWidget *toplevel = gtk_widget_get_toplevel (button);
+				dialog = gtk_message_dialog_new (
+						GTK_WINDOW (toplevel),
+						GTK_DIALOG_MODAL,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_OK,
+						_("Couldn't add contact")
+						);
+
+				gtk_message_dialog_format_secondary_text (
+						GTK_MESSAGE_DIALOG (dialog),
+						_("Cannot add contact: %s"), 
+						error->message 
+						);
+
+				gtk_dialog_run (GTK_DIALOG (dialog));
+				gtk_widget_destroy (dialog);		
 				g_warning ("Cannot add contact: %s",
 					error->message);
 				g_error_free (error);
