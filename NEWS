@@ -1,3 +1,17 @@
+Overview of Changes in 0.5 (since 0.4)
+======================================
+
+ * Don't hide any fields in view mode and sort them by priority
+ * Display errors on adding/editing contacts (bug 248)
+ * Fix memory leaks
+ * Added birthday field (bug 201)
+ * New icon
+ * Fix groups list if there are no initial contacts or groups
+ * Pass the parent window to the about callback (bug 256)
+ * Fix problems adding the first ever group
+ * New translations: Norwegian Bokmal, Polish
+
+
 Overview of Changes in 0.4 (since 0.3)
 ======================================
 
