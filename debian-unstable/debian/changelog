@@ -1,3 +1,9 @@
+contacts (0.5-2) unstable; urgency=low
+
+  * Rebuild with new EDS.
+
+ -- Ross Burton <ross@debian.org>  Wed, 25 Apr 2007 16:14:03 +0100
+
 contacts (0.5-1) unstable; urgency=low
 
   * New upstream release.
