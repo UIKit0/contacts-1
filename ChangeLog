@@ -1,3 +1,9 @@
+2007-05-01  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-main.c: (start_query), (opened_book), (main): Standardise the
+	use of ContactsData.
+	* src/contacts-utils.c: Add ORG field
+
 2007-04-23  Thomas Wood  <thomas@openedhand.com>
 
 	* NEWS:

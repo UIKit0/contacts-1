@@ -156,6 +156,7 @@ kozo_utf8_strcasestrip (const char *str)
 /* Note: PHOTO and CATEGORIES are special-cased (see contacts_edit_pane_show) */
 static const ContactsField contacts_fields[] = {
 	{ "FN", E_CONTACT_FULL_NAME, NULL, FALSE, 10, TRUE },
+	{ "ORG", E_CONTACT_ORG, NULL, FALSE, 15, TRUE },
 	{ "TEL", 0, N_("Phone"), FALSE, 20, FALSE },
 	{ "EMAIL", 0, N_("Email"), FALSE, 30, FALSE },
 	{ "ADR", 0, N_("Address"), FALSE, 40, FALSE },
