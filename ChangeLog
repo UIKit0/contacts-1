@@ -1,3 +1,9 @@
+2007-06-13  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-gtk.c:
+	Pass an iterator to gtk_list_store_insert_with_values, because on
+	GTK+ < 2.10 it fails.
+
 2007-05-01  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-main.c: (start_query), (opened_book), (main): Standardise the
