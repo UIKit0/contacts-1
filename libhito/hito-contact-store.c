@@ -49,13 +49,29 @@ sorter_cb (GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_da
 {
   int res;
   EContact *contact_a, *contact_b;
+  const gchar *name_a = NULL, *name_b = NULL;
   
   gtk_tree_model_get (model, a, COLUMN_CONTACT, &contact_a, -1);
   gtk_tree_model_get (model, b, COLUMN_CONTACT, &contact_b, -1);
 
+  name_a = e_contact_get_const (contact_a, E_CONTACT_FULL_NAME);
+  name_b = e_contact_get_const (contact_b, E_CONTACT_FULL_NAME);
+
+  if (name_a == name_b) {
+    /* i.e. probably both null */
+    return 0;
+  }
+
+  if (!name_a) {
+    return -1;
+  }
+  if (!name_b) {
+    return 1;
+  }
+
+
   /* TODO: have a display name method, and sort on that */
-  res = g_utf8_collate (e_contact_get_const (contact_a, E_CONTACT_FULL_NAME),
-                        e_contact_get_const (contact_b, E_CONTACT_FULL_NAME));
+  res = g_utf8_collate (name_a, name_b);
 
   g_object_unref (contact_a);
   g_object_unref (contact_b);
