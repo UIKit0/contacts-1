@@ -67,4 +67,5 @@ data/Makefile
 po/Makefile.in
 libhito/Makefile
 src/Makefile
+openmoko/Makefile
 ])

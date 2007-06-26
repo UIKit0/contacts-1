@@ -1,4 +1,4 @@
-SUBDIRS = libhito src po data
+SUBDIRS = libhito src openmoko po data
 
 INTLTOOL_BUILT = \
         intltool-extract \
