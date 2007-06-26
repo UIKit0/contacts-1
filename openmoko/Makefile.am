@@ -9,7 +9,15 @@ AM_CPPFLAGS=-DPKGDATADIR=\"$(pkgdatadir)\"				\
 	-DCONTACTS_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"  	\
 	-DDATADIR=\""$(datadir)"\"
 
-openmoko_contacts_SOURCES=openmoko-contacts.c
+openmoko_contacts_SOURCES= \
+	openmoko-contacts.c \
+	openmoko-contacts.h \
+	openmoko-contacts-details.c \
+	openmoko-contacts-details.h \
+	openmoko-contacts-list.c \
+	openmoko-contacts-list.h
+
+
 openmoko_contacts_LDADD=$(top_srcdir)/libhito/libhito.a $(CONTACTS_LIBS)
 openmoko_contacts_LDFLAGS = @CONTACTS_LIBS@
 
