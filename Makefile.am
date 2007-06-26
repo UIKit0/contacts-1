@@ -1,4 +1,4 @@
-SUBDIRS = src po data
+SUBDIRS = libhito src po data
 
 INTLTOOL_BUILT = \
         intltool-extract \

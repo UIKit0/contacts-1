@@ -65,5 +65,6 @@ AC_OUTPUT([
 Makefile
 data/Makefile
 po/Makefile.in
+libhito/Makefile
 src/Makefile
 ])
