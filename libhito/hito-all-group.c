@@ -17,6 +17,7 @@
  */
 
 #include <config.h>
+#include <glib/gi18n.h>
 #include "hito-all-group.h"
 
 G_DEFINE_TYPE (HitoAllGroup, hito_all_group, HITO_TYPE_GROUP);
@@ -24,8 +25,7 @@ G_DEFINE_TYPE (HitoAllGroup, hito_all_group, HITO_TYPE_GROUP);
 static const char *
 get_name (HitoGroup *group)
 {
-  /* TODO: i18n */
-  return "All";
+  return _("All");
 }
 
 static int

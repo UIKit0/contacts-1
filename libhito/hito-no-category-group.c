@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <glib/gi18n.h>
 #include "hito-no-category-group.h"
 
 G_DEFINE_TYPE (HitoNoCategoryGroup, hito_no_category_group, HITO_TYPE_GROUP);
@@ -27,8 +28,7 @@ get_name (HitoGroup *group)
 {
   g_return_val_if_fail (HITO_IS_NO_CATEGORY_GROUP (group), NULL);
   
-  /* TODO: i18n */
-  return "No Category";
+  return _("No Category");
 }
 
 static int
