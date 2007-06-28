@@ -14,7 +14,8 @@ libhito_a_SOURCES = \
 	hito-separator-group.h hito-separator-group.c \
 	hito-group-store.h hito-group-store.c \
 	hito-group-combo.h hito-group-combo.c \
-	hito-contact-preview.h hito-contact-preview.c
+	hito-contact-preview.h hito-contact-preview.c \
+	hito-vcard-util.c hito-vcard-util.h
 
 noinst_PROGRAMS = test-widgets
 test_widgets_SOURCES = test-widgets.c
