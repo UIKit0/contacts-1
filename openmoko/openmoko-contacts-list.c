@@ -68,33 +68,34 @@ create_contacts_list_page (ContactsData *data)
   toolbar = gtk_toolbar_new ();
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
 
+  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_MISSING_IMAGE);
+  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
+
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
+
+  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_MISSING_IMAGE);
+  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 2);
+
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
+
   toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_NEW);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
-
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 0);
-
-  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_ABOUT);
-  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
-
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 0);
-
-  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_ABOUT);
-  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
-
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 4);
 
   /* search/filter bar */
   hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (box), hbox, FALSE, FALSE, 0);
 
   search_toggle = gtk_toggle_button_new ();
+  gtk_widget_set_name (search_toggle, "mokosearchbutton");
   gtk_button_set_image (GTK_BUTTON (search_toggle), gtk_image_new_from_stock (GTK_STOCK_FIND, GTK_ICON_SIZE_SMALL_TOOLBAR));
   g_signal_connect (G_OBJECT (search_toggle), "toggled",  (GCallback) search_toggle_cb, data);
   gtk_box_pack_start (GTK_BOX (hbox), search_toggle, FALSE, FALSE, 0);
 
   data->search_entry = gtk_entry_new ();
+  gtk_widget_set_name (data->search_entry, "mokosearchentry");
   g_signal_connect (data->search_entry, "changed", G_CALLBACK (on_entry_changed), contact_filter);
   g_object_set (G_OBJECT (data->search_entry), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), data->search_entry, TRUE, TRUE, 0);
