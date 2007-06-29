@@ -32,7 +32,11 @@ typedef struct
   GtkWidget *groups_combo;
 
   /* details page */
-  GtkWidget *preview;
+  GtkWidget *photo;
+  GtkWidget *fullname;
+  GtkWidget *org;
+  GtkWidget *telephone;
+  GtkWidget *email;
 
 } ContactsData;
 
