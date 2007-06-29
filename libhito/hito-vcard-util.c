@@ -170,7 +170,7 @@ hito_vcard_attribute_compare_value_strings (gchar *a, gchar *b)
  * string for multivalue attributes
  */
 gchar*
-vcard_attribute_get_value_string (EVCardAttribute *attr)
+hito_vcard_attribute_get_value_string (EVCardAttribute *attr)
 {
   gchar *attr_value = NULL;
   GList *l;
