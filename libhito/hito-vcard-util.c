@@ -182,7 +182,10 @@ hito_vcard_attribute_get_value_string (EVCardAttribute *attr)
     while ((l = g_list_next (l)))
     {
       gchar *old = attr_value;
-      attr_value = g_strdup_printf ("%s; %s", old, (gchar*) l->data);
+      if (old)
+        attr_value = g_strdup_printf ("%s; %s", old, (gchar*) l->data);
+      else
+        attr_value = g_strdup (l->data);
       g_free (old);
     }
   }
