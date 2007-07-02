@@ -87,7 +87,7 @@ create_contacts_details_page (ContactsData *data)
   data->org = gtk_label_new (NULL);
   align = gtk_alignment_new (0, 0, 0, 0);
   gtk_container_add (GTK_CONTAINER (align), data->org);
-  gtk_box_pack_start (GTK_BOX (w), w, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (w), align, TRUE, TRUE, 0);
 
 
   /* liststore for attributes */
@@ -205,5 +205,5 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   }
 
   if (!photo_set)
-    gtk_image_set_from_stock (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
+    gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
 }
