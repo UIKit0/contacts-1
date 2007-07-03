@@ -29,10 +29,17 @@
 #define PADDING 6
 
 enum {
+  ATTR_POINTER_COLUMN,
   ATTR_NAME_COLUMN,
   ATTR_TYPE_COLUMN,
   ATTR_VALUE_COLUMN
 };
+
+static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
+static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
+static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
+
+static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
@@ -50,6 +57,8 @@ create_contacts_details_page (ContactsData *data)
   GtkToolItem *toolitem;
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
+  GtkCellRenderer *renderer;
+
 
 
   box = gtk_vbox_new (FALSE, 0);
@@ -60,6 +69,7 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
 
   toolitem = gtk_toggle_tool_button_new_from_stock (GTK_STOCK_EDIT);
+  g_signal_connect (G_OBJECT (toolitem), "toggled", G_CALLBACK (edit_toggle_toggled_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
 
@@ -91,7 +101,8 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* liststore for attributes */
-  liststore = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+  liststore = gtk_list_store_new (4, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+  g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), NULL);
 
   /* telephone entries */
   tel_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
@@ -103,8 +114,10 @@ create_contacts_details_page (ContactsData *data)
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->telephone),
       gtk_tree_view_column_new_with_attributes ("Type", gtk_cell_renderer_text_new(), "text", ATTR_TYPE_COLUMN, NULL));
 
+  renderer = gtk_cell_renderer_text_new ();
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), tel_filter);
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->telephone),
-      gtk_tree_view_column_new_with_attributes ("Value", gtk_cell_renderer_text_new(), "text", ATTR_VALUE_COLUMN, NULL));
+      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
 
 
   w = gtk_scrolled_window_new (NULL, NULL);
@@ -125,8 +138,10 @@ create_contacts_details_page (ContactsData *data)
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
       gtk_tree_view_column_new_with_attributes ("Type", gtk_cell_renderer_text_new(), "text", ATTR_TYPE_COLUMN, NULL));
 
+  renderer = gtk_cell_renderer_text_new ();
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), email_filter);
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
-      gtk_tree_view_column_new_with_attributes ("Value", gtk_cell_renderer_text_new(), "text", ATTR_VALUE_COLUMN, NULL));
+      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
 
   w = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
@@ -198,6 +213,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
     }
 
     gtk_list_store_insert_with_values (liststore, &iter, 0,
+        ATTR_POINTER_COLUMN, a->data,
         ATTR_NAME_COLUMN, name,
         ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
         ATTR_VALUE_COLUMN, value,
@@ -206,4 +222,49 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
   if (!photo_set)
     gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
+}
+
+
+
+static void
+edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
+{
+  GtkTreeViewColumn *col;
+  GList *list;
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 1);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", TRUE, NULL);
+}
+
+
+static void
+value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data)
+{
+  GtkTreeIter filter_iter, model_iter;
+  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (data);
+  GtkTreeModel *model;
+
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &filter_iter, path);
+  gtk_tree_model_filter_convert_iter_to_child_iter (filter, &model_iter, &filter_iter);
+  model = gtk_tree_model_filter_get_model (filter);
+
+  gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_VALUE_COLUMN, text, -1);
+}
+
+
+static void
+attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+  EVCardAttribute *attr;
+  gchar *value;
+
+  gtk_tree_model_get (model, iter, ATTR_POINTER_COLUMN, &attr, ATTR_VALUE_COLUMN, &value, -1);
+
+  /* remove old values and add new one */
+  e_vcard_attribute_remove_values (attr);
+  /* TODO: check for multi valued string */
+  e_vcard_attribute_add_value (attr, value);
+
+  /* TODO: commit contact somewhere... */
 }
