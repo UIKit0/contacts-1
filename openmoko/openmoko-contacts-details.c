@@ -49,6 +49,19 @@ filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
   return (value && name && !strcmp (value, name));
 }
 
+static void
+append_delete_column (GtkTreeView *treeview)
+{
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *treeview_column;
+
+  renderer = gtk_cell_renderer_pixbuf_new();
+  g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
+  treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
+  g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), treeview_column);
+}
+
 void
 create_contacts_details_page (ContactsData *data)
 {
@@ -58,8 +71,7 @@ create_contacts_details_page (ContactsData *data)
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
   GtkCellRenderer *renderer;
-
-
+  GtkTreeViewColumn *treeview_column;
 
   box = gtk_vbox_new (FALSE, 0);
   gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_INFO, GTK_ICON_SIZE_LARGE_TOOLBAR));
@@ -111,6 +123,9 @@ create_contacts_details_page (ContactsData *data)
   data->telephone = gtk_tree_view_new_with_model(GTK_TREE_MODEL (tel_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->telephone), FALSE);
 
+  /* delete option column */
+  append_delete_column (GTK_TREE_VIEW (data->telephone));
+
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->telephone),
       gtk_tree_view_column_new_with_attributes ("Type", gtk_cell_renderer_text_new(), "text", ATTR_TYPE_COLUMN, NULL));
 
@@ -135,9 +150,14 @@ create_contacts_details_page (ContactsData *data)
   data->email = gtk_tree_view_new_with_model(GTK_TREE_MODEL (email_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->email), FALSE);
 
+  /* delete option column */
+  append_delete_column (GTK_TREE_VIEW (data->email));
+
+  /* type selector column */
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
       gtk_tree_view_column_new_with_attributes ("Type", gtk_cell_renderer_text_new(), "text", ATTR_TYPE_COLUMN, NULL));
 
+  /* value column */
   renderer = gtk_cell_renderer_text_new ();
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), email_filter);
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
@@ -231,10 +251,30 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 {
   GtkTreeViewColumn *col;
   GList *list;
+  gboolean editing;
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 1);
+  editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button));
+
+  /* FIXME: these should be #defined (or similar)
+   * column 0 = delete
+   * column 1 = type
+   * column 2 = value
+   */
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 0);
+  g_object_set (G_OBJECT (col), "visible", editing, NULL);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 0);
+  g_object_set (G_OBJECT (col), "visible", editing, NULL);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 2);
   list = gtk_tree_view_column_get_cell_renderers (col);
-  g_object_set (G_OBJECT (list->data), "editable", TRUE, NULL);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 2);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+
 }
 
 
@@ -267,4 +307,5 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   e_vcard_attribute_add_value (attr, value);
 
   /* TODO: commit contact somewhere... */
+
 }
