@@ -36,13 +36,22 @@
 
 
 static void
+window_delete_event_cb (GtkWidget *widget, GdkEvent *event, ContactsData *data)
+{
+
+  free_contacts_details_page (data);
+  gtk_main_quit ();
+
+}
+
+static void
 make_contact_view (ContactsData *data)
 {
 
   GtkWidget *box;
 
   data->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  g_signal_connect (data->window, "delete-event", G_CALLBACK (gtk_main_quit), NULL);
+  g_signal_connect (data->window, "delete-event", G_CALLBACK (window_delete_event_cb), data);
   gtk_window_set_title (GTK_WINDOW (data->window), "Contacts");
 
 

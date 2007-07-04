@@ -20,6 +20,7 @@
 #define OPENMOKO_CONTACTS_DETAILS_H
 
 void create_contacts_details_page (ContactsData *data);
+void free_contacts_details_page (ContactsData *data);
 void contacts_details_page_set_contact (ContactsData *data, EContact *contact);
 
 #endif /* OPENMOKO_CONTACTS_DETAILS_H */

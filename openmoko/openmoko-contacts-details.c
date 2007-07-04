@@ -71,7 +71,6 @@ create_contacts_details_page (ContactsData *data)
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
   GtkCellRenderer *renderer;
-  GtkTreeViewColumn *treeview_column;
 
   box = gtk_vbox_new (FALSE, 0);
   gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_INFO, GTK_ICON_SIZE_LARGE_TOOLBAR));
@@ -169,7 +168,26 @@ create_contacts_details_page (ContactsData *data)
   gtk_container_set_border_width (GTK_CONTAINER (w), PADDING);
   gtk_container_add (GTK_CONTAINER (w), data->email);
   gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+}
 
+void
+free_contacts_details_page (ContactsData *data)
+{
+  EContact *old_contact;
+  GtkListStore *liststore;
+  gboolean dirty;
+
+  /* Clear up any loose ends */
+
+  liststore = GTK_LIST_STORE (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->telephone)))));
+  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
+
+  if (dirty)
+  {
+    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
+    /* TODO: error checking on failure */
+    e_book_commit_contact (data->book, old_contact, NULL);
+  }
 
 }
 
@@ -189,8 +207,24 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   GList *attributes, *a;
   GtkListStore *liststore;
   gboolean photo_set = FALSE;
+  gboolean dirty;
+  EContact *old_contact;
 
   liststore = GTK_LIST_STORE (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->telephone)))));
+
+  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
+
+  if (dirty)
+  {
+    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
+    /* TODO: error checking on failure */
+    e_book_commit_contact (data->book, old_contact, NULL);
+  }
+
+  /* set up references to current contact and ebook */
+  g_object_set_data (G_OBJECT (liststore), "econtact", contact);
+  g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
+
   gtk_list_store_clear (liststore);
   gtk_label_set_text (GTK_LABEL (data->fullname), NULL);
   gtk_label_set_text (GTK_LABEL (data->org), NULL);
@@ -306,6 +340,7 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   /* TODO: check for multi valued string */
   e_vcard_attribute_add_value (attr, value);
 
-  /* TODO: commit contact somewhere... */
+  /* mark liststore as "dirty" so we can commit the contact later */
+  g_object_set_data (G_OBJECT (model), "dirty", GINT_TO_POINTER (TRUE));
 
 }
