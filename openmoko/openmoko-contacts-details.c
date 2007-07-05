@@ -41,6 +41,9 @@ static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gc
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
+static void add_new_telephone (GtkWidget *button, GtkListStore *store);
+static void add_new_email (GtkWidget *button, GtkListStore *store);
+
 static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
 {
@@ -159,9 +162,15 @@ create_contacts_details_page (ContactsData *data)
   w = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-  gtk_container_set_border_width (GTK_CONTAINER (w), PADDING);
   gtk_container_add (GTK_CONTAINER (w), data->telephone);
   gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+
+  /* add phone button */
+  w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), liststore);
+  g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
+  gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+  data->add_telephone_button = w;
 
 
   /* email entries */
@@ -186,9 +195,16 @@ create_contacts_details_page (ContactsData *data)
   w = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-  gtk_container_set_border_width (GTK_CONTAINER (w), PADDING);
   gtk_container_add (GTK_CONTAINER (w), data->email);
   gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+
+  /* add e-mail button */
+  w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), liststore);
+  g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
+  gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+  data->add_email_button = w;
+
 }
 
 void
@@ -338,10 +354,12 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
 
+  g_object_set (G_OBJECT (data->add_telephone_button), "visible", editing, NULL);
+  g_object_set (G_OBJECT (data->add_email_button), "visible", editing, NULL);
+
   /* remove current focus to close any active edits */
   if (!editing)
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
-
 }
 
 
@@ -396,4 +414,35 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   /* mark liststore as "dirty" so we can commit the contact later */
   g_object_set_data (G_OBJECT (model), "dirty", GINT_TO_POINTER (TRUE));
 
+}
+
+
+static void
+add_new_telephone (GtkWidget *button, GtkListStore *store)
+{
+  EVCardAttribute *attr;
+  GtkTreeIter iter;
+  EVCard *contact;
+
+  attr = e_vcard_attribute_new (NULL, EVC_TEL);
+
+  contact = g_object_get_data (G_OBJECT (store), "econtact");
+  e_vcard_add_attribute (contact, attr);
+
+  gtk_list_store_insert_with_values (store, &iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, EVC_TEL, ATTR_TYPE_COLUMN, "WORK", -1);
+}
+
+static void
+add_new_email (GtkWidget *button, GtkListStore *store)
+{
+  EVCardAttribute *attr;
+  GtkTreeIter iter;
+  EVCard *contact;
+
+  attr = e_vcard_attribute_new (NULL, EVC_EMAIL);
+
+  contact = g_object_get_data (G_OBJECT (store), "econtact");
+  e_vcard_add_attribute (contact, attr);
+
+  gtk_list_store_insert_with_values (store, &iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, EVC_EMAIL, ATTR_TYPE_COLUMN, "WORK", -1);
 }

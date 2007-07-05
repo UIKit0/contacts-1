@@ -37,6 +37,8 @@ typedef struct
   GtkWidget *org;
   GtkWidget *telephone;
   GtkWidget *email;
+  GtkWidget *add_email_button;
+  GtkWidget *add_telephone_button;
 
 } ContactsData;
 
