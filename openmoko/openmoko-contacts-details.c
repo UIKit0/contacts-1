@@ -24,6 +24,7 @@
 #include "openmoko-contacts.h"
 #include "hito-contact-preview.h"
 #include "hito-vcard-util.h"
+#include "koto-cell-renderer-pixbuf.h"
 
 
 #define PADDING 6
@@ -39,6 +40,7 @@ static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gch
 static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
 static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
+static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data);
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
@@ -58,7 +60,8 @@ append_delete_column (GtkTreeView *treeview)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *treeview_column;
 
-  renderer = gtk_cell_renderer_pixbuf_new();
+  renderer = koto_cell_renderer_pixbuf_new ();
+  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), gtk_tree_view_get_model (treeview));
   g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
   g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
@@ -393,6 +396,31 @@ type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gp
 }
 
 
+static void
+delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data)
+{
+  EVCardAttribute *attr;
+  EVCard *card;
+  GtkTreeIter iter, child_iter;
+  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (data);
+  GtkTreeModel *model;
+
+  model = gtk_tree_model_filter_get_model (filter);
+
+  /* remove attribute from contact */
+  gtk_tree_model_get_iter_from_string (filter, &iter, path);
+  gtk_tree_model_get (filter, &iter, ATTR_POINTER_COLUMN, &attr, -1);
+  card = E_VCARD (g_object_get_data (G_OBJECT (model), "econtact"));
+
+  e_vcard_remove_attribute (card, attr);
+
+  /* remove attribute row from model */
+  gtk_tree_model_filter_convert_iter_to_child_iter (filter, &child_iter, &iter);
+  gtk_list_store_remove (GTK_LIST_STORE (model), &child_iter);
+
+  /* mark liststore as "dirty" so we can commit the contact later */
+  g_object_set_data (G_OBJECT (model), "dirty", GINT_TO_POINTER (TRUE));
+}
 
 static void
 attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)

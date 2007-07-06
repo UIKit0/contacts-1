@@ -15,7 +15,10 @@ openmoko_contacts_SOURCES= \
 	openmoko-contacts-details.c \
 	openmoko-contacts-details.h \
 	openmoko-contacts-list.c \
-	openmoko-contacts-list.h
+	openmoko-contacts-list.h \
+	koto-cell-renderer-pixbuf.c \
+	koto-cell-renderer-pixbuf.h
+
 
 
 openmoko_contacts_LDADD=$(top_srcdir)/libhito/libhito.a $(CONTACTS_LIBS)
