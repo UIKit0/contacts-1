@@ -139,6 +139,7 @@ create_contacts_details_page (ContactsData *data)
   /* liststore for attributes */
   liststore = gtk_list_store_new (4, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), NULL);
+  data->attribute_liststore = liststore;
 
   /* telephone entries */
   tel_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
@@ -216,7 +217,7 @@ free_contacts_details_page (ContactsData *data)
 
   /* Clear up any loose ends */
 
-  liststore = GTK_LIST_STORE (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->telephone)))));
+  liststore = data->attribute_liststore;
   dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
 
   if (dirty)
@@ -247,8 +248,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   gboolean dirty;
   EContact *old_contact;
 
-  liststore = GTK_LIST_STORE (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->telephone)))));
-
+  liststore = data->attribute_liststore;
   dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
 
   if (dirty)

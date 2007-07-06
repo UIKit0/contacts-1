@@ -40,6 +40,8 @@ typedef struct
   GtkWidget *add_email_button;
   GtkWidget *add_telephone_button;
 
+  GtkListStore *attribute_liststore;
+
 } ContactsData;
 
 
