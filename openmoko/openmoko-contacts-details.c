@@ -41,8 +41,8 @@ static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gc
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
-static void add_new_telephone (GtkWidget *button, GtkListStore *store);
-static void add_new_email (GtkWidget *button, GtkListStore *store);
+static void add_new_telephone (GtkWidget *button, ContactsData *data);
+static void add_new_email (GtkWidget *button, ContactsData *data);
 
 static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
@@ -168,7 +168,7 @@ create_contacts_details_page (ContactsData *data)
 
   /* add phone button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
-  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), liststore);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
   data->add_telephone_button = w;
@@ -201,7 +201,7 @@ create_contacts_details_page (ContactsData *data)
 
   /* add e-mail button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
-  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), liststore);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
   data->add_email_button = w;
@@ -416,33 +416,45 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
 
 }
 
-
 static void
-add_new_telephone (GtkWidget *button, GtkListStore *store)
+add_new_attribute (GtkTreeView *treeview, ContactsData *data, const gchar *attr_name, const gchar *attr_type)
 {
   EVCardAttribute *attr;
-  GtkTreeIter iter;
+  GtkTreeIter child_iter, filter_iter;
   EVCard *contact;
-
-  attr = e_vcard_attribute_new (NULL, EVC_TEL);
-
-  contact = g_object_get_data (G_OBJECT (store), "econtact");
-  e_vcard_add_attribute (contact, attr);
-
-  gtk_list_store_insert_with_values (store, &iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, EVC_TEL, ATTR_TYPE_COLUMN, "WORK", -1);
-}
-
-static void
-add_new_email (GtkWidget *button, GtkListStore *store)
-{
-  EVCardAttribute *attr;
-  GtkTreeIter iter;
-  EVCard *contact;
+  GtkTreeViewColumn *col;
+  GtkTreePath *filter_path;
+  GtkTreeModel *filter;
 
   attr = e_vcard_attribute_new (NULL, EVC_EMAIL);
 
-  contact = g_object_get_data (G_OBJECT (store), "econtact");
+  contact = g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact");
   e_vcard_add_attribute (contact, attr);
 
-  gtk_list_store_insert_with_values (store, &iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, EVC_EMAIL, ATTR_TYPE_COLUMN, "WORK", -1);
+  gtk_list_store_insert_with_values (data->attribute_liststore, &child_iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, attr_name, ATTR_TYPE_COLUMN, attr_type, -1);
+
+  filter = gtk_tree_view_get_model (treeview);
+  gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (filter),  &filter_iter, &child_iter);
+
+  col = gtk_tree_view_get_column (treeview, 2);
+
+  filter_path = gtk_tree_model_get_path (filter, &filter_iter);
+  gtk_tree_view_set_cursor (treeview, filter_path, col, TRUE);
+  gtk_widget_activate (GTK_WIDGET (treeview));
+
+  gtk_tree_path_free (filter_path);
 }
+
+static void
+add_new_telephone (GtkWidget *button, ContactsData *data)
+{
+  add_new_attribute (GTK_TREE_VIEW (data->telephone), data, EVC_TEL, "WORK");
+}
+
+static void
+add_new_email (GtkWidget *button, ContactsData *data)
+{
+  add_new_attribute (GTK_TREE_VIEW (data->email), data, EVC_EMAIL, "WORK");
+}
+
+
