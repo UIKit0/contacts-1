@@ -38,6 +38,7 @@ enum {
 
 static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
 static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
+static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data);
@@ -115,6 +116,7 @@ create_contacts_details_page (ContactsData *data)
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
   toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_DELETE);
+  g_signal_connect (G_OBJECT (toolitem), "clicked", G_CALLBACK (delete_contact_clicked_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 2);
 
@@ -367,6 +369,44 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 
 
 static void
+delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
+{
+  EContact *card;
+  GtkWidget *dialog;
+  const gchar *name = NULL;
+
+  card = g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact");
+  name = e_contact_get_const (card, E_CONTACT_FULL_NAME);
+
+  dialog = gtk_message_dialog_new (GTK_WINDOW (data->window),
+      GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "Are you sure you want to delete \"%s\" from your address book", name);
+
+  gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_DELETE, GTK_RESPONSE_OK, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  {
+    GError *err = NULL;
+    GtkWidget *err_message;
+    e_book_remove_contact (data->book, e_contact_get_const (card, E_CONTACT_UID), &err);
+    gtk_widget_destroy (dialog);
+    if (err)
+    {
+      err_message = gtk_message_dialog_new (GTK_WINDOW (data->window), 
+          GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+          "The following error occured while attempting to delete the contact:\n\"%s\"", err->message);
+      gtk_dialog_run (GTK_DIALOG (err_message));
+      gtk_widget_destroy (err_message);
+    }
+  }
+  else
+  {
+    gtk_widget_destroy (dialog);
+  }
+
+  /* FIXME: return to contact list or something ... */
+}
+
+static void
 value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data)
 {
   GtkTreeIter filter_iter, model_iter;
@@ -408,8 +448,8 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gp
   model = gtk_tree_model_filter_get_model (filter);
 
   /* remove attribute from contact */
-  gtk_tree_model_get_iter_from_string (filter, &iter, path);
-  gtk_tree_model_get (filter, &iter, ATTR_POINTER_COLUMN, &attr, -1);
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &iter, path);
+  gtk_tree_model_get (GTK_TREE_MODEL (filter), &iter, ATTR_POINTER_COLUMN, &attr, -1);
   card = E_VCARD (g_object_get_data (G_OBJECT (model), "econtact"));
 
   e_vcard_remove_attribute (card, attr);
