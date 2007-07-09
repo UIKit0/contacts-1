@@ -11,4 +11,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, evolution-data-server
 Description: lightweight addressbook
  Contacts is a small, lightweight addressbook that features advanced vCard field
  type handling and is designed for use on hand-held devices, such as the Nokia
- 770 or the Sharp Zaurus series of PDAs.
+ 770/N800 or the Sharp Zaurus series of PDAs.
