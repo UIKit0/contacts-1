@@ -379,7 +379,7 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   name = e_contact_get_const (card, E_CONTACT_FULL_NAME);
 
   dialog = gtk_message_dialog_new (GTK_WINDOW (data->window),
-      GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "Are you sure you want to delete \"%s\" from your address book", name);
+      GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "Are you sure you want to remove \"%s\" from your address book?", name);
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_DELETE, GTK_RESPONSE_OK, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 
