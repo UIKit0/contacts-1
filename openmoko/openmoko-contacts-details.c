@@ -43,6 +43,8 @@ static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gc
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data);
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
+static void org_changed_cb (GtkWidget *entry, ContactsData *data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
@@ -90,6 +92,28 @@ append_type_column (GtkTreeView *treeview)
   gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), treeview_column);
 }
 
+static void
+commit_contact (ContactsData *data)
+{
+  EContact *old_contact;
+  GtkListStore *liststore;
+  gboolean dirty;
+
+  /* Clear up any loose ends */
+
+  liststore = data->attribute_liststore;
+  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
+
+  if (dirty)
+  {
+    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
+    /* TODO: error checking on failure */
+    e_book_commit_contact (data->book, old_contact, NULL);
+  }
+
+  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (FALSE));
+  g_debug ("%d", old_contact);
+}
 
 void
 create_contacts_details_page (ContactsData *data)
@@ -104,6 +128,7 @@ create_contacts_details_page (ContactsData *data)
   box = gtk_vbox_new (FALSE, 0);
   gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_LARGE_TOOLBAR));
   gtk_container_child_set (GTK_CONTAINER (data->notebook), box, "tab-expand", TRUE, "tab-fill", TRUE, NULL);
+  g_signal_connect_swapped (box, "unmap", G_CALLBACK (commit_contact), data);
 
   toolbar = gtk_toolbar_new ();
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
@@ -112,6 +137,7 @@ create_contacts_details_page (ContactsData *data)
   g_signal_connect (G_OBJECT (toolitem), "toggled", G_CALLBACK (edit_toggle_toggled_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
+  data->edit_toggle = toolitem;
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
@@ -130,15 +156,17 @@ create_contacts_details_page (ContactsData *data)
   w = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, PADDING);
 
-  data->fullname = gtk_label_new (NULL);
+  data->fullname = gtk_entry_new ();
   align = gtk_alignment_new (0, 0, 0, 0);
   gtk_container_add (GTK_CONTAINER (align), data->fullname);
   gtk_box_pack_start (GTK_BOX (w), align, TRUE, TRUE, 0);
+  g_signal_connect (data->fullname, "changed", G_CALLBACK (fullname_changed_cb), data);
 
-  data->org = gtk_label_new (NULL);
+  data->org = gtk_entry_new ();
   align = gtk_alignment_new (0, 0, 0, 0);
   gtk_container_add (GTK_CONTAINER (align), data->org);
   gtk_box_pack_start (GTK_BOX (w), align, TRUE, TRUE, 0);
+  g_signal_connect (data->org, "changed", G_CALLBACK (org_changed_cb), data);
 
 
   /* liststore for attributes */
@@ -216,22 +244,7 @@ create_contacts_details_page (ContactsData *data)
 void
 free_contacts_details_page (ContactsData *data)
 {
-  EContact *old_contact;
-  GtkListStore *liststore;
-  gboolean dirty;
-
-  /* Clear up any loose ends */
-
-  liststore = data->attribute_liststore;
-  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
-
-  if (dirty)
-  {
-    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
-    /* TODO: error checking on failure */
-    e_book_commit_contact (data->book, old_contact, NULL);
-  }
-
+  commit_contact (data);
 }
 
 static void
@@ -249,9 +262,11 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 {
   GList *attributes, *a;
   GtkListStore *liststore;
-  gboolean photo_set = FALSE;
+  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
   gboolean dirty;
   EContact *old_contact;
+
+  data->detail_page_loading = TRUE;
 
   liststore = data->attribute_liststore;
   dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
@@ -268,8 +283,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
 
   gtk_list_store_clear (liststore);
-  gtk_label_set_text (GTK_LABEL (data->fullname), NULL);
-  gtk_label_set_text (GTK_LABEL (data->org), NULL);
+
 
   attributes = e_vcard_get_attributes (E_VCARD (contact));
   for (a = attributes; a; a = g_list_next (a))
@@ -281,15 +295,17 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
     if (!strcmp (name, EVC_FN))
     {
-      gchar *markup;
-      markup = g_markup_printf_escaped ("<big><b>%s</b></big>", value);
-      gtk_label_set_markup (GTK_LABEL (data->fullname), markup);
-      g_free (markup);
+      //gchar *markup;
+      //markup = g_markup_printf_escaped ("<big><b>%s</b></big>", value);
+      gtk_entry_set_text (GTK_ENTRY (data->fullname), value);
+      //g_free (markup);
+      fn_set = TRUE;
       continue;
     }
     if (!strcmp (name, EVC_ORG))
     {
-      gtk_label_set_text (GTK_LABEL (data->org), value);
+      org_set = TRUE;
+      gtk_entry_set_text (GTK_ENTRY (data->org), value);
       continue;
     }
     if (!strcmp (name, EVC_PHOTO))
@@ -318,6 +334,14 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
   if (!photo_set)
     gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
+  if (!org_set)
+    gtk_entry_set_text (data->org, "");
+  if (!fn_set)
+    gtk_entry_set_text (data->fullname, "");
+
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), FALSE);
+
+  data->detail_page_loading = FALSE;
 }
 
 
@@ -362,9 +386,32 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   g_object_set (G_OBJECT (data->add_telephone_button), "visible", editing, NULL);
   g_object_set (G_OBJECT (data->add_email_button), "visible", editing, NULL);
 
-  /* remove current focus to close any active edits */
-  if (!editing)
+  gtk_entry_set_has_frame (GTK_ENTRY (data->fullname), editing);
+  g_object_set (G_OBJECT (data->fullname), "editable", editing, NULL);
+
+  gtk_entry_set_has_frame (GTK_ENTRY (data->org), editing);
+  g_object_set (G_OBJECT (data->org), "editable", editing, NULL);
+
+  if (editing)
+  {
+    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
+    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
+
+    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
+    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
+
+  }
+  else
+  {
+    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+
+    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+
+    /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
+  }
 }
 
 
@@ -525,4 +572,41 @@ add_new_email (GtkWidget *button, ContactsData *data)
   add_new_attribute (GTK_TREE_VIEW (data->email), data, EVC_EMAIL, "WORK");
 }
 
+static void
+fullname_changed_cb (GtkWidget *entry, ContactsData *data)
+{
+  EVCard *card;
+  EVCardAttribute *attr;
 
+  if (data->detail_page_loading)
+    return;
+
+  card = E_VCARD (g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact"));
+  attr = e_vcard_get_attribute (card, EVC_FN);
+
+  e_vcard_attribute_remove_values (attr);
+  e_vcard_attribute_add_value (attr, gtk_entry_get_text (GTK_ENTRY (entry)));
+
+  /* mark liststore as "dirty" so we can commit the contact later */
+  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (TRUE));
+}
+
+static void
+org_changed_cb (GtkWidget *entry, ContactsData *data)
+{
+  EVCard *card;
+  EVCardAttribute *attr;
+
+  if (data->detail_page_loading)
+    return;
+
+  card = E_VCARD (g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact"));
+  attr = e_vcard_get_attribute (card, EVC_ORG);
+
+  e_vcard_attribute_remove_values (attr);
+  /* FIXME: this is not dealing with multi values yet */
+  e_vcard_attribute_add_value (attr, gtk_entry_get_text (GTK_ENTRY (entry)));
+
+  /* mark liststore as "dirty" so we can commit the contact later */
+  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (TRUE));
+}
