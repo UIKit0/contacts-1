@@ -45,6 +45,7 @@ static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const ch
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
+static void commit_contact (ContactsData *data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
@@ -108,11 +109,10 @@ commit_contact (ContactsData *data)
   {
     old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
     /* TODO: error checking on failure */
-    e_book_commit_contact (data->book, old_contact, NULL);
+    e_book_async_commit_contact (data->book, old_contact, NULL, NULL);
   }
 
   g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (FALSE));
-  g_debug ("%d", old_contact);
 }
 
 void
@@ -335,9 +335,9 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   if (!photo_set)
     gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
   if (!org_set)
-    gtk_entry_set_text (data->org, "");
+    gtk_entry_set_text (GTK_ENTRY (data->org), "");
   if (!fn_set)
-    gtk_entry_set_text (data->fullname, "");
+    gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
 
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), FALSE);
 
