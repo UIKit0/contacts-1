@@ -1,3 +1,9 @@
+contacts (0.5-2) bora; urgency=low
+
+  * Make Jabber fields visible.
+
+ -- Ross Burton <ross@openedhand.com>  Tue, 10 Jul 2007 09:18:59 +0100
+
 contacts (0.5-1) bora; urgency=low
 
   * New upstream release.
