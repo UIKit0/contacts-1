@@ -26,6 +26,10 @@
 #include "hito-vcard-util.h"
 #include "koto-cell-renderer-pixbuf.h"
 
+#if GLIB_MINOR_VERSION < 12
+#include "gbase64.h"
+#endif
+
 
 #define PADDING 6
 

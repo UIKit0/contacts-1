@@ -17,7 +17,10 @@ openmoko_contacts_SOURCES= \
 	openmoko-contacts-list.c \
 	openmoko-contacts-list.h \
 	koto-cell-renderer-pixbuf.c \
-	koto-cell-renderer-pixbuf.h
+	koto-cell-renderer-pixbuf.h \
+	gbase64.c \
+	gbase64.h
+
 
 
 
