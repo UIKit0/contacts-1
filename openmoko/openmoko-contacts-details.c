@@ -263,20 +263,13 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   GList *attributes, *a;
   GtkListStore *liststore;
   gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
-  gboolean dirty;
-  EContact *old_contact;
 
   data->detail_page_loading = TRUE;
 
   liststore = data->attribute_liststore;
-  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
 
-  if (dirty)
-  {
-    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
-    /* TODO: error checking on failure */
-    e_book_commit_contact (data->book, old_contact, NULL);
-  }
+  /* make sure exiting contact is committed if necessary */
+  commit_contact (data);
 
   /* set up references to current contact and ebook */
   g_object_set_data (G_OBJECT (liststore), "econtact", contact);
@@ -295,17 +288,14 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
     if (!strcmp (name, EVC_FN))
     {
-      //gchar *markup;
-      //markup = g_markup_printf_escaped ("<big><b>%s</b></big>", value);
       gtk_entry_set_text (GTK_ENTRY (data->fullname), value);
-      //g_free (markup);
       fn_set = TRUE;
       continue;
     }
     if (!strcmp (name, EVC_ORG))
     {
-      org_set = TRUE;
       gtk_entry_set_text (GTK_ENTRY (data->org), value);
+      org_set = TRUE;
       continue;
     }
     if (!strcmp (name, EVC_PHOTO))
@@ -573,40 +563,49 @@ add_new_email (GtkWidget *button, ContactsData *data)
 }
 
 static void
-fullname_changed_cb (GtkWidget *entry, ContactsData *data)
+attribute_changed (const gchar *attr_name, const gchar *new_val, ContactsData *data)
 {
   EVCard *card;
   EVCardAttribute *attr;
 
+  /* don't set the attribute if we are still loading it */
   if (data->detail_page_loading)
     return;
 
   card = E_VCARD (g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact"));
-  attr = e_vcard_get_attribute (card, EVC_FN);
+  attr = e_vcard_get_attribute (card, attr_name);
+
+  if (!attr)
+  {
+    attr = e_vcard_attribute_new (NULL, attr_name);
+    e_vcard_add_attribute (card, attr);
+  }
 
   e_vcard_attribute_remove_values (attr);
-  e_vcard_attribute_add_value (attr, gtk_entry_get_text (GTK_ENTRY (entry)));
+
+  /* FIXME: this is not dealing with multi values yet */
+  e_vcard_attribute_add_value (attr, new_val);
 
   /* mark liststore as "dirty" so we can commit the contact later */
   g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (TRUE));
 }
 
 static void
+fullname_changed_cb (GtkWidget *entry, ContactsData *data)
+{
+  const gchar *new_val;
+
+  new_val = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  attribute_changed (EVC_FN, new_val, data);
+}
+
+static void
 org_changed_cb (GtkWidget *entry, ContactsData *data)
 {
-  EVCard *card;
-  EVCardAttribute *attr;
+  const gchar *new_val;
 
-  if (data->detail_page_loading)
-    return;
+  new_val = gtk_entry_get_text (GTK_ENTRY (entry));
 
-  card = E_VCARD (g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact"));
-  attr = e_vcard_get_attribute (card, EVC_ORG);
-
-  e_vcard_attribute_remove_values (attr);
-  /* FIXME: this is not dealing with multi values yet */
-  e_vcard_attribute_add_value (attr, gtk_entry_get_text (GTK_ENTRY (entry)));
-
-  /* mark liststore as "dirty" so we can commit the contact later */
-  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (TRUE));
+  attribute_changed (EVC_ORG, new_val, data);
 }
