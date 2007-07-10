@@ -1,3 +1,8 @@
+2007-07-10  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-utils.c:
+	Add X-JABBER to the display fields.
+
 2007-06-13  Ross Burton  <ross@openedhand.com>
 
 	* src/contacts-gtk.c:

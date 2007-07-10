@@ -159,6 +159,7 @@ static const ContactsField contacts_fields[] = {
 	{ "ORG", E_CONTACT_ORG, NULL, FALSE, 15, TRUE },
 	{ "TEL", 0, N_("Phone"), FALSE, 20, FALSE },
 	{ "EMAIL", 0, N_("Email"), FALSE, 30, FALSE },
+	{ "X-JABBER", 0, N_("Jabber"), FALSE, 35, FALSE },
 	{ "ADR", 0, N_("Address"), FALSE, 40, FALSE },
 	{ "NICKNAME", E_CONTACT_NICKNAME, NULL, FALSE, 110, TRUE },
 	{ "BDAY", E_CONTACT_BIRTH_DATE, NULL, FALSE, 120, TRUE },
