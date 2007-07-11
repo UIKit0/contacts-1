@@ -1,19 +1,22 @@
-uidir = $(pkgdatadir)
-
 desktopdir = $(datadir)/applications
 desktop_in_files = contacts.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
+EXTRA_DIST = $(desktop_in_files)
+
 icondir = $(datadir)/icons/hicolor/48x48/apps
-icon_DATA = contacts.png
+dist_icon_DATA = contacts.png
+
+svnicondir = $(datadir)/icons/hicolor/scalable/apps
+dist_svnicon_DATA = contacts.svg
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 
 schemadir = $(GCONF_SCHEMA_FILE_DIR)
-schema_DATA = contacts.schemas
+dist_schema_DATA = contacts.schemas
 
-man1_MANS = contacts.1
+dist_man1_MANS = contacts.1
 
 if HAVE_GCONF
 install-data-local:
@@ -38,5 +41,3 @@ install-data-hook:
 CLEANFILES = $(desktop_DATA)
 
 MAINTAINERCLEANFILES = Makefile.in
-
-EXTRA_DIST = $(desktop_in_files) $(icon_DATA) $(schema_DATA) $(man1_MANS)
