@@ -141,7 +141,6 @@ create_contacts_details_page (ContactsData *data)
   g_signal_connect (G_OBJECT (toolitem), "toggled", G_CALLBACK (edit_toggle_toggled_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
-  data->edit_toggle = toolitem;
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
@@ -333,7 +332,8 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   if (!fn_set)
     gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
 
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), FALSE);
+  /* make sure all the widgets are in the correct state */
+  edit_toggle_toggled_cb (NULL, data);
 
   data->detail_page_loading = FALSE;
 }
@@ -347,7 +347,10 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   GList *list;
   gboolean editing;
 
-  editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button));
+  if (!button)
+    editing = FALSE;
+  else
+    editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button));
 
   /* FIXME: these should be #defined (or similar)
    * column 0 = delete
