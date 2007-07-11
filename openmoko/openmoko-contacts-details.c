@@ -482,7 +482,8 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
     gtk_widget_destroy (dialog);
   }
 
-  /* FIXME: return to contact list or something ... */
+  /* return to contact list */
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), LIST_PAGE_NUM);
 }
 
 static void
