@@ -111,9 +111,23 @@ commit_contact (ContactsData *data)
 
   if (dirty)
   {
+    const gchar *uid;
     old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
-    /* TODO: error checking on failure */
-    e_book_async_commit_contact (data->book, old_contact, NULL, NULL);
+    uid = e_contact_get_const (old_contact, E_CONTACT_UID);
+
+    hito_vcard_strip_empty_attributes (E_VCARD (old_contact));
+
+    /* if the contact doesn't have a uid then it is a newly created contact */
+    if (!uid)
+    {
+      e_book_async_add_contact (data->book, old_contact, NULL, NULL);
+      g_object_unref (old_contact);
+    }
+    else
+    {
+      /* TODO: error checking on failure */
+      e_book_async_commit_contact (data->book, old_contact, NULL, NULL);
+    }
   }
 
   g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (FALSE));
@@ -141,6 +155,7 @@ create_contacts_details_page (ContactsData *data)
   g_signal_connect (G_OBJECT (toolitem), "toggled", G_CALLBACK (edit_toggle_toggled_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
+  data->edit_toggle = toolitem;
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
@@ -250,107 +265,11 @@ free_contacts_details_page (ContactsData *data)
   commit_contact (data);
 }
 
-static void
-contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
-        gpointer user_data)
-{
-  /* Max height of GTK_ICON_SIZE_DIALOG */
-  gint iconwidth, iconheight;
-  gtk_icon_size_lookup (GTK_ICON_SIZE_DIALOG, &iconwidth, &iconheight);
-  gdk_pixbuf_loader_set_size (loader, width / ((gdouble) height / iconheight), iconheight);
-}
-
 void
-contacts_details_page_set_contact (ContactsData *data, EContact *contact)
-{
-  GList *attributes, *a;
-  GtkListStore *liststore;
-  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
-
-  data->detail_page_loading = TRUE;
-
-  liststore = data->attribute_liststore;
-
-  /* make sure exiting contact is committed if necessary */
-  commit_contact (data);
-
-  /* set up references to current contact and ebook */
-  g_object_set_data (G_OBJECT (liststore), "econtact", contact);
-  g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
-
-  gtk_list_store_clear (liststore);
-
-
-  attributes = e_vcard_get_attributes (E_VCARD (contact));
-  for (a = attributes; a; a = g_list_next (a))
-  {
-    GtkTreeIter iter;
-    const gchar *name, *value;
-    name = e_vcard_attribute_get_name (a->data);
-    value = hito_vcard_attribute_get_value_string (a->data);
-
-    if (!strcmp (name, EVC_FN))
-    {
-      gtk_entry_set_text (GTK_ENTRY (data->fullname), value);
-      fn_set = TRUE;
-      continue;
-    }
-    if (!strcmp (name, EVC_ORG))
-    {
-      gtk_entry_set_text (GTK_ENTRY (data->org), value);
-      org_set = TRUE;
-      continue;
-    }
-    if (!strcmp (name, EVC_PHOTO))
-    {
-      GdkPixbufLoader *ploader;
-      guchar *buf;
-      gsize size;
-      buf = g_base64_decode (value, &size);
-      ploader = gdk_pixbuf_loader_new ();
-      g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
-
-      gdk_pixbuf_loader_write (ploader, buf, size, NULL);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
-      gdk_pixbuf_loader_close (ploader, NULL);
-      g_object_unref (ploader);
-      photo_set = TRUE;
-    }
-
-    gtk_list_store_insert_with_values (liststore, &iter, 0,
-        ATTR_POINTER_COLUMN, a->data,
-        ATTR_NAME_COLUMN, name,
-        ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
-        ATTR_VALUE_COLUMN, value,
-        -1);
-  }
-
-  if (!photo_set)
-    gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
-  if (!org_set)
-    gtk_entry_set_text (GTK_ENTRY (data->org), "");
-  if (!fn_set)
-    gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
-
-  /* make sure all the widgets are in the correct state */
-  edit_toggle_toggled_cb (NULL, data);
-
-  data->detail_page_loading = FALSE;
-}
-
-
-
-static void
-edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
+contacts_details_page_set_editable (ContactsData *data, gboolean editing)
 {
   GtkTreeViewColumn *col;
   GList *list;
-  gboolean editing;
-
-  if (!button)
-    editing = FALSE;
-  else
-    editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button));
 
   /* FIXME: these should be #defined (or similar)
    * column 0 = delete
@@ -409,6 +328,122 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
   }
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle)))
+  {
+    if (!editing)
+      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), FALSE);
+  }
+  else
+  {
+    if (editing)
+      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), TRUE);
+  }
+}
+
+static void
+contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
+        gpointer user_data)
+{
+  /* Max height of GTK_ICON_SIZE_DIALOG */
+  gint iconwidth, iconheight;
+  gtk_icon_size_lookup (GTK_ICON_SIZE_DIALOG, &iconwidth, &iconheight);
+  gdk_pixbuf_loader_set_size (loader, width / ((gdouble) height / iconheight), iconheight);
+}
+
+void
+contacts_details_page_set_contact (ContactsData *data, EContact *contact)
+{
+  GList *attributes, *a;
+  GtkListStore *liststore;
+  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
+
+  data->detail_page_loading = TRUE;
+
+  liststore = data->attribute_liststore;
+
+  /* make sure exiting contact is committed if necessary */
+  commit_contact (data);
+
+
+  /* contact will be null if need to create a new one */
+  if (!contact)
+  {
+    contact = e_contact_new ();
+  }
+
+  /* set up references to current contact and ebook */
+  g_object_set_data (G_OBJECT (liststore), "econtact", contact);
+  g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
+
+
+  /* make sure all the widgets are in the correct state */
+  contacts_details_page_set_editable (data, (contact) ? FALSE : TRUE);
+
+
+  gtk_list_store_clear (liststore);
+
+
+  attributes = e_vcard_get_attributes (E_VCARD (contact));
+  for (a = attributes; a; a = g_list_next (a))
+  {
+    GtkTreeIter iter;
+    const gchar *name, *value;
+    name = e_vcard_attribute_get_name (a->data);
+    value = hito_vcard_attribute_get_value_string (a->data);
+
+    if (!strcmp (name, EVC_FN))
+    {
+      gtk_entry_set_text (GTK_ENTRY (data->fullname), value);
+      fn_set = TRUE;
+      continue;
+    }
+    if (!strcmp (name, EVC_ORG))
+    {
+      gtk_entry_set_text (GTK_ENTRY (data->org), value);
+      org_set = TRUE;
+      continue;
+    }
+    if (!strcmp (name, EVC_PHOTO))
+    {
+      GdkPixbufLoader *ploader;
+      guchar *buf;
+      gsize size;
+      buf = g_base64_decode (value, &size);
+      ploader = gdk_pixbuf_loader_new ();
+      g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
+
+      gdk_pixbuf_loader_write (ploader, buf, size, NULL);
+      gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
+      gdk_pixbuf_loader_close (ploader, NULL);
+      g_object_unref (ploader);
+      photo_set = TRUE;
+    }
+
+    gtk_list_store_insert_with_values (liststore, &iter, 0,
+        ATTR_POINTER_COLUMN, a->data,
+        ATTR_NAME_COLUMN, name,
+        ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
+        ATTR_VALUE_COLUMN, value,
+        -1);
+  }
+
+  if (!photo_set)
+    gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
+  if (!org_set)
+    gtk_entry_set_text (GTK_ENTRY (data->org), "");
+  if (!fn_set)
+    gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
+
+  data->detail_page_loading = FALSE;
+}
+
+
+
+static void
+edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
+{
+  contacts_details_page_set_editable (data, gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button)));
 }
 
 

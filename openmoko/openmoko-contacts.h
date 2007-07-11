@@ -17,6 +17,13 @@
  */
 
 
+enum {
+  LIST_PAGE_NUM,
+  DETAIL_PAGE_NUM,
+  HISTORY_PAGE_NUM,
+  GROUPS_PAGE_NUM
+};
+
 typedef struct
 {
   GtkWidget *notebook;
@@ -39,6 +46,7 @@ typedef struct
   GtkWidget *email;
   GtkWidget *add_email_button;
   GtkWidget *add_telephone_button;
+  GtkToolItem *edit_toggle;
 
   GtkListStore *attribute_liststore;
   gboolean detail_page_loading;

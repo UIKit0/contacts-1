@@ -37,6 +37,7 @@
 
 /* callbacks */
 static void search_toggle_cb (GtkWidget *button, ContactsData *data);
+static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
 
@@ -81,6 +82,7 @@ create_contacts_list_page (ContactsData *data)
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
 
   toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_NEW);
+  g_signal_connect (toolitem, "clicked", G_CALLBACK (new_contact_clicked_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 4);
 
@@ -164,3 +166,11 @@ search_toggle_cb (GtkWidget *button, ContactsData *data)
 }
 
 
+static void
+new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
+{
+  /* NULL is used to indicate "new contact" */
+  contacts_details_page_set_contact (data, NULL);
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), DETAIL_PAGE_NUM);
+  contacts_details_page_set_editable (data, TRUE);
+}
