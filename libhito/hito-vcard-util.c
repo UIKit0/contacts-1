@@ -53,10 +53,12 @@ hito_vcard_get_named_attributes (EVCard *contact, const char *name)
  *
  */
 void
-hito_vcard_attribute_set_type (EVCardAttribute *attr, gchar *type)
+hito_vcard_attribute_set_type (EVCardAttribute *attr, const gchar *type)
 {
   GList *params;
   EVCardAttributeParam *p = NULL;
+  gchar **values;
+  gint i;
 
   /* look for the TYPE parameter */
   for (params = e_vcard_attribute_get_params (attr); params;
@@ -69,9 +71,14 @@ hito_vcard_attribute_set_type (EVCardAttribute *attr, gchar *type)
     }
   }
 
-  /* if we didn't find the TYPE parameter, so create it now */
-  if (p == NULL)
+  /* we didn't find the TYPE parameter, so create it now */
+  if (!p)
   {
+    /* if there isn't an existing TYPE and we are not setting a value, we can
+     * return straight away */
+    if (!type)
+      return;
+
     p = e_vcard_attribute_param_new ("TYPE");
     e_vcard_attribute_add_param (attr, p);
   }
@@ -79,8 +86,11 @@ hito_vcard_attribute_set_type (EVCardAttribute *attr, gchar *type)
   /* remove the current values */
   e_vcard_attribute_param_remove_values (p);
 
-  gint i;
-  gchar **values = g_strsplit (type, ";", -1);
+  /* if type is null, we don't want to add any type parameters */
+  if (!type)
+    return;
+
+  values = g_strsplit (type, ";", -1);
 
   for (i = 0; (values[i]); i++)
   {
