@@ -1,5 +1,11 @@
 2007-07-11  Ross Burton  <ross@openedhand.com>
 
+	* configure.ac:
+	* data/icons/*:
+	Add the rest of the icons that Andreas drew.
+
+2007-07-11  Ross Burton  <ross@openedhand.com>
+
 	* data/Makefile.am:
 	Install the SVG icon, and clean up the rules a little.
 
