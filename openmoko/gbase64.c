@@ -28,10 +28,10 @@
 #include <string.h>
 
 #include "gbase64.h"
-#include "glib.h"
-#include "glibintl.h"
+#include <glib.h>
+/* #include <glibintl.h> */
 
-#include "galias.h"
+/* #include <galias.h> */
 
 static const char base64_alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -376,4 +376,4 @@ g_base64_decode (const gchar *text,
 }
 
 #define __G_BASE64_C__
-#include "galiasdef.c"
+/* #include "galiasdef.c" */
