@@ -4,6 +4,9 @@ set -e
 
 case "$1" in
     configure)
+        # Update the icon cache
+        gtk-update-icon-cache -f /usr/share/icons/hicolor
+
         if [ -z "$2" ]; then
             maemo-select-menu-location contacts.desktop tana_fi_utilities
         fi
