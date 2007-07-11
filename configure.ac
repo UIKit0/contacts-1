@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(contacts, 0.5, http://www.openedhand.com/)
+AC_INIT(contacts, 0.6, http://www.openedhand.com/)
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR(src/contacts-main.c)
 AM_CONFIG_HEADER(src/config.h)

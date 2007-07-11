@@ -1,3 +1,11 @@
+Overview of Changes in 0.6 (since 0.5)
+======================================
+
+* Fix running against GTK+ < 2.10
+* Show ORG and X-JABBER fields
+* Install more icon sizes
+
+
 Overview of Changes in 0.5 (since 0.4)
 ======================================
 
