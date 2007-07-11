@@ -1,6 +1,16 @@
 2007-07-11  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:
+	* data/icons/24x24/:
+	* data/icons/26x26/:
+	Add 24px and 26px (22px with a border) icons.
+
+	* data/icons/*/Makefile.am:
+	Clean dist rules.
+
+2007-07-11  Ross Burton  <ross@openedhand.com>
+
+	* configure.ac:
 	* data/icons/*:
 	Add the rest of the icons that Andreas drew.
 
