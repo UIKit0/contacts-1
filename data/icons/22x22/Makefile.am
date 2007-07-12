@@ -1,2 +1,2 @@
 icondir = $(datadir)/icons/hicolor/22x22/apps
-dist_icon_DATA = contacts.svg contacts.png
+dist_icon_DATA = contacts.png

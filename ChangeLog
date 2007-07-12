@@ -1,3 +1,8 @@
+2007-07-12  Ross Burton  <ross@openedhand.com>
+
+	* data/icons/*/Makefile.am:
+	Don't install the SVG files in the fixed sizes, they are source.
+
 2007-07-11  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:
