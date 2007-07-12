@@ -1,8 +1,8 @@
 AC_PREREQ(2.53)
 AC_INIT(contacts, 0.5, http://www.openedhand.com/)
 AM_INIT_AUTOMAKE()
-AC_CONFIG_SRCDIR(src/contacts-main.c)
-AM_CONFIG_HEADER(src/config.h)
+AC_CONFIG_SRCDIR(vanilla/contacts-main.c)
+AM_CONFIG_HEADER(vanilla/config.h)
 AM_MAINTAINER_MODE
 
 AC_ISC_POSIX
@@ -55,9 +55,14 @@ if test "$want_gconf" = "yes"; then
 fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
 
-FRONTEND="gtk"
-AC_SUBST(FRONTEND)
-AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-gtk.h"], [Main GTK+ Frontend])
+
+contacts_frontend="vanilla"
+
+AC_ARG_WITH([frontend],
+            AC_HELP_STRING([--with-frontend], [Which frontend to use [[default=vanilla]]]),
+            [contacts_frontend=$with_frontend])
+
+AC_SUBST([contacts_frontend])
 
 AM_GCONF_SOURCE_2
 
@@ -66,6 +71,6 @@ Makefile
 data/Makefile
 po/Makefile.in
 libhito/Makefile
-src/Makefile
+vanilla/Makefile
 openmoko/Makefile
 ])

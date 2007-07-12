@@ -7,7 +7,7 @@ REQUIRED_AUTOMAKE_VERSION=1.8
 PKG_NAME=contacts
 
 (test -f $srcdir/configure.ac \
-  && test -f $srcdir/src/contacts-main.c) || {
+  && test -f $srcdir/libhito/hito-all-group.c) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level $PKG_NAME directory"
     exit 1

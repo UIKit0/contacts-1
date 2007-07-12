@@ -1,11 +1,7 @@
 #include "contacts-defs.h"
 #include "config.h"
 
-#ifndef FRONTEND_HEADER
-#error No front-end header defined
-#else
-#include FRONTEND_HEADER
-#endif
+#include "contacts-gtk.h"
 
 
 void contacts_setup_ui (ContactsData *data);

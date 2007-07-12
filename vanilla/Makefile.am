@@ -25,8 +25,8 @@ contacts_SOURCES = \
                     contacts-utils.h \
                     contacts-ui.c \
                     contacts-ui.h \
-                    contacts-@FRONTEND@.c \
-                    contacts-@FRONTEND@.h
+                    contacts-gtk.c \
+                    contacts-gtk.h
 
 contacts_LDADD   = $(CONTACTS_LIBS)
 contacts_LDFLAGS = @CONTACTS_LIBS@

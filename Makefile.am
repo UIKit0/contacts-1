@@ -1,4 +1,7 @@
-SUBDIRS = libhito src openmoko po data
+SUBDIRS = libhito @contacts_frontend@ po data
+
+DIST_SUBDIRS = libhito vanilla openmoko po data
+
 
 INTLTOOL_BUILT = \
         intltool-extract \
