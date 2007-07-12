@@ -1,7 +1,7 @@
 
 INCLUDES = -I$(top_srcdir)/libhito
 
-noinst_PROGRAMS=openmoko-contacts
+bin_PROGRAMS=openmoko-contacts
 
 
 AM_CFLAGS = -Wall -export-dynamic $(CONTACTS_CFLAGS)
