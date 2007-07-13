@@ -410,8 +410,8 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
       g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
 
       gdk_pixbuf_loader_write (ploader, buf, size, NULL);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
       gdk_pixbuf_loader_close (ploader, NULL);
+      gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
       g_object_unref (ploader);
       photo_set = TRUE;
     }
