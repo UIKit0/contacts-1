@@ -137,7 +137,7 @@ void
 create_contacts_details_page (ContactsData *data)
 {
 
-  GtkWidget *box, *hbox, *toolbar, *w, *align;
+  GtkWidget *box, *hbox, *toolbar, *w;
   GtkToolItem *toolitem;
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
