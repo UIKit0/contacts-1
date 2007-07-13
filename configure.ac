@@ -11,6 +11,8 @@ AC_STDC_HEADERS
 AC_PROG_LIBTOOL
 IT_PROG_INTLTOOL([0.35.0])
 
+LIBMOKOUI_VERSION=0.0.5
+
 dnl i18n support
 GETTEXT_PACKAGE=Contacts
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
@@ -61,6 +63,10 @@ contacts_frontend="vanilla"
 AC_ARG_WITH([frontend],
             AC_HELP_STRING([--with-frontend], [Which frontend to use [[default=vanilla]]]),
             [contacts_frontend=$with_frontend])
+
+if test x"$contacts_frontend" = x"openmoko"; then
+	PKG_CHECK_MODULES(MOKOUI, libmokoui >= $LIBMOKOUI_VERSION)
+fi
 
 AC_SUBST([contacts_frontend])
 

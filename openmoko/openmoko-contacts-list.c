@@ -19,6 +19,7 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include <libmokoui/moko-finger-scroll.h>
 
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"
@@ -110,8 +111,7 @@ create_contacts_list_page (ContactsData *data)
 
 
   /* main treeview */
-  scrolled = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  scrolled = moko_finger_scroll_new ();
   gtk_box_pack_start (GTK_BOX (box), scrolled, TRUE, TRUE, 0);
 
   treeview = hito_contact_view_new (HITO_CONTACT_STORE (contact_store),
