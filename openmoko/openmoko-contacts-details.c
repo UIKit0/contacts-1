@@ -172,18 +172,14 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (hbox), data->photo, FALSE, FALSE, 0);
 
   w = gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, PADDING);
+  gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, PADDING);
 
   data->fullname = gtk_entry_new ();
-  align = gtk_alignment_new (0, 0, 0, 0);
-  gtk_container_add (GTK_CONTAINER (align), data->fullname);
-  gtk_box_pack_start (GTK_BOX (w), align, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (w), data->fullname, TRUE, TRUE, 0);
   g_signal_connect (data->fullname, "changed", G_CALLBACK (fullname_changed_cb), data);
 
   data->org = gtk_entry_new ();
-  align = gtk_alignment_new (0, 0, 0, 0);
-  gtk_container_add (GTK_CONTAINER (align), data->org);
-  gtk_box_pack_start (GTK_BOX (w), align, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (w), data->org, TRUE, TRUE, 0);
   g_signal_connect (data->org, "changed", G_CALLBACK (org_changed_cb), data);
 
 
