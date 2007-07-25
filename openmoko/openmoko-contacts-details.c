@@ -138,7 +138,7 @@ void
 create_contacts_details_page (ContactsData *data)
 {
 
-  GtkWidget *box, *hbox, *toolbar, *w, *sw, *vbox, *viewport;
+  GtkWidget *box, *hbox, *toolbar, *w, *sw, *vbox, *vb, *viewport;
   GtkToolItem *toolitem;
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
@@ -202,6 +202,9 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* telephone entries */
+  vb = gtk_vbox_new (0, FALSE);
+  gtk_box_pack_start (GTK_BOX (vbox), vb, FALSE, FALSE, 0);
+
   tel_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (tel_filter),
       (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_TEL, NULL);
@@ -225,17 +228,21 @@ create_contacts_details_page (ContactsData *data)
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
   gtk_container_add (GTK_CONTAINER (w), data->telephone);*/
-  gtk_box_pack_start (GTK_BOX (vbox), data->telephone, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vb), data->telephone, FALSE, FALSE, 0);
 
   /* add phone button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_telephone_button = w;
 
 
   /* email entries */
+  vb = gtk_vbox_new (0, FALSE);
+  gtk_box_pack_start (GTK_BOX (vbox), vb, FALSE, FALSE, 0);
+
   email_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (email_filter), (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_EMAIL, NULL);
 
@@ -258,13 +265,14 @@ create_contacts_details_page (ContactsData *data)
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
   gtk_container_add (GTK_CONTAINER (w), data->email);*/
-  gtk_box_pack_start (GTK_BOX (vbox), data->email, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vb), data->email, FALSE, FALSE, 0);
 
   /* add e-mail button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  gtk_widget_set_name (w, "moko-contacts-add-detail-button");  
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_email_button = w;
 
 }
