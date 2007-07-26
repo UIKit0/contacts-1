@@ -190,7 +190,9 @@ create_contacts_details_page (ContactsData *data)
   g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), NULL);
   data->attribute_liststore = liststore;
 
-  sw = moko_finger_scroll_new ();
+  sw = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
   gtk_box_pack_start (GTK_BOX (box), sw, TRUE, TRUE, 0);
 
   vbox = gtk_vbox_new (FALSE, PADDING);
@@ -211,6 +213,7 @@ create_contacts_details_page (ContactsData *data)
 
   data->telephone = gtk_tree_view_new_with_model(GTK_TREE_MODEL (tel_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->telephone), FALSE);
+  gtk_box_pack_start (GTK_BOX (vb), data->telephone, FALSE, FALSE, 0);
 
   /* delete option column */
   append_delete_column (GTK_TREE_VIEW (data->telephone));
@@ -219,16 +222,11 @@ create_contacts_details_page (ContactsData *data)
   append_type_column (GTK_TREE_VIEW (data->telephone));
 
   renderer = gtk_cell_renderer_text_new ();
+  g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), tel_filter);
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->telephone),
       gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
 
-
-  /*w = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-  gtk_container_add (GTK_CONTAINER (w), data->telephone);*/
-  gtk_box_pack_start (GTK_BOX (vb), data->telephone, FALSE, FALSE, 0);
 
   /* add phone button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
@@ -248,6 +246,7 @@ create_contacts_details_page (ContactsData *data)
 
   data->email = gtk_tree_view_new_with_model(GTK_TREE_MODEL (email_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->email), FALSE);
+  gtk_box_pack_start (GTK_BOX (vb), data->email, FALSE, FALSE, 0);
 
   /* delete option column */
   append_delete_column (GTK_TREE_VIEW (data->email));
@@ -258,18 +257,14 @@ create_contacts_details_page (ContactsData *data)
   /* value column */
   renderer = gtk_cell_renderer_text_new ();
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), email_filter);
+  g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
       gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
 
-  /*w = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-  gtk_container_add (GTK_CONTAINER (w), data->email);*/
-  gtk_box_pack_start (GTK_BOX (vb), data->email, FALSE, FALSE, 0);
 
   /* add e-mail button */
   w = gtk_button_new_from_stock (GTK_STOCK_ADD);
-  gtk_widget_set_name (w, "moko-contacts-add-detail-button");  
+  gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
@@ -295,9 +290,11 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
    * column 2 = value
    */
 
+  g_object_set (G_OBJECT (data->telephone), "can-focus", editing, NULL);
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 0);
   g_object_set (G_OBJECT (col), "visible", editing, NULL);
 
+  g_object_set (G_OBJECT (data->email), "can-focus", editing, NULL);
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 0);
   g_object_set (G_OBJECT (col), "visible", editing, NULL);
 
