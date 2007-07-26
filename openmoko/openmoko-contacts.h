@@ -16,6 +16,8 @@
  * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <gtk/gtk.h>
+#include <libebook/e-book.h>
 
 enum {
   LIST_PAGE_NUM,
@@ -50,6 +52,9 @@ typedef struct
 
   GtkListStore *attribute_liststore;
   gboolean detail_page_loading;
+
+  /* history page */
+  GtkWidget *history;
 
 } ContactsData;
 

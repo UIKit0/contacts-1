@@ -33,6 +33,7 @@
 
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"
+#include "openmoko-contacts-history.h"
 
 
 static void
@@ -62,12 +63,8 @@ make_contact_view (ContactsData *data)
   /* create notebook pages */
   create_contacts_list_page (data);
   create_contacts_details_page (data);
+  create_contacts_history_page (data);
 
-
-  /* history */
-  box = gtk_vbox_new (FALSE, 0);
-  gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR));
-  gtk_container_child_set (GTK_CONTAINER (data->notebook), box, "tab-expand", TRUE, "tab-fill", TRUE, NULL);
 
   /* groups */
   box = gtk_vbox_new (FALSE, 0);

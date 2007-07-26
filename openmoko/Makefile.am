@@ -10,12 +10,16 @@ AM_CPPFLAGS=-DPKGDATADIR=\"$(pkgdatadir)\"				\
 	-DDATADIR=\""$(datadir)"\"
 
 openmoko_contacts_SOURCES= \
+	contacts-history.c \
+	contacts-history.h \
 	openmoko-contacts.c \
 	openmoko-contacts.h \
 	openmoko-contacts-details.c \
 	openmoko-contacts-details.h \
 	openmoko-contacts-list.c \
 	openmoko-contacts-list.h \
+	openmoko-contacts-history.c \
+	openmoko-contacts-history.h \
 	koto-cell-renderer-pixbuf.c \
 	koto-cell-renderer-pixbuf.h \
 	gbase64.c \
