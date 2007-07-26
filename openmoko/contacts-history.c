@@ -598,8 +598,7 @@ contacts_history_finalize(GObject *obj)
   if (priv->journal)
     moko_journal_close (priv->journal);
   
-  if (G_OBJECT_CLASS(parent_class)->finalize)
-    G_OBJECT_CLASS(parent_class)->finalize(obj);
+  G_OBJECT_CLASS(contacts_history_parent_class)->finalize (obj);
 }
 
 static void
