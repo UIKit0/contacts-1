@@ -85,7 +85,7 @@ contacts_history_preview_clicked (ContactsHistory *history, GtkWidget *preview)
   shown = GPOINTER_TO_BOOLEAN (g_object_get_qdata (G_OBJECT (preview),
                                shown_quark));
 
-  switch (moko_journal_entry_get_type (entry)) {
+  switch (moko_journal_entry_get_entry_type (entry)) {
     case EMAIL_JOURNAL_ENTRY:
     case SMS_JOURNAL_ENTRY:
       if (!label)
@@ -321,7 +321,6 @@ contacts_history_create_voice_preview (MokoJournalEntry *entry,
 {
 #define BUF 256
   GtkWidget *eb, *hbox, *icon, *label;
-  MokoJournalVoiceInfo *info;
   const MokoTime *mtime;
   gchar *blurb = NULL;
   gchar t[BUF];
@@ -330,9 +329,8 @@ contacts_history_create_voice_preview (MokoJournalEntry *entry,
   gboolean missed = FALSE;
 
   /* If we have call info, lets load it */
-  if (moko_journal_entry_get_voice_info (entry, &info)) {
-    missed = moko_journal_voice_info_get_was_missed (info);
-  }
+  missed = moko_journal_voice_info_get_was_missed (entry);
+ 
   
   /* Make MokoTime into something human-readable */
   mtime = moko_journal_entry_get_dtstart (entry);
@@ -415,7 +413,7 @@ contacts_history_make_preview (ContactsHistory *history,
   if (!moko_journal_entry_get_direction (entry, &direction))
     direction = DIRECTION_IN;
     
-  switch (moko_journal_entry_get_type (entry)) {
+  switch (moko_journal_entry_get_entry_type (entry)) {
     case EMAIL_JOURNAL_ENTRY:
       preview = contacts_history_create_email_preview (entry, direction);
       break;
