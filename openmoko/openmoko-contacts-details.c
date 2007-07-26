@@ -281,6 +281,9 @@ free_contacts_details_page (ContactsData *data)
 
   /* free data referenced in the attribute liststore */
   gtk_tree_model_foreach (GTK_TREE_MODEL (data->attribute_liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
+
+  /* unref the attribute list */
+  g_object_unref (data->attribute_liststore);
 }
 
 void
@@ -306,18 +309,22 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 1);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
 
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 2);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
 
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 1);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
 
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 2);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
 
   g_object_set (G_OBJECT (data->add_telephone_button), "visible", editing, NULL);
   g_object_set (G_OBJECT (data->add_email_button), "visible", editing, NULL);
