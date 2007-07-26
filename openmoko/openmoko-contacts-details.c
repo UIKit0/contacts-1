@@ -55,6 +55,8 @@ static void commit_contact (ContactsData *data);
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
 
+static void free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+
 static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
 {
@@ -276,6 +278,9 @@ void
 free_contacts_details_page (ContactsData *data)
 {
   commit_contact (data);
+
+  /* free data referenced in the attribute liststore */
+  gtk_tree_model_foreach (GTK_TREE_MODEL (data->attribute_liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
 }
 
 void
@@ -366,6 +371,15 @@ contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
   gdk_pixbuf_loader_set_size (loader, width / ((gdouble) height / iconheight), iconheight);
 }
 
+static void
+free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+  gchar *value = NULL, *type = NULL;
+  gtk_tree_model_get (model, iter, ATTR_VALUE_COLUMN, &value, ATTR_TYPE_COLUMN, &type, -1);
+  g_free (value);
+  g_free (type);
+}
+
 void
 contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 {
@@ -396,6 +410,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   contacts_details_page_set_editable (data, (contact) ? FALSE : TRUE);
 
 
+  gtk_tree_model_foreach (GTK_TREE_MODEL (liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
   gtk_list_store_clear (liststore);
 
 
