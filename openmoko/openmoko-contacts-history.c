@@ -53,7 +53,7 @@ contacts_history_page_free (ContactsData *data)
 void
 contacts_history_page_set_contact (ContactsData *data, EContact *contact)
 {
-  const gchar *uid;
+  const gchar *uid = NULL;
 
   /* Get the contacts uid and update the history widget */
   uid = e_contact_get_const (contact, E_CONTACT_UID);

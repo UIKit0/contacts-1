@@ -653,7 +653,10 @@ contacts_history_init (ContactsHistory *self)
   /* Create the MokoJournal object */
   priv->journal = moko_journal_open_default ();
   if (!priv->journal)
+  {
+    g_warning ("Could not open the journal");
     return;
+  }
   
   /* load all journal entries from the journal on storage*/
   if (!moko_journal_load_from_storage (priv->journal)) {
