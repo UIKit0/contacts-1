@@ -61,8 +61,11 @@ static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
 {
   gchar *value;
+  gboolean result;
   gtk_tree_model_get (model, iter, ATTR_NAME_COLUMN, &value, -1);
-  return (value && name && !strcmp (value, name));
+  result = (value && name && !strcmp (value, name));
+  g_free (value);
+  return result;
 }
 
 static void
