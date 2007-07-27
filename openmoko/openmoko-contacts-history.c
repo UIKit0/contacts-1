@@ -29,18 +29,26 @@ void
 create_contacts_history_page (ContactsData *data)
 {
 
+  GtkWidget *vbox;
+
+  vbox = gtk_vbox_new (FALSE, 0);
+
+  data->history_label = gtk_label_new (NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), data->history_label, FALSE, FALSE, 0);
+
   data->history = contacts_history_new ();
+  gtk_box_pack_start (GTK_BOX (vbox), data->history, TRUE, TRUE, 0);
 
   g_signal_connect (G_OBJECT (data->history), "entry-activated",
                     G_CALLBACK (on_moko_journal_entry_activated), NULL);
 
   gtk_notebook_append_page (
       GTK_NOTEBOOK (data->notebook),
-      data->history,
+      vbox,
       gtk_image_new_from_stock (MOKO_STOCK_HISTORY, GTK_ICON_SIZE_LARGE_TOOLBAR)
       );
 
-  gtk_container_child_set (GTK_CONTAINER (data->notebook), data->history,
+  gtk_container_child_set (GTK_CONTAINER (data->notebook), vbox,
       "tab-expand", TRUE, "tab-fill", TRUE, NULL);
 
 }
@@ -53,12 +61,24 @@ contacts_history_page_free (ContactsData *data)
 void
 contacts_history_page_set_contact (ContactsData *data, EContact *contact)
 {
-  const gchar *uid = NULL;
+  const gchar *s = NULL;
+  gchar *markup;
 
   /* Get the contacts uid and update the history widget */
-  uid = e_contact_get_const (contact, E_CONTACT_UID);
-  if (uid)
-    contacts_history_update_uid (CONTACTS_HISTORY (data->history), uid);
+  s = e_contact_get_const (contact, E_CONTACT_UID);
+  if (s)
+    contacts_history_update_uid (CONTACTS_HISTORY (data->history), s);
+
+  /* set the title of the page */
+  s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
+  if (s)
+  {
+    markup = g_markup_printf_escaped ("<b>%s</b>", s);
+    gtk_label_set_markup (GTK_LABEL (data->history_label), markup);
+    g_free (markup);
+  }
+  else
+    gtk_label_set_markup (GTK_LABEL (data->history_label), "<b>Communication History</b>");
 
 }
 

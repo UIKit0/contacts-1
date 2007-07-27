@@ -55,6 +55,7 @@ typedef struct
 
   /* history page */
   GtkWidget *history;
+  GtkWidget *history_label;
 
 } ContactsData;
 
