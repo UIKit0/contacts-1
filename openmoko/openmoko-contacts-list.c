@@ -24,6 +24,7 @@
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"
 #include "openmoko-contacts-history.h"
+#include "openmoko-contacts-groups.h"
 
 #include "hito-contact-store.h"
 #include "hito-contact-model-filter.h"
@@ -142,10 +143,12 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
     gtk_tree_model_get (model, &iter, COLUMN_CONTACT, &contact, -1);
     contacts_details_page_set_contact (data, contact);
     contacts_history_page_set_contact (data, contact);
+    contacts_groups_page_set_contact (data, contact);
     g_object_unref (contact);
   } else {
     contacts_details_page_set_contact (data, NULL);
     contacts_history_page_set_contact (data, NULL);
+    contacts_groups_page_set_contact (data, NULL);
   }
 }
 

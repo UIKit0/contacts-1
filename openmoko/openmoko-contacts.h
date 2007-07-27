@@ -57,6 +57,11 @@ typedef struct
   GtkWidget *history;
   GtkWidget *history_label;
 
+  /* groups page */
+  GtkWidget *groups;
+  GtkListStore *groups_liststore;
+  GtkWidget *groups_label;
+
 } ContactsData;
 
 

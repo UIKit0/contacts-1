@@ -16,10 +16,12 @@ openmoko_contacts_SOURCES= \
 	openmoko-contacts.h \
 	openmoko-contacts-details.c \
 	openmoko-contacts-details.h \
-	openmoko-contacts-list.c \
-	openmoko-contacts-list.h \
+	openmoko-contacts-groups.c \
+	openmoko-contacts-groups.h \
 	openmoko-contacts-history.c \
 	openmoko-contacts-history.h \
+	openmoko-contacts-list.c \
+	openmoko-contacts-list.h \
 	koto-cell-renderer-pixbuf.c \
 	koto-cell-renderer-pixbuf.h \
 	gbase64.c \
