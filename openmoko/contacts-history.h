@@ -21,7 +21,7 @@
 #include <config.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <libmokojournal/moko-journal.h>
+#include <moko-journal.h>
 
 #ifndef _CONTACTS_HISTORY_H
 #define _CONTACTS_HISTORY_H

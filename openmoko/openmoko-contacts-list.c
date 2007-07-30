@@ -19,7 +19,7 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
-#include <libmokoui/moko-finger-scroll.h>
+#include <moko-finger-scroll.h>
 
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"

@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 #include <string.h>
-#include <libmokoui/moko-finger-scroll.h>
+#include <moko-finger-scroll.h>
 
 #include "openmoko-contacts.h"
 #include "hito-contact-preview.h"
