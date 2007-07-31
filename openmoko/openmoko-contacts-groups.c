@@ -24,13 +24,28 @@
 #include "hito-group.h"
 
 static void
-groups_tree_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+groups_name_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
   HitoGroup *group;
   gtk_tree_model_get (model, iter, 0, &group, -1);
   g_object_set (G_OBJECT (cell), "text", hito_group_get_name (group), NULL);
   g_object_unref (group);
 }
+
+static void
+groups_toggle_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, GtkTreeModel *model, GtkTreeIter *iter, ContactsData *data)
+{
+  HitoGroup *group;
+  EContact *contact = NULL;
+
+  contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+  if (!contact)
+    return;
+  gtk_tree_model_get (model, iter, 0, &group, -1);
+  g_object_set (G_OBJECT (cell), "active", hito_group_includes_contact (group, contact), NULL);
+  g_object_unref (group);
+}
+
 
 void
 create_contacts_groups_page (ContactsData *data)
@@ -50,13 +65,20 @@ create_contacts_groups_page (ContactsData *data)
   hito_group_store_set_view (HITO_GROUP_STORE (data->groups_liststore), data->view);
 
   data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
   gtk_box_pack_start (GTK_BOX (box), data->groups, TRUE, TRUE, 0);
 
-  cell = gtk_cell_renderer_text_new ();
-  col = gtk_tree_view_column_new_with_attributes ("Groups", cell, NULL);
-  gtk_tree_view_column_set_cell_data_func (col, cell, groups_tree_cell_data_func, NULL, NULL);
-  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
+  col = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
+
+  cell = gtk_cell_renderer_toggle_new ();
+  gtk_tree_view_column_pack_start (col, cell, FALSE);
+  gtk_tree_view_column_set_cell_data_func (col, cell, (GtkTreeCellDataFunc) groups_toggle_cell_data_func, data, NULL);
+
+
+  cell = gtk_cell_renderer_text_new ();
+  gtk_tree_view_column_pack_start (col, cell, TRUE);
+  gtk_tree_view_column_set_cell_data_func (col, cell, groups_name_cell_data_func, NULL, NULL);
 }
 
 void
@@ -81,6 +103,7 @@ contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
   else
     gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Communication History</b>");
 
+  g_object_set_data (G_OBJECT (data->groups), "contact", contact);
 
 }
 
