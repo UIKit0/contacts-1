@@ -89,10 +89,10 @@ main (int argc, char **argv)
   g_assert (data->view);
   e_book_query_unref (query);
   
-  e_book_view_start (data->view);
-
   make_contact_view (data);
   
+  e_book_view_start (data->view);
+
   gtk_main ();
 
   e_book_view_stop (data->view);
