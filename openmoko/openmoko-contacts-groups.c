@@ -20,11 +20,24 @@
 #include <moko-stock.h>
 
 #include "openmoko-contacts.h"
+#include "hito-group-store.h"
+#include "hito-group.h"
+
+static void
+groups_tree_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+  HitoGroup *group;
+  gtk_tree_model_get (model, iter, 0, &group, -1);
+  g_object_set (G_OBJECT (cell), "text", hito_group_get_name (group), NULL);
+  g_object_unref (group);
+}
 
 void
 create_contacts_groups_page (ContactsData *data)
 {
   GtkWidget *box;
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *cell;
 
   box = gtk_vbox_new (FALSE, 0);
   gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (MOKO_STOCK_CONTACT_GROUPS, GTK_ICON_SIZE_LARGE_TOOLBAR));
@@ -32,6 +45,18 @@ create_contacts_groups_page (ContactsData *data)
 
   data->groups_label = gtk_label_new (NULL);
   gtk_box_pack_start (GTK_BOX (box), data->groups_label, FALSE, FALSE, 0);
+
+  data->groups_liststore = hito_group_store_new ();
+  hito_group_store_set_view (HITO_GROUP_STORE (data->groups_liststore), data->view);
+
+  data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
+  gtk_box_pack_start (GTK_BOX (box), data->groups, TRUE, TRUE, 0);
+
+  cell = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new_with_attributes ("Groups", cell, NULL);
+  gtk_tree_view_column_set_cell_data_func (col, cell, groups_tree_cell_data_func, NULL, NULL);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
 }
 
 void
