@@ -50,6 +50,9 @@ static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const ch
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
+static void entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
+static void entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
+
 static void commit_contact (ContactsData *data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
@@ -184,10 +187,14 @@ create_contacts_details_page (ContactsData *data)
   data->fullname = gtk_entry_new ();
   gtk_box_pack_start (GTK_BOX (w), data->fullname, TRUE, TRUE, 0);
   g_signal_connect (data->fullname, "changed", G_CALLBACK (fullname_changed_cb), data);
+  g_signal_connect (data->fullname, "focus-in-event", G_CALLBACK (entry_focus_in_cb), "Name");
+  g_signal_connect (data->fullname, "focus-out-event", G_CALLBACK (entry_focus_out_cb), "Name");
 
   data->org = gtk_entry_new ();
   gtk_box_pack_start (GTK_BOX (w), data->org, TRUE, TRUE, 0);
   g_signal_connect (data->org, "changed", G_CALLBACK (org_changed_cb), data);
+  g_signal_connect (data->org, "focus-in-event", G_CALLBACK (entry_focus_in_cb), "Organisation");
+  g_signal_connect (data->org, "focus-out-event", G_CALLBACK (entry_focus_out_cb), "Organisation");
 
 
   /* liststore for attributes */
@@ -234,7 +241,7 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* add phone button */
-  w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  w = gtk_button_new_with_label ("_Add Phone Number");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
@@ -268,7 +275,7 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* add e-mail button */
-  w = gtk_button_new_from_stock (GTK_STOCK_ADD);
+  w = gtk_button_new_with_label ("Add E-Mail Address");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
@@ -346,6 +353,9 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
     gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
     gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
 
+    /* add any "hint" values */
+    entry_focus_out_cb (data->fullname, NULL, "Name");
+    entry_focus_out_cb (data->org, NULL, "Organisation");
   }
   else
   {
@@ -357,6 +367,11 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
 
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
+
+    /* clear any "hint" values */
+    entry_focus_in_cb (data->fullname, NULL, "Name");
+    entry_focus_in_cb (data->org, NULL, "Organisation");
+
   }
 
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle)))
@@ -691,4 +706,31 @@ org_changed_cb (GtkWidget *entry, ContactsData *data)
   new_val = gtk_entry_get_text (GTK_ENTRY (entry));
 
   attribute_changed (EVC_ORG, new_val, data);
+}
+
+
+static void
+entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
+{
+  const gchar *contents = NULL;
+  contents = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  if (contents && !strcmp (contents, fieldname))
+  {
+    gtk_entry_set_text (GTK_ENTRY (entry), "");
+    gtk_widget_modify_text (entry, GTK_STATE_NORMAL, NULL);
+  }
+}
+
+static void
+entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
+{
+  const gchar *contents = NULL;
+  contents = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  if (contents && !strcmp (contents, ""))
+  {
+    gtk_entry_set_text (GTK_ENTRY (entry), fieldname);
+    gtk_widget_modify_text (entry, GTK_STATE_NORMAL, &entry->style->text[GTK_STATE_INSENSITIVE]);
+  }
 }
