@@ -241,7 +241,7 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* add phone button */
-  w = gtk_button_new_with_label ("_Add Phone Number");
+  w = gtk_button_new_with_label ("Add Phone Number");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
