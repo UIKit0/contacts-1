@@ -20,6 +20,8 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 
+#include <moko-stock.h>
+
 #include "hito-contact-store.h"
 #include "hito-contact-model-filter.h"
 #include "hito-contact-view.h"
@@ -48,6 +50,8 @@ window_delete_event_cb (GtkWidget *widget, GdkEvent *event, ContactsData *data)
 static void
 make_contact_view (ContactsData *data)
 {
+
+  moko_stock_register ();
 
   data->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_signal_connect (data->window, "delete-event", G_CALLBACK (window_delete_event_cb), data);

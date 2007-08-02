@@ -23,6 +23,10 @@
 #include "hito-group-store.h"
 #include "hito-group.h"
 
+static void toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *data);
+static void commit_contact (ContactsData *data);
+
+
 static void
 groups_name_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
@@ -57,12 +61,14 @@ create_contacts_groups_page (ContactsData *data)
   box = gtk_vbox_new (FALSE, 0);
   gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (MOKO_STOCK_CONTACT_GROUPS, GTK_ICON_SIZE_LARGE_TOOLBAR));
   gtk_container_child_set (GTK_CONTAINER (data->notebook), box, "tab-expand", TRUE, "tab-fill", TRUE, NULL);
+  g_signal_connect_swapped (box, "unmap", G_CALLBACK (commit_contact), data);
 
   data->groups_label = gtk_label_new (NULL);
   gtk_box_pack_start (GTK_BOX (box), data->groups_label, FALSE, FALSE, 0);
 
   data->groups_liststore = hito_group_store_new ();
   hito_group_store_set_view (HITO_GROUP_STORE (data->groups_liststore), data->view);
+  g_object_set_data (G_OBJECT (data->groups_liststore), "dirty", GINT_TO_POINTER (FALSE));
 
   data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
@@ -73,6 +79,7 @@ create_contacts_groups_page (ContactsData *data)
 
   cell = gtk_cell_renderer_toggle_new ();
   gtk_tree_view_column_pack_start (col, cell, FALSE);
+  g_signal_connect (cell, "toggled", G_CALLBACK (toggle_toggled_cb), data);
   gtk_tree_view_column_set_cell_data_func (col, cell, (GtkTreeCellDataFunc) groups_toggle_cell_data_func, data, NULL);
 
 
@@ -108,3 +115,77 @@ contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
 }
 
 
+static void
+toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *data)
+{
+  HitoGroup *group;
+  gboolean toggle;
+  EContact *contact;
+  GtkTreeIter iter;
+  EVCardAttribute *attr;
+
+  g_object_get (G_OBJECT (renderer), "active", &toggle, NULL);
+
+  contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+  if (!contact)
+    return;
+  gtk_tree_model_get_iter_from_string (data->groups_liststore, &iter, path);
+  gtk_tree_model_get (data->groups_liststore, &iter, 0, &group, -1);
+  
+  attr = e_vcard_get_attribute (contact, EVC_CATEGORIES);
+  if (!attr)
+  {
+    attr = e_vcard_attribute_new (NULL, EVC_CATEGORIES);
+    e_vcard_add_attribute (contact, attr);
+  }
+
+  if (hito_group_includes_contact (group, contact))
+  {
+    /* remove group from contact */
+    e_vcard_attribute_remove_value (attr, hito_group_get_name (group));
+  }
+  else
+  {
+    /* add group to contact */
+    e_vcard_attribute_add_value (attr, hito_group_get_name (group));
+  }
+
+  g_object_set_data (G_OBJECT (data->groups_liststore), "dirty", GINT_TO_POINTER (TRUE));
+
+}
+static void
+commit_contact (ContactsData *data)
+{
+  EContact *old_contact;
+  GtkListStore *liststore;
+  gboolean dirty;
+
+  /* Clear up any loose ends */
+
+  liststore = data->groups_liststore;
+  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
+
+  if (dirty)
+  {
+    const gchar *uid;
+    old_contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+    uid = e_contact_get_const (old_contact, E_CONTACT_UID);
+
+    hito_vcard_strip_empty_attributes (E_VCARD (old_contact));
+
+    /* if the contact doesn't have a uid then it is a newly created contact */
+    if (!uid)
+    {
+      e_book_async_add_contact (data->book, old_contact, NULL, NULL);
+      g_object_unref (old_contact);
+    }
+    else
+    {
+      /* TODO: error checking on failure */
+      e_book_async_commit_contact (data->book, old_contact, NULL, NULL);
+    }
+  }
+
+  g_object_set_data (G_OBJECT (data->groups_liststore), "dirty", GINT_TO_POINTER (FALSE));
+
+}
