@@ -21,6 +21,7 @@
 #include <libebook/e-book.h>
 #include <string.h>
 #include <moko-finger-scroll.h>
+#include <moko-stock.h>
 
 #include "openmoko-contacts.h"
 #include "hito-contact-preview.h"
@@ -39,6 +40,14 @@ enum {
   ATTR_NAME_COLUMN,
   ATTR_TYPE_COLUMN,
   ATTR_VALUE_COLUMN
+};
+
+
+enum {
+  TREE_DEL_COLUMN = 0,
+  TREE_TYPE_COLUMN,
+  TREE_ICON_COLUMN,
+  TREE_VALUE_COLUMN
 };
 
 static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
@@ -82,7 +91,7 @@ append_delete_column (GtkTreeView *treeview)
   g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
   g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), treeview_column);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), treeview_column, TREE_DEL_COLUMN);
 }
 
 static void
@@ -93,18 +102,35 @@ append_type_column (GtkTreeView *treeview)
   GtkListStore *liststore;
   GtkTreeIter iter;
 
+  /* FIXME: this should be translatable somehow */
   liststore = gtk_list_store_new (1, G_TYPE_STRING);
-  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "WORK", -1);
-  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "HOME", -1);
-  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "OTHER", -1);
-  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "PREF", -1);
+  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "Work", -1);
+  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "Home", -1);
+  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "Other", -1);
+  gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "Pref", -1);
 
   renderer = gtk_cell_renderer_combo_new();
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (type_renderer_edited_cb), gtk_tree_view_get_model (treeview));
   g_object_set (G_OBJECT (renderer), "model", liststore, "text-column", 0, "has-entry", FALSE, NULL);
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, "text", ATTR_TYPE_COLUMN, NULL);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), treeview_column);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), treeview_column, TREE_TYPE_COLUMN);
 }
+
+
+static void
+append_icon_column (GtkTreeView *treeview, gchar *stock_id)
+{
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *treeview_column;
+
+  renderer = gtk_cell_renderer_pixbuf_new();
+  g_object_set (G_OBJECT (renderer), "stock-id", stock_id, NULL);
+  treeview_column = gtk_tree_view_column_new ();
+  gtk_tree_view_column_pack_start (treeview_column, renderer, FALSE);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), treeview_column, TREE_ICON_COLUMN);
+}
+
+
 
 static void
 commit_contact (ContactsData *data)
@@ -233,11 +259,15 @@ create_contacts_details_page (ContactsData *data)
   /* type option column */
   append_type_column (GTK_TREE_VIEW (data->telephone));
 
+  /* icon column */
+  append_icon_column (GTK_TREE_VIEW (data->telephone), MOKO_STOCK_CONTACT_PHONE);
+
+  /* value column */
   renderer = gtk_cell_renderer_text_new ();
   g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), tel_filter);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (data->telephone),
-      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (data->telephone),
+      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL), TREE_VALUE_COLUMN);
 
 
   /* add phone button */
@@ -266,12 +296,16 @@ create_contacts_details_page (ContactsData *data)
   /* type option column */
   append_type_column (GTK_TREE_VIEW (data->email));
 
+  /* icon column */
+  append_icon_column (GTK_TREE_VIEW (data->email), MOKO_STOCK_CONTACT_PHONE);
+
+
   /* value column */
   renderer = gtk_cell_renderer_text_new ();
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), email_filter);
   g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (data->email),
-      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL));
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (data->email),
+      gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL), TREE_VALUE_COLUMN);
 
 
   /* add e-mail button */
@@ -302,36 +336,30 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
   GtkTreeViewColumn *col;
   GList *list;
 
-  /* FIXME: these should be #defined (or similar)
-   * column 0 = delete
-   * column 1 = type
-   * column 2 = value
-   */
-
   g_object_set (G_OBJECT (data->telephone), "can-focus", editing, NULL);
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 0);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_DEL_COLUMN);
   g_object_set (G_OBJECT (col), "visible", editing, NULL);
 
   g_object_set (G_OBJECT (data->email), "can-focus", editing, NULL);
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 0);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_DEL_COLUMN);
   g_object_set (G_OBJECT (col), "visible", editing, NULL);
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 1);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_TYPE_COLUMN);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
   g_list_free (list);
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), 2);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_VALUE_COLUMN);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
   g_list_free (list);
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 1);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_TYPE_COLUMN);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
   g_list_free (list);
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), 2);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_VALUE_COLUMN);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
   g_list_free (list);
