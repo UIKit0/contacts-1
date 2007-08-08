@@ -202,6 +202,30 @@ commit_contact (ContactsData *data)
 
 
 static void
-add_groups_clicked_cb (GtkWidget *button, ContactsData *Data)
+add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
 {
+  HitoGroup *new_group;
+  gchar *new_name;
+  GtkDialog *d; /* temporary dialog until group rename is implemented */
+  GtkWidget *w;
+
+  d = gtk_dialog_new_with_buttons ("New Group", data->window,
+      GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+
+  w = gtk_entry_new ();
+  gtk_container_add (d->vbox, w);
+  gtk_widget_show (w);
+
+  if (gtk_dialog_run (d) == GTK_RESPONSE_OK)
+  {
+    new_name = gtk_entry_get_text (GTK_ENTRY (w));
+
+    new_group = hito_category_group_new (new_name);
+
+    hito_group_store_add_group (data->groups_liststore, new_group);
+
+    g_object_unref (new_group);
+
+  }
+  gtk_widget_destroy (d);
 }
