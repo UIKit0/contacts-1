@@ -1,3 +1,9 @@
+contacts (0.7-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Ross Burton <ross@debian.org>  Thu,  9 Aug 2007 20:40:24 +0100
+
 contacts (0.6-1) unstable; urgency=low
 
   * New upstream release.
