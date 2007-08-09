@@ -1,3 +1,9 @@
+2007-08-09  Rob Bradford  <rob@openedhand.com>
+
+	* src/contacts-gtk.c: (groups_combobox_changed_cb):
+	Fix crash due to invalid iter when retrieving active item in the
+	group combobox. (OH Bugzilla: #441)
+
 2007-07-12  Ross Burton  <ross@openedhand.com>
 
 	* data/icons/*/Makefile.am:

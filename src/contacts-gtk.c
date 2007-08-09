@@ -67,10 +67,12 @@ groups_combobox_changed_cb (GtkWidget *widget, ContactsData *data)
 {
 	GtkTreeIter iter;
 	gchar *text = NULL;
-	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (groups_combobox), &iter);
-	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (groups_combobox)), &iter, 0, &text, -1);
-	g_free (data->selected_group);
-	data->selected_group = text;
+	if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (groups_combobox), &iter))
+	{
+		gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (groups_combobox)), &iter, 0, &text, -1);
+		g_free (data->selected_group);
+		data->selected_group = text;
+	}
 	contacts_update_treeview (data);
 }
 
