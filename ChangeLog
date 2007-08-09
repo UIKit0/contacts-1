@@ -1,3 +1,9 @@
+2007-08-09  Ross Burton  <ross@openedhand.com>
+
+	* configure.ac:
+	* NEWS:
+	Version 0.7.
+
 2007-08-09  Rob Bradford  <rob@openedhand.com>
 
 	* src/contacts-gtk.c: (groups_combobox_changed_cb):
