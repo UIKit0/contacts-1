@@ -1,6 +1,11 @@
 2007-08-10  Neil J. Patel  <njp@o-hand.com>
 
 	* data/contacts.desktop.in:
+	Remove 'PIM' category, as its not valid.
+
+2007-08-10  Neil J. Patel  <njp@o-hand.com>
+
+	* data/contacts.desktop.in:
 	Add a 'PIM' category for Openmoko menus.
 
 2007-06-13  Ross Burton  <ross@openedhand.com>
