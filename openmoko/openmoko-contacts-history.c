@@ -45,7 +45,7 @@ create_contacts_history_page (ContactsData *data)
   gtk_notebook_append_page (
       GTK_NOTEBOOK (data->notebook),
       vbox,
-      gtk_image_new_from_stock (MOKO_STOCK_HISTORY, GTK_ICON_SIZE_LARGE_TOOLBAR)
+      gtk_image_new_from_stock (MOKO_STOCK_HISTORY, GTK_ICON_SIZE_BUTTON)
       );
 
   gtk_container_child_set (GTK_CONTAINER (data->notebook), vbox,
