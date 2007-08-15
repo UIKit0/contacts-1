@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 #include <moko-finger-scroll.h>
+#include <moko-stock.h>
 
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"
@@ -72,13 +73,13 @@ create_contacts_list_page (ContactsData *data)
   toolbar = gtk_toolbar_new ();
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
 
-  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_MISSING_IMAGE);
+  toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_CALL_DIAL);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
-  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_MISSING_IMAGE);
+  toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_SMS_NEW);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 2);
 
