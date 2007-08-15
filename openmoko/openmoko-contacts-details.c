@@ -439,6 +439,14 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   GList *attributes, *a;
   GtkListStore *liststore;
   gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
+  EContact *old_contact = NULL;
+
+  /* unref the old contact */
+  old_contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+
+  if (old_contact)
+    g_object_unref (old_contact);
+
 
   data->detail_page_loading = TRUE;
 
@@ -519,6 +527,9 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
     gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
 
   data->detail_page_loading = FALSE;
+
+  /* ref the contact so it doesn't go away when committed */
+  g_object_ref (contact);
 }
 
 

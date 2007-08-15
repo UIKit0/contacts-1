@@ -106,6 +106,13 @@ void
 contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
 {
   const gchar *s;
+  EContact *old_contact = NULL;
+
+  /* unref the old contact */
+  old_contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+
+  if (old_contact)
+    g_object_unref (old_contact);
 
   /* set the title of the page */
   s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
@@ -120,6 +127,9 @@ contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
     gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Communication History</b>");
 
   g_object_set_data (G_OBJECT (data->groups), "contact", contact);
+
+  /* ref the contact so it doesn't go away when committed */
+  g_object_ref (contact);
 
 }
 
