@@ -39,6 +39,7 @@ typedef struct
   /* index page */
   GtkWidget *search_entry;
   GtkWidget *groups_combo;
+  GtkWidget *contacts_treeview;
 
   /* details page */
   GtkWidget *photo;

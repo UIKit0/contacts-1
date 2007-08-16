@@ -47,13 +47,13 @@ static void dial_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
-
+static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data);
 
 /* ui creation */
 void
 create_contacts_list_page (ContactsData *data)
 {
-  GtkWidget *toolbar, *box, *hbox, *scrolled, *treeview;
+  GtkWidget *toolbar, *box, *hbox, *scrolled;
   GtkToolItem *toolitem;
   GtkWidget *search_toggle;
   GtkTreeModel *group_store, *contact_store, *contact_filter;
@@ -122,15 +122,39 @@ create_contacts_list_page (ContactsData *data)
   scrolled = moko_finger_scroll_new ();
   gtk_box_pack_start (GTK_BOX (box), scrolled, TRUE, TRUE, 0);
 
-  treeview = hito_contact_view_new (HITO_CONTACT_STORE (contact_store),
+  data->contacts_treeview = hito_contact_view_new (HITO_CONTACT_STORE (contact_store),
                                     HITO_CONTACT_MODEL_FILTER (contact_filter));
-  g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview)),
+  g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview)),
                     "changed", G_CALLBACK (on_selection_changed), data);
-  gtk_container_add (GTK_CONTAINER (scrolled), treeview);
+  gtk_container_add (GTK_CONTAINER (scrolled), data->contacts_treeview);
+
+  g_signal_connect (data->view, "sequence-complete", sequence_complete_cb, data);
 
 }
 
 /* callbacks */
+
+static void
+sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data)
+{
+  GtkTreeSelection *selection;
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview));
+
+  /* make sure at least one contact is selected */
+  if (gtk_tree_selection_count_selected_rows (selection) == 0)
+  {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    GtkTreePath *path;
+
+    model = gtk_tree_view_get_model (GTK_TREE_VIEW (data->contacts_treeview));
+    gtk_tree_model_get_iter_first (model, &iter);
+    path = gtk_tree_model_get_path (model, &iter);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (data->contacts_treeview), path, NULL, FALSE);
+    gtk_tree_path_free (path);
+  }
+
+}
 
 static void
 on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter)
@@ -150,7 +174,6 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
     contacts_details_page_set_contact (data, contact);
     contacts_history_page_set_contact (data, contact);
     contacts_groups_page_set_contact (data, contact);
-    g_object_unref (contact);
   } else {
     contacts_details_page_set_contact (data, NULL);
     contacts_history_page_set_contact (data, NULL);
