@@ -208,7 +208,10 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
   num_tels = g_list_length (numbers);
 
   if (num_tels < 1)
+  {
+    g_print ("Dial: This contact does not have any numbers\n");
     return;
+  }
   else if (num_tels == 1)
   {
     /* dial */
@@ -270,7 +273,10 @@ dial_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   contact = g_object_get_data (G_OBJECT (data->groups), "contact");
 
   if (!E_IS_CONTACT (contact))
+  {
+    g_print ("Dial: This is not a valid contact\n");
     return;
+  }
 
   attributes = e_vcard_get_attributes (E_VCARD (contact));
   for (a = attributes; a; a = g_list_next (a))
