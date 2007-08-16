@@ -19,6 +19,7 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include <string.h>
 #include <moko-finger-scroll.h>
 #include <moko-stock.h>
 
@@ -26,6 +27,7 @@
 #include "openmoko-contacts-details.h"
 #include "openmoko-contacts-history.h"
 #include "openmoko-contacts-groups.h"
+#include "openmoko-contacts-util.h"
 
 #include "hito-contact-store.h"
 #include "hito-contact-model-filter.h"
@@ -36,11 +38,12 @@
 #include "hito-category-group.h"
 #include "hito-no-category-group.h"
 #include "hito-separator-group.h"
-
+#include "hito-vcard-util.h"
 
 
 /* callbacks */
 static void search_toggle_cb (GtkWidget *button, ContactsData *data);
+static void dial_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
@@ -76,6 +79,8 @@ create_contacts_list_page (ContactsData *data)
   toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_CALL_DIAL);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
+  g_signal_connect (toolitem, "clicked", 
+                    G_CALLBACK (dial_contact_clicked_cb), data);
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
@@ -172,7 +177,6 @@ search_toggle_cb (GtkWidget *button, ContactsData *data)
   }
 }
 
-
 static void
 new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
 {
@@ -181,3 +185,108 @@ new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), DETAIL_PAGE_NUM);
   contacts_details_page_set_editable (data, TRUE);
 }
+
+static void
+on_dial_number_clicked (GtkWidget *eb, GdkEventButton *event, GtkDialog *dialog)
+{
+  EVCardAttribute *att;
+  const gchar *number;
+
+  att = g_object_get_data (G_OBJECT (eb), "contact");
+  number = hito_vcard_attribute_get_value_string (att);
+  openmoko_contacts_util_dial_number (number);
+
+  gtk_dialog_response (dialog, GTK_RESPONSE_CANCEL);
+}
+
+static void
+show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
+{
+  GList *n;
+  gint num_tels = 0;
+
+  num_tels = g_list_length (numbers);
+
+  if (num_tels < 1)
+    return;
+  else if (num_tels == 1)
+  {
+    /* dial */
+    openmoko_contacts_util_dial_number (
+            hito_vcard_attribute_get_value_string (numbers->data));
+  }
+  else
+  {
+    /* Make a dialog with a list of numbers, which are one-click dialling */
+    /* dial on click, and then close the window */
+    GtkWidget *dialog, *vbox, *hbox, *image, *label;
+
+    dialog = gtk_dialog_new_with_buttons ("Please choose a number to call",
+                                          GTK_WINDOW (data->window),
+                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                          GTK_STOCK_CANCEL,
+                                          GTK_RESPONSE_CANCEL,
+                                          NULL);
+    gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);                                    
+    vbox = gtk_vbox_new (FALSE, 8);
+    gtk_box_pack_start (GTK_BOX (GTK_DIALOG(dialog)->vbox), vbox, 
+                        FALSE, FALSE, 12);
+
+    for (n = numbers; n; n = n->next)
+    {
+      GtkWidget *button = gtk_event_box_new ();
+      gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 8);
+
+      hbox = gtk_hbox_new (FALSE, 6);
+      gtk_container_add (GTK_CONTAINER (button), hbox);
+      
+      image = gtk_image_new_from_stock (MOKO_STOCK_CONTACT_PHONE, 
+                                        GTK_ICON_SIZE_BUTTON);
+      gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+
+      label = gtk_label_new (hito_vcard_attribute_get_value_string (n->data));
+      gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
+      g_signal_connect (button, "button-release-event",
+                        G_CALLBACK (on_dial_number_clicked), (gpointer)dialog);
+      g_object_set_data (G_OBJECT (button), "contact", n->data);
+    }
+    
+    /*g_signal_connect_swapped (dialog, "response",
+                              G_CALLBACK (gtk_widget_destroy), dialog);*/
+    gtk_widget_show_all (dialog);
+    gint res = gtk_dialog_run (GTK_DIALOG (dialog));
+    res++;
+    gtk_widget_destroy (dialog);
+  } 
+}
+
+static void
+dial_contact_clicked_cb (GtkWidget *button, ContactsData *data)
+{
+  EContact *contact = NULL;
+  GList *attributes, *a, *numbers = NULL;
+
+  contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+
+  if (!E_IS_CONTACT (contact))
+    return;
+
+  attributes = e_vcard_get_attributes (E_VCARD (contact));
+  for (a = attributes; a; a = g_list_next (a))
+  {
+    const gchar *name, *value, *type;
+    name = e_vcard_attribute_get_name (a->data);
+    value = hito_vcard_attribute_get_value_string (a->data);
+    type = hito_vcard_attribute_get_type (a->data);
+
+    if (!strcmp (name, EVC_TEL))
+    {
+      numbers = g_list_append (numbers, a->data);
+      continue;
+    }
+  }
+  show_contact_numbers ("hello", numbers, data);
+  g_list_free (numbers);
+}
+

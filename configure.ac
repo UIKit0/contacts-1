@@ -65,7 +65,7 @@ AC_ARG_WITH([frontend],
             [contacts_frontend=$with_frontend])
 
 if test x"$contacts_frontend" = x"openmoko"; then
-	PKG_CHECK_MODULES(MOKOUI, libmokoui2 libmokojournal2)
+	PKG_CHECK_MODULES(MOKOUI, libmokoui2 libmokojournal2 dbus-glib-1)
 fi
 
 AC_SUBST([contacts_frontend])

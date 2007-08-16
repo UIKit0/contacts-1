@@ -22,6 +22,8 @@ openmoko_contacts_SOURCES= \
 	openmoko-contacts-history.h \
 	openmoko-contacts-list.c \
 	openmoko-contacts-list.h \
+	openmoko-contacts-util.c \
+	openmoko-contacts-util.h \
 	koto-cell-renderer-pixbuf.c \
 	koto-cell-renderer-pixbuf.h \
 	gbase64.c \
