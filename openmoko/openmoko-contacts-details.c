@@ -668,7 +668,7 @@ add_new_attribute (GtkTreeView *treeview, ContactsData *data, const gchar *attr_
   GtkTreePath *filter_path;
   GtkTreeModel *filter;
 
-  attr = e_vcard_attribute_new (NULL, EVC_EMAIL);
+  attr = e_vcard_attribute_new (NULL, attr_name);
 
   contact = g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact");
   e_vcard_add_attribute (contact, attr);
@@ -690,13 +690,13 @@ add_new_attribute (GtkTreeView *treeview, ContactsData *data, const gchar *attr_
 static void
 add_new_telephone (GtkWidget *button, ContactsData *data)
 {
-  add_new_attribute (GTK_TREE_VIEW (data->telephone), data, EVC_TEL, "WORK");
+  add_new_attribute (GTK_TREE_VIEW (data->telephone), data, EVC_TEL, "Work");
 }
 
 static void
 add_new_email (GtkWidget *button, ContactsData *data)
 {
-  add_new_attribute (GTK_TREE_VIEW (data->email), data, EVC_EMAIL, "WORK");
+  add_new_attribute (GTK_TREE_VIEW (data->email), data, EVC_EMAIL, "Work");
 }
 
 static void
