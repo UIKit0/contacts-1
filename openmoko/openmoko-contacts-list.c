@@ -128,7 +128,7 @@ create_contacts_list_page (ContactsData *data)
                     "changed", G_CALLBACK (on_selection_changed), data);
   gtk_container_add (GTK_CONTAINER (scrolled), data->contacts_treeview);
 
-  g_signal_connect (data->view, "sequence-complete", sequence_complete_cb, data);
+  g_signal_connect (data->view, "sequence-complete", G_CALLBACK (sequence_complete_cb), data);
 
 }
 

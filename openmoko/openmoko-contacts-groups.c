@@ -21,6 +21,7 @@
 
 #include "openmoko-contacts.h"
 #include "hito-group-store.h"
+#include "hito-category-group.h"
 #include "hito-group.h"
 #include "hito-vcard-util.h"
 
@@ -215,24 +216,24 @@ static void
 add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
 {
   HitoGroup *new_group;
-  gchar *new_name;
-  GtkDialog *d; /* temporary dialog until group rename is implemented */
+  const gchar *new_name;
+  GtkWidget *d; /* temporary dialog until group rename is implemented */
   GtkWidget *w;
 
-  d = gtk_dialog_new_with_buttons ("New Group", data->window,
+  d = gtk_dialog_new_with_buttons ("New Group", GTK_WINDOW (data->window),
       GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
   w = gtk_entry_new ();
-  gtk_container_add (d->vbox, w);
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (d)->vbox), w);
   gtk_widget_show (w);
 
-  if (gtk_dialog_run (d) == GTK_RESPONSE_OK)
+  if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
   {
     new_name = gtk_entry_get_text (GTK_ENTRY (w));
 
     new_group = hito_category_group_new (new_name);
 
-    hito_group_store_add_group (data->groups_liststore, new_group);
+    hito_group_store_add_group (HITO_GROUP_STORE (data->groups_liststore), new_group);
 
     g_object_unref (new_group);
 
