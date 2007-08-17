@@ -140,7 +140,7 @@ sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data)
   GtkTreeSelection *selection;
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview));
 
-  /* make sure at least one contact is selected */
+  /* try to make sure at least one contact is selected */
   if (gtk_tree_selection_count_selected_rows (selection) == 0)
   {
     GtkTreeIter iter;
@@ -148,7 +148,8 @@ sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data)
     GtkTreePath *path;
 
     model = gtk_tree_view_get_model (GTK_TREE_VIEW (data->contacts_treeview));
-    gtk_tree_model_get_iter_first (model, &iter);
+    if (!gtk_tree_model_get_iter_first (model, &iter))
+      return;
     path = gtk_tree_model_get_path (model, &iter);
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (data->contacts_treeview), path, NULL, FALSE);
     gtk_tree_path_free (path);
