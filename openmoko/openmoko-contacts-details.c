@@ -759,6 +759,9 @@ entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
     gtk_entry_set_text (GTK_ENTRY (entry), "");
     gtk_widget_modify_text (entry, GTK_STATE_NORMAL, NULL);
   }
+
+  /* propagate further */
+  return FALSE;
 }
 
 static void
@@ -772,4 +775,7 @@ entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
     gtk_entry_set_text (GTK_ENTRY (entry), fieldname);
     gtk_widget_modify_text (entry, GTK_STATE_NORMAL, &entry->style->text[GTK_STATE_INSENSITIVE]);
   }
+
+  /* propagate further */
+  return FALSE;
 }
