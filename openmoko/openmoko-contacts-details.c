@@ -59,8 +59,8 @@ static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const ch
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
-static void entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
-static void entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
+static gboolean entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
+static gboolean entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
 
 static void commit_contact (ContactsData *data);
 
@@ -748,7 +748,7 @@ org_changed_cb (GtkWidget *entry, ContactsData *data)
 }
 
 
-static void
+static gboolean
 entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
 {
   const gchar *contents = NULL;
@@ -764,7 +764,7 @@ entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
   return FALSE;
 }
 
-static void
+static gboolean
 entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
 {
   const gchar *contents = NULL;
