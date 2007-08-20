@@ -54,9 +54,9 @@ void
 create_contacts_list_page (ContactsData *data)
 {
   GtkWidget *toolbar, *box, *hbox, *scrolled;
-  GtkToolItem *toolitem;
   GtkWidget *search_toggle;
   GtkTreeModel *group_store, *contact_store, *contact_filter;
+  GtkToolItem *toolitem;
 
   group_store = hito_group_store_new ();
   hito_group_store_set_view (HITO_GROUP_STORE (group_store), data->view);
@@ -76,17 +76,17 @@ create_contacts_list_page (ContactsData *data)
   toolbar = gtk_toolbar_new ();
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
 
-  toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_CALL_DIAL);
-  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
-  g_signal_connect (toolitem, "clicked", 
+  data->dial_button = gtk_tool_button_new_from_stock (MOKO_STOCK_CALL_DIAL);
+  gtk_tool_item_set_expand (GTK_TOOL_ITEM (data->dial_button), TRUE);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->dial_button, 0);
+  g_signal_connect (data->dial_button, "clicked", 
                     G_CALLBACK (dial_contact_clicked_cb), data);
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
-  toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_SMS_NEW);
-  gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 2);
+  data->sms_button = gtk_tool_button_new_from_stock (MOKO_STOCK_SMS_NEW);
+  gtk_tool_item_set_expand (GTK_TOOL_ITEM (data->sms_button), TRUE);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->sms_button, 2);
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
 
@@ -168,18 +168,26 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  EContact *contact;
+  EContact *contact = NULL;
+  GList *numbers;
 
-  if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+  {
     gtk_tree_model_get (model, &iter, COLUMN_CONTACT, &contact, -1);
-    contacts_details_page_set_contact (data, contact);
-    contacts_history_page_set_contact (data, contact);
-    contacts_groups_page_set_contact (data, contact);
-  } else {
-    contacts_details_page_set_contact (data, NULL);
-    contacts_history_page_set_contact (data, NULL);
-    contacts_groups_page_set_contact (data, NULL);
   }
+
+  contacts_details_page_set_contact (data, contact);
+  contacts_history_page_set_contact (data, contact);
+  contacts_groups_page_set_contact (data, contact);
+
+  numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
+
+  gtk_widget_set_sensitive (GTK_WIDGET (data->sms_button), numbers ? TRUE : FALSE);
+  gtk_widget_set_sensitive (GTK_WIDGET (data->dial_button), numbers ? TRUE : FALSE);
+
+  g_list_free (numbers);
+
+
 }
 
 static void
@@ -288,13 +296,32 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
   } 
 }
 
+
+
+EContact*
+contacts_list_get_selected_contact (ContactsData *data)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  EContact *contact = NULL;
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview));
+
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    gtk_tree_model_get (model, &iter, COLUMN_CONTACT, &contact, -1);
+
+  return contact;
+}
+
+
 static void
 dial_contact_clicked_cb (GtkWidget *button, ContactsData *data)
 {
   EContact *contact = NULL;
-  GList *attributes, *a, *numbers = NULL;
+  GList *numbers = NULL;
 
-  contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+  contact = contacts_list_get_selected_contact (data);
 
   if (!E_IS_CONTACT (contact))
   {
@@ -302,20 +329,7 @@ dial_contact_clicked_cb (GtkWidget *button, ContactsData *data)
     return;
   }
 
-  attributes = e_vcard_get_attributes (E_VCARD (contact));
-  for (a = attributes; a; a = g_list_next (a))
-  {
-    const gchar *name, *value, *type;
-    name = e_vcard_attribute_get_name (a->data);
-    value = hito_vcard_attribute_get_value_string (a->data);
-    type = hito_vcard_attribute_get_type (a->data);
-
-    if (!strcmp (name, EVC_TEL))
-    {
-      numbers = g_list_append (numbers, a->data);
-      continue;
-    }
-  }
+  numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
   show_contact_numbers ("hello", numbers, data);
   g_list_free (numbers);
 }

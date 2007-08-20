@@ -40,6 +40,8 @@ typedef struct
   GtkWidget *search_entry;
   GtkWidget *groups_combo;
   GtkWidget *contacts_treeview;
+  GtkToolItem *dial_button;
+  GtkToolItem *sms_button;
 
   /* details page */
   GtkWidget *photo;
