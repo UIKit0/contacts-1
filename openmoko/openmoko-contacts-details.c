@@ -460,8 +460,11 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
   EContact *old_contact = NULL;
 
+
+  liststore = data->attribute_liststore;
+
   /* unref the old contact */
-  old_contact = g_object_get_data (G_OBJECT (data->groups), "contact");
+  old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
 
   if (old_contact)
     g_object_unref (old_contact);
@@ -469,7 +472,6 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
   data->detail_page_loading = TRUE;
 
-  liststore = data->attribute_liststore;
 
   /* make sure exiting contact is committed if necessary */
   commit_contact (data);
@@ -486,7 +488,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
 
 
-  /* make sure all the widgets are in the correct state */
+  /* make sure all the widgets are in a consistent state */
   contacts_details_page_set_editable (data, (contact) ? FALSE : TRUE);
 
 
