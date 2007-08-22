@@ -202,7 +202,7 @@ contacts_history_button_pressed (GtkWidget *eb,
  */
 static GtkWidget*
 contacts_history_create_email_preview (MokoJournalEntry *entry,
-                                       enum MessageDirection direction)
+                                       MessageDirection direction)
 {
 #define BUF 256
   GtkWidget *eb, *hbox, *icon, *label;
@@ -271,7 +271,7 @@ contacts_history_create_email_preview (MokoJournalEntry *entry,
  */
 static GtkWidget*
 contacts_history_create_sms_preview (MokoJournalEntry *entry,
-                                     enum MessageDirection direction)
+                                     MessageDirection direction)
 {
   GtkWidget *eb, *hbox, *icon, *label;
   gchar *blurb = NULL;
@@ -317,7 +317,7 @@ contacts_history_create_sms_preview (MokoJournalEntry *entry,
  */
 static GtkWidget*
 contacts_history_create_voice_preview (MokoJournalEntry *entry,
-                                       enum MessageDirection direction)
+                                       MessageDirection direction)
 {
 #define BUF 256
   GtkWidget *eb, *hbox, *icon, *label;
@@ -405,7 +405,7 @@ contacts_history_make_preview (ContactsHistory *history,
 {
   ContactsHistoryPrivate *priv;
   GtkWidget *preview = NULL;
-  enum MessageDirection	direction;
+  MessageDirection	direction;
   
   g_return_val_if_fail(CONTACTS_IS_HISTORY(history), NULL);
   priv = CONTACTS_HISTORY_GET_PRIVATE (history);

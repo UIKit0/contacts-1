@@ -1,3 +1,13 @@
+2007-08-22  Neil J. Patel  <njp@o-hand.com>
+
+	* openmoko/contacts-history.c:
+	(contacts_history_create_email_preview),
+	(contacts_history_create_sms_preview),
+	(contacts_history_create_voice_preview),
+	(contacts_history_make_preview):
+	Update to reflect change of MessageDirection from enum to typedef enum in
+	libmokojournal.
+
 2007-08-10  Neil J. Patel  <njp@o-hand.com>
 
 	* data/contacts.desktop.in:
