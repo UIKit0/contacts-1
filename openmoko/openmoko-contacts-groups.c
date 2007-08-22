@@ -116,21 +116,26 @@ contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
     g_object_unref (old_contact);
 
   /* set the title of the page */
-  s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-  if (s)
+  if (contact)
   {
     gchar *markup;
+    s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
     markup = g_markup_printf_escaped ("<b>%s</b>", s);
     gtk_label_set_markup (GTK_LABEL (data->groups_label), markup);
     g_free (markup);
+
+    g_object_set_data (G_OBJECT (data->groups), "contact", contact);
+
+    /* ref the contact so it doesn't go away when committed */
+    g_object_ref (contact);
+
   }
   else
-    gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Communication History</b>");
+  {
+    gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Groups</b>");
+    /* FIXME: blank out the page here? */
+  }
 
-  g_object_set_data (G_OBJECT (data->groups), "contact", contact);
-
-  /* ref the contact so it doesn't go away when committed */
-  g_object_ref (contact);
 
 }
 

@@ -65,7 +65,11 @@ contacts_history_page_set_contact (ContactsData *data, EContact *contact)
   gchar *markup;
 
   if (!contact)
+  {
     gtk_label_set_markup (GTK_LABEL (data->history_label), "<b>Communication History</b>");
+    contacts_history_update_uid (CONTACTS_HISTORY (data->history), "");
+    return;
+  }
 
   /* Get the contacts uid and update the history widget */
   s = e_contact_get_const (contact, E_CONTACT_UID);

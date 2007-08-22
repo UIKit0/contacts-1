@@ -180,7 +180,10 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
   contacts_history_page_set_contact (data, contact);
   contacts_groups_page_set_contact (data, contact);
 
-  numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
+  if (contact)
+    numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
+  else
+    numbers = NULL;
 
   gtk_widget_set_sensitive (GTK_WIDGET (data->sms_button), numbers ? TRUE : FALSE);
   gtk_widget_set_sensitive (GTK_WIDGET (data->dial_button), numbers ? TRUE : FALSE);

@@ -50,6 +50,25 @@ enum {
   TREE_VALUE_COLUMN
 };
 
+struct _AttributeName {
+  gchar *vcard_name;
+  gchar *pretty_name;
+};
+
+struct _AttributeName attr_names[] = {
+  {EVC_TEL, "Telephone"},
+  {EVC_EMAIL, "E-Mail"},
+  {EVC_FN, "Fullname"},
+  {EVC_ORG, "Organisation"}
+};
+
+enum {
+  ATTR_TEL = 0,
+  ATTR_EMAIL,
+  ATTR_FN,
+  ATTR_ORG
+};
+
 static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
 static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
 static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
@@ -213,14 +232,14 @@ create_contacts_details_page (ContactsData *data)
   data->fullname = gtk_entry_new ();
   gtk_box_pack_start (GTK_BOX (w), data->fullname, TRUE, TRUE, 0);
   g_signal_connect (data->fullname, "changed", G_CALLBACK (fullname_changed_cb), data);
-  g_signal_connect (data->fullname, "focus-in-event", G_CALLBACK (entry_focus_in_cb), "Name");
-  g_signal_connect (data->fullname, "focus-out-event", G_CALLBACK (entry_focus_out_cb), "Name");
+  g_signal_connect (data->fullname, "focus-in-event", G_CALLBACK (entry_focus_in_cb), attr_names[ATTR_FN].pretty_name);
+  g_signal_connect (data->fullname, "focus-out-event", G_CALLBACK (entry_focus_out_cb), attr_names[ATTR_FN].pretty_name);
 
   data->org = gtk_entry_new ();
   gtk_box_pack_start (GTK_BOX (w), data->org, TRUE, TRUE, 0);
   g_signal_connect (data->org, "changed", G_CALLBACK (org_changed_cb), data);
-  g_signal_connect (data->org, "focus-in-event", G_CALLBACK (entry_focus_in_cb), "Organisation");
-  g_signal_connect (data->org, "focus-out-event", G_CALLBACK (entry_focus_out_cb), "Organisation");
+  g_signal_connect (data->org, "focus-in-event", G_CALLBACK (entry_focus_in_cb), attr_names[ATTR_ORG].pretty_name);
+  g_signal_connect (data->org, "focus-out-event", G_CALLBACK (entry_focus_out_cb), attr_names[ATTR_ORG].pretty_name);
 
 
   /* liststore for attributes */
@@ -297,7 +316,7 @@ create_contacts_details_page (ContactsData *data)
   append_type_column (GTK_TREE_VIEW (data->email));
 
   /* icon column */
-  append_icon_column (GTK_TREE_VIEW (data->email), MOKO_STOCK_CONTACT_PHONE);
+  append_icon_column (GTK_TREE_VIEW (data->email), MOKO_STOCK_CONTACT_EMAIL);
 
 
   /* value column */
@@ -382,8 +401,8 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
     gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
 
     /* add any "hint" values */
-    entry_focus_out_cb (data->fullname, NULL, "Name");
-    entry_focus_out_cb (data->org, NULL, "Organisation");
+    entry_focus_out_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
+    entry_focus_out_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
   }
   else
   {
@@ -397,8 +416,8 @@ contacts_details_page_set_editable (ContactsData *data, gboolean editing)
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
 
     /* clear any "hint" values */
-    entry_focus_in_cb (data->fullname, NULL, "Name");
-    entry_focus_in_cb (data->org, NULL, "Organisation");
+    entry_focus_in_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
+    entry_focus_in_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
 
   }
 
@@ -560,7 +579,12 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   {
     GError *err = NULL;
     GtkWidget *err_message;
-    e_book_remove_contact (data->book, e_contact_get_const (card, E_CONTACT_UID), &err);
+    const gchar *uid;
+    uid = e_contact_get_const (card, E_CONTACT_UID);
+    if (uid)
+    {
+      e_book_remove_contact (data->book, uid, &err);
+    }
     gtk_widget_destroy (dialog);
     if (err)
     {
@@ -769,6 +793,10 @@ entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
 {
   const gchar *contents = NULL;
   contents = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  /* simple way to check if we are editing (has frame == editing) */
+  if (!gtk_entry_get_has_frame (GTK_ENTRY (entry)))
+    return FALSE;
 
   if (contents && !strcmp (contents, ""))
   {
