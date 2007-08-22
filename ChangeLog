@@ -1,3 +1,9 @@
+2007-08-22  Rob Bradford  <rob@openedhand.com>
+
+	* vanilla/contacts-gtk.c: (groups_combobox_changed_cb):
+	Check the return value of gtk_combo_box_get_active_iter. Returns
+	boolean if the iter was set.
+
 2007-08-22  Neil J. Patel  <njp@o-hand.com>
 
 	* openmoko/contacts-history.c:
