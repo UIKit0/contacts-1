@@ -1,5 +1,15 @@
 2007-08-22  Rob Bradford  <rob@openedhand.com>
 
+	* Makefile.am:
+	* configure.ac:
+	* hildon/Makefile.am:
+	* hildon/hildon-contacts.c: (book_view_callback), (book_opened_cb),
+	(tv_selection_changed_cb), (ensure_first_selected_cb),
+	(row_inserted_cb), (row_deleted_cb), (main):
+	Add initial hildon port.
+
+2007-08-22  Rob Bradford  <rob@openedhand.com>
+
 	* vanilla/contacts-gtk.c: (groups_combobox_changed_cb):
 	Check the return value of gtk_combo_box_get_active_iter. Returns
 	boolean if the iter was set.

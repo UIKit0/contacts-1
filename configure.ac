@@ -68,6 +68,11 @@ if test x"$contacts_frontend" = x"openmoko"; then
 	PKG_CHECK_MODULES(MOKOUI, libmokoui2 libmokojournal2 dbus-glib-1)
 fi
 
+if test x"$contacts_frontend" = x"hildon"; then
+	PKG_CHECK_MODULES(HILDON, [hildon-1, 
+                                   dbus-glib-1])
+fi
+
 AC_SUBST([contacts_frontend])
 
 AM_GCONF_SOURCE_2
@@ -79,4 +84,5 @@ po/Makefile.in
 libhito/Makefile
 vanilla/Makefile
 openmoko/Makefile
+hildon/Makefile
 ])
