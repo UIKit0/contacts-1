@@ -42,15 +42,7 @@ create_contacts_history_page (ContactsData *data)
   g_signal_connect (G_OBJECT (data->history), "entry-activated",
                     G_CALLBACK (on_moko_journal_entry_activated), NULL);
 
-  gtk_notebook_append_page (
-      GTK_NOTEBOOK (data->notebook),
-      vbox,
-      gtk_image_new_from_stock (MOKO_STOCK_HISTORY, GTK_ICON_SIZE_BUTTON)
-      );
-
-  gtk_container_child_set (GTK_CONTAINER (data->notebook), vbox,
-      "tab-expand", TRUE, "tab-fill", TRUE, NULL);
-
+  contacts_notebook_add_page_with_icon (data->notebook, vbox, MOKO_STOCK_HISTORY);
 }
 
 void

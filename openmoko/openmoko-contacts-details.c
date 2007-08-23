@@ -198,8 +198,8 @@ create_contacts_details_page (ContactsData *data)
   GtkCellRenderer *renderer;
 
   box = gtk_vbox_new (FALSE, 0);
-  gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_BUTTON));
-  gtk_container_child_set (GTK_CONTAINER (data->notebook), box, "tab-expand", TRUE, "tab-fill", TRUE, NULL);
+
+  contacts_notebook_add_page_with_icon (data->notebook, box, GTK_STOCK_FILE);
   g_signal_connect_swapped (box, "unmap", G_CALLBACK (commit_contact), data);
 
   toolbar = gtk_toolbar_new ();

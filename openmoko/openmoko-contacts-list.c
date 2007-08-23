@@ -69,8 +69,7 @@ create_contacts_list_page (ContactsData *data)
   contact_filter = hito_contact_model_filter_new (HITO_CONTACT_STORE (contact_store));
 
   box = gtk_vbox_new (FALSE, 0);
-  gtk_notebook_append_page (GTK_NOTEBOOK (data->notebook), box, gtk_image_new_from_stock (GTK_STOCK_INDEX, GTK_ICON_SIZE_BUTTON));
-  gtk_container_child_set (GTK_CONTAINER (data->notebook), box, "tab-expand", TRUE, "tab-fill", TRUE, NULL);
+  contacts_notebook_add_page_with_icon (data->notebook, box, GTK_STOCK_INDEX);
 
   /* toolbar */
   toolbar = gtk_toolbar_new ();
@@ -90,7 +89,7 @@ create_contacts_list_page (ContactsData *data)
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
 
-  toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_NEW);
+  toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_CONTACT_NEW);
   g_signal_connect (toolitem, "clicked", G_CALLBACK (new_contact_clicked_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 4);

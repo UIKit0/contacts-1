@@ -71,6 +71,25 @@ make_contact_view (ContactsData *data)
   gtk_widget_show_all (data->window);
 }
 
+void
+contacts_notebook_add_page_with_icon (GtkWidget *notebook, GtkWidget *child,
+				   const gchar *icon_name)
+{
+  int padding = 6;
+	GtkWidget *icon = gtk_image_new_from_icon_name (icon_name,
+		GTK_ICON_SIZE_LARGE_TOOLBAR);
+	GtkWidget *align = gtk_alignment_new (0.5, 0.5, 1, 1);
+
+	gtk_alignment_set_padding (GTK_ALIGNMENT (align), padding,
+		padding, padding, padding);
+	gtk_container_add (GTK_CONTAINER (align), icon);
+	gtk_widget_show_all (align);
+	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), child, align);
+	gtk_container_child_set (GTK_CONTAINER (notebook), child,
+		"tab-expand", TRUE, NULL);
+}
+
+
 int
 main (int argc, char **argv)
 {
