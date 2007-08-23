@@ -352,84 +352,14 @@ free_contacts_details_page (ContactsData *data)
 void
 contacts_details_page_set_editable (ContactsData *data, gboolean editing)
 {
-  GtkTreeViewColumn *col;
-  GList *list;
+  gboolean tb_state;
 
-  g_object_set (G_OBJECT (data->telephone), "can-focus", editing, NULL);
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_DEL_COLUMN);
-  g_object_set (G_OBJECT (col), "visible", editing, NULL);
+  tb_state = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle));
 
-  g_object_set (G_OBJECT (data->email), "can-focus", editing, NULL);
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_DEL_COLUMN);
-  g_object_set (G_OBJECT (col), "visible", editing, NULL);
-
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_TYPE_COLUMN);
-  list = gtk_tree_view_column_get_cell_renderers (col);
-  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
-  g_list_free (list);
-
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_VALUE_COLUMN);
-  list = gtk_tree_view_column_get_cell_renderers (col);
-  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
-  g_list_free (list);
-
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_TYPE_COLUMN);
-  list = gtk_tree_view_column_get_cell_renderers (col);
-  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
-  g_list_free (list);
-
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_VALUE_COLUMN);
-  list = gtk_tree_view_column_get_cell_renderers (col);
-  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
-  g_list_free (list);
-
-  g_object_set (G_OBJECT (data->add_telephone_button), "visible", editing, NULL);
-  g_object_set (G_OBJECT (data->add_email_button), "visible", editing, NULL);
-
-  gtk_entry_set_has_frame (GTK_ENTRY (data->fullname), editing);
-  g_object_set (G_OBJECT (data->fullname), "editable", editing, NULL);
-
-  gtk_entry_set_has_frame (GTK_ENTRY (data->org), editing);
-  g_object_set (G_OBJECT (data->org), "editable", editing, NULL);
-
-  if (editing)
+  /* change active state only if current state is different to new state */
+  if (tb_state ^ editing)
   {
-    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
-    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
-
-    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
-    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
-
-    /* add any "hint" values */
-    entry_focus_out_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
-    entry_focus_out_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
-  }
-  else
-  {
-    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
-    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
-
-    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
-    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
-
-    /* remove current focus to close any active edits */
-    gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
-
-    /* clear any "hint" values */
-    entry_focus_in_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
-    entry_focus_in_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
-
-  }
-
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle)))
-  {
-    if (!editing)
-      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), FALSE);
-  }
-  else
-  {
-    if (editing)
-      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), TRUE);
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle), editing);
   }
 }
 
@@ -489,7 +419,7 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 
 
   /* make sure all the widgets are in a consistent state */
-  contacts_details_page_set_editable (data, (contact) ? FALSE : TRUE);
+  contacts_details_page_set_editable (data, FALSE);
 
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
@@ -558,7 +488,79 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
 static void
 edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 {
-  contacts_details_page_set_editable (data, gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (button)));
+  GtkTreeViewColumn *col;
+  GList *list;
+  gboolean editing;
+
+  editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle));
+
+  g_object_set (G_OBJECT (data->telephone), "can-focus", editing, NULL);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_DEL_COLUMN);
+  g_object_set (G_OBJECT (col), "visible", editing, NULL);
+
+  g_object_set (G_OBJECT (data->email), "can-focus", editing, NULL);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_DEL_COLUMN);
+  g_object_set (G_OBJECT (col), "visible", editing, NULL);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_TYPE_COLUMN);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_VALUE_COLUMN);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_TYPE_COLUMN);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
+
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->email), TREE_VALUE_COLUMN);
+  list = gtk_tree_view_column_get_cell_renderers (col);
+  g_object_set (G_OBJECT (list->data), "editable", editing, NULL);
+  g_list_free (list);
+
+  g_object_set (G_OBJECT (data->add_telephone_button), "visible", editing, NULL);
+  g_object_set (G_OBJECT (data->add_email_button), "visible", editing, NULL);
+
+  gtk_entry_set_has_frame (GTK_ENTRY (data->fullname), editing);
+  g_object_set (G_OBJECT (data->fullname), "editable", editing, NULL);
+
+  gtk_entry_set_has_frame (GTK_ENTRY (data->org), editing);
+  g_object_set (G_OBJECT (data->org), "editable", editing, NULL);
+
+  if (editing)
+  {
+
+    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
+    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
+
+    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
+    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
+
+    /* add any "hint" values */
+    entry_focus_out_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
+    entry_focus_out_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
+  }
+  else
+  {
+    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+
+    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+
+    /* remove current focus to close any active edits */
+    gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
+
+    /* clear any "hint" values */
+    entry_focus_in_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
+    entry_focus_in_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
+
+  }
+
 }
 
 
@@ -760,6 +762,9 @@ fullname_changed_cb (GtkWidget *entry, ContactsData *data)
 
   new_val = gtk_entry_get_text (GTK_ENTRY (entry));
 
+  if (new_val && !strcmp (new_val, attr_names[ATTR_FN].pretty_name))
+    return;
+
   attribute_changed (EVC_FN, new_val, data);
 }
 
@@ -769,6 +774,9 @@ org_changed_cb (GtkWidget *entry, ContactsData *data)
   const gchar *new_val;
 
   new_val = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  if (new_val && !strcmp (new_val, attr_names[ATTR_ORG].pretty_name))
+    return;
 
   attribute_changed (EVC_ORG, new_val, data);
 }
