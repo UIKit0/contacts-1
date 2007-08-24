@@ -175,9 +175,7 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
     gtk_tree_model_get (model, &iter, COLUMN_CONTACT, &contact, -1);
   }
 
-  contacts_details_page_set_contact (data, contact);
-  contacts_history_page_set_contact (data, contact);
-  contacts_groups_page_set_contact (data, contact);
+  contacts_set_current_contact (data, contact);
 
   if (contact)
     numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
@@ -212,12 +210,21 @@ search_toggle_cb (GtkWidget *button, ContactsData *data)
 }
 
 static void
-new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
+ebook_id_callback(EBook *book, EBookStatus status, const char *id, ContactsData *data)
 {
-  /* NULL is used to indicate "new contact" */
-  contacts_details_page_set_contact (data, NULL);
+  EContact *contact;
+  e_book_get_contact (data->book, id, &contact, NULL);
+  contacts_set_current_contact (data, contact);
   gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), DETAIL_PAGE_NUM);
   contacts_details_page_set_editable (data, TRUE);
+}
+
+static void
+new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
+{
+  EContact *contact;
+  contact = e_contact_new ();
+  e_book_async_add_contact (data->book, contact, ebook_id_callback, data);
 }
 
 static void

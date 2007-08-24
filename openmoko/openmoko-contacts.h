@@ -34,6 +34,12 @@ typedef struct
   EBook *book;
   EBookView *view;
 
+  /* current contact being edited - must be set through contact_set_current_contact() */
+  EContact *contact;
+
+  /* this should be set to true by any function that modifies the above contact */
+  gboolean dirty;
+
   /* the following should be considered private */
 
   /* index page */
@@ -68,4 +74,6 @@ typedef struct
 
 } ContactsData;
 
+void contacts_notebook_add_page_with_icon (GtkWidget *notebook, GtkWidget *child, const gchar *icon_name);
+void contacts_set_current_contact (ContactsData *data, EContact *contact);
 

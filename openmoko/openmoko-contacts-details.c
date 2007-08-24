@@ -74,14 +74,12 @@ static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
 static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
-static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data);
-static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data);
+static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
 static gboolean entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
 static gboolean entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
-
-static void commit_contact (ContactsData *data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
@@ -106,7 +104,7 @@ append_delete_column (GtkTreeView *treeview)
   GtkTreeViewColumn *treeview_column;
 
   renderer = koto_cell_renderer_pixbuf_new ();
-  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), gtk_tree_view_get_model (treeview));
+  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), NULL);
   g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
   g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
@@ -150,43 +148,6 @@ append_icon_column (GtkTreeView *treeview, gchar *stock_id)
 }
 
 
-
-static void
-commit_contact (ContactsData *data)
-{
-  EContact *old_contact;
-  GtkListStore *liststore;
-  gboolean dirty;
-
-  /* Clear up any loose ends */
-
-  liststore = data->attribute_liststore;
-  dirty = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (liststore), "dirty"));
-
-  if (dirty)
-  {
-    const gchar *uid;
-    old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
-    uid = e_contact_get_const (old_contact, E_CONTACT_UID);
-
-    hito_vcard_strip_empty_attributes (E_VCARD (old_contact));
-
-    /* if the contact doesn't have a uid then it is a newly created contact */
-    if (!uid)
-    {
-      e_book_async_add_contact (data->book, old_contact, NULL, NULL);
-      g_object_unref (old_contact);
-    }
-    else
-    {
-      /* TODO: error checking on failure */
-      e_book_async_commit_contact (data->book, old_contact, NULL, NULL);
-    }
-  }
-
-  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (FALSE));
-}
-
 void
 create_contacts_details_page (ContactsData *data)
 {
@@ -200,7 +161,6 @@ create_contacts_details_page (ContactsData *data)
   box = gtk_vbox_new (FALSE, 0);
 
   contacts_notebook_add_page_with_icon (data->notebook, box, GTK_STOCK_FILE);
-  g_signal_connect_swapped (box, "unmap", G_CALLBACK (commit_contact), data);
 
   toolbar = gtk_toolbar_new ();
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
@@ -244,7 +204,7 @@ create_contacts_details_page (ContactsData *data)
 
   /* liststore for attributes */
   liststore = gtk_list_store_new (4, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-  g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), NULL);
+  g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), data);
   data->attribute_liststore = liststore;
 
   sw = gtk_scrolled_window_new (NULL, NULL);
@@ -340,8 +300,6 @@ create_contacts_details_page (ContactsData *data)
 void
 free_contacts_details_page (ContactsData *data)
 {
-  commit_contact (data);
-
   /* free data referenced in the attribute liststore */
   gtk_tree_model_foreach (GTK_TREE_MODEL (data->attribute_liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
 
@@ -383,40 +341,15 @@ free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, 
 }
 
 void
-contacts_details_page_set_contact (ContactsData *data, EContact *contact)
+contacts_details_page_update (ContactsData *data)
 {
   GList *attributes, *a;
   GtkListStore *liststore;
   gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
-  EContact *old_contact = NULL;
-
 
   liststore = data->attribute_liststore;
 
-  /* unref the old contact */
-  old_contact = g_object_get_data (G_OBJECT (liststore), "econtact");
-
-  if (old_contact)
-    g_object_unref (old_contact);
-
-
   data->detail_page_loading = TRUE;
-
-
-  /* make sure exiting contact is committed if necessary */
-  commit_contact (data);
-
-
-  /* contact will be null if need to create a new one */
-  if (!contact)
-  {
-    contact = e_contact_new ();
-  }
-
-  /* set up references to current contact and ebook */
-  g_object_set_data (G_OBJECT (liststore), "econtact", contact);
-  g_object_set_data (G_OBJECT (liststore), "dirty", GINT_TO_POINTER (FALSE));
-
 
   /* make sure all the widgets are in a consistent state */
   contacts_details_page_set_editable (data, FALSE);
@@ -426,7 +359,10 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
   gtk_list_store_clear (liststore);
 
 
-  attributes = e_vcard_get_attributes (E_VCARD (contact));
+  if (data->contact)
+    attributes = e_vcard_get_attributes (E_VCARD (data->contact));
+  else
+    attributes = NULL;
   for (a = attributes; a; a = g_list_next (a))
   {
     GtkTreeIter iter;
@@ -478,9 +414,6 @@ contacts_details_page_set_contact (ContactsData *data, EContact *contact)
     gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
 
   data->detail_page_loading = FALSE;
-
-  /* ref the contact so it doesn't go away when committed */
-  g_object_ref (contact);
 }
 
 
@@ -571,7 +504,7 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   GtkWidget *dialog;
   const gchar *name = NULL;
 
-  card = g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact");
+  card = data->contact;
   name = e_contact_get_const (card, E_CONTACT_FULL_NAME);
 
   dialog = gtk_message_dialog_new (GTK_WINDOW (data->window),
@@ -639,12 +572,12 @@ type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gp
 
 
 static void
-delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gpointer data)
+delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data)
 {
   EVCardAttribute *attr;
   EVCard *card;
   GtkTreeIter iter, child_iter;
-  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (data);
+  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->attribute_liststore)));
   GtkTreeModel *model;
 
   model = gtk_tree_model_filter_get_model (filter);
@@ -652,7 +585,7 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gp
   /* remove attribute from contact */
   gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &iter, path);
   gtk_tree_model_get (GTK_TREE_MODEL (filter), &iter, ATTR_POINTER_COLUMN, &attr, -1);
-  card = E_VCARD (g_object_get_data (G_OBJECT (model), "econtact"));
+  card = E_VCARD (data->contact);
 
   e_vcard_remove_attribute (card, attr);
 
@@ -660,12 +593,11 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, gp
   gtk_tree_model_filter_convert_iter_to_child_iter (filter, &child_iter, &iter);
   gtk_list_store_remove (GTK_LIST_STORE (model), &child_iter);
 
-  /* mark liststore as "dirty" so we can commit the contact later */
-  g_object_set_data (G_OBJECT (model), "dirty", GINT_TO_POINTER (TRUE));
+  data->dirty = TRUE;
 }
 
 static void
-attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data)
 {
   EVCardAttribute *attr;
   gchar *value;
@@ -681,8 +613,7 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   gtk_tree_model_get (model, iter, ATTR_TYPE_COLUMN, &value, -1);
   hito_vcard_attribute_set_type (attr, value);
 
-  /* mark liststore as "dirty" so we can commit the contact later */
-  g_object_set_data (G_OBJECT (model), "dirty", GINT_TO_POINTER (TRUE));
+  data->dirty = TRUE;
 
 }
 
@@ -698,7 +629,7 @@ add_new_attribute (GtkTreeView *treeview, ContactsData *data, const gchar *attr_
 
   attr = e_vcard_attribute_new (NULL, attr_name);
 
-  contact = g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact");
+  contact = E_VCARD (data->contact);
   e_vcard_add_attribute (contact, attr);
 
   gtk_list_store_insert_with_values (data->attribute_liststore, &child_iter, 0, ATTR_POINTER_COLUMN, attr, ATTR_NAME_COLUMN, attr_name, ATTR_TYPE_COLUMN, attr_type, -1);
@@ -737,7 +668,7 @@ attribute_changed (const gchar *attr_name, const gchar *new_val, ContactsData *d
   if (data->detail_page_loading)
     return;
 
-  card = E_VCARD (g_object_get_data (G_OBJECT (data->attribute_liststore), "econtact"));
+  card = E_VCARD (data->contact);
   attr = e_vcard_get_attribute (card, attr_name);
 
   if (!attr)
@@ -751,8 +682,7 @@ attribute_changed (const gchar *attr_name, const gchar *new_val, ContactsData *d
   /* FIXME: this is not dealing with multi values yet */
   e_vcard_attribute_add_value (attr, new_val);
 
-  /* mark liststore as "dirty" so we can commit the contact later */
-  g_object_set_data (G_OBJECT (data->attribute_liststore), "dirty", GINT_TO_POINTER (TRUE));
+  data->dirty = TRUE;
 }
 
 static void

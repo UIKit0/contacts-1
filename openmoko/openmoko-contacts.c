@@ -72,6 +72,37 @@ make_contact_view (ContactsData *data)
 }
 
 void
+contacts_set_current_contact (ContactsData *data, EContact *contact)
+{
+
+  if (contact == data->contact)
+    return;
+
+  /* check if contact needs committing */
+  if (data->dirty)
+  {
+    e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+  }
+
+  /* unref the old contact */
+  if (data->contact)
+    g_object_unref (data->contact);
+
+  data->contact = contact;
+
+  /* ref the contact to prevent it disappearing if committed */
+  if (contact)
+    g_object_ref (contact); 
+
+  contacts_details_page_update (data);
+  contacts_history_page_update (data);
+  contacts_groups_page_update (data);
+
+  data->dirty = FALSE;
+
+}
+
+void
 contacts_notebook_add_page_with_icon (GtkWidget *notebook, GtkWidget *child,
 				   const gchar *icon_name)
 {

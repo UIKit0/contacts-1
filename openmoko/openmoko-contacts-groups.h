@@ -21,6 +21,6 @@
 
 void create_contacts_groups_page (ContactsData *data);
 void free_contacts_groups_page (ContactsData *data);
-void contacts_groups_page_set_contact (ContactsData *data, EContact *contact);
+void contacts_groups_page_update (ContactsData *data);
 
 #endif /* OPENMOKO_CONTACTS_GROUPS_H */

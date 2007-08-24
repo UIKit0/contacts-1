@@ -23,6 +23,6 @@
 
 void create_contacts_history_page (ContactsData *data);
 void contacts_history_page_free (ContactsData *data);
-void contacts_history_page_set_contact (ContactsData *data, EContact *contact);
+void contacts_history_page_update (ContactsData *data);
 
 #endif

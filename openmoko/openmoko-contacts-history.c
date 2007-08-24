@@ -51,10 +51,13 @@ contacts_history_page_free (ContactsData *data)
 }
 
 void
-contacts_history_page_set_contact (ContactsData *data, EContact *contact)
+contacts_history_page_update (ContactsData *data)
 {
   const gchar *s = NULL;
   gchar *markup;
+  EContact *contact;
+
+  contact = data->contact;
 
   if (!contact)
   {
