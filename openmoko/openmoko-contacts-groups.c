@@ -57,16 +57,16 @@ groups_toggle_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, Gtk
 void
 create_contacts_groups_page (ContactsData *data)
 {
-  GtkWidget *box, *w;
+  GtkWidget *w;
   GtkTreeViewColumn *col;
   GtkCellRenderer *cell;
 
-  box = gtk_vbox_new (FALSE, 0);
-  contacts_notebook_add_page_with_icon (data->notebook, box, MOKO_STOCK_CONTACT_GROUPS);
-  g_signal_connect_swapped (box, "unmap", G_CALLBACK (commit_contact), data);
+  data->groups_box = gtk_vbox_new (FALSE, 0);
+  contacts_notebook_add_page_with_icon (data->notebook, data->groups_box, MOKO_STOCK_CONTACT_GROUPS);
+  g_signal_connect_swapped (data->groups_box, "unmap", G_CALLBACK (commit_contact), data);
 
   data->groups_label = gtk_label_new (NULL);
-  gtk_box_pack_start (GTK_BOX (box), data->groups_label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (data->groups_box), data->groups_label, FALSE, FALSE, 0);
 
   data->groups_liststore = hito_group_store_new ();
   hito_group_store_set_view (HITO_GROUP_STORE (data->groups_liststore), data->view);
@@ -74,7 +74,7 @@ create_contacts_groups_page (ContactsData *data)
 
   data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
-  gtk_box_pack_start (GTK_BOX (box), data->groups, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (data->groups_box), data->groups, FALSE, FALSE, 0);
 
   col = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
@@ -93,7 +93,7 @@ create_contacts_groups_page (ContactsData *data)
   w = gtk_button_new_with_label ("Add Group");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_groups_clicked_cb), data);
-  gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (data->groups_box), w, FALSE, FALSE, 0);
 
 }
 
@@ -119,20 +119,29 @@ contacts_groups_page_set_contact (ContactsData *data, EContact *contact)
   {
     gchar *markup;
     s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-    markup = g_markup_printf_escaped ("<b>%s</b>", s);
-    gtk_label_set_markup (GTK_LABEL (data->groups_label), markup);
-    g_free (markup);
+    if (s)
+    {
+      markup = g_markup_printf_escaped ("<b>%s</b>", s);
+      gtk_label_set_markup (GTK_LABEL (data->groups_label), markup);
+      g_free (markup);
+    }
+    else
+    {
+      gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Groups</b>");
+    }
 
     g_object_set_data (G_OBJECT (data->groups), "contact", contact);
 
     /* ref the contact so it doesn't go away when committed */
     g_object_ref (contact);
 
+    gtk_widget_set_sensitive (data->groups_box, TRUE);
+
   }
   else
   {
+    gtk_widget_set_sensitive (data->groups_box, FALSE);
     gtk_label_set_markup (GTK_LABEL (data->groups_label), "<b>Groups</b>");
-    /* FIXME: blank out the page here? */
   }
 
 

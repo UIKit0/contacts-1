@@ -64,6 +64,7 @@ typedef struct
   GtkWidget *groups;
   GtkTreeModel *groups_liststore;
   GtkWidget *groups_label;
+  GtkWidget *groups_box;
 
 } ContactsData;
 
