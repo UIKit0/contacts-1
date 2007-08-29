@@ -228,9 +228,13 @@ create_contacts_details_page (ContactsData *data)
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (tel_filter),
       (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_TEL, NULL);
 
+  w = gtk_frame_new (NULL);
+  gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
+  gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
+
   data->telephone = gtk_tree_view_new_with_model(GTK_TREE_MODEL (tel_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->telephone), FALSE);
-  gtk_box_pack_start (GTK_BOX (vb), data->telephone, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (w), data->telephone);
 
   /* delete option column */
   append_delete_column (GTK_TREE_VIEW (data->telephone));
@@ -265,9 +269,13 @@ create_contacts_details_page (ContactsData *data)
   email_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (email_filter), (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_EMAIL, NULL);
 
+  w = gtk_frame_new (NULL);
+  gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
+  gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
+
   data->email = gtk_tree_view_new_with_model(GTK_TREE_MODEL (email_filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->email), FALSE);
-  gtk_box_pack_start (GTK_BOX (vb), data->email, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (w), data->email);
 
   /* delete option column */
   append_delete_column (GTK_TREE_VIEW (data->email));
@@ -295,6 +303,8 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_email_button = w;
 
+  /* make sure everything is in the correct state */
+  edit_toggle_toggled_cb (GTK_WIDGET (data->edit_toggle), data);
 }
 
 void
@@ -351,7 +361,7 @@ contacts_details_page_update (ContactsData *data)
 
   data->detail_page_loading = TRUE;
 
-  /* make sure all the widgets are in a consistent state */
+  /* ensure the default mode is view, not edit */
   contacts_details_page_set_editable (data, FALSE);
 
 
@@ -422,6 +432,7 @@ static void
 edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 {
   GtkTreeViewColumn *col;
+  GtkTreeSelection *sel;
   GList *list;
   gboolean editing;
 
@@ -476,6 +487,16 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     /* add any "hint" values */
     entry_focus_out_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
     entry_focus_out_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
+
+    /* ensure selection is possible in edit mode - cell editing is not possible
+     * without it
+     */
+    sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->telephone));
+    gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
+
+    sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->email));
+    gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
+
   }
   else
   {
@@ -492,6 +513,12 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     entry_focus_in_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
     entry_focus_in_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
 
+    /* disable selection when not in editing mode */
+    sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->telephone));
+    gtk_tree_selection_set_mode (sel, GTK_SELECTION_NONE);
+
+    sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->email));
+    gtk_tree_selection_set_mode (sel, GTK_SELECTION_NONE);
   }
 
 }
