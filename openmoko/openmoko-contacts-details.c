@@ -556,14 +556,17 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
       gtk_dialog_run (GTK_DIALOG (err_message));
       gtk_widget_destroy (err_message);
     }
+    else
+    {
+      /* return to contact list */
+      gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), LIST_PAGE_NUM);
+    }
   }
   else
   {
     gtk_widget_destroy (dialog);
   }
 
-  /* return to contact list */
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), LIST_PAGE_NUM);
 }
 
 static void
