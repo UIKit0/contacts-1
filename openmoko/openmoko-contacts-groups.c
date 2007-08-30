@@ -56,7 +56,7 @@ groups_toggle_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, Gtk
 void
 create_contacts_groups_page (ContactsData *data)
 {
-  GtkWidget *w;
+  GtkWidget *w, *vbox;
   GtkTreeViewColumn *col;
   GtkCellRenderer *cell;
 
@@ -69,9 +69,17 @@ create_contacts_groups_page (ContactsData *data)
   data->groups_liststore = hito_group_store_new ();
   hito_group_store_set_view (HITO_GROUP_STORE (data->groups_liststore), data->view);
 
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox), PADDING);
+  gtk_box_pack_start (GTK_BOX (data->groups_box), vbox, FALSE, FALSE, 0);
+
+  w = gtk_frame_new (NULL);
+  gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
+  gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 0);
+
   data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
-  gtk_box_pack_start (GTK_BOX (data->groups_box), data->groups, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (w), data->groups);
 
   col = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
@@ -90,7 +98,7 @@ create_contacts_groups_page (ContactsData *data)
   w = gtk_button_new_with_label ("Add Group");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
   g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_groups_clicked_cb), data);
-  gtk_box_pack_start (GTK_BOX (data->groups_box), w, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 0);
 
 }
 

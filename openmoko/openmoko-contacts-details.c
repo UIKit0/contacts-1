@@ -33,8 +33,6 @@
 #endif
 
 
-#define PADDING 6
-
 enum {
   ATTR_POINTER_COLUMN,
   ATTR_NAME_COLUMN,

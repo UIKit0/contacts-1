@@ -19,6 +19,8 @@
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
 
+#define PADDING 6
+
 enum {
   LIST_PAGE_NUM,
   DETAIL_PAGE_NUM,
