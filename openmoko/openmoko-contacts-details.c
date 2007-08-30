@@ -96,14 +96,18 @@ filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
 }
 
 static void
-append_delete_column (GtkTreeView *treeview)
+append_delete_column (GtkTreeView *treeview, ContactsData *data)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *treeview_column;
 
   renderer = koto_cell_renderer_pixbuf_new ();
-  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), NULL);
   g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
+  /* we need to know what treeview this renderer is associated with for the
+   * "activated" callback */
+  g_object_set_data (G_OBJECT (renderer), "treeview", treeview);
+  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), data);
+
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
   g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), treeview_column, TREE_DEL_COLUMN);
@@ -235,7 +239,7 @@ create_contacts_details_page (ContactsData *data)
   gtk_container_add (GTK_CONTAINER (w), data->telephone);
 
   /* delete option column */
-  append_delete_column (GTK_TREE_VIEW (data->telephone));
+  append_delete_column (GTK_TREE_VIEW (data->telephone), data);
 
   /* type option column */
   append_type_column (GTK_TREE_VIEW (data->telephone));
@@ -276,7 +280,7 @@ create_contacts_details_page (ContactsData *data)
   gtk_container_add (GTK_CONTAINER (w), data->email);
 
   /* delete option column */
-  append_delete_column (GTK_TREE_VIEW (data->email));
+  append_delete_column (GTK_TREE_VIEW (data->email), data);
 
   /* type option column */
   append_type_column (GTK_TREE_VIEW (data->email));
@@ -605,9 +609,14 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Co
   EVCardAttribute *attr;
   EVCard *card;
   GtkTreeIter iter, child_iter;
-  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (data->attribute_liststore)));
+  GtkTreeModelFilter *filter;
   GtkTreeModel *model;
+  GtkTreeView *treeview;
 
+  treeview = g_object_get_data (G_OBJECT (cell), "treeview");
+
+  /* the model on the treeview is a filter */
+  filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
   model = gtk_tree_model_filter_get_model (filter);
 
   /* remove attribute from contact */
