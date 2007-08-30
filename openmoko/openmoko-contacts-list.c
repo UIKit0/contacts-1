@@ -224,7 +224,7 @@ new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
 {
   EContact *contact;
   contact = e_contact_new ();
-  e_book_async_add_contact (data->book, contact, ebook_id_callback, data);
+  e_book_async_add_contact (data->book, contact, (EBookIdCallback) ebook_id_callback, data);
 }
 
 static void
