@@ -180,20 +180,21 @@ main (int argc, char **argv)
 {
   ContactsApp *app;
   GError *error = NULL;
-  GtkWidget *alignment = NULL;
+  GtkWidget *alignment;
 
 #ifdef ENABLE_NLS
   /* Initialise i18n*/
-  bindtextdomain(GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
-  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-  textdomain(GETTEXT_PACKAGE);
+  bindtextdomain (GETTEXT_PACKAGE, CONTACTS_LOCALE_DIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
 #endif
 
-  app = g_new0 (ContactsApp, 1);
-
   /* Boring init */
-  g_thread_init (NULL);
+  if (!g_thread_supported ())
+    g_thread_init (NULL);
   gtk_init (&argc, &argv);
+
+  app = g_new0 (ContactsApp, 1);
 
   /* 
    * Get addressbook. Do this nice and early. Without this life is a bit
@@ -212,8 +213,7 @@ main (int argc, char **argv)
    *
    * This function returns FALSE on success.
    */
-  if (e_book_async_open (app->book, FALSE, (EBookCallback)book_opened_cb,
-        app) == TRUE)
+  if (e_book_async_open (app->book, FALSE, book_opened_cb, app) == TRUE)
   {
     g_error ("Error when asking to open address book asynchronously");
   }
@@ -227,8 +227,8 @@ main (int argc, char **argv)
   g_signal_connect (app->main_window, "destroy", gtk_main_quit, NULL);
 
   /* 
-   * Create the main model. The view *might* be available. The view *might be
-   * be available. This function accepts NULL anyway.
+   * Create the main model. The view *might* be available. This function accepts
+   * NULL anyway.
    */
   app->contact_store = hito_contact_store_new (app->book_view);
 
@@ -236,10 +236,10 @@ main (int argc, char **argv)
    * Hook up some callbacks for faffing with ensuring something useful is
    * selected
    */
-  g_signal_connect (app->contact_store, "row-inserted", 
-      (GCallback)row_inserted_cb, app);
+  g_signal_connect (app->contact_store, "row-inserted",
+                    G_CALLBACK (row_inserted_cb), app);
   g_signal_connect (app->contact_store, "row-deleted",
-      (GCallback)row_deleted_cb, app);
+                    G_CALLBACK (row_deleted_cb), app);
 
   /* Create the main tree view using this model. */
   app->tv = hito_contact_view_new (HITO_CONTACT_STORE (app->contact_store), NULL);
@@ -248,7 +248,7 @@ main (int argc, char **argv)
 
   /* Get a selection on this tv and setup the changed callback */
   app->selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (app->tv));
-  g_signal_connect (app->selection, "changed", (GCallback)tv_selection_changed_cb, app);
+  g_signal_connect (app->selection, "changed", G_CALLBACK (tv_selection_changed_cb), app);
 
   /* Create the viewer box for the side bar */
   app->preview_box = gtk_vbox_new (FALSE, 6);
