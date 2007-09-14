@@ -1,3 +1,4 @@
+SUBDIRS = data
 
 INCLUDES = -I$(top_srcdir)/libhito
 

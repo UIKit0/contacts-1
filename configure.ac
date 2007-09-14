@@ -79,10 +79,10 @@ AM_GCONF_SOURCE_2
 
 AC_OUTPUT([
 Makefile
-data/Makefile
 po/Makefile.in
 libhito/Makefile
 vanilla/Makefile
 openmoko/Makefile
+openmoko/data/Makefile
 hildon/Makefile
 ])

@@ -1,6 +1,6 @@
-SUBDIRS = libhito @contacts_frontend@ po data
+SUBDIRS = libhito @contacts_frontend@ po
 
-DIST_SUBDIRS = libhito vanilla openmoko hildon po data
+DIST_SUBDIRS = libhito vanilla openmoko hildon po
 
 
 INTLTOOL_BUILT = \
