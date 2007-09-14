@@ -208,11 +208,12 @@ add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
   {
     new_name = gtk_entry_get_text (GTK_ENTRY (w));
 
-    new_group = hito_category_group_new (new_name);
-
-    hito_group_store_add_group (HITO_GROUP_STORE (data->groups_liststore), new_group);
-
-    g_object_unref (new_group);
+    if (new_name && !g_str_equal (new_name, ""))
+    {
+      new_group = hito_category_group_new (new_name);
+      hito_group_store_add_group (HITO_GROUP_STORE (data->groups_liststore), new_group);
+      g_object_unref (new_group);
+    }
 
   }
   gtk_widget_destroy (d);
