@@ -56,7 +56,7 @@ groups_toggle_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, Gtk
 void
 create_contacts_groups_page (ContactsData *data)
 {
-  GtkWidget *w, *vbox;
+  GtkWidget *w, *sw, *vbox;
   GtkTreeViewColumn *col;
   GtkCellRenderer *cell;
 
@@ -71,15 +71,19 @@ create_contacts_groups_page (ContactsData *data)
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), PADDING);
-  gtk_box_pack_start (GTK_BOX (data->groups_box), vbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (data->groups_box), vbox, TRUE, TRUE, 0);
 
   w = gtk_frame_new (NULL);
   gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
-  gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), w, TRUE, TRUE, 0);
+
+  sw = moko_finger_scroll_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (w), sw);
+  
 
   data->groups = gtk_tree_view_new_with_model (data->groups_liststore);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
-  gtk_container_add (GTK_CONTAINER (w), data->groups);
+  gtk_container_add (GTK_CONTAINER (sw), data->groups);
 
   col = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
