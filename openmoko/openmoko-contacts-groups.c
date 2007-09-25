@@ -192,7 +192,6 @@ toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *d
 static void
 add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
 {
-  HitoGroup *new_group;
   const gchar *new_name;
   GtkWidget *d; /* temporary dialog until group rename is implemented */
   GtkWidget *w;
@@ -206,15 +205,22 @@ add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
 
   if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
   {
+    EVCardAttribute *attr;
+
     new_name = gtk_entry_get_text (GTK_ENTRY (w));
 
     if (new_name && !g_str_equal (new_name, ""))
     {
-      new_group = hito_category_group_new (new_name);
-      hito_group_store_add_group (HITO_GROUP_STORE (data->groups_liststore), new_group);
-      g_object_unref (new_group);
+      attr = e_vcard_get_attribute (E_VCARD (data->contact), EVC_CATEGORIES);
+      if (!attr)
+      {
+        attr = e_vcard_attribute_new (NULL, EVC_CATEGORIES);
+        e_vcard_add_attribute (E_VCARD (data->contact), attr);
+      }
+      e_vcard_attribute_add_value (attr, new_name);
     }
 
+    e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
   }
   gtk_widget_destroy (d);
 }
