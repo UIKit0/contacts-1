@@ -22,6 +22,7 @@
 #include <string.h>
 #include <moko-finger-scroll.h>
 #include <moko-stock.h>
+#include <moko-search-bar.h>
 
 #include "openmoko-contacts-list.h"
 #include "openmoko-contacts-details.h"
@@ -42,10 +43,9 @@
 
 
 /* callbacks */
-static void search_toggle_cb (GtkWidget *button, ContactsData *data);
 static void dial_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
-static void on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter);
+static void on_entry_changed (MokoSearchBar *bar, GtkEntry *entry, HitoContactModelFilter *filter);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
 static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data);
 
@@ -53,8 +53,7 @@ static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *da
 void
 create_contacts_list_page (ContactsData *data)
 {
-  GtkWidget *toolbar, *box, *hbox, *scrolled;
-  GtkWidget *search_toggle;
+  GtkWidget *toolbar, *box, *scrolled, *searchbar;
   GtkTreeModel *group_store, *contact_store, *contact_filter;
   GtkToolItem *toolitem;
 
@@ -95,27 +94,18 @@ create_contacts_list_page (ContactsData *data)
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 4);
 
   /* search/filter bar */
-  hbox = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (box), hbox, FALSE, FALSE, 0);
 
-  search_toggle = gtk_toggle_button_new ();
-  gtk_widget_set_name (search_toggle, "mokosearchbutton");
-  gtk_button_set_image (GTK_BUTTON (search_toggle), gtk_image_new_from_stock (GTK_STOCK_FIND, GTK_ICON_SIZE_SMALL_TOOLBAR));
-  g_signal_connect (G_OBJECT (search_toggle), "toggled",  (GCallback) search_toggle_cb, data);
-  gtk_box_pack_start (GTK_BOX (hbox), search_toggle, FALSE, FALSE, 0);
-
-  data->search_entry = gtk_entry_new ();
-  gtk_widget_set_name (data->search_entry, "mokosearchentry");
-  g_signal_connect (data->search_entry, "changed", G_CALLBACK (on_entry_changed), contact_filter);
-  g_object_set (G_OBJECT (data->search_entry), "no-show-all", TRUE, NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), data->search_entry, TRUE, TRUE, 0);
-
+  /* we use a special combo box from libhito */
   data->groups_combo = hito_group_combo_new (HITO_GROUP_STORE (group_store));
   hito_group_combo_connect_filter (HITO_GROUP_COMBO (data->groups_combo),
                                    HITO_CONTACT_MODEL_FILTER (contact_filter));
   gtk_combo_box_set_active (GTK_COMBO_BOX (data->groups_combo), 0);
-  gtk_box_pack_start (GTK_BOX (hbox), data->groups_combo, TRUE, TRUE, 0);
 
+  /* create the searchbar with the above combobox */
+  searchbar = moko_search_bar_new_with_combo (GTK_COMBO_BOX (data->groups_combo));
+  gtk_box_pack_start (GTK_BOX (box), searchbar, FALSE, FALSE, 0);
+
+  g_signal_connect (searchbar, "text-changed", G_CALLBACK (on_entry_changed), contact_filter);
 
   /* main treeview */
   scrolled = moko_finger_scroll_new ();
@@ -157,7 +147,7 @@ sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data)
 }
 
 static void
-on_entry_changed (GtkEntry *entry, HitoContactModelFilter *filter)
+on_entry_changed (MokoSearchBar *bar, GtkEntry *entry, HitoContactModelFilter *filter)
 {
   hito_contact_model_filter_set_text (filter, gtk_entry_get_text (entry));
 }
@@ -188,25 +178,6 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
   g_list_free (numbers);
 
 
-}
-
-static void
-search_toggle_cb (GtkWidget *button, ContactsData *data)
-{
-  gboolean search;
-  
-  search = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-
-  if (search)
-  {
-    gtk_widget_show (data->search_entry);
-    gtk_widget_hide (data->groups_combo);
-  }
-  else
-  {
-    gtk_widget_show (data->groups_combo);
-    gtk_widget_hide (data->search_entry);
-  }
 }
 
 static void
