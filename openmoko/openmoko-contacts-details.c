@@ -472,11 +472,17 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 
   if (editing)
   {
-    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
-    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
+    if (!moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->fullname)))
+    {
+      gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
+      gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
+    }
 
-    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
-    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
+    if (!moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->org)))
+    {
+      gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
+      gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
+    }
 
 
     /* make sure fullname and org are visible */
@@ -497,14 +503,22 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   {
     if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->fullname)))
       gtk_widget_hide (data->fullname);
+    else
+    {
+      gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+      gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+    }
+
     if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->org)))
       gtk_widget_hide (data->org);
+    else
+    {
+      gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+      gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+    }
 
-    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
-    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
 
-    gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
-    gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+
 
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);

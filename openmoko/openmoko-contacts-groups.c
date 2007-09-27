@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <moko-stock.h>
+#include <moko-finger-scroll.h>
 
 #include "openmoko-contacts.h"
 #include "hito-group-store.h"
@@ -77,7 +78,7 @@ create_contacts_groups_page (ContactsData *data)
   gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
   gtk_box_pack_start (GTK_BOX (vbox), w, TRUE, TRUE, 0);
 
-  sw = moko_finger_scroll_new (NULL, NULL);
+  sw = moko_finger_scroll_new ();
   gtk_container_add (GTK_CONTAINER (w), sw);
   
 
