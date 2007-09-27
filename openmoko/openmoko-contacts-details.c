@@ -22,6 +22,7 @@
 #include <string.h>
 #include <moko-finger-scroll.h>
 #include <moko-stock.h>
+#include <moko-hint-entry.h>
 
 #include "openmoko-contacts.h"
 #include "hito-contact-preview.h"
@@ -57,7 +58,7 @@ struct _AttributeName attr_names[] = {
   {EVC_TEL, "Telephone"},
   {EVC_EMAIL, "E-Mail"},
   {EVC_FN, "Fullname"},
-  {EVC_ORG, "Organisation"}
+  {EVC_ORG, "Organization"}
 };
 
 enum {
@@ -76,8 +77,6 @@ static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const ch
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
-static gboolean entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
-static gboolean entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
@@ -202,17 +201,13 @@ create_contacts_details_page (ContactsData *data)
   w = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, PADDING);
 
-  data->fullname = gtk_entry_new ();
+  data->fullname = moko_hint_entry_new ("Name");
   gtk_box_pack_start (GTK_BOX (w), data->fullname, TRUE, TRUE, 0);
   g_signal_connect (data->fullname, "changed", G_CALLBACK (fullname_changed_cb), data);
-  g_signal_connect (data->fullname, "focus-in-event", G_CALLBACK (entry_focus_in_cb), attr_names[ATTR_FN].pretty_name);
-  g_signal_connect (data->fullname, "focus-out-event", G_CALLBACK (entry_focus_out_cb), attr_names[ATTR_FN].pretty_name);
 
-  data->org = gtk_entry_new ();
+  data->org = moko_hint_entry_new ("Organization");
   gtk_box_pack_start (GTK_BOX (w), data->org, TRUE, TRUE, 0);
   g_signal_connect (data->org, "changed", G_CALLBACK (org_changed_cb), data);
-  g_signal_connect (data->org, "focus-in-event", G_CALLBACK (entry_focus_in_cb), attr_names[ATTR_ORG].pretty_name);
-  g_signal_connect (data->org, "focus-out-event", G_CALLBACK (entry_focus_out_cb), attr_names[ATTR_ORG].pretty_name);
 
 
   /* liststore for attributes */
@@ -382,13 +377,13 @@ contacts_details_page_update (ContactsData *data)
 
     if (!strcmp (name, EVC_FN))
     {
-      gtk_entry_set_text (GTK_ENTRY (data->fullname), value);
+      moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), value);
       fn_set = TRUE;
       continue;
     }
     if (!strcmp (name, EVC_ORG))
     {
-      gtk_entry_set_text (GTK_ENTRY (data->org), value);
+      moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), value);
       org_set = TRUE;
       continue;
     }
@@ -419,9 +414,9 @@ contacts_details_page_update (ContactsData *data)
   if (!photo_set)
     gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
   if (!org_set)
-    gtk_entry_set_text (GTK_ENTRY (data->org), "");
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
   if (!fn_set)
-    gtk_entry_set_text (GTK_ENTRY (data->fullname), "");
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), "");
 
   data->detail_page_loading = FALSE;
 }
@@ -477,16 +472,16 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 
   if (editing)
   {
-
     gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
     gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
 
     gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
     gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
 
-    /* add any "hint" values */
-    entry_focus_out_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
-    entry_focus_out_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
+
+    /* make sure fullname and org are visible */
+    gtk_widget_show (data->fullname);
+    gtk_widget_show (data->org);
 
     /* ensure selection is possible in edit mode - cell editing is not possible
      * without it
@@ -500,6 +495,11 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   }
   else
   {
+    if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->fullname)))
+      gtk_widget_hide (data->fullname);
+    if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->org)))
+      gtk_widget_hide (data->org);
+
     gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
     gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
 
@@ -509,9 +509,6 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
 
-    /* clear any "hint" values */
-    entry_focus_in_cb (data->fullname, NULL, attr_names[ATTR_FN].pretty_name);
-    entry_focus_in_cb (data->org, NULL, attr_names[ATTR_ORG].pretty_name);
 
     /* disable selection when not in editing mode */
     sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->telephone));
@@ -727,7 +724,7 @@ fullname_changed_cb (GtkWidget *entry, ContactsData *data)
 
   new_val = gtk_entry_get_text (GTK_ENTRY (entry));
 
-  if (new_val && !strcmp (new_val, attr_names[ATTR_FN].pretty_name))
+  if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (entry)))
     return;
 
   attribute_changed (EVC_FN, new_val, data);
@@ -740,45 +737,10 @@ org_changed_cb (GtkWidget *entry, ContactsData *data)
 
   new_val = gtk_entry_get_text (GTK_ENTRY (entry));
 
-  if (new_val && !strcmp (new_val, attr_names[ATTR_ORG].pretty_name))
+  if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (entry)))
     return;
 
   attribute_changed (EVC_ORG, new_val, data);
 }
 
 
-static gboolean
-entry_focus_in_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
-{
-  const gchar *contents = NULL;
-  contents = gtk_entry_get_text (GTK_ENTRY (entry));
-
-  if (contents && !strcmp (contents, fieldname))
-  {
-    gtk_entry_set_text (GTK_ENTRY (entry), "");
-    gtk_widget_modify_text (entry, GTK_STATE_NORMAL, NULL);
-  }
-
-  /* propagate further */
-  return FALSE;
-}
-
-static gboolean
-entry_focus_out_cb (GtkWidget *entry, GdkEventFocus *event, gchar *fieldname)
-{
-  const gchar *contents = NULL;
-  contents = gtk_entry_get_text (GTK_ENTRY (entry));
-
-  /* simple way to check if we are editing (has frame == editing) */
-  if (!gtk_entry_get_has_frame (GTK_ENTRY (entry)))
-    return FALSE;
-
-  if (contents && !strcmp (contents, ""))
-  {
-    gtk_entry_set_text (GTK_ENTRY (entry), fieldname);
-    gtk_widget_modify_text (entry, GTK_STATE_NORMAL, &entry->style->text[GTK_STATE_INSENSITIVE]);
-  }
-
-  /* propagate further */
-  return FALSE;
-}
