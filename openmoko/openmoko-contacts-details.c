@@ -49,6 +49,11 @@ enum {
   TREE_VALUE_COLUMN
 };
 
+typedef struct {
+  ContactsData *contacts_data;
+  GtkTreeModelFilter *filter;
+} RendererData;
+
 struct _AttributeName {
   gchar *vcard_name;
   gchar *pretty_name;
@@ -71,9 +76,9 @@ enum {
 static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
 static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
 static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
-static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
-static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data);
-static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data);
+static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data);
+static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data);
+static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, RendererData *data);
 static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
@@ -94,18 +99,31 @@ filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
   return result;
 }
 
+static RendererData*
+renderer_data_new (GtkTreeModelFilter *filter, ContactsData *data)
+{
+  RendererData *r_data;
+  r_data = g_new0 (RendererData, 1);
+  r_data->contacts_data = data;
+  r_data->filter = filter;
+  return r_data;
+}
+
 static void
 append_delete_column (GtkTreeView *treeview, ContactsData *data)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *treeview_column;
+  RendererData *r_data;
+
+  r_data = renderer_data_new (
+    GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (treeview))),
+    data);
 
   renderer = koto_cell_renderer_pixbuf_new ();
   g_object_set (G_OBJECT (renderer), "stock-id", GTK_STOCK_DELETE, NULL);
-  /* we need to know what treeview this renderer is associated with for the
-   * "activated" callback */
-  g_object_set_data (G_OBJECT (renderer), "treeview", treeview);
-  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), data);
+
+  g_signal_connect (G_OBJECT (renderer), "activated", G_CALLBACK (delete_renderer_activated_cb), r_data);
 
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, NULL);
   g_object_set (G_OBJECT (treeview_column), "visible", FALSE, NULL);
@@ -113,12 +131,17 @@ append_delete_column (GtkTreeView *treeview, ContactsData *data)
 }
 
 static void
-append_type_column (GtkTreeView *treeview)
+append_type_column (GtkTreeView *treeview, ContactsData *data)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *treeview_column;
   GtkListStore *liststore;
   GtkTreeIter iter;
+  RendererData *r_data;
+
+  r_data = renderer_data_new (
+    GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (treeview))),
+    data);
 
   /* FIXME: this should be translatable somehow */
   liststore = gtk_list_store_new (1, G_TYPE_STRING);
@@ -128,7 +151,7 @@ append_type_column (GtkTreeView *treeview)
   gtk_list_store_insert_with_values (liststore, &iter, 0, 0, "Pref", -1);
 
   renderer = gtk_cell_renderer_combo_new();
-  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (type_renderer_edited_cb), gtk_tree_view_get_model (treeview));
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (type_renderer_edited_cb), r_data);
   g_object_set (G_OBJECT (renderer), "model", liststore, "text-column", 0, "has-entry", FALSE, NULL);
   treeview_column = gtk_tree_view_column_new_with_attributes ("", renderer, "text", ATTR_TYPE_COLUMN, NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), treeview_column, TREE_TYPE_COLUMN);
@@ -158,6 +181,7 @@ create_contacts_details_page (ContactsData *data)
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
   GtkCellRenderer *renderer;
+  RendererData *r_data;
 
   box = gtk_vbox_new (FALSE, 0);
 
@@ -235,15 +259,17 @@ create_contacts_details_page (ContactsData *data)
   append_delete_column (GTK_TREE_VIEW (data->telephone), data);
 
   /* type option column */
-  append_type_column (GTK_TREE_VIEW (data->telephone));
+  append_type_column (GTK_TREE_VIEW (data->telephone), data);
 
   /* icon column */
   append_icon_column (GTK_TREE_VIEW (data->telephone), MOKO_STOCK_CONTACT_PHONE);
 
   /* value column */
+  r_data = renderer_data_new (GTK_TREE_MODEL_FILTER (tel_filter), data);
+    
   renderer = gtk_cell_renderer_text_new ();
   g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), tel_filter);
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), r_data);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (data->telephone),
       gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL), TREE_VALUE_COLUMN);
 
@@ -276,15 +302,16 @@ create_contacts_details_page (ContactsData *data)
   append_delete_column (GTK_TREE_VIEW (data->email), data);
 
   /* type option column */
-  append_type_column (GTK_TREE_VIEW (data->email));
+  append_type_column (GTK_TREE_VIEW (data->email), data);
 
   /* icon column */
   append_icon_column (GTK_TREE_VIEW (data->email), MOKO_STOCK_CONTACT_EMAIL);
 
 
   /* value column */
+  r_data = renderer_data_new (GTK_TREE_MODEL_FILTER (email_filter), data);
   renderer = gtk_cell_renderer_text_new ();
-  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), email_filter);
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (value_renderer_edited_cb), r_data);
   g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (data->email),
       gtk_tree_view_column_new_with_attributes ("Value", renderer, "text", ATTR_VALUE_COLUMN, NULL), TREE_VALUE_COLUMN);
@@ -583,63 +610,72 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
 }
 
 static void
-value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data)
+value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data)
 {
   GtkTreeIter filter_iter, model_iter;
-  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (data);
   GtkTreeModel *model;
 
-  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &filter_iter, path);
-  gtk_tree_model_filter_convert_iter_to_child_iter (filter, &model_iter, &filter_iter);
-  model = gtk_tree_model_filter_get_model (filter);
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (data->filter), &filter_iter, path);
+  gtk_tree_model_filter_convert_iter_to_child_iter (data->filter, &model_iter, &filter_iter);
+  model = gtk_tree_model_filter_get_model (data->filter);
 
-  gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_VALUE_COLUMN, text, -1);
+  if (g_str_equal (text, ""))
+  {
+    EVCardAttribute *attr;
+    EVCard *card;
+
+    /* remove from contact */
+    gtk_tree_model_get (GTK_TREE_MODEL (model), &model_iter, ATTR_POINTER_COLUMN, &attr, -1);
+    card = E_VCARD (data->contacts_data->contact);
+    e_vcard_remove_attribute (card, attr);
+
+    /* remove from list store */
+    gtk_list_store_remove (GTK_LIST_STORE (model), &model_iter);
+  }
+  else
+  {
+    gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_VALUE_COLUMN, text, -1);
+  }
 }
 
 
 static void
-type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, gpointer data)
+type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data)
 {
   GtkTreeIter filter_iter, model_iter;
-  GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (data);
   GtkTreeModel *model;
 
-  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &filter_iter, path);
-  gtk_tree_model_filter_convert_iter_to_child_iter (filter, &model_iter, &filter_iter);
-  model = gtk_tree_model_filter_get_model (filter);
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (data->filter), &filter_iter, path);
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (data->filter), &filter_iter, path);
+  gtk_tree_model_filter_convert_iter_to_child_iter (data->filter, &model_iter, &filter_iter);
+  model = gtk_tree_model_filter_get_model (data->filter);
 
   gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_TYPE_COLUMN, text, -1);
 }
 
 
 static void
-delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data)
+delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, RendererData *data)
 {
   EVCardAttribute *attr;
   EVCard *card;
   GtkTreeIter iter, child_iter;
-  GtkTreeModelFilter *filter;
   GtkTreeModel *model;
-  GtkTreeView *treeview;
 
-  treeview = g_object_get_data (G_OBJECT (cell), "treeview");
-
-  /* the model on the treeview is a filter */
-  filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
-  model = gtk_tree_model_filter_get_model (filter);
+  model = gtk_tree_model_filter_get_model (data->filter);
 
   /* remove attribute from contact */
-  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (filter), &iter, path);
-  gtk_tree_model_get (GTK_TREE_MODEL (filter), &iter, ATTR_POINTER_COLUMN, &attr, -1);
-  card = E_VCARD (data->contact);
+  gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (data->filter), &iter, path);
+  gtk_tree_model_get (GTK_TREE_MODEL (data->filter), &iter, ATTR_POINTER_COLUMN, &attr, -1);
+  card = E_VCARD (data->contacts_data->contact);
 
   e_vcard_remove_attribute (card, attr);
 
   /* remove attribute row from model */
-  gtk_tree_model_filter_convert_iter_to_child_iter (filter, &child_iter, &iter);
+  gtk_tree_model_filter_convert_iter_to_child_iter (data->filter, &child_iter, &iter);
   gtk_list_store_remove (GTK_LIST_STORE (model), &child_iter);
 
-  data->dirty = TRUE;
+  data->contacts_data->dirty = TRUE;
 }
 
 static void
