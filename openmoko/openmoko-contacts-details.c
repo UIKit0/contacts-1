@@ -59,7 +59,7 @@ struct _AttributeName {
   gchar *pretty_name;
 };
 
-struct _AttributeName attr_names[] = {
+static const struct _AttributeName attr_names[] = {
   {EVC_TEL, "Telephone"},
   {EVC_EMAIL, "E-Mail"},
   {EVC_FN, "Fullname"},
