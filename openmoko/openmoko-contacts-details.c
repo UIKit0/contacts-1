@@ -631,6 +631,8 @@ value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, R
 
     /* remove from list store */
     gtk_list_store_remove (GTK_LIST_STORE (model), &model_iter);
+
+    data->contacts_data->dirty = TRUE;
   }
   else
   {
