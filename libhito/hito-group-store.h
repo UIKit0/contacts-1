@@ -68,6 +68,8 @@ void hito_group_store_set_view (HitoGroupStore *store, EBookView *view);
 
 void hito_group_store_add_group (HitoGroupStore *store, HitoGroup *group);
 
+void hito_group_store_remove_group (HitoGroupStore *store, HitoGroup *group);
+
 G_END_DECLS
 
 #endif /* _HITO_GROUP_STORE */

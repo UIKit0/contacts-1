@@ -234,11 +234,36 @@ hito_group_store_set_view (HitoGroupStore *store, EBookView *view)
 void
 hito_group_store_add_group (HitoGroupStore *store, HitoGroup *group)
 {
+  HitoGroupStorePrivate *priv;
   GtkTreeIter iter;
   
   g_return_if_fail (HITO_IS_GROUP_STORE (store));
   g_return_if_fail (HITO_IS_GROUP (group));
 
+  priv = GET_PRIVATE (store);
+
   gtk_list_store_insert_with_values (GTK_LIST_STORE (store), &iter, 0,
                                      COL_GROUP, group, -1);
+
+  g_hash_table_insert (priv->name_hash,
+                       g_strdup (hito_group_get_name (group)),
+                       gtk_tree_iter_copy (&iter));
+}
+
+void
+hito_group_store_remove_group (HitoGroupStore *store, HitoGroup *group)
+{
+  HitoGroupStorePrivate *priv;
+  GtkTreeIter *iter;
+  
+  g_return_if_fail (HITO_IS_GROUP_STORE (store));
+  g_return_if_fail (HITO_IS_GROUP (group));
+
+  priv = GET_PRIVATE (store);
+
+  iter = g_hash_table_lookup (priv->name_hash, hito_group_get_name (group));
+  
+  gtk_list_store_remove (GTK_LIST_STORE (store), iter);
+
+  g_hash_table_remove (priv->name_hash, hito_group_get_name (group));
 }
