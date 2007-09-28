@@ -245,25 +245,60 @@ hito_group_store_add_group (HitoGroupStore *store, HitoGroup *group)
   gtk_list_store_insert_with_values (GTK_LIST_STORE (store), &iter, 0,
                                      COL_GROUP, group, -1);
 
-  g_hash_table_insert (priv->name_hash,
-                       g_strdup (hito_group_get_name (group)),
-                       gtk_tree_iter_copy (&iter));
+  if (HITO_IS_CATEGORY_GROUP (group)) {
+    g_hash_table_insert (priv->name_hash,
+                         g_strdup (hito_group_get_name (group)),
+                         gtk_tree_iter_copy (&iter));
+  }
+}
+
+static gboolean
+find_group (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
+{
+  struct {
+    HitoGroup *group;
+    gboolean found;
+    GtkTreeIter iter;
+  } *data = user_data;
+  HitoGroup *group = NULL;
+
+  gtk_tree_model_get (model, iter, COL_GROUP, &group, -1);
+  
+  if (group == data->group) {
+    data->found = TRUE;
+    data->iter = *iter;
+  }
+
+  g_object_unref (group);
+
+  return data->found;
 }
 
 void
 hito_group_store_remove_group (HitoGroupStore *store, HitoGroup *group)
 {
   HitoGroupStorePrivate *priv;
-  GtkTreeIter *iter;
-  
+  struct {
+    HitoGroup *group;
+    gboolean found;
+    GtkTreeIter iter;
+  } data;
+
   g_return_if_fail (HITO_IS_GROUP_STORE (store));
   g_return_if_fail (HITO_IS_GROUP (group));
 
   priv = GET_PRIVATE (store);
 
-  iter = g_hash_table_lookup (priv->name_hash, hito_group_get_name (group));
+  data.group = group;
+  data.found = FALSE;
   
-  gtk_list_store_remove (GTK_LIST_STORE (store), iter);
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), find_group, &data);
 
-  g_hash_table_remove (priv->name_hash, hito_group_get_name (group));
+  if (data.found) {
+    gtk_list_store_remove (GTK_LIST_STORE (store), &data.iter);
+    
+    if (HITO_IS_CATEGORY_GROUP (group)) {
+      g_hash_table_remove (priv->name_hash, hito_group_get_name (group));
+    }
+  }
 }
