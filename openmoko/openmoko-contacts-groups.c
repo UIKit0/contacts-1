@@ -25,9 +25,17 @@
 #include "hito-category-group.h"
 #include "hito-group.h"
 #include "hito-vcard-util.h"
+#include "koto-cell-renderer-pixbuf.h"
+
+
+typedef struct {
+  ContactsData *contacts_data;
+  const gchar *name;
+} DeleteData;
 
 static void toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *data);
 static void add_groups_clicked_cb (GtkWidget *button, ContactsData *Data);
+static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data);
 
 
 static void
@@ -98,6 +106,12 @@ create_contacts_groups_page (ContactsData *data)
   cell = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (col, cell, TRUE);
   gtk_tree_view_column_set_cell_data_func (col, cell, groups_name_cell_data_func, NULL, NULL);
+
+  cell = koto_cell_renderer_pixbuf_new ();
+  g_object_set (G_OBJECT (cell), "stock-id", GTK_STOCK_DELETE, NULL);
+  g_signal_connect (G_OBJECT (cell), "activated", G_CALLBACK (delete_renderer_activated_cb), data);
+  gtk_tree_view_column_pack_start (col, cell, FALSE);
+
 
 
   w = gtk_button_new_with_label ("Add Group");
@@ -188,6 +202,58 @@ toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *d
   }
 
   data->dirty = TRUE;
+}
+
+static void
+delete_groups_helper (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, DeleteData *data)
+{
+  EContact *contact;
+  EVCardAttribute *attr;
+
+  gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
+
+  attr = e_vcard_get_attribute (E_VCARD (contact), EVC_CATEGORIES);
+  if (attr)
+  {
+    e_vcard_attribute_remove_value (attr, data->name);
+    /* FIXME: would be better if we can commit a group of contacts at once
+     * luckily, ebook already seems to do some checking and won't commit the
+     * contact if it hasn't changed */
+    e_book_async_commit_contact (data->contacts_data->book, contact, NULL, NULL);
+  }
+
+}
+
+static void
+delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data)
+{
+  GtkWidget *d;
+  HitoGroup *group;
+  const gchar *name = NULL;
+  GtkTreeIter iter;
+
+  gtk_tree_model_get_iter_from_string (data->groups_liststore, &iter, path);
+  gtk_tree_model_get (data->groups_liststore, &iter, 0, &group, -1);
+
+  name = hito_group_get_name (group);
+
+  d = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE, "Are you sure you want to delete the group \"%s\" from all contacts?", name);
+  gtk_dialog_add_buttons (GTK_DIALOG (d), GTK_STOCK_DELETE, GTK_RESPONSE_OK, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+  if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
+  {
+    DeleteData delete_data;
+    gtk_widget_destroy (d);
+
+    delete_data.name = name;
+    delete_data.contacts_data = data;
+
+    gtk_tree_model_foreach (GTK_TREE_MODEL (data->contacts_store), (GtkTreeModelForeachFunc) delete_groups_helper, &delete_data);
+  }
+  else
+    gtk_widget_destroy (d);
+
+  hito_group_store_remove_group (HITO_GROUP_STORE (data->groups_liststore), group);
 }
 
 static void

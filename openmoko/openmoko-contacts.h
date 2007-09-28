@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include <hito-contact-store.h>
 
 #define PADDING 6
 
@@ -38,6 +39,8 @@ typedef struct
 
   /* current contact being edited - must be set through contact_set_current_contact() */
   EContact *contact;
+
+  HitoContactStore *contacts_store;
 
   /* this should be set to true by any function that modifies the above contact */
   gboolean dirty;

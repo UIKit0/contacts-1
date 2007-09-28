@@ -64,7 +64,7 @@ create_contacts_list_page (ContactsData *data)
   hito_group_store_add_group (HITO_GROUP_STORE (group_store), hito_separator_group_new (99));
   hito_group_store_add_group (HITO_GROUP_STORE (group_store), hito_no_category_group_new ());
 
-  contact_store = hito_contact_store_new (data->view);
+  data->contacts_store = contact_store = hito_contact_store_new (data->view);
   contact_filter = hito_contact_model_filter_new (HITO_CONTACT_STORE (contact_store));
 
   box = gtk_vbox_new (FALSE, 0);
