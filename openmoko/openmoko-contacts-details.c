@@ -79,9 +79,11 @@ static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data);
 static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, RendererData *data);
 static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, RendererData *data);
-static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
+
+static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
+static void update_visible_treeviews (ContactsData *data);
 
 static void add_new_telephone (GtkWidget *button, ContactsData *data);
 static void add_new_email (GtkWidget *button, ContactsData *data);
@@ -246,6 +248,8 @@ create_contacts_details_page (ContactsData *data)
   tel_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (tel_filter),
       (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_TEL, NULL);
+  g_signal_connect_swapped (tel_filter, "row-inserted", G_CALLBACK (update_visible_treeviews), data);
+  g_signal_connect_swapped (tel_filter, "row-deleted", G_CALLBACK (update_visible_treeviews), data);
 
   w = gtk_frame_new (NULL);
   gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
@@ -289,6 +293,8 @@ create_contacts_details_page (ContactsData *data)
 
   email_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (liststore), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (email_filter), (GtkTreeModelFilterVisibleFunc) filter_visible_func, EVC_EMAIL, NULL);
+  g_signal_connect_swapped (email_filter, "row-inserted", G_CALLBACK (update_visible_treeviews), data);
+  g_signal_connect_swapped (email_filter, "row-deleted", G_CALLBACK (update_visible_treeviews), data);
 
   w = gtk_frame_new (NULL);
   gtk_frame_set_shadow_type (GTK_FRAME (w), GTK_SHADOW_IN);
@@ -545,8 +551,6 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     }
 
 
-
-
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);
 
@@ -698,6 +702,27 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   hito_vcard_attribute_set_type (attr, value);
 
   data->dirty = TRUE;
+
+}
+
+static void
+update_visible_treeviews (ContactsData *data)
+{
+  GtkTreeIter foo;
+
+  /* this hides the treeview completely when there are no rows to display
+   * (actually hides the parent since the parent draws the frame)
+   */
+
+  if (!gtk_tree_model_get_iter_first (gtk_tree_view_get_model (GTK_TREE_VIEW (data->telephone)), &foo))
+    gtk_widget_hide (data->telephone->parent);
+  else
+    gtk_widget_show (data->telephone->parent);
+
+  if (!gtk_tree_model_get_iter_first (gtk_tree_view_get_model (GTK_TREE_VIEW (data->email)), &foo))
+    gtk_widget_hide (data->email->parent);
+  else
+    gtk_widget_show (data->email->parent);
 
 }
 
