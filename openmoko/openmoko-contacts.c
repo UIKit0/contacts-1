@@ -38,6 +38,16 @@
 #include "openmoko-contacts-history.h"
 #include "openmoko-contacts-groups.h"
 
+static void notebook_switch_page_cb (GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, ContactsData *data);
+
+static void
+notebook_switch_page_cb (GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, ContactsData *data)
+{
+  if (data->dirty)
+    e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+}
+
+
 static void
 window_delete_event_cb (GtkWidget *widget, GdkEvent *event, ContactsData *data)
 {
@@ -61,6 +71,7 @@ make_contact_view (ContactsData *data)
   data->notebook = gtk_notebook_new ();
   gtk_notebook_set_tab_pos (GTK_NOTEBOOK (data->notebook), GTK_POS_BOTTOM);
   gtk_container_add (GTK_CONTAINER (data->window), data->notebook);
+  g_signal_connect (data->notebook, "switch-page", G_CALLBACK (notebook_switch_page_cb), data);
 
   /* create notebook pages */
   create_contacts_list_page (data);

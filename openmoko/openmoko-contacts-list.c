@@ -48,6 +48,7 @@ static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (MokoSearchBar *bar, GtkEntry *entry, HitoContactModelFilter *filter);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
 static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data);
+static void rows_reordererd_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer arg3, ContactsData *data);
 
 /* ui creation */
 void
@@ -66,6 +67,7 @@ create_contacts_list_page (ContactsData *data)
 
   data->contacts_store = contact_store = hito_contact_store_new (data->view);
   contact_filter = hito_contact_model_filter_new (HITO_CONTACT_STORE (contact_store));
+  g_signal_connect (contact_store, "rows-reordered", G_CALLBACK (rows_reordererd_cb), data);
 
   box = gtk_vbox_new (FALSE, 0);
   contacts_notebook_add_page_with_icon (data->notebook, box, GTK_STOCK_INDEX);
@@ -210,6 +212,28 @@ on_dial_number_clicked (GtkWidget *eb, GdkEventButton *event, GtkDialog *dialog)
 
   gtk_dialog_response (dialog, GTK_RESPONSE_CANCEL);
 }
+
+
+static void
+rows_reordererd_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer arg3, ContactsData *data)
+{
+  GtkTreePath *selected_path;
+  GtkTreeIter selected_iter;
+  GtkTreeSelection *selection;
+  GtkTreeModel *treemodel;
+
+
+  /* this makes sure the selected row is always visible */
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview));
+  gtk_tree_selection_get_selected (selection, &treemodel, &selected_iter);
+  selected_path = gtk_tree_model_get_path (treemodel, &selected_iter);
+
+  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (data->contacts_treeview), selected_path, NULL, FALSE, 0, 0);
+
+  gtk_tree_path_free (selected_path);
+}
+
 
 static void
 show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)

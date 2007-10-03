@@ -40,7 +40,7 @@ typedef struct
   /* current contact being edited - must be set through contact_set_current_contact() */
   EContact *contact;
 
-  HitoContactStore *contacts_store;
+  GtkTreeModel *contacts_store;
 
   /* this should be set to true by any function that modifies the above contact */
   gboolean dirty;
