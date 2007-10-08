@@ -37,6 +37,8 @@ typedef struct
   EBook *book;
   EBookView *view;
 
+  GtkTreeModel *contact_store;
+
   /* current contact being edited - must be set through contact_set_current_contact() */
   EContact *contact;
 

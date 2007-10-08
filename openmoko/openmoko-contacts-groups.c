@@ -33,6 +33,12 @@ typedef struct {
   const gchar *name;
 } DeleteData;
 
+typedef struct {
+  ContactsData *contacts_data;
+  const gchar *old_name;
+  gchar *new_name;
+} RenameData;
+
 static void toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *data);
 static void add_groups_clicked_cb (GtkWidget *button, ContactsData *Data);
 static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, ContactsData *data);
@@ -61,6 +67,52 @@ groups_toggle_cell_data_func (GtkTreeViewColumn *col, GtkCellRenderer *cell, Gtk
   g_object_unref (group);
 }
 
+gboolean
+groups_rename_contact_group (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, RenameData *data)
+{
+  EContact *contact;
+  EVCardAttribute *attr;
+
+  gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
+
+  attr = e_vcard_get_attribute (E_VCARD (contact), EVC_CATEGORIES);
+  if (attr)
+  {
+    /* TODO: some possible conflicts here */
+    e_vcard_attribute_remove_value (attr, data->old_name);
+    e_vcard_attribute_add_value (attr, data->new_name);
+
+    /* FIXME: would be better if we can commit a group of contacts at once
+     * luckily, ebook already seems to do some checking and won't commit the
+     * contact if it hasn't changed */
+    e_book_async_commit_contact (data->contacts_data->book, contact, NULL, NULL);
+  }
+
+  /* continue gtk_tree_model_foreach */
+  return FALSE;
+}
+
+void
+groups_name_edited_cb (GtkCellRendererText *renderer, gchar *path, gchar *new_text, ContactsData *data)
+{
+  RenameData r_data;
+  HitoGroup *group;
+  GtkTreeIter iter;
+
+  r_data.contacts_data = data;
+  r_data.new_name = new_text;
+
+  gtk_tree_model_get_iter_from_string (data->groups_liststore, &iter, path);
+  gtk_tree_model_get (data->groups_liststore, &iter, 0, &group, -1);
+  r_data.old_name = hito_group_get_name (group);
+  g_object_unref (group);
+
+
+  gtk_tree_model_foreach (data->contacts_store,
+		  (GtkTreeModelForeachFunc) groups_rename_contact_group, &r_data);
+
+  /* FIXME: hito doesn't yet remove the group when it is empty */
+}
 
 void
 create_contacts_groups_page (ContactsData *data)
@@ -106,6 +158,8 @@ create_contacts_groups_page (ContactsData *data)
   cell = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (col, cell, TRUE);
   gtk_tree_view_column_set_cell_data_func (col, cell, groups_name_cell_data_func, NULL, NULL);
+  g_object_set (G_OBJECT (cell), "editable", TRUE, NULL);
+  g_signal_connect (cell, "edited", G_CALLBACK (groups_name_edited_cb), data);
 
   cell = koto_cell_renderer_pixbuf_new ();
   g_object_set (G_OBJECT (cell), "stock-id", GTK_STOCK_DELETE, NULL);

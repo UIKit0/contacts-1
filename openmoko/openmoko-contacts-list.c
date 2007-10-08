@@ -113,7 +113,7 @@ create_contacts_list_page (ContactsData *data)
   scrolled = moko_finger_scroll_new ();
   gtk_box_pack_start (GTK_BOX (box), scrolled, TRUE, TRUE, 0);
 
-  data->contacts_treeview = hito_contact_view_new (HITO_CONTACT_STORE (contact_store),
+  data->contacts_treeview = hito_contact_view_new (HITO_CONTACT_STORE (data->contact_store),
                                     HITO_CONTACT_MODEL_FILTER (contact_filter));
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview)),
                     "changed", G_CALLBACK (on_selection_changed), data);
