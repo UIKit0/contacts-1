@@ -145,7 +145,8 @@ hito_contact_model_filter_set_text (HitoContactModelFilter *filter, const char *
   }
 
   /* Normalise now for faster matching later */
-  priv->text = g_utf8_normalize (text, -1, G_NORMALIZE_ALL);
+  if (text)
+    priv->text = g_utf8_normalize (text, -1, G_NORMALIZE_ALL);
 
   gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (filter));
 }
