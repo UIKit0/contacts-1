@@ -295,11 +295,13 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
                                           GTK_STOCK_CANCEL,
                                           GTK_RESPONSE_CANCEL,
                                           NULL);
-    gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);                                    
+    gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);
     vbox = gtk_vbox_new (FALSE, 8);
     gtk_box_pack_start (GTK_BOX (GTK_DIALOG(dialog)->vbox), vbox, 
                         FALSE, FALSE, 12);
 
+    GtkSizeGroup *size_group;
+    size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
     for (n = numbers; n; n = n->next)
     {
       GtkWidget *button = gtk_event_box_new ();
@@ -308,6 +310,11 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
       hbox = gtk_hbox_new (FALSE, 6);
       gtk_container_add (GTK_CONTAINER (button), hbox);
       
+      label = gtk_label_new (hito_vcard_attribute_get_type (n->data));
+      gtk_size_group_add_widget (size_group, label);
+      gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+      gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
       image = gtk_image_new_from_stock (MOKO_STOCK_CONTACT_PHONE, 
                                         GTK_ICON_SIZE_BUTTON);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
@@ -319,9 +326,7 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
                         G_CALLBACK (on_dial_number_clicked), (gpointer)dialog);
       g_object_set_data (G_OBJECT (button), "contact", n->data);
     }
-    
-    /*g_signal_connect_swapped (dialog, "response",
-                              G_CALLBACK (gtk_widget_destroy), dialog);*/
+    g_object_unref (size_group);
     gtk_widget_show_all (dialog);
     gint res = gtk_dialog_run (GTK_DIALOG (dialog));
     res++;
@@ -357,10 +362,7 @@ dial_contact_clicked_cb (GtkWidget *button, ContactsData *data)
   contact = contacts_list_get_selected_contact (data);
 
   if (!E_IS_CONTACT (contact))
-  {
-    g_print ("Dial: This is not a valid contact\n");
     return;
-  }
 
   numbers = hito_vcard_get_named_attributes (E_VCARD (contact), EVC_TEL);
   show_contact_numbers ("hello", numbers, data);
