@@ -46,6 +46,7 @@
 static void dial_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (MokoSearchBar *bar, GtkEntry *entry, HitoContactModelFilter *filter);
+static void searchbar_toggled_cb (MokoSearchBar *searchbar, gboolean foo, ContactsData *data);
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
 static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data);
 static void rows_reordererd_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer arg3, ContactsData *data);
@@ -108,6 +109,7 @@ create_contacts_list_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (box), searchbar, FALSE, FALSE, 0);
 
   g_signal_connect (searchbar, "text-changed", G_CALLBACK (on_entry_changed), contact_filter);
+  g_signal_connect (searchbar, "toggled", G_CALLBACK (searchbar_toggled_cb), data);
 
   /* main treeview */
   scrolled = moko_finger_scroll_new ();
@@ -124,6 +126,33 @@ create_contacts_list_page (ContactsData *data)
 }
 
 /* callbacks */
+
+static void
+searchbar_toggled_cb (MokoSearchBar *searchbar, gboolean foo, ContactsData *data)
+{
+  GtkTreeModelFilter *filter;
+  GtkEntry *entry;
+  GtkComboBox *combo;
+  filter = GTK_TREE_MODEL_FILTER (
+      gtk_tree_view_get_model (GTK_TREE_VIEW (data->contacts_treeview)));
+
+  entry = moko_search_bar_get_entry (searchbar);
+  combo = moko_search_bar_get_combo_box (searchbar);
+
+  if (moko_search_bar_search_visible (searchbar))
+  {
+    hito_contact_model_filter_set_text (HITO_CONTACT_MODEL_FILTER (filter),
+       gtk_entry_get_text (entry));
+    gtk_combo_box_set_active (combo, 0);
+  }
+  else
+  {
+    hito_contact_model_filter_set_text (HITO_CONTACT_MODEL_FILTER (filter), NULL);
+    gtk_combo_box_set_active (combo, 0);
+  }
+
+}
+
 
 static void
 sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data)

@@ -324,7 +324,6 @@ add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
   GtkTreeIter iter;
   GtkTreeViewColumn *col;
   EVCardAttribute *attr;
-  GList *list;
 
   attr = e_vcard_get_attribute (E_VCARD (data->contact), EVC_CATEGORIES);
   if (!attr)
