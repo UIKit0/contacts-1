@@ -26,6 +26,7 @@ void     hito_vcard_attribute_set_type (EVCardAttribute *attr, const gchar *type
 gchar*   hito_vcard_attribute_get_type (EVCardAttribute *attr);
 gchar*   hito_vcard_attribute_get_value_string (EVCardAttribute *attr);
 gboolean hito_vcard_attribute_compare_value_strings (gchar *a, gchar *b);
+gboolean hito_vcard_attribute_has_value (EVCardAttribute *card, const gchar *value);
 
 gint hito_vcard_strip_empty_attributes (EVCard *card);
 

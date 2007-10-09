@@ -243,3 +243,26 @@ hito_vcard_strip_empty_attributes (EVCard *card)
 }
 
 
+gboolean
+hito_vcard_attribute_has_value (EVCardAttribute *attr, const gchar *value)
+{
+  GList *list;
+  gboolean result;
+
+  g_return_val_if_fail (attr, FALSE);
+  g_return_val_if_fail (value, FALSE);
+
+  result = FALSE;
+
+  list = e_vcard_attribute_get_values (attr);
+  while (list)
+  {
+    if (list->data && g_str_equal (list->data, value))
+    {
+      result = TRUE;
+      break;
+    }
+    list = g_list_next (list);
+  }
+  return result;
+}

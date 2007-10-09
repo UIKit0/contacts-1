@@ -76,15 +76,13 @@ groups_rename_contact_group (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter
   gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
 
   attr = e_vcard_get_attribute (E_VCARD (contact), EVC_CATEGORIES);
-  if (attr)
+  if (attr && hito_vcard_attribute_has_value (attr, data->old_name))
   {
-    /* TODO: some possible conflicts here */
     e_vcard_attribute_remove_value (attr, data->old_name);
-    e_vcard_attribute_add_value (attr, data->new_name);
 
-    /* FIXME: would be better if we can commit a group of contacts at once
-     * luckily, ebook already seems to do some checking and won't commit the
-     * contact if it hasn't changed */
+    if (!hito_vcard_attribute_has_value (attr, data->new_name))
+      e_vcard_attribute_add_value (attr, data->new_name);
+
     e_book_async_commit_contact (data->contacts_data->book, contact, NULL, NULL);
   }
 
@@ -111,7 +109,8 @@ groups_name_edited_cb (GtkCellRendererText *renderer, gchar *path, gchar *new_te
   gtk_tree_model_foreach (data->contacts_store,
 		  (GtkTreeModelForeachFunc) groups_rename_contact_group, &r_data);
 
-  /* FIXME: hito doesn't yet remove the group when it is empty */
+  /* hito doesn't yet remove the group when it is empty */
+  hito_group_store_remove_group (HITO_GROUP_STORE (data->groups_liststore), group);
 }
 
 void
@@ -267,12 +266,9 @@ delete_groups_helper (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter,
   gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
 
   attr = e_vcard_get_attribute (E_VCARD (contact), EVC_CATEGORIES);
-  if (attr)
+  if (attr && hito_vcard_attribute_has_value (attr, data->name))
   {
     e_vcard_attribute_remove_value (attr, data->name);
-    /* FIXME: would be better if we can commit a group of contacts at once
-     * luckily, ebook already seems to do some checking and won't commit the
-     * contact if it hasn't changed */
     e_book_async_commit_contact (data->contacts_data->book, contact, NULL, NULL);
   }
 
@@ -297,17 +293,17 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Co
   if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
   {
     DeleteData delete_data;
-    gtk_widget_destroy (d);
 
     delete_data.name = name;
     delete_data.contacts_data = data;
 
-    gtk_tree_model_foreach (GTK_TREE_MODEL (data->contacts_store), (GtkTreeModelForeachFunc) delete_groups_helper, &delete_data);
+    gtk_tree_model_foreach (GTK_TREE_MODEL (data->contacts_store),
+        (GtkTreeModelForeachFunc) delete_groups_helper, &delete_data);
+    hito_group_store_remove_group (HITO_GROUP_STORE (data->groups_liststore), group);
   }
-  else
-    gtk_widget_destroy (d);
 
-  hito_group_store_remove_group (HITO_GROUP_STORE (data->groups_liststore), group);
+  gtk_widget_destroy (d);
+
 }
 
 static void
