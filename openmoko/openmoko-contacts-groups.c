@@ -145,6 +145,7 @@ create_contacts_groups_page (ContactsData *data)
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (data->groups), FALSE);
   gtk_container_add (GTK_CONTAINER (sw), data->groups);
 
+  /* checkbox */
   col = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
 
@@ -153,12 +154,20 @@ create_contacts_groups_page (ContactsData *data)
   g_signal_connect (cell, "toggled", G_CALLBACK (toggle_toggled_cb), data);
   gtk_tree_view_column_set_cell_data_func (col, cell, (GtkTreeCellDataFunc) groups_toggle_cell_data_func, data, NULL);
 
+  /* label */
+  col = gtk_tree_view_column_new ();
+  g_object_set (G_OBJECT (col), "expand", TRUE, NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
 
   cell = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (col, cell, TRUE);
   gtk_tree_view_column_set_cell_data_func (col, cell, groups_name_cell_data_func, NULL, NULL);
   g_object_set (G_OBJECT (cell), "editable", TRUE, NULL);
   g_signal_connect (cell, "edited", G_CALLBACK (groups_name_edited_cb), data);
+
+  /* delete button */
+  col = gtk_tree_view_column_new ();
+  gtk_tree_view_append_column (GTK_TREE_VIEW (data->groups), col);
 
   cell = koto_cell_renderer_pixbuf_new ();
   g_object_set (G_OBJECT (cell), "stock-id", GTK_STOCK_DELETE, NULL);
@@ -309,35 +318,46 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Co
 static void
 add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
 {
-  const gchar *new_name;
-  GtkWidget *d; /* temporary dialog until group rename is implemented */
-  GtkWidget *w;
+  const gchar *new_name = "New Group";
+  const gchar *name;
+  GtkTreePath *path;
+  GtkTreeIter iter;
+  GtkTreeViewColumn *col;
+  EVCardAttribute *attr;
+  GList *list;
 
-  d = gtk_dialog_new_with_buttons ("New Group", GTK_WINDOW (data->window),
-      GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-
-  w = gtk_entry_new ();
-  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (d)->vbox), w);
-  gtk_widget_show (w);
-
-  if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
+  attr = e_vcard_get_attribute (E_VCARD (data->contact), EVC_CATEGORIES);
+  if (!attr)
   {
-    EVCardAttribute *attr;
-
-    new_name = gtk_entry_get_text (GTK_ENTRY (w));
-
-    if (new_name && !g_str_equal (new_name, ""))
-    {
-      attr = e_vcard_get_attribute (E_VCARD (data->contact), EVC_CATEGORIES);
-      if (!attr)
-      {
-        attr = e_vcard_attribute_new (NULL, EVC_CATEGORIES);
-        e_vcard_add_attribute (E_VCARD (data->contact), attr);
-      }
-      e_vcard_attribute_add_value (attr, new_name);
-    }
-
-    e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+    attr = e_vcard_attribute_new (NULL, EVC_CATEGORIES);
+    e_vcard_add_attribute (E_VCARD (data->contact), attr);
   }
-  gtk_widget_destroy (d);
+  e_vcard_attribute_add_value (attr, new_name);
+  e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+
+  if (!gtk_tree_model_get_iter_first (data->groups_liststore, &iter))
+  {
+    /* something went wrong! */
+    return;
+  }
+
+  do
+  {
+    HitoGroup *group;
+    gtk_tree_model_get (data->groups_liststore, &iter, 0, &group, -1);
+    name = hito_group_get_name (group);
+    g_object_unref (group);
+    if (g_str_equal (name, new_name))
+      break;
+   }
+   while (gtk_tree_model_iter_next (data->groups_liststore, &iter));
+
+  /* activate the new item */
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->groups), 1);
+
+  gtk_window_set_focus (GTK_WINDOW (data->window), data->groups);
+  path = gtk_tree_model_get_path (data->groups_liststore, &iter);
+  gtk_tree_view_set_cursor (GTK_TREE_VIEW (data->groups), path, col, TRUE);
+  gtk_tree_view_row_activated (GTK_TREE_VIEW (data->groups), path, col);
+
 }
