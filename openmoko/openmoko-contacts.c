@@ -44,7 +44,10 @@ static void
 notebook_switch_page_cb (GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, ContactsData *data)
 {
   if (data->dirty)
+  {
     e_book_async_commit_contact (data->book, data->contact, NULL, NULL);
+    data->dirty = FALSE;
+  }
 }
 
 
@@ -85,6 +88,7 @@ make_contact_view (ContactsData *data)
 void
 contacts_set_current_contact (ContactsData *data, EContact *contact)
 {
+  GtkWidget *w;
 
   if (contact == data->contact)
     return;
@@ -103,7 +107,16 @@ contacts_set_current_contact (ContactsData *data, EContact *contact)
 
   /* ref the contact to prevent it disappearing if committed */
   if (contact)
+  {
     g_object_ref (contact); 
+  }
+
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 1);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 2);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 3);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
 
   contacts_details_page_update (data);
   contacts_history_page_update (data);
