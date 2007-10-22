@@ -50,6 +50,8 @@ static void searchbar_toggled_cb (MokoSearchBar *searchbar, gboolean foo, Contac
 static void on_selection_changed (GtkTreeSelection *selection, ContactsData *data);
 static void sequence_complete_cb (EBookView *view, gchar *arg1, ContactsData *data);
 static void rows_reordererd_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer arg3, ContactsData *data);
+static void treeview_mapped_cb (GtkWidget *widget, ContactsData *data);
+
 
 /* ui creation */
 void
@@ -120,12 +122,23 @@ create_contacts_list_page (ContactsData *data)
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview)),
                     "changed", G_CALLBACK (on_selection_changed), data);
   gtk_container_add (GTK_CONTAINER (scrolled), data->contacts_treeview);
+  g_signal_connect (data->contacts_treeview, "map", treeview_mapped_cb, data);
 
   g_signal_connect (data->view, "sequence-complete", G_CALLBACK (sequence_complete_cb), data);
 
 }
 
 /* callbacks */
+
+static void
+treeview_mapped_cb (GtkWidget *widget, ContactsData *data)
+{
+  GtkTreeSelection *sel;
+
+  /* fake a selection changes to make sure the toolbar buttons are updated */
+  sel = gtk_tree_view_get_selection (data->contacts_treeview);
+  on_selection_changed (sel, data);
+}
 
 static void
 searchbar_toggled_cb (MokoSearchBar *searchbar, gboolean foo, ContactsData *data)
