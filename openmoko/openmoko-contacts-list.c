@@ -224,6 +224,7 @@ on_selection_changed (GtkTreeSelection *selection, ContactsData *data)
 
 }
 
+/* called when a new contact is created (see below) */
 static void
 ebook_id_callback(EBook *book, EBookStatus status, const char *id, ContactsData *data)
 {
@@ -232,6 +233,7 @@ ebook_id_callback(EBook *book, EBookStatus status, const char *id, ContactsData 
   contacts_set_current_contact (data, contact);
   gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), DETAIL_PAGE_NUM);
   contacts_details_page_set_editable (data, TRUE);
+  data->dirty = TRUE;
 }
 
 static void
