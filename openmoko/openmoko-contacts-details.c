@@ -174,6 +174,20 @@ append_icon_column (GtkTreeView *treeview, gchar *stock_id)
 }
 
 
+static gboolean
+contacts_details_page_map_event_cb (GtkWidget *widget, ContactsData *data)
+{
+  static gboolean mapped = FALSE;
+
+  /* make sure the UI is set up properly when initially mapped */
+  if (!mapped)
+  {
+    edit_toggle_toggled_cb (NULL, data);
+    mapped = TRUE;
+  }
+  return FALSE;
+}
+
 void
 create_contacts_details_page (ContactsData *data)
 {
@@ -186,6 +200,10 @@ create_contacts_details_page (ContactsData *data)
   RendererData *r_data;
 
   box = gtk_vbox_new (FALSE, 0);
+
+  /* do further widget setup once they have been mapped
+   * (some setup requires the style to have been set) */
+  g_signal_connect (box, "map", G_CALLBACK (contacts_details_page_map_event_cb), data);
 
   contacts_notebook_add_page_with_icon (data->notebook, box, GTK_STOCK_FILE);
 
@@ -331,8 +349,6 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_email_button = w;
 
-  /* make sure everything is in the correct state */
-  edit_toggle_toggled_cb (GTK_WIDGET (data->edit_toggle), data);
 }
 
 void
@@ -502,6 +518,8 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 
   gtk_entry_set_has_frame (GTK_ENTRY (data->org), editing);
   g_object_set (G_OBJECT (data->org), "editable", editing, NULL);
+  
+  update_visible_treeviews (data);
 
   if (editing)
   {
