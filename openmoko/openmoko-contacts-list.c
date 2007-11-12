@@ -122,7 +122,7 @@ create_contacts_list_page (ContactsData *data)
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview)),
                     "changed", G_CALLBACK (on_selection_changed), data);
   gtk_container_add (GTK_CONTAINER (scrolled), data->contacts_treeview);
-  g_signal_connect (data->contacts_treeview, "map", treeview_mapped_cb, data);
+  g_signal_connect (data->contacts_treeview, "map", G_CALLBACK (treeview_mapped_cb), data);
 
   g_signal_connect (data->view, "sequence-complete", G_CALLBACK (sequence_complete_cb), data);
 
@@ -136,7 +136,7 @@ treeview_mapped_cb (GtkWidget *widget, ContactsData *data)
   GtkTreeSelection *sel;
 
   /* fake a selection changes to make sure the toolbar buttons are updated */
-  sel = gtk_tree_view_get_selection (data->contacts_treeview);
+  sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview));
   on_selection_changed (sel, data);
 }
 

@@ -46,10 +46,9 @@ notebook_switch_page_cb (GtkNotebook *notebook, GtkNotebookPage *page, guint pag
   if (data->dirty)
   {
     GList *list;
-    int num;
 
     /* remove contact if empty */
-    list = e_vcard_get_attributes (data->contact);
+    list = e_vcard_get_attributes (E_VCARD (data->contact));
     /* an EVCard always has at least three attributes (UID, rev and version) */
     if (!list || g_list_length (list) < 4)
     {
@@ -111,7 +110,7 @@ contacts_set_current_contact (ContactsData *data, EContact *contact)
     GList *list;
 
     /* remove contact if empty */
-    list = e_vcard_get_attributes (data->contact);
+    list = e_vcard_get_attributes (E_VCARD (data->contact));
     /* an EVCard always has at least 3 attributes */
     if (g_list_length (list) < 4)
       e_book_async_remove_contact (data->book, data->contact, NULL, NULL);
