@@ -90,6 +90,9 @@ static void add_new_email (GtkWidget *button, ContactsData *data);
 
 static void free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
+static void attribute_changed (const gchar *attr_name, const gchar *new_val, ContactsData *data);
+
+
 static gboolean
 filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name)
 {
@@ -188,6 +191,22 @@ contacts_details_page_map_event_cb (GtkWidget *widget, ContactsData *data)
   return FALSE;
 }
 
+static void
+address_buffer_changed_cb (GtkTextBuffer *buf, ContactsData *data)
+{
+  gchar *p, *value = NULL;
+  g_object_get (G_OBJECT (buf), "text", &value, NULL);
+  p = value;
+  while (*p)
+  {
+    if (*p == '\n')
+      *p = ';';
+    p++;
+  }
+  attribute_changed (EVC_ADR, value, data);
+  g_free (value);
+}
+
 void
 create_contacts_details_page (ContactsData *data)
 {
@@ -197,6 +216,7 @@ create_contacts_details_page (ContactsData *data)
   GtkListStore *liststore;
   GtkTreeModel *tel_filter, *email_filter;
   GtkCellRenderer *renderer;
+  GtkTextBuffer *buffer;
   RendererData *r_data;
 
   box = gtk_vbox_new (FALSE, 0);
@@ -349,6 +369,18 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_email_button = w;
 
+  /* add address field */
+  sw = gtk_frame_new (NULL);
+  gtk_frame_set_shadow_type (GTK_FRAME (sw), GTK_SHADOW_IN);
+  gtk_box_pack_start (GTK_BOX (vb), sw, FALSE, FALSE, PADDING);
+
+  w = gtk_text_view_new ();
+  gtk_container_add (GTK_CONTAINER (sw), w);
+  data->address = w;
+
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w));
+  g_signal_connect (buffer, "changed", G_CALLBACK (address_buffer_changed_cb), data);
+
 }
 
 void
@@ -399,7 +431,7 @@ contacts_details_page_update (ContactsData *data)
 {
   GList *attributes, *a;
   GtkListStore *liststore;
-  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE;
+  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE, adr_set = FALSE;
 
   liststore = data->attribute_liststore;
 
@@ -450,8 +482,24 @@ contacts_details_page_update (ContactsData *data)
       gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
       g_object_unref (ploader);
       photo_set = TRUE;
+      continue;
     }
-
+    if (!strcmp (name, EVC_ADR))
+    {
+      GtkTextBuffer *buf;
+      gchar *s, *p;
+      p = s = g_strdup (value);
+      while (*p)
+      {
+        if (*p == ';')
+          *p = '\n';
+        p++;
+      }
+      buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
+      gtk_text_buffer_set_text (buf, s, -1);
+      adr_set = TRUE;
+      g_free (s);
+    }
     gtk_list_store_insert_with_values (liststore, &iter, 0,
         ATTR_POINTER_COLUMN, a->data,
         ATTR_NAME_COLUMN, name,
@@ -464,10 +512,21 @@ contacts_details_page_update (ContactsData *data)
     gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
   if (!org_set)
     moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
+
   if (!fn_set)
     moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), "");
 
+  if (!adr_set)
+  {
+    GtkTextBuffer *buf;
+    buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
+    gtk_text_buffer_set_text (buf, "", -1);
+  }
+
   data->detail_page_loading = FALSE;
+
+  /* ensure the UI is in a sane state */
+  edit_toggle_toggled_cb (NULL, data);
 }
 
 
@@ -479,8 +538,10 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   GtkTreeSelection *sel;
   GList *list;
   gboolean editing;
+  GtkTextBuffer *buffer;
 
-  editing = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle));
+  editing =
+    gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle));
 
   g_object_set (G_OBJECT (data->telephone), "can-focus", editing, NULL);
   col = gtk_tree_view_get_column (GTK_TREE_VIEW (data->telephone), TREE_DEL_COLUMN);
@@ -518,27 +579,29 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 
   gtk_entry_set_has_frame (GTK_ENTRY (data->org), editing);
   g_object_set (G_OBJECT (data->org), "editable", editing, NULL);
-  
+
+  g_object_set (G_OBJECT (data->address), "editable", editing, NULL);
+
   update_visible_treeviews (data);
 
   if (editing)
   {
+    /* only reset the text colours if the field is not empty, but always reset
+     * the base colour */
     if (!moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->fullname)))
-    {
       gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, NULL);
-      gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
-    }
+    gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, NULL);
 
     if (!moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->org)))
-    {
       gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, NULL);
-      gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
-    }
+    gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, NULL);
 
-
-    /* make sure fullname and org are visible */
+    /* make sure fullname, org and address are visible */
     gtk_widget_show (data->fullname);
     gtk_widget_show (data->org);
+
+    /* parent of the address textview is the frame */
+    gtk_widget_show (data->address->parent);
 
     /* ensure selection is possible in edit mode - cell editing is not possible
      * without it
@@ -553,11 +616,14 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
   else
   {
     if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->fullname)))
+    {
       gtk_widget_hide (data->fullname);
+    }
     else
     {
       gtk_widget_modify_text (data->fullname, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
       gtk_widget_modify_base (data->fullname, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+      gtk_widget_show (data->fullname);
     }
 
     if (moko_hint_entry_is_empty (MOKO_HINT_ENTRY (data->org)))
@@ -566,8 +632,19 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     {
       gtk_widget_modify_text (data->org, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
       gtk_widget_modify_base (data->org, GTK_STATE_NORMAL, &data->org->style->bg[GTK_STATE_NORMAL]);
+      gtk_widget_show (data->org);
     }
 
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
+    if (gtk_text_buffer_get_char_count (buffer) == 0)
+    {
+      /* parent of the address textview is the frame */
+      gtk_widget_hide (data->address->parent);
+    }
+    else
+    {
+      gtk_widget_show (data->address->parent);
+    }
 
     /* remove current focus to close any active edits */
     gtk_window_set_focus (GTK_WINDOW (data->window), NULL);

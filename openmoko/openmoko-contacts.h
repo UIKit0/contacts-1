@@ -64,6 +64,7 @@ typedef struct
   GtkWidget *email;
   GtkWidget *add_email_button;
   GtkWidget *add_telephone_button;
+  GtkWidget *address;
   GtkToolItem *edit_toggle;
 
   GtkListStore *attribute_liststore;
