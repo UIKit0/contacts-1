@@ -461,7 +461,7 @@ contacts_details_page_update (ContactsData *data)
   }
 
   if (!photo_set)
-    gtk_image_set_from_stock (GTK_IMAGE (data->photo), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_DIALOG);
+    gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
   if (!org_set)
     moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
   if (!fn_set)
