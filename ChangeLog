@@ -1,3 +1,9 @@
+2007-11-14  Ross Burton  <ross@openedhand.com>
+
+	* data/contacts.desktop.in:
+	Remove Encoding key, its deprecated.  Rename SingleInstance to
+	X-SingleInstance to comply with the spec.
+
 2007-08-09  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:
