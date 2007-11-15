@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: contacts\n"
+"Project-Id-Version: contacts - trunk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-11-24 09:52+0000\n"
-"PO-Revision-Date: 2007-02-04 05:50+0100\n"
+"PO-Revision-Date: 2007-08-24 21:24+0100\n"
 "Last-Translator: Kristian Poul Herkild <kristian@herkild.dk>\n"
 "Language-Team: Danish <kristian@herkild.dk>\n"
 "MIME-Version: 1.0\n"
@@ -22,124 +22,48 @@ msgid "Address book"
 msgstr "Adressebog"
 
 #: ../data/contacts.desktop.in.h:2
-#: ../data/contacts.glade.h:6
-#: ../src/contacts-edit-pane.c:83
+#: ../src/contacts-edit-pane.c:84
+#: ../src/contacts-gtk.c:177
 msgid "Contacts"
 msgstr "Kontakter"
 
-#: ../data/contacts.glade.h:1
-msgid "0-9#"
-msgstr "0-9#"
-
-#: ../data/contacts.glade.h:2
-msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Foretag et valg:</b></span>"
-
-#: ../data/contacts.glade.h:3
-msgid "<span><big><b>Welcome to Contacts</b></big></span>"
-msgstr "<span><big><b>Velkommen til adressebogen</b></big></span>"
-
-#: ../data/contacts.glade.h:4
-msgid "A-G"
-msgstr "A-G"
-
-#: ../data/contacts.glade.h:5
-msgid "All"
-msgstr "Alle"
-
-#: ../data/contacts.glade.h:7
-msgid "Edit Types"
-msgstr "Redigér typer"
-
-#: ../data/contacts.glade.h:8
-msgid "H-N"
-msgstr "H-N"
-
-#: ../data/contacts.glade.h:9
-msgid "O-U"
-msgstr "O-U"
-
-#: ../data/contacts.glade.h:10
-msgid "V-Z"
-msgstr "V-Å"
-
-#: ../data/contacts.glade.h:11
-msgid "_Add Field"
-msgstr "_Tilføj felt"
-
-#: ../data/contacts.glade.h:12
-msgid "_Contact"
-msgstr "_Kontakt"
-
-#: ../data/contacts.glade.h:13
-msgid "_Contacts"
-msgstr "_Kontakter"
-
-#: ../data/contacts.glade.h:14
-msgid "_Edit"
-msgstr "R_edigér"
-
-#: ../data/contacts.glade.h:15
-msgid "_Export"
-msgstr "_Eksportér"
-
-#: ../data/contacts.glade.h:16
-msgid "_Groups"
-msgstr "_Grupper"
-
-#: ../data/contacts.glade.h:17
-msgid "_Help"
-msgstr "_Hjælp"
-
-#: ../data/contacts.glade.h:18
-msgid "_Import"
-msgstr "_Importér"
-
-#: ../data/contacts.glade.h:19
-msgid "_Remove Field"
-msgstr "_Fjern felt"
-
-#: ../data/contacts.glade.h:20
-msgid "_Search:"
-msgstr "_Søg:"
-
-#: ../src/contacts-callbacks-ui.c:159
+#: ../src/contacts-callbacks-ui.c:161
 msgid "Unknown"
 msgstr "Ukendt"
 
-#: ../src/contacts-callbacks-ui.c:163
+#: ../src/contacts-callbacks-ui.c:165
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
 msgstr "Er du sikker på, at du vil slette \"%s\"?"
 
-#: ../src/contacts-callbacks-ui.c:167
+#: ../src/contacts-callbacks-ui.c:169
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
 msgstr "Er du sikker på, at du vil slette %d kontakter?"
 
-#: ../src/contacts-callbacks-ui.c:248
+#: ../src/contacts-callbacks-ui.c:252
 #, c-format
 msgid "Would you like to import contact '%s'?"
 msgstr "Vil du importerer kontakten \"%s\"?"
 
-#: ../src/contacts-callbacks-ui.c:253
+#: ../src/contacts-callbacks-ui.c:257
 msgid "_Show contact"
 msgstr "_Vis kontakt"
 
-#: ../src/contacts-callbacks-ui.c:254
+#: ../src/contacts-callbacks-ui.c:258
 msgid "_Import contact"
 msgstr "_Importér kontakt"
 
-#: ../src/contacts-callbacks-ui.c:308
+#: ../src/contacts-callbacks-ui.c:312
 msgid "Import Contact"
 msgstr "Importér kontakt"
 
-#: ../src/contacts-callbacks-ui.c:376
+#: ../src/contacts-callbacks-ui.c:380
 msgid "Export Contact"
 msgstr "Eksportér kontakt"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:413
+#: ../src/contacts-callbacks-ui.c:417
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
@@ -148,100 +72,131 @@ msgstr ""
 "<big><b>Filen \"%s\" findes allerede.\n"
 "Vil du erstatte den?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:419
+#: ../src/contacts-callbacks-ui.c:423
 msgid "Replacing it will overwrite its contents."
 msgstr "Filens indhold vil blive overskrevet, hvis du erstatter den."
 
-#: ../src/contacts-callbacks-ui.c:423
+#: ../src/contacts-callbacks-ui.c:427
 msgid "_Replace"
 msgstr "_Erstat"
 
+#: ../src/contacts-callbacks-ui.c:572
+msgid ""
+"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+msgstr ""
+"Dette program er frit programmel. Du kan videredistribuere det eller ændre det under betingelserne i GNU General Public License som udgives af Free Software Foundation; enten version 2 af licensen eller (hvis du ønsker det) enhver senere version.\n"
+"\n"
+"Dette program distribueres i håb om at programmet er nyttigt, men UDEN NOGEN GARANTI, ikke engang underforstået garanti om at det er SALGBART eller er BRUGBART TIL ET BESTEMT FORMÅL. Se GNU General Public License for flere detaljer.\n"
+"\n"
+"Du burde have modtaget en kopi af GNU General Public License sammen med programmet; hvis ikke, så skriv til Free Software Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
+
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:564
+#: ../src/contacts-callbacks-ui.c:587
 msgid "translator-credits"
 msgstr "Kristian Poul Herkild <kristian@herkild.dk>"
 
-#: ../src/contacts-edit-pane.c:99
+#: ../src/contacts-edit-pane.c:102
 msgid "Are you sure you want to delete this contact?"
 msgstr "Er du sikker på, at du vil slette denne kontakt?"
 
-#: ../src/contacts-edit-pane.c:280
-#: ../src/contacts-main.c:175
+#: ../src/contacts-edit-pane.c:140
+msgid "Couldn't update contact"
+msgstr "Kunne ikke opdatere kontakt"
+
+#: ../src/contacts-edit-pane.c:145
+#, c-format
+msgid "Information couldn't be updated, error was: %s"
+msgstr "Oplysninger kunne ikke opdateres. Fejlen var: %s"
+
+#: ../src/contacts-edit-pane.c:180
+msgid "Couldn't add contact"
+msgstr "Kunne ikke tilføje kontakt"
+
+#: ../src/contacts-edit-pane.c:185
+#, c-format
+msgid "Cannot add contact: %s"
+msgstr "Kan ikke tilføje kontakten %s"
+
+#: ../src/contacts-edit-pane.c:317
 msgid "Other"
 msgstr "Øvrige"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:396
+#: ../src/contacts-edit-pane.c:433
 msgid "<b>Type:</b>"
 msgstr "<b>Type:</b>"
 
-#: ../src/contacts-edit-pane.c:731
+#: ../src/contacts-edit-pane.c:770
 msgid "Change groups"
 msgstr "Ændr grupper"
 
-#: ../src/contacts-edit-pane.c:731
+#: ../src/contacts-edit-pane.c:770
 msgid "<b>Choose groups</b>"
 msgstr "<b>Vælg grupper</b>"
 
-#: ../src/contacts-edit-pane.c:790
+#: ../src/contacts-edit-pane.c:832
 msgid "Add field"
 msgstr "Tilføj felt"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:792
+#: ../src/contacts-edit-pane.c:834
 msgid "<b>Choose a field</b>"
 msgstr "<b>Vælg et felt</b>"
 
-#: ../src/contacts-edit-pane.c:1151
+#: ../src/contacts-edit-pane.c:1204
 msgid "Edit contact"
 msgstr "Redigér kontakt"
 
-#: ../src/contacts-main.c:88
-msgid "Unnamed"
-msgstr "Ikke navngivet"
-
-#: ../src/contacts-utils.c:159
+#: ../src/contacts-utils.c:160
 msgid "Phone"
 msgstr "Telefon"
 
-#: ../src/contacts-utils.c:160
+#: ../src/contacts-utils.c:161
 msgid "Email"
 msgstr "E-post"
 
-#: ../src/contacts-utils.c:161
+#: ../src/contacts-utils.c:162
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/contacts-utils.c:163
 msgid "Address"
 msgstr "Adresse"
 
-#: ../src/contacts-utils.c:163
+#: ../src/contacts-utils.c:166
 msgid "Homepage"
 msgstr "Hjemmeside"
 
-#: ../src/contacts-utils.c:171
+#: ../src/contacts-utils.c:174
 msgid "PO Box"
 msgstr "Postboks"
 
-#: ../src/contacts-utils.c:172
+#: ../src/contacts-utils.c:175
 msgid "Ext."
 msgstr "Tilnytning"
 
-#: ../src/contacts-utils.c:173
+#: ../src/contacts-utils.c:176
 msgid "Street"
 msgstr "Vej"
 
-#: ../src/contacts-utils.c:174
+#: ../src/contacts-utils.c:177
 msgid "Locality"
 msgstr "Lokalitet"
 
-#: ../src/contacts-utils.c:175
+#: ../src/contacts-utils.c:178
 msgid "Region"
 msgstr "Region"
 
-#: ../src/contacts-utils.c:176
+#: ../src/contacts-utils.c:179
 msgid "Post Code"
 msgstr "Postnummer"
 
-#: ../src/contacts-utils.c:177
+#: ../src/contacts-utils.c:180
 msgid "Country"
 msgstr "Land"
 
@@ -249,11 +204,79 @@ msgstr "Land"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:559
+#: ../src/contacts-utils.c:560
 msgid "Open image"
 msgstr "Åben billede"
 
-#: ../src/contacts-utils.c:569
+#: ../src/contacts-utils.c:570
 msgid "No image"
 msgstr "Intet billede"
+
+#: ../src/contacts-gtk.c:187
+msgid "_Contacts"
+msgstr "_Kontakter"
+
+#: ../src/contacts-gtk.c:204
+msgid "_Import"
+msgstr "_Importér"
+
+#: ../src/contacts-gtk.c:214
+msgid "_Contact"
+msgstr "_Kontakt"
+
+#: ../src/contacts-gtk.c:224
+msgid "_Groups"
+msgstr "_Grupper"
+
+#: ../src/contacts-gtk.c:227
+msgid "_Export"
+msgstr "_Eksportér"
+
+#: ../src/contacts-gtk.c:237
+msgid "_Edit"
+msgstr "R_edigér"
+
+#: ../src/contacts-gtk.c:252
+msgid "_Help"
+msgstr "_Hjælp"
+
+#: ../src/contacts-gtk.c:304
+msgid "_Search:"
+msgstr "_Søg:"
+
+#: ../src/contacts-gtk.c:313
+msgid "0-9#"
+msgstr "0-9#"
+
+#: ../src/contacts-gtk.c:318
+msgid "A-G"
+msgstr "A-G"
+
+#: ../src/contacts-gtk.c:324
+msgid "H-N"
+msgstr "H-N"
+
+#: ../src/contacts-gtk.c:329
+msgid "O-U"
+msgstr "O-U"
+
+#: ../src/contacts-gtk.c:334
+msgid "V-Z"
+msgstr "V-Å"
+
+#: ../src/contacts-gtk.c:415
+msgid "_Add Field"
+msgstr "_Tilføj felt"
+
+#: ../src/contacts-gtk.c:419
+msgid "_Remove Field"
+msgstr "_Fjern felt"
+
+#: ../src/contacts-gtk.c:601
+msgid "Edit Types"
+msgstr "Redigér typer"
+
+#: ../src/contacts-gtk.c:613
+msgid "<span><b>Make a choice:</b></span>"
+msgstr "<span><b>Foretag et valg:</b></span>"
 
