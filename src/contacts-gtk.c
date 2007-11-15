@@ -201,7 +201,7 @@ create_main_window (ContactsData *data)
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), delete_menuitem);
 	gtk_widget_set_sensitive (delete_menuitem, FALSE);
 
-	contacts_import = gtk_menu_item_new_with_mnemonic (_("_Import"));
+	contacts_import = gtk_menu_item_new_with_mnemonic (_("_Import..."));
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), contacts_import);
 
 	widget = gtk_separator_menu_item_new ();
