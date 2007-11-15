@@ -1,5 +1,10 @@
 2007-11-15  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-callbacks-ui.c:
+	Collate the contacts, don't use strcmp (#395, thanks Adrien Bustany).
+
+2007-11-15  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-gtk.c:
 	Add ellipsis as per HIG, thanks Michael Monreal (#535).
 

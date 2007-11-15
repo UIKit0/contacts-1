@@ -730,8 +730,13 @@ contacts_sort_treeview_cb (GtkTreeModel * model, GtkTreeIter * a, GtkTreeIter * 
 	gtk_tree_model_get (model, b, CONTACT_NAME_COL, &string2, -1);
 	if (!string1) string1 = g_new0 (gchar, 1);
 	if (!string2) string2 = g_new0 (gchar, 1);
-	returnval = strcasecmp ((const char *) string1,
-				(const char *) string2);
+
+	/* Necessary for case independant comparison */
+
+	string1 = g_utf8_casefold (string1, -1);
+	string2 = g_utf8_casefold (string2, -1);
+	returnval = g_utf8_collate ((const char *) string1,
+				    (const char *) string2);
 	g_free (string1);
 	g_free (string2);
 
