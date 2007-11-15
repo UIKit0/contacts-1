@@ -25,6 +25,9 @@
 #include <moko-hint-entry.h>
 
 #include "openmoko-contacts.h"
+#include "contacts-attribute-store.h"
+#include "openmoko-contacts-details.h"
+
 #include "hito-contact-preview.h"
 #include "hito-vcard-util.h"
 #include "koto-cell-renderer-pixbuf.h"
@@ -32,14 +35,6 @@
 #if GLIB_MINOR_VERSION < 12
 #include "gbase64.h"
 #endif
-
-
-enum {
-  ATTR_POINTER_COLUMN,
-  ATTR_NAME_COLUMN,
-  ATTR_TYPE_COLUMN,
-  ATTR_VALUE_COLUMN
-};
 
 
 enum {
@@ -66,13 +61,6 @@ static const struct _AttributeName attr_names[] = {
   {EVC_ORG, "Organization"}
 };
 
-enum {
-  ATTR_TEL = 0,
-  ATTR_EMAIL,
-  ATTR_FN,
-  ATTR_ORG
-};
-
 static gboolean filter_visible_func (GtkTreeModel *model, GtkTreeIter *iter, gchar *name);
 static void edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data);
 static void delete_contact_clicked_cb (GtkWidget *button, ContactsData *data);
@@ -81,15 +69,9 @@ static void type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gch
 static void delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, RendererData *data);
 static void fullname_changed_cb (GtkWidget *entry, ContactsData *data);
 static void org_changed_cb (GtkWidget *entry, ContactsData *data);
-
-static void attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data);
 static void update_visible_treeviews (ContactsData *data);
-
-static void add_new_telephone (GtkWidget *button, ContactsData *data);
-static void add_new_email (GtkWidget *button, ContactsData *data);
-
-static void free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
-
+static void add_new_telephone_cb (GtkWidget *button, ContactsData *data);
+static void add_new_email_cb (GtkWidget *button, ContactsData *data);
 static void attribute_changed (const gchar *attr_name, const gchar *new_val, ContactsData *data);
 
 
@@ -213,7 +195,7 @@ create_contacts_details_page (ContactsData *data)
 
   GtkWidget *box, *hbox, *toolbar, *w, *sw, *vb, *viewport, *main_vbox;
   GtkToolItem *toolitem;
-  GtkListStore *liststore;
+  GtkTreeModel *liststore;
   GtkTreeModel *tel_filter, *email_filter;
   GtkCellRenderer *renderer;
   GtkTextBuffer *buffer;
@@ -275,9 +257,8 @@ create_contacts_details_page (ContactsData *data)
 
 
   /* liststore for attributes */
-  liststore = gtk_list_store_new (4, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-  g_signal_connect (G_OBJECT (liststore), "row-changed", G_CALLBACK (attribute_store_row_changed_cb), data);
-  data->attribute_liststore = liststore;
+  liststore = contacts_attribute_store_new ();
+  data->attribute_liststore = GTK_LIST_STORE (liststore);
 
   /* telephone entries */
   vb = gtk_vbox_new (0, FALSE);
@@ -319,7 +300,7 @@ create_contacts_details_page (ContactsData *data)
   /* add phone button */
   w = gtk_button_new_with_label ("Add Phone Number");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
-  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone), data);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_telephone_cb), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_telephone_button = w;
@@ -364,7 +345,7 @@ create_contacts_details_page (ContactsData *data)
   /* add e-mail button */
   w = gtk_button_new_with_label ("Add E-Mail Address");
   gtk_widget_set_name (w, "moko-contacts-add-detail-button");
-  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email), data);
+  g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (add_new_email_cb), data);
   g_object_set (G_OBJECT (w), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (vb), w, FALSE, FALSE, 0);
   data->add_email_button = w;
@@ -386,12 +367,15 @@ create_contacts_details_page (ContactsData *data)
 void
 free_contacts_details_page (ContactsData *data)
 {
+#if 0
   /* free data referenced in the attribute liststore */
   gtk_tree_model_foreach (GTK_TREE_MODEL (data->attribute_liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
 
   /* unref the attribute list */
   g_object_unref (data->attribute_liststore);
+#endif
 }
+
 
 void
 contacts_details_page_set_editable (ContactsData *data, gboolean editing)
@@ -417,21 +401,13 @@ contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
   gdk_pixbuf_loader_set_size (loader, width / ((gdouble) height / iconheight), iconheight);
 }
 
-static void
-free_liststore_data (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-{
-  gchar *value = NULL, *type = NULL;
-  gtk_tree_model_get (model, iter, ATTR_VALUE_COLUMN, &value, ATTR_TYPE_COLUMN, &type, -1);
-  g_free (value);
-  g_free (type);
-}
 
 void
 contacts_details_page_update (ContactsData *data)
 {
-  GList *attributes, *a;
   GtkListStore *liststore;
-  gboolean photo_set = FALSE, fn_set = FALSE, org_set = FALSE, adr_set = FALSE;
+  const gchar *value;
+  GList *list = NULL;
 
   liststore = data->attribute_liststore;
 
@@ -440,88 +416,58 @@ contacts_details_page_update (ContactsData *data)
   /* ensure the default mode is view, not edit */
   contacts_details_page_set_editable (data, FALSE);
 
+  contacts_attribute_store_set_vcard (CONTACTS_ATTRIBUTE_STORE (liststore),
+                                      E_VCARD (data->contact));
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
-  gtk_list_store_clear (liststore);
+  value = e_contact_get_const (data->contact, E_CONTACT_FULL_NAME);
+  if (!value) value = "";
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), value);
+  
+  value = e_contact_get_const (data->contact, E_CONTACT_ORG);
+  if (!value) value = "";
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), value);
 
-
-  if (data->contact)
-    attributes = e_vcard_get_attributes (E_VCARD (data->contact));
-  else
-    attributes = NULL;
-  for (a = attributes; a; a = g_list_next (a))
-  {
-    GtkTreeIter iter;
-    const gchar *name, *value;
-    name = e_vcard_attribute_get_name (a->data);
-    value = hito_vcard_attribute_get_value_string (a->data);
-
-    if (!strcmp (name, EVC_FN))
-    {
-      moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), value);
-      fn_set = TRUE;
-      continue;
-    }
-    if (!strcmp (name, EVC_ORG))
-    {
-      moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), value);
-      org_set = TRUE;
-      continue;
-    }
-    if (!strcmp (name, EVC_PHOTO))
-    {
-      GdkPixbufLoader *ploader;
-      guchar *buf;
-      gsize size;
-      buf = g_base64_decode (value, &size);
-      ploader = gdk_pixbuf_loader_new ();
-      g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
-
-      gdk_pixbuf_loader_write (ploader, buf, size, NULL);
-      gdk_pixbuf_loader_close (ploader, NULL);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
-      g_object_unref (ploader);
-      photo_set = TRUE;
-      continue;
-    }
-    if (!strcmp (name, EVC_ADR))
-    {
-      GtkTextBuffer *buf;
-      gchar *s, *p;
-      p = s = g_strdup (value);
-      while (*p)
-      {
-        if (*p == ';')
-          *p = '\n';
-        p++;
-      }
-      buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
-      gtk_text_buffer_set_text (buf, s, -1);
-      adr_set = TRUE;
-      g_free (s);
-    }
-    gtk_list_store_insert_with_values (liststore, &iter, 0,
-        ATTR_POINTER_COLUMN, a->data,
-        ATTR_NAME_COLUMN, name,
-        ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
-        ATTR_VALUE_COLUMN, value,
-        -1);
-  }
-
-  if (!photo_set)
-    gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
-  if (!org_set)
-    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
-
-  if (!fn_set)
-    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), "");
-
-  if (!adr_set)
+  list = hito_vcard_get_named_attributes (E_VCARD (data->contact), EVC_ADR);
+  if (list)
   {
     GtkTextBuffer *buf;
+    gchar *s, *p;
+    
+    p = s = g_strdup (list->data);
+    while (*p)
+    {
+      if (*p == ';')
+        *p = '\n';
+      p++;
+    }
     buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
-    gtk_text_buffer_set_text (buf, "", -1);
+    gtk_text_buffer_set_text (buf, s, -1);
+    g_free (s);
+    g_list_free (list);
   }
+
+  list = hito_vcard_get_named_attributes (E_VCARD (data->contact), EVC_PHOTO);
+  if (list)
+  {
+    GdkPixbufLoader *ploader;
+    guchar *buf;
+    gsize size;
+    value = list->data;
+    buf = g_base64_decode (value, &size);
+    ploader = gdk_pixbuf_loader_new ();
+    g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
+
+    gdk_pixbuf_loader_write (ploader, buf, size, NULL);
+    gdk_pixbuf_loader_close (ploader, NULL);
+    gtk_image_set_from_pixbuf (GTK_IMAGE (data->photo), g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader)));
+    g_object_unref (ploader);
+    g_list_free (list);
+  }
+  else
+  {
+    gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
+  }
+
 
   data->detail_page_loading = FALSE;
 
@@ -740,6 +686,7 @@ value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, R
   {
     gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_VALUE_COLUMN, text, -1);
   }
+  data->contacts_data->dirty = TRUE;
 }
 
 
@@ -755,6 +702,7 @@ type_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, Re
   model = gtk_tree_model_filter_get_model (data->filter);
 
   gtk_list_store_set (GTK_LIST_STORE (model), &model_iter, ATTR_TYPE_COLUMN, text, -1);
+  data->contacts_data->dirty = TRUE;
 }
 
 
@@ -782,26 +730,6 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Re
   data->contacts_data->dirty = TRUE;
 }
 
-static void
-attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsData *data)
-{
-  EVCardAttribute *attr;
-  gchar *value;
-
-  gtk_tree_model_get (model, iter, ATTR_POINTER_COLUMN, &attr, ATTR_VALUE_COLUMN, &value, -1);
-
-  /* remove old values and add new one */
-  e_vcard_attribute_remove_values (attr);
-  /* TODO: check for multi valued string */
-  e_vcard_attribute_add_value (attr, value);
-
-
-  gtk_tree_model_get (model, iter, ATTR_TYPE_COLUMN, &value, -1);
-  hito_vcard_attribute_set_type (attr, value);
-
-  data->dirty = TRUE;
-
-}
 
 static void
 update_visible_treeviews (ContactsData *data)
@@ -854,13 +782,13 @@ add_new_attribute (GtkTreeView *treeview, ContactsData *data, const gchar *attr_
 }
 
 static void
-add_new_telephone (GtkWidget *button, ContactsData *data)
+add_new_telephone_cb (GtkWidget *button, ContactsData *data)
 {
   add_new_attribute (GTK_TREE_VIEW (data->telephone), data, EVC_TEL, "Work");
 }
 
 static void
-add_new_email (GtkWidget *button, ContactsData *data)
+add_new_email_cb (GtkWidget *button, ContactsData *data)
 {
   add_new_attribute (GTK_TREE_VIEW (data->email), data, EVC_EMAIL, "Work");
 }

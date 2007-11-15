@@ -28,7 +28,9 @@ openmoko_contacts_SOURCES= \
 	koto-cell-renderer-pixbuf.c \
 	koto-cell-renderer-pixbuf.h \
 	gbase64.c \
-	gbase64.h
+	gbase64.h \
+	contacts-attribute-store.h \
+	contacts-attribute-store.c
 
 
 
