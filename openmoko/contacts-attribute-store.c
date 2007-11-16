@@ -26,16 +26,21 @@ typedef struct _ContactAttributeStorePriv ContactsAttributeStorePriv;
 struct _ContactAttributeStorePriv
 {
   EVCard *vcard;
+  gboolean updating;
 };
 
 #define GET_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), CONTACTS_TYPE_ATTRIBUTE_STORE, ContactsAttributeStorePriv))
 
 static void
-attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer *data)
+attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsAttributeStore *self)
 {
+  ContactsAttributeStorePriv *priv = GET_PRIVATE (self);
   EVCardAttribute *attr;
   gchar *value;
+
+  if (priv->updating)
+    return;
 
   gtk_tree_model_get (model, iter,
                       ATTR_POINTER_COLUMN, &attr,
@@ -52,6 +57,18 @@ attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeI
   hito_vcard_attribute_set_type (attr, value);
 }
 
+static void
+attribute_store_row_inserted_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsAttributeStore *self)
+{
+  EVCardAttribute *attr;
+  ContactsAttributeStorePriv *priv = GET_PRIVATE (self);
+
+  if (priv->updating)
+    return;
+
+  gtk_tree_model_get (model, iter, ATTR_POINTER_COLUMN, &attr, -1);
+  e_vcard_add_attribute (priv->vcard, attr);
+}
 
 static void
 contacts_attribute_store_init (ContactsAttributeStore *self)
@@ -66,8 +83,11 @@ contacts_attribute_store_init (ContactsAttributeStore *self)
   
   gtk_list_store_set_column_types (GTK_LIST_STORE (self), 
                                    G_N_ELEMENTS (col_types), col_types);
+
   g_signal_connect (G_OBJECT (self), "row-changed",
-                    G_CALLBACK (attribute_store_row_changed_cb), NULL);
+                    G_CALLBACK (attribute_store_row_changed_cb), self);
+  g_signal_connect (G_OBJECT (self), "row-inserted",
+                    G_CALLBACK (attribute_store_row_inserted_cb), self);
 }
 
 static void
@@ -130,6 +150,9 @@ contacts_attribute_store_set_vcard (ContactsAttributeStore *store, EVCard *card)
   
   if (priv->vcard == card)
     return;
+  
+  priv->updating = TRUE;
+
   if (priv->vcard)
   {
     g_object_unref (priv->vcard);
@@ -162,5 +185,26 @@ contacts_attribute_store_set_vcard (ContactsAttributeStore *store, EVCard *card)
         ATTR_VALUE_COLUMN, value,
         -1);
   }
+  
+  priv->updating = FALSE;
 
+}
+
+void
+contacts_attribute_store_remove (ContactsAttributeStore *store, GtkTreeIter *iter)
+{
+  ContactsAttributeStorePriv *priv;
+  EVCardAttribute *attr;
+
+  g_return_if_fail (CONTACTS_IS_ATTRIBUTE_STORE (store));
+  
+  priv = GET_PRIVATE (store);
+  
+  /* remove attribute from contact */
+  gtk_tree_model_get (GTK_TREE_MODEL (store), iter,
+                      ATTR_POINTER_COLUMN, &attr, -1);
+  e_vcard_remove_attribute (priv->vcard, attr);
+
+  /* remove attribute row from model */
+  gtk_list_store_remove (GTK_LIST_STORE (store), iter);
 }

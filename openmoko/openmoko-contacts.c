@@ -78,6 +78,7 @@ make_contact_view (ContactsData *data)
   moko_stock_register ();
 
   data->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (data->window, 400, 600);
   g_signal_connect (data->window, "delete-event", G_CALLBACK (window_delete_event_cb), data);
   gtk_window_set_title (GTK_WINDOW (data->window), "Contacts");
 

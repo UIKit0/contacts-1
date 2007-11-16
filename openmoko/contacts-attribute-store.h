@@ -57,6 +57,7 @@ GType contacts_attribute_store_get_type (void) G_GNUC_CONST;
 
 GtkTreeModel * contacts_attribute_store_new ();
 void contacts_attribute_store_set_vcard (ContactsAttributeStore *store, EVCard *card);
+void contacts_attribute_store_remove (ContactsAttributeStore *store, GtkTreeIter *iter);
 
 G_END_DECLS
 

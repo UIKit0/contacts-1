@@ -30,7 +30,9 @@ openmoko_contacts_SOURCES= \
 	gbase64.c \
 	gbase64.h \
 	contacts-attribute-store.h \
-	contacts-attribute-store.c
+	contacts-attribute-store.c \
+	contacts-attributes-editor.h \
+	contacts-attributes-editor.c
 
 
 
