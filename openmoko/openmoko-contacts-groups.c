@@ -296,8 +296,15 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Co
 
   name = hito_group_get_name (group);
 
-  d = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE, "Are you sure you want to delete the group \"%s\" from all contacts?", name);
-  gtk_dialog_add_buttons (GTK_DIALOG (d), GTK_STOCK_DELETE, GTK_RESPONSE_OK, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+  d = gtk_message_dialog_new (GTK_WINDOW (data->window), 0,
+      GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE,
+      "Are you sure you want to delete the group \"%s\" from all contacts?",
+      name);
+
+  gtk_dialog_add_buttons (GTK_DIALOG (d),
+      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+      GTK_STOCK_DELETE, GTK_RESPONSE_OK,
+      NULL);
 
   if (gtk_dialog_run (GTK_DIALOG (d)) == GTK_RESPONSE_OK)
   {
