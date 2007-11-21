@@ -266,7 +266,7 @@ toggle_toggled_cb (GtkCellRendererToggle *renderer, gchar *path, ContactsData *d
   data->dirty = TRUE;
 }
 
-static void
+static gboolean
 delete_groups_helper (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, DeleteData *data)
 {
   EContact *contact;
@@ -277,10 +277,18 @@ delete_groups_helper (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter,
   attr = e_vcard_get_attribute (E_VCARD (contact), EVC_CATEGORIES);
   if (attr && hito_vcard_attribute_has_value (attr, data->name))
   {
+    GList *list = NULL;
     e_vcard_attribute_remove_value (attr, data->name);
+    /* We need to delete the attribute if we just deleted the last group for
+     * this contact, otherwise we end up with a superfluous empty group */
+    list = e_vcard_attribute_get_values (attr);
+    if (g_list_length (list) == 0)
+    {
+      e_vcard_remove_attribute (E_VCARD (contact), attr);
+    }
     e_book_async_commit_contact (data->contacts_data->book, contact, NULL, NULL);
   }
-
+  return FALSE;
 }
 
 static void
