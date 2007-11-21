@@ -471,8 +471,6 @@ contacts_history_refresh_ui (ContactsHistory *history)
   g_return_if_fail(CONTACTS_IS_HISTORY(history));
   priv = CONTACTS_HISTORY_GET_PRIVATE (history);
   
-  g_return_if_fail (priv->journal);
-  
   if (!priv->uid)
     return;
   
@@ -484,6 +482,9 @@ contacts_history_refresh_ui (ContactsHistory *history)
   
   g_list_free (children);
   children = NULL;
+  
+  if (!priv->journal)
+    return;
   
   /* Traverse though the Journal looking for all entries that 
      correspond to the the priv->uid

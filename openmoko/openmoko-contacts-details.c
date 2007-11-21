@@ -244,14 +244,25 @@ contacts_details_page_update (ContactsData *data)
 
   contacts_attribute_store_set_vcard (CONTACTS_ATTRIBUTE_STORE (liststore),
                                       E_VCARD (data->contact));
+  if (!data->contact)
+  {
+    GtkTextBuffer *buf;
+
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), "");
+    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
+    gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
+    buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
+    gtk_text_buffer_set_text (buf, "", -1);
+    return;
+  }
 
   value = e_contact_get_const (data->contact, E_CONTACT_FULL_NAME);
   if (!value) value = "";
-    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), value);
+  moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), value);
   
   value = e_contact_get_const (data->contact, E_CONTACT_ORG);
   if (!value) value = "";
-    moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), value);
+  moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), value);
 
   list = hito_vcard_get_named_attributes (E_VCARD (data->contact), EVC_ADR);
   if (list)

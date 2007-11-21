@@ -146,11 +146,14 @@ contacts_attribute_store_set_vcard (ContactsAttributeStore *store, EVCard *card)
   priv = GET_PRIVATE (store);
   
   g_return_if_fail (CONTACTS_IS_ATTRIBUTE_STORE (store));
-  g_return_if_fail (E_IS_VCARD (card));
-  
+
+  /* we allow for NULL to be set */
+  if (card)
+    g_return_if_fail (E_IS_VCARD (card));
+
   if (priv->vcard == card)
     return;
-  
+
   priv->updating = TRUE;
 
   if (priv->vcard)
@@ -158,32 +161,37 @@ contacts_attribute_store_set_vcard (ContactsAttributeStore *store, EVCard *card)
     g_object_unref (priv->vcard);
   }
   priv->vcard = card;
-  g_object_ref (card);
+
+  if (card)
+    g_object_ref (card);
 
   /* clear the current attributes */
   gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
   gtk_list_store_clear (GTK_LIST_STORE (store));
 
-  attributes = e_vcard_get_attributes (card);
-
-  for (a = attributes; a; a = g_list_next (a))
+  if (card)
   {
-    const gchar *name, *value;
+    attributes = e_vcard_get_attributes (card);
 
-    name = e_vcard_attribute_get_name (a->data);
-        
-    /* we don't really want to put photo data in the attribute list */
-    if (g_str_equal (name, EVC_PHOTO))
-      continue;
+    for (a = attributes; a; a = g_list_next (a))
+    {
+      const gchar *name, *value;
 
-    value = hito_vcard_attribute_get_value_string (a->data);
+      name = e_vcard_attribute_get_name (a->data);
+          
+      /* we don't really want to put photo data in the attribute list */
+      if (g_str_equal (name, EVC_PHOTO))
+        continue;
 
-    gtk_list_store_insert_with_values (GTK_LIST_STORE (store), NULL, 0,
-        ATTR_POINTER_COLUMN, a->data,
-        ATTR_NAME_COLUMN, name,
-        ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
-        ATTR_VALUE_COLUMN, value,
-        -1);
+      value = hito_vcard_attribute_get_value_string (a->data);
+
+      gtk_list_store_insert_with_values (GTK_LIST_STORE (store), NULL, 0,
+          ATTR_POINTER_COLUMN, a->data,
+          ATTR_NAME_COLUMN, name,
+          ATTR_TYPE_COLUMN, hito_vcard_attribute_get_type (a->data),
+          ATTR_VALUE_COLUMN, value,
+          -1);
+    }
   }
   
   priv->updating = FALSE;
