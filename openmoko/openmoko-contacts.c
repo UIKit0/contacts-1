@@ -102,6 +102,15 @@ contacts_set_current_contact (ContactsData *data, EContact *contact)
 {
   GtkWidget *w;
 
+  /* ensure the edit, history and groups tabs are only visible when usable */
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 1);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 2);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
+  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 3);
+  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
+
+
   if (contact == data->contact)
     return;
 
@@ -130,13 +139,6 @@ contacts_set_current_contact (ContactsData *data, EContact *contact)
   {
     g_object_ref (contact); 
   }
-
-  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 1);
-  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
-  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 2);
-  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
-  w = gtk_notebook_get_nth_page (GTK_NOTEBOOK (data->notebook), 3);
-  g_object_set (G_OBJECT (w), "visible", (contact != NULL), NULL);
 
   contacts_details_page_update (data);
   contacts_history_page_update (data);
