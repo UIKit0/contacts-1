@@ -380,13 +380,15 @@ contacts_attributes_editor_set_editable (ContactsAttributesEditor *editor, gbool
   g_object_set (G_OBJECT (list->data), "editable", editable, NULL);
   g_list_free (list);
   
-   col = gtk_tree_view_get_column (GTK_TREE_VIEW (priv->treeview), TREE_VALUE_COLUMN);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (priv->treeview), TREE_VALUE_COLUMN);
   list = gtk_tree_view_column_get_cell_renderers (col);
   g_object_set (G_OBJECT (list->data), "editable", editable, NULL);
   g_list_free (list);
 
   g_object_set (G_OBJECT (priv->button), "visible", editable, NULL);
-  
+
+  update_visible_treeviews (editor);
+
   /* ensure selection is possible in edit mode - cell editing is not possible
    * without it
    */
