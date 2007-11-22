@@ -97,7 +97,14 @@ value_renderer_edited_cb (GtkCellRenderer *renderer, gchar *path, gchar *text, C
   gtk_tree_model_get_iter_from_string (priv->filter, &filter_iter, path);
   gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (priv->filter), &model_iter, &filter_iter);
 
-  gtk_list_store_set (GTK_LIST_STORE (priv->store), &model_iter, ATTR_VALUE_COLUMN, text, -1);
+  if (g_str_equal (text, ""))
+  {
+    contacts_attribute_store_remove (CONTACTS_ATTRIBUTE_STORE (priv->store), &model_iter);
+  }
+  else
+  {
+    gtk_list_store_set (GTK_LIST_STORE (priv->store), &model_iter, ATTR_VALUE_COLUMN, text, -1);
+  }
 }
 
 
