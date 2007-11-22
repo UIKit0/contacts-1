@@ -340,6 +340,8 @@ add_groups_clicked_cb (GtkWidget *button, ContactsData *data)
   GtkTreeViewColumn *col;
   EVCardAttribute *attr;
 
+  g_return_if_fail (E_IS_VCARD (data->contact));
+
   attr = e_vcard_get_attribute (E_VCARD (data->contact), EVC_CATEGORIES);
   if (!attr)
   {
