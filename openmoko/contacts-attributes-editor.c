@@ -136,7 +136,7 @@ delete_renderer_activated_cb (KotoCellRendererPixbuf *cell, const char *path, Co
 
 
 static void
-add_new_attribute (GtkWidget *widget, ContactsAttributesEditor *self)
+add_new_attribute_cb (GtkWidget *widget, ContactsAttributesEditor *self)
 {
   ContactsAttributesEditorPriv *priv = GET_PRIVATE (self);
   EVCardAttribute *attr;
@@ -154,7 +154,7 @@ add_new_attribute (GtkWidget *widget, ContactsAttributesEditor *self)
   gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (priv->filter),
                                                     &filter_iter, &child_iter);
 
-  col = gtk_tree_view_get_column (GTK_TREE_VIEW (priv->treeview), 2);
+  col = gtk_tree_view_get_column (GTK_TREE_VIEW (priv->treeview), TREE_VALUE_COLUMN);
 
   filter_path = gtk_tree_model_get_path (GTK_TREE_MODEL (priv->filter), &filter_iter);
   gtk_tree_view_set_cursor (GTK_TREE_VIEW (priv->treeview), filter_path, col, TRUE);
@@ -225,7 +225,7 @@ contacts_attributes_editor_init (ContactsAttributesEditor *self)
   /* add attribute button */
   priv->button = gtk_button_new_with_label ("Add Phone Number");
   gtk_widget_set_name (priv->button, "contacts-add-detail-button");
-  g_signal_connect (G_OBJECT (priv->button), "clicked", G_CALLBACK (add_new_attribute), self);
+  g_signal_connect (G_OBJECT (priv->button), "clicked", G_CALLBACK (add_new_attribute_cb), self);
   g_object_set (G_OBJECT (priv->button), "no-show-all", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (vb), priv->button, FALSE, FALSE, 0);
 
