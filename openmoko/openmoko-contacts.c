@@ -167,26 +167,51 @@ contacts_notebook_add_page_with_icon (GtkWidget *notebook, GtkWidget *child,
 }
 
 
+static void
+display_error (GError *err, gchar *summary)
+{
+  GtkWidget *dlg;
+
+  dlg = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+      "%s\n\n%s", summary, err->message);
+  gtk_dialog_run (GTK_DIALOG (dlg));
+  gtk_widget_destroy (dlg);
+}
+
 int
 main (int argc, char **argv)
 {
   EBookQuery *query;
   ContactsData *data;
+  GError *err = NULL;
 
-  data = g_new (ContactsData, 1);
+  data = g_new0 (ContactsData, 1);
 
   g_thread_init (NULL);
   gtk_init (&argc, &argv);
 
-  data->book = e_book_new_system_addressbook (NULL);
-  g_assert (data->book);
+  data->book = e_book_new_system_addressbook (&err);
+  if (err)
+  {
+    display_error (err, "Could not access system address book");
+    return 1;
+  }
 
-  e_book_open (data->book, FALSE, NULL);
+  e_book_open (data->book, FALSE, &err);
+  if (err)
+  {
+    display_error (err, "Could not open the address book");
+    return 1;
+  }
 
   query = e_book_query_any_field_contains (NULL);
 
-  e_book_get_book_view (data->book, query, NULL, 0, &data->view, NULL);
-  g_assert (data->view);
+  e_book_get_book_view (data->book, query, NULL, 0, &data->view, &err);
+  if (err)
+  {
+    display_error (err, "Could not query the address book");
+    return 1;
+  }
   e_book_query_unref (query);
   
   make_contact_view (data);
