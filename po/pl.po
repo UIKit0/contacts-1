@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-23 21:34+0200\n"
-"PO-Revision-Date: 2007-08-23 21:35+0100\n"
+"POT-Creation-Date: 2007-11-28 14:27+0100\n"
+"PO-Revision-Date: 2007-11-28 14:28+0100\n"
 "Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
 "Language-Team: Polish <dominikowski@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -217,8 +217,8 @@ msgid "_Contacts"
 msgstr "_Kontakty"
 
 #: ../src/contacts-gtk.c:204
-msgid "_Import"
-msgstr "_Importuj"
+msgid "_Import..."
+msgstr "_Importuj..."
 
 #: ../src/contacts-gtk.c:214
 msgid "_Contact"
