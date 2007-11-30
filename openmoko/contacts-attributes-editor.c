@@ -353,11 +353,20 @@ contacts_attributes_editor_set_type (ContactsAttributesEditor *editor, const gch
   priv->filter_string = g_strdup (type);
   
   if (g_str_equal (type, EVC_TEL))
+  {
     g_object_set (priv->icon_renderer, "stock-id", MOKO_STOCK_CONTACT_PHONE, NULL);
+    gtk_button_set_label (GTK_BUTTON (priv->button), "Add Phone Number");
+  }
   else if (g_str_equal (type, EVC_EMAIL))
+  {
     g_object_set (priv->icon_renderer, "stock-id", MOKO_STOCK_CONTACT_EMAIL, NULL);
+    gtk_button_set_label (GTK_BUTTON (priv->button), "Add E-Mail Address");
+  }
   else
+  {
     g_object_set (priv->icon_renderer, "stock-id", "", NULL);
+    gtk_button_set_label (GTK_BUTTON (priv->button), "Add Attribute");
+  }
   
   gtk_tree_view_set_model (GTK_TREE_VIEW (priv->treeview), priv->filter);
   gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
