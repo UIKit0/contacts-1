@@ -193,13 +193,10 @@ create_contacts_details_page (ContactsData *data)
 void
 free_contacts_details_page (ContactsData *data)
 {
-#if 0
-  /* free data referenced in the attribute liststore */
-  gtk_tree_model_foreach (GTK_TREE_MODEL (data->attribute_liststore), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
 
   /* unref the attribute list */
   g_object_unref (data->attribute_liststore);
-#endif
+
 }
 
 

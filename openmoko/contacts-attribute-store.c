@@ -32,6 +32,10 @@ struct _ContactAttributeStorePriv
 #define GET_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), CONTACTS_TYPE_ATTRIBUTE_STORE, ContactsAttributeStorePriv))
 
+static void free_liststore_data (GtkTreeModel *model, GtkTreePath *path,
+                                 GtkTreeIter *iter, gpointer data);
+
+
 static void
 attribute_store_row_changed_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, ContactsAttributeStore *self)
 {
@@ -104,6 +108,7 @@ contacts_attribute_store_finalize (GObject *self)
   {
     g_object_unref (priv->vcard);
   }
+  gtk_tree_model_foreach (GTK_TREE_MODEL (self), (GtkTreeModelForeachFunc) free_liststore_data, NULL);
 
   G_OBJECT_CLASS (contacts_attribute_store_parent_class)->finalize (self);
 }
