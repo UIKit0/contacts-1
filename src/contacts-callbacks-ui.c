@@ -158,7 +158,7 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		if ((!name) || (g_utf8_strlen (name, 4) <= 0))
-			name = _("Unknown");
+			name = _("Unnamed");
 
 		contact_list = g_list_prepend (contact_list, e_contact_get (contact, E_CONTACT_UID));
 
@@ -630,7 +630,7 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	if (!hash || !hash->contact) return FALSE;
 	data = hash->contacts_data;
 
-	if (data->selected_group && strcmp ("All", data->selected_group))
+	if (data->selected_group && strcmp (_("All"), data->selected_group))
 	{
 		groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
 		if ((group = data->selected_group)) {

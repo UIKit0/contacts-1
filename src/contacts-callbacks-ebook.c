@@ -64,7 +64,7 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		hash = g_new (EContactListHash, 1);
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
-			name = "Unnamed";
+			name = _("Unnamed");
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		hash->contact = g_object_ref (contact);
 		hash->contacts_data = data;
@@ -137,7 +137,7 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 		/* Update list with possibly new name */
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
 		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
-			name = "Unnamed";
+			name = _("Unnamed");
 		gtk_list_store_set (model, &hash->iter, CONTACT_NAME_COL, name,
 			-1);
 

@@ -90,7 +90,7 @@ contacts_ui_update_groups_list (ContactsData *data)
 	list = (GtkListStore*) gtk_combo_box_get_model (GTK_COMBO_BOX(groups_combobox));
 	if (!list) return;
 	gtk_list_store_clear (list);
-	gtk_list_store_insert_with_values (list, &dummy, 0, 0, "All", -1);
+	gtk_list_store_insert_with_values (list, &dummy, 0, 0, _("All"), -1);
 	g_list_foreach (data->contacts_groups, add_to_list, list);
 
 	/* Select 'All' in the groups combobox if nothing selected */

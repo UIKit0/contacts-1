@@ -149,13 +149,13 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 			
 			name_markup = g_strdup_printf (
 			//	"<b>%s:</b>\n<small>(%s)</small>",
-				"<b>%s:</b>",
+				_("<b>%s:</b>"),
 			//	contacts_field_pretty_name (field),
 				types_string);
 				
 			g_list_free (types_list);
 		} else {
-			name_markup = g_strdup_printf ("<b>%s:</b>",
+			name_markup = g_strdup_printf (_("<b>%s:</b>"),
 				contacts_field_pretty_name (field));
 		}
 		name_widget = gtk_label_new (name_markup);

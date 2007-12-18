@@ -355,7 +355,7 @@ contacts_label_widget_new (EContact *contact, EVCardAttribute *attr,
 	gchar *label_markup;
 
 	/* Create label/button text */
-	label_markup = g_strdup_printf ("<b>%s:</b>", name);
+	label_markup = g_strdup_printf (_("<b>%s:</b>"), name);
 
 	/* Create widget */
 	label_widget = gtk_label_new (NULL);
@@ -461,8 +461,13 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				multiline = sfield->multiline;				
 				gtk_label_set_use_markup (GTK_LABEL (label),
 							  TRUE);
+
 				label_markup = g_strdup_printf (
-					"<b>%s:</b>",
+                                        /** Translators, the first
+                                         * argument is the field's
+                                         * name, ex. <b>Country:</b>
+                                         */				
+                                        _("<b>%s:</b>"),
 					gettext(sfield->subfield_name));
 				gtk_label_set_markup (GTK_LABEL (label),
 						      label_markup);
