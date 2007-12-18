@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-24 10:25+0200\n"
-"PO-Revision-Date: 2007-09-24 10:34+0100\n"
+"POT-Creation-Date: 2007-11-15 12:40+0100\n"
+"PO-Revision-Date: 2007-11-15 12:46+0100\n"
 "Last-Translator: Espen Stefansen <espens@svn.gnome.org>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -85,6 +85,11 @@ msgid ""
 "\n"
 "You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
+"Contacts er fri programvare. Du kan redistribuere og/eller endre programmet under betingelsene gitt i GNU General Public License som utgitt av Free Software Foundation; enten versjon 2 av lisensen, eller (hvis du ønsker det) enhver senere versjon.\n"
+"\n"
+"Contacts distribueres i håp om at programmet er nyttig, men UTEN NOEN GARANTI, ikke engang implisitt garanti om at det er SALGBART eller PASSER ET BESTEMT FORMÅL. Se GNU General Public License for detaljer.\n"
+"\n"
+"Du skal ha mottatt en kopi av GNU General Public License sammen med Contacts. Hvis ikke så skriv til Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -209,8 +214,8 @@ msgid "_Contacts"
 msgstr "_Kontakter"
 
 #: ../src/contacts-gtk.c:204
-msgid "_Import"
-msgstr "_Importer"
+msgid "_Import..."
+msgstr "_Importer ..."
 
 #: ../src/contacts-gtk.c:214
 msgid "_Contact"

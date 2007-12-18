@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: contacts - trunk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-11-24 09:52+0000\n"
-"PO-Revision-Date: 2007-08-24 21:24+0100\n"
+"PO-Revision-Date: 2007-12-02 07:40+0100\n"
 "Last-Translator: Kristian Poul Herkild <kristian@herkild.dk>\n"
 "Language-Team: Danish <kristian@herkild.dk>\n"
 "MIME-Version: 1.0\n"
@@ -217,8 +217,8 @@ msgid "_Contacts"
 msgstr "_Kontakter"
 
 #: ../src/contacts-gtk.c:204
-msgid "_Import"
-msgstr "_Importér"
+msgid "_Import..."
+msgstr "_Importér..."
 
 #: ../src/contacts-gtk.c:214
 msgid "_Contact"
