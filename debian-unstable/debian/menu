@@ -1,2 +1,2 @@
-?package(contacts):needs="X11" section="Apps/Tools" \
+?package(contacts):needs="X11" section="Applications/Data Management" \
   title="Contacts" command="/usr/bin/contacts"
