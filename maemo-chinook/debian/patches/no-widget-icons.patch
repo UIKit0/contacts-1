@@ -1,0 +1,17 @@
+Index: src/contacts-main.c
+===================================================================
+--- src/contacts-main.c	(revision 266)
++++ src/contacts-main.c	(working copy)
+@@ -202,6 +202,12 @@
+ 	}
+ 	
+ 	widget = data->ui->main_window;
++
++	g_object_set (gtk_widget_get_settings (widget),
++		      "gtk-button-images", FALSE,
++		      "gtk-menu-images", FALSE,
++		      NULL);
++
+ 	if (plug > 0) {
+ 		GtkWidget *plug_widget;
+ 		GtkWidget *contents;
