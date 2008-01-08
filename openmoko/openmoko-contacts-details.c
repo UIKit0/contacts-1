@@ -431,6 +431,8 @@ delete_contact_clicked_cb (GtkWidget *button, ContactsData *data)
     }
     else
     {
+      data->dirty = FALSE;
+
       /* return to contact list */
       gtk_notebook_set_current_page (GTK_NOTEBOOK (data->notebook), LIST_PAGE_NUM);
     }
