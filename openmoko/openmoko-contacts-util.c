@@ -20,8 +20,9 @@
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-bindings.h>
 
-#define DIALER_NAMESPACE "org.openmoko.Dialer"
-#define DIALER_OBJECT "/org/openmoko/Dialer"
+#define PK_NAMESPACE "org.openmoko.PhoneKit"
+#define DIALER_NAMESPACE "org.openmoko.PhoneKit.Dialer"
+#define DIALER_OBJECT "/org/openmoko/PhoneKit/Dialer"
 
 
 void 
@@ -40,7 +41,7 @@ openmoko_contacts_util_dial_number (const gchar *number)
   }
 
   proxy = dbus_g_proxy_new_for_name (conn,
-                                     DIALER_NAMESPACE,
+                                     PK_NAMESPACE,
                                      DIALER_OBJECT,
                                      DIALER_NAMESPACE);
   if (proxy == NULL)
