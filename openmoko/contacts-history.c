@@ -22,6 +22,8 @@
 
 #include <string.h>
 #include <time.h>
+#include <libebook/e-book.h>
+#include "hito-vcard-util.h"
 
 G_DEFINE_TYPE (ContactsHistory, contacts_history, GTK_TYPE_VBOX);
 
@@ -35,14 +37,14 @@ struct _ContactsHistoryPrivate
   GtkWidget         *menu;
   GtkWidget         *open_item;
   
-  gchar             *uid;
+  EContact          *contact;
   
 };
 
 enum
 {
   PROP_0,
-  PROP_UID
+  PROP_CONTACT
 };
 
 enum
@@ -466,12 +468,12 @@ static void
 contacts_history_refresh_ui (ContactsHistory *history)
 {
   ContactsHistoryPrivate *priv;
-  GList *children, *c;
+  GList *children, *c, *numbers;
 	
   g_return_if_fail(CONTACTS_IS_HISTORY(history));
   priv = CONTACTS_HISTORY_GET_PRIVATE (history);
   
-  if (!priv->uid)
+  if (!priv->contact)
     return;
   
   /* First we remove all of the existing history-widgets */
@@ -487,21 +489,45 @@ contacts_history_refresh_ui (ContactsHistory *history)
     return;
   
   /* Traverse though the Journal looking for all entries that 
-     correspond to the the priv->uid
-     FIXME : MokoJournal should have a special function for this. 
+     correspond to the numbers associated with priv->contact
+     FIXME : MokoJournal should have a special function for this?
   */
-  gint len = moko_journal_get_nb_entries (priv->journal);
-  gint i;
-  for (i = 0; i < len; i++) {
-    MokoJournalEntry *entry = NULL;
-    
-    if (moko_journal_get_entry_at (priv->journal, i, &entry)) {
-      const gchar *uid = moko_journal_entry_get_contact_uid (entry);
-
-      if (uid && strcmp (priv->uid, uid) == 0) {
-        children = g_list_append (children, entry);
+  
+  numbers = hito_vcard_get_named_attributes (E_VCARD (priv->contact), EVC_TEL);
+  if (numbers) {
+    gint i;
+    gint len = moko_journal_get_nb_entries (priv->journal);
+    for (i = 0; i < len; i++) {
+      gint j;
+      MokoJournalEntry *entry = NULL;
+      
+      if (!moko_journal_get_entry_at (priv->journal, i, &entry)) continue;
+      if (moko_journal_entry_get_entry_type (entry) != VOICE_JOURNAL_ENTRY)
+        continue;
+      
+      for (j = 0; j < 2; j++) {
+        GList *n;
+        const gchar *number;
+        gboolean added = FALSE;
+        
+        number = j ?
+          moko_journal_voice_info_get_distant_number (entry) :
+          moko_journal_voice_info_get_local_number (entry);
+          
+        if (!number) continue;
+        
+        for (n = numbers; n; n = n->next) {
+          if (strcmp (number,
+                      hito_vcard_attribute_get_value_string (n->data)) == 0) {
+            children = g_list_prepend (children, entry);
+            added = TRUE;
+            break;
+          }
+        }
+        if (added) break;
       }
     }
+    g_list_free (numbers);
   }
   
   /* Sort the list in order of time, most recent first */
@@ -525,11 +551,11 @@ contacts_history_refresh_ui (ContactsHistory *history)
 }
 
 void
-contacts_history_update_uid (ContactsHistory *history, const gchar *uid)
+contacts_history_update_uid (ContactsHistory *history, EContact *contact)
 {
   g_return_if_fail (CONTACTS_IS_HISTORY (history));
   
-  g_object_set (G_OBJECT (history), "uid", uid, NULL);
+  g_object_set (G_OBJECT (history), "contact", contact, NULL);
 }
 
 /* GObject functions */
@@ -546,10 +572,10 @@ contacts_history_set_property (GObject      *object,
   priv = CONTACTS_HISTORY_GET_PRIVATE (object);
 
   switch (prop_id) {
-    case PROP_UID:
-      if (priv->uid) 
-        g_free (priv->uid);
-      priv->uid = g_strdup (g_value_get_string (value)); 
+    case PROP_CONTACT:
+      if (priv->contact) g_object_unref (priv->contact);
+      priv->contact = g_value_get_object (value);
+      if (priv->contact) priv->contact = g_object_ref (priv->contact);
       contacts_history_refresh_ui (CONTACTS_HISTORY (object));
       break;
     
@@ -571,8 +597,8 @@ contacts_history_get_property (GObject    *object,
   priv = CONTACTS_HISTORY_GET_PRIVATE (object);
 
   switch (prop_id) {
-    case PROP_UID:
-      g_value_set_string (value, priv->uid);
+    case PROP_CONTACT:
+      g_value_set_object (value, priv->contact);
       break;
     
     default:
@@ -591,8 +617,8 @@ contacts_history_finalize(GObject *obj)
 
   priv = CONTACTS_HISTORY_GET_PRIVATE (obj);
   
-  if (priv->uid)
-   g_free (priv->uid);
+  if (priv->contact)
+    g_object_unref (priv->contact);
   
   if (priv->journal)
     moko_journal_close (priv->journal);
@@ -614,11 +640,11 @@ contacts_history_class_init (ContactsHistoryClass *klass)
   
   /* Install class properties */
   g_object_class_install_property (gobject_class,
-		                   PROP_UID,
-		                   g_param_spec_string ("uid",
-		                     "UID",
-		                     "The Contact uid",
-		                     NULL,
+		                   PROP_CONTACT,
+		                   g_param_spec_object ("contact",
+		                     "EContact",
+		                     "The contact",
+		                     E_TYPE_CONTACT,
 		                     G_PARAM_CONSTRUCT|G_PARAM_READWRITE));
 
   /* Class signals */

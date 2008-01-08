@@ -22,6 +22,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <moko-journal.h>
+#include <libebook/e-book.h>
 
 #ifndef _CONTACTS_HISTORY_H
 #define _CONTACTS_HISTORY_H
@@ -81,7 +82,7 @@ GtkWidget*
 contacts_history_new (void);
 
 void
-contacts_history_update_uid (ContactsHistory *history, const gchar *uid);
+contacts_history_update_uid (ContactsHistory *history, EContact *contact);
 
 G_END_DECLS
 

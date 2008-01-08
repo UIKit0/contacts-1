@@ -62,14 +62,12 @@ contacts_history_page_update (ContactsData *data)
   if (!contact)
   {
     gtk_label_set_markup (GTK_LABEL (data->history_label), "<b>Communication History</b>");
-    contacts_history_update_uid (CONTACTS_HISTORY (data->history), "");
+    contacts_history_update_uid (CONTACTS_HISTORY (data->history), NULL);
     return;
   }
 
-  /* Get the contacts uid and update the history widget */
-  s = e_contact_get_const (contact, E_CONTACT_UID);
-  if (s)
-    contacts_history_update_uid (CONTACTS_HISTORY (data->history), s);
+  /* Update the history widget */
+  contacts_history_update_uid (CONTACTS_HISTORY (data->history), contact);
 
   /* set the title of the page */
   s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
