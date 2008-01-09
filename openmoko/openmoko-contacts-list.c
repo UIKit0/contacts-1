@@ -41,9 +41,12 @@
 #include "hito-separator-group.h"
 #include "hito-vcard-util.h"
 
+/* Utility functions */
+static EContact* contacts_list_get_selected_contact (ContactsData *data);
 
 /* callbacks */
 static void dial_contact_clicked_cb (GtkWidget *button, ContactsData *data);
+static void sms_contact_clicked (GtkWidget *button, ContactsData *data);
 static void new_contact_clicked_cb (GtkWidget *button, ContactsData *data);
 static void on_entry_changed (MokoSearchBar *bar, GtkEntry *entry, HitoContactModelFilter *filter);
 static void searchbar_toggled_cb (MokoSearchBar *searchbar, gboolean foo, ContactsData *data);
@@ -90,6 +93,8 @@ create_contacts_list_page (ContactsData *data)
   data->sms_button = gtk_tool_button_new_from_stock (MOKO_STOCK_SMS_NEW);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (data->sms_button), TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->sms_button, 2);
+  g_signal_connect (data->sms_button, "clicked",
+                    G_CALLBACK (sms_contact_clicked), data);
 
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
 
@@ -237,6 +242,17 @@ ebook_id_callback(EBook *book, EBookStatus status, const char *id, ContactsData 
 }
 
 static void
+sms_contact_clicked (GtkWidget *button, ContactsData *data)
+{
+  EContact *contact;
+  
+  if ((contact = contacts_list_get_selected_contact (data))) {
+    openmoko_contacts_util_sms (e_contact_get_const (contact, E_CONTACT_UID));
+    g_object_unref (contact);
+  }
+}
+
+static void
 new_contact_clicked_cb (GtkWidget *button, ContactsData *data)
 {
   EContact *contact;
@@ -256,7 +272,6 @@ on_dial_number_clicked (GtkWidget *eb, GdkEventButton *event, GtkDialog *dialog)
 
   gtk_dialog_response (dialog, GTK_RESPONSE_CANCEL);
 }
-
 
 static void
 rows_reordererd_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer arg3, ContactsData *data)
@@ -351,7 +366,7 @@ show_contact_numbers (const gchar *name, GList *numbers, ContactsData *data)
 
 
 
-EContact*
+static EContact*
 contacts_list_get_selected_contact (ContactsData *data)
 {
   GtkTreeSelection *selection;

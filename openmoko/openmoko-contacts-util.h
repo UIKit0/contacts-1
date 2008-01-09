@@ -17,3 +17,4 @@
  */
 
 void openmoko_contacts_util_dial_number (const gchar *number);
+void openmoko_contacts_util_sms (const gchar *uid);

@@ -24,6 +24,8 @@
 #define DIALER_NAMESPACE "org.openmoko.PhoneKit.Dialer"
 #define DIALER_OBJECT "/org/openmoko/PhoneKit/Dialer"
 
+#define SMS_NAMESPACE "org.openmoko.OpenmokoMessages2"
+#define SMS_OBJECT "/org/openmoko/OpenmokoMessages2"
 
 void 
 openmoko_contacts_util_dial_number (const gchar *number)
@@ -61,3 +63,42 @@ openmoko_contacts_util_dial_number (const gchar *number)
     g_error_free (err);
   }
 }
+
+void
+openmoko_contacts_util_sms (const gchar *uid)
+{
+  DBusGConnection *conn;
+  DBusGProxy *proxy;
+  GError *err = NULL;
+
+  conn = dbus_g_bus_get (DBUS_BUS_SESSION, &err);
+  if (conn == NULL)
+  {
+    g_warning ("Failed to make DBus connection: %s", err->message);
+    g_error_free (err);
+    return;
+  }
+
+  proxy = dbus_g_proxy_new_for_name (conn,
+                                     SMS_NAMESPACE,
+                                     SMS_OBJECT,
+                                     SMS_NAMESPACE);
+  if (proxy == NULL)
+  {
+    g_warning ("Unable to get openmoko-messages2 object");
+    return;
+  }
+
+  err = NULL;
+  dbus_g_proxy_call (proxy, "SendMessage", &err,
+                     G_TYPE_STRING, uid, G_TYPE_STRING, NULL,
+                     G_TYPE_STRING, NULL,
+                     G_TYPE_INVALID, G_TYPE_INVALID);
+
+  if (err)
+  {
+    g_warning (err->message);
+    g_error_free (err);
+  }
+}
+
