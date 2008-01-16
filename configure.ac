@@ -66,6 +66,7 @@ AC_ARG_WITH([frontend],
 
 if test x"$contacts_frontend" = x"openmoko"; then
 	PKG_CHECK_MODULES(MOKOUI, libmokoui2 libmokojournal2 dbus-glib-1)
+	PKG_CHECK_MODULES(JANA, libjana libjana-ecal libjana-gtk)
 fi
 
 if test x"$contacts_frontend" = x"hildon"; then

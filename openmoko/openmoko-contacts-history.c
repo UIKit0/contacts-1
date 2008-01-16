@@ -21,15 +21,13 @@
 #include "openmoko-contacts.h"
 #include "contacts-history.h"
 #include <moko-stock.h>
-
-static void on_moko_journal_entry_activated (ContactsHistory *history, MokoJournalEntry *entry);
-
+#include <moko-finger-scroll.h>
 
 void
 create_contacts_history_page (ContactsData *data)
 {
 
-  GtkWidget *vbox;
+  GtkWidget *vbox, *scroll;
 
   vbox = gtk_vbox_new (FALSE, 0);
 
@@ -37,10 +35,10 @@ create_contacts_history_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (vbox), data->history_label, FALSE, FALSE, 0);
 
   data->history = contacts_history_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), data->history, TRUE, TRUE, 0);
+  scroll = moko_finger_scroll_new ();
+  gtk_container_add (GTK_CONTAINER (scroll), data->history);
 
-  g_signal_connect (G_OBJECT (data->history), "entry-activated",
-                    G_CALLBACK (on_moko_journal_entry_activated), NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);
 
   contacts_notebook_add_page_with_icon (data->notebook, vbox, MOKO_STOCK_HISTORY);
 }
@@ -62,12 +60,12 @@ contacts_history_page_update (ContactsData *data)
   if (!contact)
   {
     gtk_label_set_markup (GTK_LABEL (data->history_label), "<b>Communication History</b>");
-    contacts_history_update_uid (CONTACTS_HISTORY (data->history), NULL);
+    contacts_history_set_contact (CONTACTS_HISTORY (data->history), NULL);
     return;
   }
 
   /* Update the history widget */
-  contacts_history_update_uid (CONTACTS_HISTORY (data->history), contact);
+  contacts_history_set_contact (CONTACTS_HISTORY (data->history), contact);
 
   /* set the title of the page */
   s = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
@@ -81,12 +79,4 @@ contacts_history_page_update (ContactsData *data)
     gtk_label_set_markup (GTK_LABEL (data->history_label), "<b>Communication History</b>");
 
 }
-
-static void
-on_moko_journal_entry_activated (ContactsHistory *history, 
-                                 MokoJournalEntry *entry)
-{
-  g_print ("Launch Viewer\n");
-}
-
 

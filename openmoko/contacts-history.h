@@ -21,7 +21,6 @@
 #include <config.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <moko-journal.h>
 #include <libebook/e-book.h>
 
 #ifndef _CONTACTS_HISTORY_H
@@ -58,7 +57,7 @@ typedef struct _ContactsHistoryPrivate ContactsHistoryPrivate;
 
 struct _ContactsHistory
 {
-	GtkVBox         parent;
+	GtkTreeView              parent;
 	
 	/* private */
 	ContactsHistoryPrivate   *priv;
@@ -67,9 +66,8 @@ struct _ContactsHistory
 struct _ContactsHistoryClass 
 {
 	/* private */
-	GtkVBoxClass parent_class;
+	GtkTreeViewClass parent_class;
 
-	void (*entry_activated) (ContactsHistory*, MokoJournalEntry*); 
 	void (*_moko_reserved_1) (void);
 	void (*_moko_reserved_2) (void);
 	void (*_moko_reserved_3) (void);
@@ -82,7 +80,7 @@ GtkWidget*
 contacts_history_new (void);
 
 void
-contacts_history_update_uid (ContactsHistory *history, EContact *contact);
+contacts_history_set_contact (ContactsHistory *history, EContact *contact);
 
 G_END_DECLS
 
