@@ -359,10 +359,12 @@ refresh_sms_query (ContactsHistory *history)
   numbers = hito_vcard_get_named_attributes (E_VCARD (priv->contact), EVC_TEL);
   if (numbers) {
     for (n = numbers; n; n = n->next) {
+      gchar *number = hito_vcard_attribute_get_value_string (n->data);
       jana_store_view_add_match (priv->sms_store_view, JANA_STORE_VIEW_AUTHOR,
-                               hito_vcard_attribute_get_value_string (n->data));
+                                 number);
       jana_store_view_add_match (priv->sms_store_view,JANA_STORE_VIEW_RECIPIENT,
-                               hito_vcard_attribute_get_value_string (n->data));
+                                 number);
+      g_free (number);
     }
     g_list_free (numbers);
   } else {
@@ -489,12 +491,13 @@ visible_func (GtkTreeModel *model, GtkTreeIter *iter, ContactsHistory *history)
   numbers = hito_vcard_get_named_attributes (E_VCARD (priv->contact), EVC_TEL);
   if (numbers) {
     for (n = numbers; n; n = n->next) {
-      const gchar *number = hito_vcard_attribute_get_value_string (n->data);
-      if ((author && (strcmp (number, author) == 0)) ||
+      gchar *number = hito_vcard_attribute_get_value_string (n->data);
+      if ((author && number && (strcmp (number, author) == 0)) ||
           (recipient && (strcmp (number, recipient) == 0))) {
         result = TRUE;
         break;
       }
+      g_free (number);
     }
     g_list_free (numbers);
   }
