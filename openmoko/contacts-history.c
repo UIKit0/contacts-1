@@ -147,7 +147,7 @@ add_voice_entry (MokoJournal *journal, MokoJournalEntry *entry,
       JanaTime *end_time;
 
       icaltime =
-        icaltime_from_timet (moko_time_as_timet (mtime), 0);
+        icaltime_from_timet (moko_time_as_timet (dtend), 0);
       
       end_time = jana_ecal_time_new_from_icaltime (&icaltime);
       jana_utils_time_diff (time, end_time, NULL, NULL, NULL,
