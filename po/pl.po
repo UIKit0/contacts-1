@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 14:27+0100\n"
-"PO-Revision-Date: 2007-11-28 14:28+0100\n"
+"POT-Creation-Date: 2008-02-07 18:42+0100\n"
+"PO-Revision-Date: 2008-02-07 18:43+0100\n"
 "Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
 "Language-Team: Polish <dominikowski@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -28,23 +28,23 @@ msgid "Contacts"
 msgstr "Kontakty"
 
 #: ../src/contacts-callbacks-ui.c:161
-msgid "Unknown"
-msgstr "Nieznany"
+msgid "Unnamed"
+msgstr "Bez nazwy"
 
 #: ../src/contacts-callbacks-ui.c:165
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
-msgstr "Czy na pewno usunąć \"%s\"?"
+msgstr "Na pewno usunąć \"%s\"?"
 
 #: ../src/contacts-callbacks-ui.c:169
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "Czy na pewno usunąć %d kontaktów?"
+msgstr "Na pewno usunąć %d kontaktów?"
 
 #: ../src/contacts-callbacks-ui.c:252
 #, c-format
 msgid "Would you like to import contact '%s'?"
-msgstr "Czy zaimportować kontakt \"%s\"?"
+msgstr "Zaimportować kontakt \"%s\"?"
 
 #: ../src/contacts-callbacks-ui.c:257
 msgid "_Show contact"
@@ -98,11 +98,16 @@ msgstr ""
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:587
 msgid "translator-credits"
-msgstr "Tomasz Dominikowski <dominikowski@gmail.com>"
+msgstr "Tomasz Dominikowski (Aviary.pl) <dominikowski@gmail.com>"
+
+#: ../src/contacts-callbacks-ui.c:633
+#: ../src/contacts-gtk.c:93
+msgid "All"
+msgstr "Wszystkie"
 
 #: ../src/contacts-edit-pane.c:102
 msgid "Are you sure you want to delete this contact?"
-msgstr "Czy na pewno usunąć ten kontakt?"
+msgstr "Na pewno usunąć ten kontakt?"
 
 #: ../src/contacts-edit-pane.c:140
 msgid "Couldn't update contact"
@@ -126,29 +131,40 @@ msgstr "Nie można dodać kontaktu: %s"
 msgid "Other"
 msgstr "Inne"
 
+#. Create label/button text
+#. * Translators, the first
+#. * argument is the field's
+#. * name, ex. <b>Country:</b>
+#.
+#: ../src/contacts-edit-pane.c:358
+#: ../src/contacts-edit-pane.c:470
+#, c-format
+msgid "<b>%s:</b>"
+msgstr "<b>%s:</b>"
+
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:433
 msgid "<b>Type:</b>"
 msgstr "<b>Typ:</b>"
 
-#: ../src/contacts-edit-pane.c:770
+#: ../src/contacts-edit-pane.c:775
 msgid "Change groups"
 msgstr "Zmień grupy"
 
-#: ../src/contacts-edit-pane.c:770
+#: ../src/contacts-edit-pane.c:775
 msgid "<b>Choose groups</b>"
 msgstr "<b>Wybierz grupy</b>"
 
-#: ../src/contacts-edit-pane.c:832
+#: ../src/contacts-edit-pane.c:837
 msgid "Add field"
 msgstr "Dodaj pole"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:834
+#: ../src/contacts-edit-pane.c:839
 msgid "<b>Choose a field</b>"
 msgstr "<b>Wybierz pole</b>"
 
-#: ../src/contacts-edit-pane.c:1204
+#: ../src/contacts-edit-pane.c:1209
 msgid "Edit contact"
 msgstr "Modyfikuj kontakt"
 
@@ -234,7 +250,7 @@ msgstr "_Eksportuj"
 
 #: ../src/contacts-gtk.c:237
 msgid "_Edit"
-msgstr "_Modyfikuj"
+msgstr "_Edycja"
 
 #: ../src/contacts-gtk.c:252
 msgid "_Help"
@@ -278,8 +294,10 @@ msgstr "Modyfikuj typy"
 
 #: ../src/contacts-gtk.c:613
 msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Dokonaj wyboru:</b></span>"
+msgstr "<span><b>Wybór:</b></span>"
 
+#~ msgid "Unknown"
+#~ msgstr "Nieznany"
 #~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
 #~ msgstr "<span><big><b>Witaj w Kontaktach</b></big></span>"
 
