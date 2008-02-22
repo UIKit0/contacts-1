@@ -587,7 +587,6 @@ contacts_about_cb (GtkWidget *parent)
 	const char *translator_credits = _("translator-credits");
 
 	gtk_show_about_dialog (GTK_WINDOW (parent),
-		"name", GETTEXT_PACKAGE,
 		"version", VERSION,
 		"authors", authors,
 		"logo-icon-name", "contacts",

@@ -1,4 +1,9 @@
-2007-12-18  Ross Burton  <ross@burtonini.com>
+2008-02-22  Ross Burton  <ross@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	Don't set INLINE on an internal function to fix compile warnings.
+
+2007-12-18  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:
 	* NEWS:
