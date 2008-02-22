@@ -32,7 +32,7 @@
  * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
  */
  /*****************************************************************************/
-G_INLINE_FUNC char *
+char *
 e_util_unicode_get_utf8 (const char *text, gunichar * out)
 {
 	*out = g_utf8_get_char (text);
