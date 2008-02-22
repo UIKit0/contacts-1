@@ -1,5 +1,14 @@
 2008-02-22  Ross Burton  <ross@openedhand.com>
 
+	* src/contacts-main.c:
+	Call g_set_application_name().
+	
+	* src/contacts-callbacks-ui.c:
+	Don't set the "name" property, the about dialog will use the
+	application name.
+
+2008-02-22  Ross Burton  <ross@openedhand.com>
+
 	* src/contacts-utils.c:
 	Don't set INLINE on an internal function to fix compile warnings.
 
