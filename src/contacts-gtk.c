@@ -426,7 +426,7 @@ create_main_window (ContactsData *data)
 	GTK_WIDGET_SET_FLAGS (edit_done_button, GTK_CAN_DEFAULT);
 
 
-	gtk_widget_grab_focus (search_entry);
+	gtk_widget_grab_focus (contacts_treeview);
 	gtk_widget_grab_default (edit_button);
 	gtk_window_add_accel_group (GTK_WINDOW (main_window), accel_group);
 
