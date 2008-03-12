@@ -30,12 +30,14 @@ G_DEFINE_TYPE (HitoContactView, hito_contact_view, GTK_TYPE_TREE_VIEW);
 typedef struct {
   HitoContactStore *store;
   HitoContactModelFilter *filter;
+  gboolean display_phone;
 } HitoContactViewPrivate;
 
 enum {
   PROP_0,
   PROP_BASE_MODEL,
   PROP_FILTER,
+  PROP_PHONE
 };
 
 /*
@@ -50,17 +52,48 @@ name_data_func (GtkTreeViewColumn *tree_column,
               GtkCellRenderer   *cell,
               GtkTreeModel      *model,
               GtkTreeIter       *iter,
-              gpointer           user_data)
+              HitoContactView   *view)
 {
   EContact *contact = NULL;
+  gchar *display;
+  gchar *number = NULL;
+  HitoContactViewPrivate *priv = GET_PRIVATE (view);
 
   gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
   if (!contact)
     return;
 
   /* Get the display name from the store, so that the display and sort names are in sync */
-  g_object_set (cell, "text", e_contact_get_const (contact, E_CONTACT_FULL_NAME), NULL);
 
+  if (priv->display_phone)
+  {
+    number = e_contact_get (contact, E_CONTACT_PHONE_MOBILE);
+    if (!number)
+    {
+      EVCardAttribute *attr;
+      attr = e_vcard_get_attribute (E_VCARD (contact), EVC_TEL);
+      if (attr)
+        number = e_vcard_attribute_get_value (attr);
+    }
+
+    if (!number)
+      number = g_strdup ("");
+
+    display = g_strdup_printf ("<b>%s</b>\n%s",
+        (char*)e_contact_get_const (contact, E_CONTACT_FULL_NAME),
+        number
+        );
+    g_object_set (cell, "markup", display, NULL);
+  }
+  else
+  {
+    g_object_set (cell, "text",
+        e_contact_get_const (contact, E_CONTACT_FULL_NAME), NULL);
+  }
+
+
+  g_free (display);
+  g_free (number);
   g_object_unref (contact);
 }
 
@@ -124,6 +157,9 @@ hito_contact_view_set_property (GObject *object, guint property_id,
     }
     priv->store = HITO_CONTACT_STORE (g_value_dup_object (value));
     break;
+  case PROP_PHONE:
+    priv->display_phone = g_value_get_boolean (value);
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
   }
@@ -177,6 +213,12 @@ hito_contact_view_class_init (HitoContactViewClass *klass)
                                                         HITO_TYPE_CONTACT_MODEL_FILTER,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
                                                         G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB));
+
+  g_object_class_install_property (object_class, PROP_PHONE,
+                                   g_param_spec_boolean ("display-phone", "Display Phone Number", NULL,
+                                                         FALSE,
+                                                         G_PARAM_READWRITE |
+                                                         G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB));
 }
 
 static void
@@ -201,7 +243,7 @@ hito_contact_view_init (HitoContactView *self)
                 "ellipsize", PANGO_ELLIPSIZE_END,
                 NULL);
   gtk_tree_view_column_set_cell_data_func (column, renderer,
-                                           name_data_func, treeview, NULL);
+                                           name_data_func, treeview, self);
   gtk_tree_view_append_column (treeview, column);
 }
 
