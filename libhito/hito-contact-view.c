@@ -55,7 +55,7 @@ name_data_func (GtkTreeViewColumn *tree_column,
               HitoContactView   *view)
 {
   EContact *contact = NULL;
-  gchar *display;
+  gchar *display = NULL;
   gchar *number = NULL;
   HitoContactViewPrivate *priv = GET_PRIVATE (view);
 
@@ -243,7 +243,7 @@ hito_contact_view_init (HitoContactView *self)
                 "ellipsize", PANGO_ELLIPSIZE_END,
                 NULL);
   gtk_tree_view_column_set_cell_data_func (column, renderer,
-                                           name_data_func, treeview, self);
+                                           (GtkTreeCellDataFunc) name_data_func, treeview, NULL);
   gtk_tree_view_append_column (treeview, column);
 }
 
