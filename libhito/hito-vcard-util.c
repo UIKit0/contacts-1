@@ -19,6 +19,7 @@
 #include <config.h>
 #include <string.h>
 #include <libebook/e-contact.h>
+#include <gtk/gtk.h>
 
 /* Get a list of the specified attributes from a contact */
 GList *
@@ -266,3 +267,74 @@ hito_vcard_attribute_has_value (EVCardAttribute *attr, const gchar *value)
   }
   return result;
 }
+
+
+static void
+contact_photo_size (GdkPixbufLoader *loader, gint width, gint height,
+                    gpointer user_data)
+{
+  /* Max height of GTK_ICON_SIZE_DIALOG */
+  gint iconwidth, iconheight;
+  gtk_icon_size_lookup (GTK_ICON_SIZE_DIALOG, &iconwidth, &iconheight);
+
+  gdk_pixbuf_loader_set_size (loader, width / ((gdouble) height / iconheight),
+      iconheight);
+}
+
+GdkPixbuf *
+hito_vcard_get_photo_pixbuf (EVCard *card)
+{
+  GdkPixbuf *ret;
+  GList *list = NULL;
+
+  list = hito_vcard_get_named_attributes (card, EVC_PHOTO);
+  if (list)
+  {
+    GdkPixbufLoader *ploader;
+    guchar *buf;
+    gsize size;
+    const gchar *value;
+    gchar *type, *type_up;
+    int cmp = 0;
+
+    value = e_vcard_attribute_get_value ((EVCardAttribute *)list->data);
+    if (!value)
+    {
+      g_list_free (list);
+      return NULL;
+    }
+
+    type = hito_vcard_attribute_get_type (list->data);
+    if (type)
+    {
+      type_up = g_ascii_strup (type, -1);
+      cmp = strcmp (type_up, "URL");
+      g_free (type);
+      g_free (type_up);
+
+      /* TODO: we can't deal with images from URLs yet */
+      if (!cmp)
+      {
+        g_list_free (list);
+        return NULL;
+      }
+    }
+
+    buf = g_base64_decode (value, &size);
+    ploader = gdk_pixbuf_loader_new ();
+    g_signal_connect (G_OBJECT (ploader), "size-prepared", G_CALLBACK (contact_photo_size),  NULL);
+
+    gdk_pixbuf_loader_write (ploader, buf, size, NULL);
+    gdk_pixbuf_loader_close (ploader, NULL);
+    ret = g_object_ref (gdk_pixbuf_loader_get_pixbuf (ploader));
+    g_object_unref (ploader);
+    g_list_free (list);
+    return ret;
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+

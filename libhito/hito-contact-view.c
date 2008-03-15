@@ -20,7 +20,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <libedataserver/e-data-server-util.h>
+
 #include "hito-contact-view.h"
+#include "hito-vcard-util.h"
 
 G_DEFINE_TYPE (HitoContactView, hito_contact_view, GTK_TYPE_TREE_VIEW);
 
@@ -31,13 +33,15 @@ typedef struct {
   HitoContactStore *store;
   HitoContactModelFilter *filter;
   gboolean display_phone;
+  GtkTreeViewColumn *photo_column;
 } HitoContactViewPrivate;
 
 enum {
   PROP_0,
   PROP_BASE_MODEL,
   PROP_FILTER,
-  PROP_PHONE
+  PROP_PHONE,
+  PROP_PHOTO
 };
 
 /*
@@ -90,12 +94,51 @@ name_data_func (GtkTreeViewColumn *tree_column,
     g_object_set (cell, "text",
         e_contact_get_const (contact, E_CONTACT_FULL_NAME), NULL);
   }
-
-
   g_free (display);
   g_free (number);
   g_object_unref (contact);
 }
+
+/*
+ * Cell data function for the photo column.
+ */
+static void
+photo_data_func (GtkTreeViewColumn *tree_column,
+              GtkCellRenderer   *cell,
+              GtkTreeModel      *model,
+              GtkTreeIter       *iter,
+              HitoContactView   *view)
+{
+  EContact *contact = NULL;
+  GdkPixbuf *pixbuf;
+
+  /* photo_data_func() gets called even if the column is hidden (?!)
+   * so to be more efficent, just return when if the column is not visible */ 
+  if (!gtk_tree_view_column_get_visible (tree_column))
+    return;
+
+  gtk_tree_model_get (model, iter, COLUMN_CONTACT, &contact, -1);
+  if (!contact)
+    return;
+
+  /* Get the photo, or set to the stock icon if no photo available */
+  pixbuf = hito_vcard_get_photo_pixbuf (E_VCARD (contact));
+  if (!pixbuf)
+    g_object_set (G_OBJECT (cell), "icon-name", "stock_person",
+        "stock-size", GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
+  else
+  {
+    g_object_set (G_OBJECT (cell), "pixbuf", pixbuf, NULL);
+
+    /* the cell renderer takes a ref of the pixbuf */
+    g_object_unref (pixbuf);
+
+  }
+
+  g_object_unref (contact);
+}
+
+
 
 /*
  * Custom function for interactive searches.
@@ -160,6 +203,10 @@ hito_contact_view_set_property (GObject *object, guint property_id,
   case PROP_PHONE:
     priv->display_phone = g_value_get_boolean (value);
     break;
+  case PROP_PHOTO:
+    if (priv->photo_column)
+      gtk_tree_view_column_set_visible (priv->photo_column, g_value_get_boolean (value));
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
   }
@@ -219,6 +266,12 @@ hito_contact_view_class_init (HitoContactViewClass *klass)
                                                          FALSE,
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB));
+  g_object_class_install_property (object_class, PROP_PHOTO,
+                                   g_param_spec_boolean ("display-photo", "Display Contact Photo", NULL,
+                                                         FALSE,
+                                                         G_PARAM_READWRITE |
+                                                         G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB));
+
 }
 
 static void
@@ -227,6 +280,7 @@ hito_contact_view_init (HitoContactView *self)
   GtkTreeView *treeview;
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
+  HitoContactViewPrivate *priv = GET_PRIVATE (self);
 
   treeview = GTK_TREE_VIEW (self);
 
@@ -235,7 +289,17 @@ hito_contact_view_init (HitoContactView *self)
   gtk_tree_view_set_enable_search (treeview, TRUE);
   gtk_tree_view_set_search_column (treeview, COLUMN_CONTACT);
   gtk_tree_view_set_search_equal_func (treeview, search_equal_func, NULL, NULL);
-  
+
+  /* Photo column */
+  renderer = gtk_cell_renderer_pixbuf_new ();
+  column = gtk_tree_view_column_new_with_attributes (_("Photo"), renderer,  NULL);
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           (GtkTreeCellDataFunc) photo_data_func, treeview, NULL);
+  gtk_tree_view_append_column (treeview, column);
+  priv->photo_column = column;
+
+  gtk_tree_view_column_set_visible (priv->photo_column, FALSE);
+
   /* Summary column */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (_("Name"), renderer,  NULL);
