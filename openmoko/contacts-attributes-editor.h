@@ -1,7 +1,7 @@
 /*
  * OpenMoko Contacts
  *
- * Copyright (C) 2007 OpenMoko Inc.
+ * Copyright (C) 2007 OpenMoko, Inc.
  * 
  * OpenMoko Contacts is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
