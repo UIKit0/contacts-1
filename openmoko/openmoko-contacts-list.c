@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 OpenMoko, Inc
+ * Copyright (C) 2008 OpenedHand Ltd
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -124,6 +125,8 @@ create_contacts_list_page (ContactsData *data)
 
   data->contacts_treeview = hito_contact_view_new (HITO_CONTACT_STORE (data->contact_store),
                                     HITO_CONTACT_MODEL_FILTER (contact_filter));
+  g_object_set (data->contacts_treeview, "display-phone", TRUE, NULL);
+  g_object_set (data->contacts_treeview, "display-photo", TRUE, NULL);
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (data->contacts_treeview)),
                     "changed", G_CALLBACK (on_selection_changed), data);
   gtk_container_add (GTK_CONTAINER (scrolled), data->contacts_treeview);
