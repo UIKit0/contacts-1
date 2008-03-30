@@ -97,6 +97,43 @@ mark_contact_dirty (ContactsData *data)
   }
 }
 
+gboolean
+address_frame_expose_cb (GtkWidget *w, GdkEventExpose *e, gpointer user_data)
+{
+  gint width, height;
+  gdk_window_set_background (e->window, &w->style->base[GTK_STATE_NORMAL]);
+  gdk_drawable_get_size (e->window, &width, & height);
+  gtk_paint_shadow (w->style, w->window, GTK_WIDGET_STATE (w),
+      GTK_SHADOW_IN, &e->area, w, "", 0, 0, width, height);
+  return TRUE;
+}
+
+
+void
+address_frame_style_set_cb (GtkWidget *w, GtkStyle *previous_style, ContactsData *data)
+{
+  gboolean interior_focus;
+  gint focus_width;
+  gint xpad, ypad;
+
+  /* we need to "borrow" the correct style settings from another GtkEntry */
+  xpad = data->fullname->style->xthickness;
+  ypad = data->fullname->style->ythickness;
+
+  gtk_widget_style_get (data->fullname,
+      "interior-focus", &interior_focus,
+      "focus-line-width", &focus_width, NULL);
+
+  if (interior_focus)
+  {
+    xpad += focus_width;
+    ypad += focus_width;
+  }
+
+  gtk_alignment_set_padding (GTK_ALIGNMENT (w), ypad, ypad, xpad, xpad);
+  gtk_widget_modify_bg (w, GTK_STATE_NORMAL, data->fullname->style->base);
+}
+
 void
 create_contacts_details_page (ContactsData *data)
 {
@@ -177,15 +214,28 @@ create_contacts_details_page (ContactsData *data)
   gtk_box_pack_start (GTK_BOX (main_vbox), data->email, FALSE, FALSE, PADDING);
 
   /* add address field */
-  sw = gtk_frame_new (NULL);
-  gtk_frame_set_shadow_type (GTK_FRAME (sw), GTK_SHADOW_IN);
+
+  /* here we try to simulate a GtkEntry
+   * to get the correct padding between the shadow and the text view, we use a
+   * GtkAlignment to set the padding, and borrow the thickness values from the
+   * style of another GtkEntry */
+
+  /* we use a GtkEventBox to draw the shadow on and set the correct background
+   * color */
+  sw = gtk_event_box_new ();
+  g_signal_connect (sw, "expose-event", address_frame_expose_cb, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), sw, FALSE, FALSE, PADDING);
 
-  w = gtk_text_view_new ();
+  /* we need to add some padding between frame and textview */
+  w = gtk_alignment_new (0, 0, 1, 1);
   gtk_container_add (GTK_CONTAINER (sw), w);
-  data->address = w;
+  g_signal_connect (w, "style-set", G_CALLBACK (address_frame_style_set_cb), data);
+  /* now we have some padding, make sure the bg of the frame is the same colour
+   * as the bg of the textview */
 
-  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w));
+  data->address = gtk_text_view_new ();
+  gtk_container_add (GTK_CONTAINER (w), data->address);
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
   g_signal_connect (buffer, "changed", G_CALLBACK (address_buffer_changed_cb), data);
 
 }
@@ -348,7 +398,7 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     gtk_widget_show (data->org);
 
     /* parent of the address textview is the frame */
-    gtk_widget_show (data->address->parent);
+    gtk_widget_show (data->address->parent->parent);
 
   }
   else
@@ -377,7 +427,7 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
     if (gtk_text_buffer_get_char_count (buffer) == 0)
     {
       /* parent of the address textview is the frame */
-      gtk_widget_hide (data->address->parent);
+      gtk_widget_hide (data->address->parent->parent);
     }
     else
     {
