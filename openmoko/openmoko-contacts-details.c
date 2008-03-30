@@ -407,8 +407,9 @@ contacts_details_page_update (ContactsData *data)
   if (list)
   {
     gchar *s, *p;
-    
-    p = s = g_strdup (list->data);
+
+    p = s = e_vcard_attribute_get_value (list->data);
+
     while (*p)
     {
       if (*p == ';')
