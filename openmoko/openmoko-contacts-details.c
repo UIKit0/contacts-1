@@ -97,7 +97,7 @@ mark_contact_dirty (ContactsData *data)
   }
 }
 
-gboolean
+static gboolean
 address_frame_expose_cb (GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 {
   gint width, height;
@@ -109,18 +109,18 @@ address_frame_expose_cb (GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 }
 
 
-void
-address_frame_style_set_cb (GtkWidget *w, GtkStyle *previous_style, ContactsData *data)
+static void
+address_frame_style_set_cb (GtkWidget *entry, GtkStyle *previous_style, GtkWidget *alignment)
 {
   gboolean interior_focus;
   gint focus_width;
   gint xpad, ypad;
 
   /* we need to "borrow" the correct style settings from another GtkEntry */
-  xpad = data->fullname->style->xthickness;
-  ypad = data->fullname->style->ythickness;
+  xpad = entry->style->xthickness;
+  ypad = entry->style->ythickness;
 
-  gtk_widget_style_get (data->fullname,
+  gtk_widget_style_get (entry,
       "interior-focus", &interior_focus,
       "focus-line-width", &focus_width, NULL);
 
@@ -130,8 +130,8 @@ address_frame_style_set_cb (GtkWidget *w, GtkStyle *previous_style, ContactsData
     ypad += focus_width;
   }
 
-  gtk_alignment_set_padding (GTK_ALIGNMENT (w), ypad, ypad, xpad, xpad);
-  gtk_widget_modify_bg (w, GTK_STATE_NORMAL, data->fullname->style->base);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), ypad, ypad, xpad, xpad);
+  gtk_widget_modify_bg (alignment, GTK_STATE_NORMAL, entry->style->base);
 }
 
 void
@@ -220,18 +220,16 @@ create_contacts_details_page (ContactsData *data)
    * GtkAlignment to set the padding, and borrow the thickness values from the
    * style of another GtkEntry */
 
-  /* we use a GtkEventBox to draw the shadow on and set the correct background
-   * color */
+  /* we use a GtkEventBox to draw the shadow and set the correct background color */
   sw = gtk_event_box_new ();
-  g_signal_connect (sw, "expose-event", address_frame_expose_cb, NULL);
+  g_signal_connect (sw, "expose-event", G_CALLBACK (address_frame_expose_cb), NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), sw, FALSE, FALSE, PADDING);
 
   /* we need to add some padding between frame and textview */
   w = gtk_alignment_new (0, 0, 1, 1);
   gtk_container_add (GTK_CONTAINER (sw), w);
-  g_signal_connect (w, "style-set", G_CALLBACK (address_frame_style_set_cb), data);
-  /* now we have some padding, make sure the bg of the frame is the same colour
-   * as the bg of the textview */
+  /* when the style info for a GtkEntry is available, use it to set padding values */
+  g_signal_connect (data->fullname, "style-set", G_CALLBACK (address_frame_style_set_cb), w);
 
   data->address = gtk_text_view_new ();
   gtk_container_add (GTK_CONTAINER (w), data->address);
