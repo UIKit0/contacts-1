@@ -72,22 +72,6 @@ contacts_details_page_map_event_cb (GtkWidget *widget, ContactsData *data)
   return FALSE;
 }
 
-static void
-address_buffer_changed_cb (GtkTextBuffer *buf, ContactsData *data)
-{
-  gchar *p, *value = NULL;
-  g_object_get (G_OBJECT (buf), "text", &value, NULL);
-  p = value;
-  while (*p)
-  {
-    if (*p == '\n')
-      *p = ';';
-    p++;
-  }
-  attribute_changed (EVC_ADR, value, data);
-  g_free (value);
-}
-
 void
 mark_contact_dirty (ContactsData *data)
 {
@@ -121,6 +105,32 @@ address_field_empty (GtkTextView *text_view)
   }
 
   return FALSE;
+}
+
+static void
+address_buffer_changed_cb (GtkTextBuffer *buf, ContactsData *data)
+{
+  gchar *p, *value = NULL;
+  GtkTextIter start, end;
+
+ 
+  if (address_field_empty (data->address))
+    return;
+
+  gtk_text_buffer_get_end_iter (buf, &end);
+  gtk_text_buffer_get_start_iter (buf, &start);
+
+  value = gtk_text_buffer_get_text (buf, &start, &end, FALSE);
+
+  p = value;
+  while (*p)
+  {
+    if (*p == '\n')
+      *p = ';';
+    p++;
+  }
+  attribute_changed (EVC_ADR, value, data);
+  g_free (value);
 }
 
 static gboolean
@@ -166,6 +176,19 @@ address_focus_in_cb (GtkTextView *text_view, GdkEventFocus *event, gpointer user
   
   return FALSE;
 }
+
+static void
+address_field_set_text (GtkTextView *text_view, gchar *value)
+{
+  GtkTextBuffer *buf;
+
+  buf = gtk_text_view_get_buffer (text_view);
+
+  gtk_text_buffer_set_text (buf, value, -1);
+
+  address_focus_out_cb (text_view, NULL, NULL);
+}
+
 
 
 static gboolean
@@ -295,6 +318,7 @@ create_contacts_details_page (ContactsData *data)
   sw = gtk_event_box_new ();
   g_signal_connect (sw, "expose-event", G_CALLBACK (address_frame_expose_cb), NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), sw, FALSE, FALSE, PADDING);
+  gtk_widget_modify_bg (sw, GTK_STATE_NORMAL, sw->style->base);
 
   /* we need to add some padding between frame and textview */
   w = gtk_alignment_new (0, 0, 1, 1);
@@ -364,13 +388,10 @@ contacts_details_page_update (ContactsData *data)
                                       E_VCARD (data->contact));
   if (!data->contact)
   {
-    GtkTextBuffer *buf;
-
     moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->fullname), "");
     moko_hint_entry_set_text (MOKO_HINT_ENTRY (data->org), "");
     gtk_image_set_from_icon_name (GTK_IMAGE (data->photo), "stock_person", GTK_ICON_SIZE_DIALOG);
-    buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
-    gtk_text_buffer_set_text (buf, "", -1);
+    address_field_set_text (GTK_TEXT_VIEW (data->address), "");
     return;
   }
 
@@ -385,7 +406,6 @@ contacts_details_page_update (ContactsData *data)
   list = hito_vcard_get_named_attributes (E_VCARD (data->contact), EVC_ADR);
   if (list)
   {
-    GtkTextBuffer *buf;
     gchar *s, *p;
     
     p = s = g_strdup (list->data);
@@ -395,8 +415,7 @@ contacts_details_page_update (ContactsData *data)
         *p = '\n';
       p++;
     }
-    buf = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
-    gtk_text_buffer_set_text (buf, s, -1);
+    address_field_set_text (GTK_TEXT_VIEW (data->address), s);
     g_free (s);
     g_list_free (list);
   }
