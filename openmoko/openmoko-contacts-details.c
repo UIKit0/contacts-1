@@ -98,6 +98,77 @@ mark_contact_dirty (ContactsData *data)
 }
 
 static gboolean
+address_field_empty (GtkTextView *text_view)
+{
+  GtkTextBuffer *buf;
+  GtkTextIter start, end;
+  gchar *text;
+
+  buf = gtk_text_view_get_buffer (text_view);
+
+  if (gtk_text_buffer_get_char_count (buf) == 0)
+    return TRUE;
+
+  gtk_text_buffer_get_end_iter (buf, &end);
+  gtk_text_buffer_get_start_iter (buf, &start);
+
+  text = gtk_text_buffer_get_text (buf, &start, &end, FALSE);
+
+  if (text && !strcmp (text, "Address"))
+  {
+    g_free (text);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static gboolean
+address_focus_out_cb (GtkTextView *text_view, GdkEventFocus *event, gpointer user_data)
+{
+  GtkTextBuffer *buf;
+  gint i;
+  
+  buf = gtk_text_view_get_buffer (text_view);
+  i = gtk_text_buffer_get_char_count (buf);
+
+  if (i == 0)
+  {
+    gtk_widget_modify_text (GTK_WIDGET (text_view), GTK_STATE_NORMAL,
+        &GTK_WIDGET (text_view)->style->text[GTK_STATE_INSENSITIVE]);
+    gtk_text_buffer_set_text (buf, "Address", -1);
+  }
+
+
+  return FALSE;
+}
+
+static gboolean
+address_focus_in_cb (GtkTextView *text_view, GdkEventFocus *event, gpointer user_data)
+{
+  GtkTextBuffer *buf;
+  GtkTextIter start, end;
+  gchar *text;
+
+  buf = gtk_text_view_get_buffer (text_view);
+
+  gtk_text_buffer_get_end_iter (buf, &end);
+  gtk_text_buffer_get_start_iter (buf, &start);
+  
+  text = gtk_text_buffer_get_text (buf, &start, &end, FALSE);
+  
+  if (text && !strcmp (text, "Address"))
+  {
+    gtk_text_buffer_set_text (buf, "", -1);
+    gtk_widget_modify_text (GTK_WIDGET (text_view), GTK_STATE_NORMAL, NULL);
+  }
+
+  
+  return FALSE;
+}
+
+
+static gboolean
 address_frame_expose_cb (GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 {
   gint width, height;
@@ -235,6 +306,8 @@ create_contacts_details_page (ContactsData *data)
   gtk_container_add (GTK_CONTAINER (w), data->address);
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
   g_signal_connect (buffer, "changed", G_CALLBACK (address_buffer_changed_cb), data);
+  g_signal_connect (data->address, "focus-in-event", G_CALLBACK (address_focus_in_cb), data);
+  g_signal_connect (data->address, "focus-out-event", G_CALLBACK (address_focus_out_cb), data);
 
 }
 
@@ -363,7 +436,6 @@ static void
 edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
 {
   gboolean editing;
-  GtkTextBuffer *buffer;
 
   editing =
     gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (data->edit_toggle));
@@ -421,15 +493,15 @@ edit_toggle_toggled_cb (GtkWidget *button, ContactsData *data)
       gtk_widget_show (data->org);
     }
 
-    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (data->address));
-    if (gtk_text_buffer_get_char_count (buffer) == 0)
+    if (address_field_empty (GTK_TEXT_VIEW (data->address)))
     {
       /* parent of the address textview is the frame */
       gtk_widget_hide (data->address->parent->parent);
     }
     else
     {
-      gtk_widget_show (data->address->parent);
+      gtk_widget_modify_text (data->address, GTK_STATE_NORMAL, &data->org->style->fg[GTK_STATE_NORMAL]);
+      gtk_widget_show (data->address->parent->parent);
     }
 
     /* remove current focus to close any active edits */
