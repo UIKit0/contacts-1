@@ -114,7 +114,7 @@ address_buffer_changed_cb (GtkTextBuffer *buf, ContactsData *data)
   GtkTextIter start, end;
 
  
-  if (address_field_empty (data->address))
+  if (address_field_empty (GTK_TEXT_VIEW (data->address)))
     return;
 
   gtk_text_buffer_get_end_iter (buf, &end);
@@ -197,6 +197,8 @@ address_frame_expose_cb (GtkWidget *w, GdkEventExpose *e, gpointer user_data)
   gint width, height;
   gdk_window_set_background (e->window, &w->style->base[GTK_STATE_NORMAL]);
   gdk_drawable_get_size (e->window, &width, & height);
+  gtk_paint_flat_box (w->style, w->window, GTK_WIDGET_STATE (w),
+      GTK_SHADOW_NONE, &e->area, w, "", 0, 0, width, height);
   gtk_paint_shadow (w->style, w->window, GTK_WIDGET_STATE (w),
       GTK_SHADOW_IN, &e->area, w, "", 0, 0, width, height);
   return TRUE;
