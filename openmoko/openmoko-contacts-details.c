@@ -253,15 +253,13 @@ create_contacts_details_page (ContactsData *data)
   toolitem = gtk_toggle_tool_button_new_from_stock (GTK_STOCK_EDIT);
   g_signal_connect (G_OBJECT (toolitem), "toggled", G_CALLBACK (edit_toggle_toggled_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 0);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
   data->edit_toggle = toolitem;
-
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
 
   toolitem = gtk_tool_button_new_from_stock (GTK_STOCK_DELETE);
   g_signal_connect (G_OBJECT (toolitem), "clicked", G_CALLBACK (delete_contact_clicked_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 2);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
 
 
   main_vbox = gtk_vbox_new (FALSE, PADDING);

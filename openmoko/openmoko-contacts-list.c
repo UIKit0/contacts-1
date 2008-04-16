@@ -85,24 +85,21 @@ create_contacts_list_page (ContactsData *data)
 
   data->dial_button = gtk_tool_button_new_from_stock (MOKO_STOCK_CALL_DIAL);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (data->dial_button), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->dial_button, 0);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->dial_button, -1);
   g_signal_connect (data->dial_button, "clicked", 
                     G_CALLBACK (dial_contact_clicked_cb), data);
 
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 1);
-
   data->sms_button = gtk_tool_button_new_from_stock (MOKO_STOCK_SMS_NEW);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (data->sms_button), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->sms_button, 2);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), data->sms_button, -1);
   g_signal_connect (data->sms_button, "clicked",
                     G_CALLBACK (sms_contact_clicked), data);
 
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), gtk_separator_tool_item_new (), 3);
 
   toolitem = gtk_tool_button_new_from_stock (MOKO_STOCK_CONTACT_NEW);
   g_signal_connect (toolitem, "clicked", G_CALLBACK (new_contact_clicked_cb), data);
   gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolitem), TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, 4);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
 
   /* search/filter bar */
 
