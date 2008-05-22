@@ -271,7 +271,7 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 					/* TODO: add progress indicator and callback here */
 					e_book_async_add_contact (data->book, contact,
 								   NULL, NULL);
-					/* Maually trigger the added callback so that
+					/* Manually trigger the added callback so that
 					 * the contact can be selected.
 					 */
 					#if 0

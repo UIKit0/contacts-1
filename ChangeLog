@@ -1,3 +1,12 @@
+2008-05-22  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-main.c: (main):
+	* src/contacts-ui.c:
+
+	Fix typos and missing copyright header, based on patch from bug 890.
+	Fixes bug 890.
+
 2008-02-27  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-gtk.c: (create_main_window):

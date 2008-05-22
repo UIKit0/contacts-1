@@ -136,8 +136,8 @@ main (int argc, char **argv)
 	GError *error = NULL;
 	BaconMessageConnection *mc;
 	ContactsData *data;	/* Variable for passing around data -
-					 * see contacts-defs.h.
-					 */
+				 * see contacts-defs.h.
+				 */
 	GOptionContext *context;
 	static gint plug = 0;
 	GtkWidget *widget;
