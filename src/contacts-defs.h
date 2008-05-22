@@ -157,4 +157,7 @@ typedef struct {
 
 #define NO_IMAGE 1	/* For the image-chooser dialog */
 
+
+#define NO_CATEGORY_LABEL _("No Group")
+
 #endif

@@ -632,6 +632,8 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 	if (data->selected_group && strcmp (_("All"), data->selected_group))
 	{
 		groups = e_contact_get (hash->contact, E_CONTACT_CATEGORY_LIST);
+		if (!groups && !strcmp (NO_CATEGORY_LABEL, data->selected_group))
+			result = TRUE;
 		if ((group = data->selected_group)) {
 			for (g = groups; g; g = g->next) {
 				if (strcmp (group, g->data) == 0)

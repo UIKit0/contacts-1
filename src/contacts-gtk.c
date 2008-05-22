@@ -76,14 +76,16 @@ groups_combobox_changed_cb (GtkWidget *widget, ContactsData *data)
 	contacts_update_treeview (data);
 }
 
+void add_to_list (gpointer data, gpointer list)
+{
+	GtkTreeIter iter;
+	gtk_list_store_insert_with_values (list, &iter, -1, 0, data, -1);
+}
+
+
 void
 contacts_ui_update_groups_list (ContactsData *data)
 {
-	void add_to_list (gpointer data, gpointer list)
-	{
-		GtkTreeIter iter;
-		gtk_list_store_insert_with_values (list, &iter, 1, 0, data, -1);
-	}
 	GtkListStore *list;
 	GtkTreeIter dummy;
 
@@ -91,11 +93,31 @@ contacts_ui_update_groups_list (ContactsData *data)
 	if (!list) return;
 	gtk_list_store_clear (list);
 	gtk_list_store_insert_with_values (list, &dummy, 0, 0, _("All"), -1);
+	gtk_list_store_insert_with_values (list, &dummy, 1, 0, NULL, -1);
 	g_list_foreach (data->contacts_groups, add_to_list, list);
+	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NULL, -1);
+	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NO_CATEGORY_LABEL, -1);
 
 	/* Select 'All' in the groups combobox if nothing selected */
 	if (gtk_combo_box_get_active (GTK_COMBO_BOX (groups_combobox)))
 		gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combobox), 0);
+}
+
+gboolean
+groups_combo_seperator_func (GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+	gchar *tmp;
+
+	gtk_tree_model_get (model, iter, 0, &tmp, -1);
+	if (!tmp)
+	{
+		return TRUE;
+	}
+	else
+	{
+		g_free (tmp);
+		return FALSE;
+	}
 }
 
 void
@@ -274,6 +296,8 @@ create_main_window (ContactsData *data)
 	groups_combobox = gtk_combo_box_new ();
 	GtkListStore *ls = gtk_list_store_new (1, G_TYPE_STRING);
 	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (groups_combobox),
+	    groups_combo_seperator_func, NULL, NULL);
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (groups_combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (groups_combobox), renderer, "text", 0);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (groups_combobox), GTK_TREE_MODEL(ls));
