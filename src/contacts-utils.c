@@ -445,14 +445,14 @@ contacts_load_photo (EContact *contact)
  * value. Evolution tends to add empty fields like this a lot - as does
  * contacts, to show required fields (but it removes them after editing, via
  * this function).
- * TODO: This really doesn't need to be recursive.
  */
 void
 contacts_clean_contact (EContact *contact)
 {
-	GList *attributes, *c;
+	GList *attributes, *c, *trash = NULL;
 
 	attributes = e_vcard_get_attributes (E_VCARD (contact));
+
 	for (c = attributes; c; c = c->next) {
 		EVCardAttribute *a = (EVCardAttribute*)c->data;
 		GList *values = e_vcard_attribute_get_values (a);
@@ -462,11 +462,14 @@ contacts_clean_contact (EContact *contact)
 				remove = FALSE;
 		}
 		if (remove) {
-			e_vcard_remove_attribute (E_VCARD (contact), a);
-			contacts_clean_contact (contact);
-			break;
+			trash = g_list_prepend (trash, a);
 		}
 	}
+
+	for (c = g_list_first (trash); c; c = c->next)
+		e_vcard_remove_attribute (E_VCARD (contact), c->data);
+
+	g_list_free (trash);
 }
 
 gboolean

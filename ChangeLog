@@ -1,5 +1,13 @@
 2008-05-22  Thomas Wood  <thomas@openedhand.com>
 
+	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
+	* src/contacts-utils.c: (contacts_clean_contact):
+
+	Replace recursive function with iterative version. Fixes bug 893.
+
+2008-05-22  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-callbacks-ui.c:
 	* src/contacts-main.c: (main):
 	* src/contacts-ui.c:
