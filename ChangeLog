@@ -1,5 +1,14 @@
 2008-05-22  Thomas Wood  <thomas@openedhand.com>
 
+	Based on patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
+	* src/contacts-ui.c: (contacts_display_summary):
+	* src/contacts-utils.c: (contacts_compare_attributes):
+
+	Fix attribute sorting in view mode. Fixes bug 885 (and 42).
+
+2008-05-22  Thomas Wood  <thomas@openedhand.com>
+
 	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
 
 	* src/contacts-utils.c: (contacts_clean_contact):

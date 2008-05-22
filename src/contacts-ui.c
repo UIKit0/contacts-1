@@ -110,14 +110,15 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 			       widget);
 	g_object_set (widget, "n-rows", 1, NULL);
 	g_object_set (widget, "n-columns", 2, NULL);
-	attributes = e_vcard_get_attributes (E_VCARD (contact));
+	attributes = g_list_copy (e_vcard_get_attributes (E_VCARD (contact)));
 	attributes = g_list_sort (attributes, (GCompareFunc) contacts_compare_attributes);
+
 	g_value_init (can_focus, G_TYPE_BOOLEAN);
 	g_value_set_boolean (can_focus, FALSE);
 	for (a = attributes; a; a = a->next) {
 		GtkWidget *name_widget, *value_widget;
 		gchar *value_text, *name_markup;
-		GList *values;
+		GList *values = NULL;
 		const gchar **types;
 		const gchar *attr_name;
 		EVCardAttribute *attr = (EVCardAttribute *)a->data;
@@ -206,6 +207,8 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 
 	widget = data->ui->summary_table;
 	contacts_remove_labels_from_focus_chain (GTK_CONTAINER (widget));
+
+	g_list_free (attributes);
 }
 
 /* Helper method to set edit/delete sensitive/insensitive */

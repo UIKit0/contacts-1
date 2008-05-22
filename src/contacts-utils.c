@@ -278,13 +278,13 @@ contacts_compare_attributes (EVCardAttribute *attrA, EVCardAttribute *attrB)
 
 	for (i = 0; contacts_fields[i].vcard_field; i++)
 	{
-		if (strcmp (nameA, contacts_fields[i].vcard_field))
+		if (a == 0 && strcmp (nameA, contacts_fields[i].vcard_field) == 0)
 			a = contacts_fields[i].priority;
-		if (strcmp (nameB, contacts_fields[i].vcard_field))
+		if (b == 0 && strcmp (nameB, contacts_fields[i].vcard_field) == 0)
 			b = contacts_fields[i].priority;
 	}
 
-	return b - a;
+	return a - b;
 }
 
 EContact *
