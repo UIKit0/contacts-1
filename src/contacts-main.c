@@ -155,10 +155,21 @@ main (int argc, char **argv)
 
 	g_set_application_name (_("Contacts"));
 
-	context = g_option_context_new (" - A light-weight address-book");
+	context = g_option_context_new (N_("- A light-weight address-book"));
 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	g_option_context_parse (context, &argc, &argv, NULL);
+
+	/* Parse command line */
+	if (!g_option_context_parse (context, &argc, &argv, &error))
+	{
+		g_option_context_free (context);
+
+		g_print ("%s\n", error->message);
+		g_error_free (error);
+		exit (1);
+	}
+
+	error = NULL;
 
 	mc = bacon_message_connection_new ("contacts");
 	if (!bacon_message_connection_get_is_server (mc)) {

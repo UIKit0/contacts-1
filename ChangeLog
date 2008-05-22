@@ -1,5 +1,12 @@
 2008-05-22  Thomas Wood  <thomas@openedhand.com>
 
+	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
+	* src/contacts-main.c: (main): Fix bug 888 - contacts segfaults when
+	provided with incomplete options on command line.
+
+2008-05-22  Thomas Wood  <thomas@openedhand.com>
+
 	Based on patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
 
 	* src/contacts-ui.c: (contacts_display_summary):
