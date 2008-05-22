@@ -1,5 +1,10 @@
 2008-05-22  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-callbacks-ui.c: Update website and copyright information
+	in the about dialog. Closes bug 866.
+
+2008-05-22  Thomas Wood  <thomas@openedhand.com>
+
 	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
 
 	* src/contacts-main.c: (main): Fix bug 888 - contacts segfaults when
