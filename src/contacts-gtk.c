@@ -76,12 +76,26 @@ groups_combobox_changed_cb (GtkWidget *widget, ContactsData *data)
 	contacts_update_treeview (data);
 }
 
-void add_to_list (gpointer data, gpointer list)
+void
+add_to_list (gpointer data, gpointer list)
 {
 	GtkTreeIter iter;
 	gtk_list_store_insert_with_values (list, &iter, -1, 0, data, -1);
 }
 
+gint
+groups_compare (const gchar *a, const gchar *b)
+{
+	gint result;
+	gchar *str1, *str2;
+
+	str1 = g_utf8_casefold(a, -1);
+	str2 = g_utf8_casefold(b, -1);
+	result = g_utf8_collate(str1, str2);
+	g_free(str1);
+	g_free(str2);
+	return result;
+}
 
 void
 contacts_ui_update_groups_list (ContactsData *data)
@@ -94,6 +108,7 @@ contacts_ui_update_groups_list (ContactsData *data)
 	gtk_list_store_clear (list);
 	gtk_list_store_insert_with_values (list, &dummy, 0, 0, _("All"), -1);
 	gtk_list_store_insert_with_values (list, &dummy, 1, 0, NULL, -1);
+	data->contacts_groups = g_list_sort (data->contacts_groups, groups_compare);
 	g_list_foreach (data->contacts_groups, add_to_list, list);
 	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NULL, -1);
 	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NO_CATEGORY_LABEL, -1);

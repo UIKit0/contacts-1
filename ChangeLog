@@ -1,3 +1,12 @@
+2008-05-23  Thomas Wood  <thomas@openedhand.com>
+
+	Based on patch by: Adrien Bustany <madcat@mymadcat.com>
+
+	* src/contacts-gtk.c: (groups_combobox_changed_cb),
+	(groups_compare), (contacts_ui_update_groups_list):
+
+	Sort the groups list before adding to the combobox. Fixes bug 309.
+
 2008-05-22  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-callbacks-ui.c:
