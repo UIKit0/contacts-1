@@ -1,5 +1,10 @@
 2008-05-23  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-edit-pane.c: (contacts_edit_widget_new): Don't accept
+	tabs in text view widgets. Fixes bug 275.
+
+2008-05-23  Thomas Wood  <thomas@openedhand.com>
+
 	Based on patch by: Adrien Bustany <madcat@mymadcat.com>
 
 	* src/contacts-gtk.c: (groups_combobox_changed_cb),

@@ -500,6 +500,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 				gtk_text_buffer_set_text (buffer, string ?
 							   string : "", -1);
 				gtk_text_view_set_editable (view, TRUE);
+				gtk_text_view_set_accepts_tab (view, FALSE);
 				
 				entry = gtk_frame_new (NULL);
 				gtk_frame_set_shadow_type (GTK_FRAME (entry),
@@ -546,6 +547,7 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 		gtk_widget_set_name (GTK_WIDGET (view), attr_name);
 		gtk_text_buffer_set_text (buffer, string ? string : "", -1);
 		gtk_text_view_set_editable (view, TRUE);
+		gtk_text_view_set_accepts_tab (view, FALSE);
 		g_free (string);
 
 		container = gtk_frame_new (NULL);
