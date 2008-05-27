@@ -3,7 +3,7 @@
  *
  *  Authored By Chris Lord <chris@o-hand.com>
  *
- *  Copyright (c) 2005 OpenedHand Ltd - http://o-hand.com
+ *  Copyright (c) 2005, 2008 OpenedHand Ltd - http://o-hand.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -157,8 +157,11 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 		if (!contact) return;
 
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-		if ((!name) || (g_utf8_strlen (name, 4) <= 0))
-			name = _("Unnamed");
+		if ((!name) || (g_utf8_strlen (name, 4) <= 0)) {
+			name = e_contact_get_const (contact, E_CONTACT_ORG);
+			if ((!name) || (g_utf8_strlen (name, 4) <= 0))
+				name = _("Unnamed");
+		}
 
 		contact_list = g_list_prepend (contact_list, e_contact_get (contact, E_CONTACT_UID));
 

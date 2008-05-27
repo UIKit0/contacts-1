@@ -1,5 +1,17 @@
 2008-05-27  Thomas Wood  <thomas@openedhand.com>
 
+	Patch by: Simon Josefsson <simon@josefsson.org>
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb),
+	(contacts_changed_cb):
+	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
+	* src/contacts-ui.c: (contacts_display_summary):
+
+	Display organisation name if full name is not available.
+	Closes bug 808.
+
+2008-05-27  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
 	* src/contacts-callbacks-ui.h:
 

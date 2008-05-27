@@ -3,7 +3,7 @@
  *
  *  Authored By Chris Lord <chris@o-hand.com>
  *
- *  Copyright (c) 2005 OpenedHand Ltd - http://o-hand.com
+ *  Copyright (c) 2005, 2008 OpenedHand Ltd - http://o-hand.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,8 +63,11 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		/* Add contact to list */
 		hash = g_new (EContactListHash, 1);
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
-			name = _("Unnamed");
+		if ((!name) || (g_utf8_strlen (name, -1) <= 0)) {
+			name = e_contact_get_const (contact, E_CONTACT_ORG);
+			if ((!name) || (g_utf8_strlen (name, -1) <= 0))
+				name = _("Unnamed");
+		}
 		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		hash->contact = g_object_ref (contact);
 		hash->contacts_data = data;
@@ -136,8 +139,11 @@ contacts_changed_cb (EBookView *book_view, const GList *contacts,
 
 		/* Update list with possibly new name */
 		name = e_contact_get_const (contact, E_CONTACT_FULL_NAME);
-		if ((!name) || (g_utf8_strlen (name, -1) <= 0))
-			name = _("Unnamed");
+		if ((!name) || (g_utf8_strlen (name, -1) <= 0)) {
+			name = e_contact_get_const (contact, E_CONTACT_ORG);
+			if ((!name) || (g_utf8_strlen (name, -1) <= 0))
+				name = _("Unnamed");
+		}
 		gtk_list_store_set (model, &hash->iter, CONTACT_NAME_COL, name,
 			-1);
 
