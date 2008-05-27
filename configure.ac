@@ -28,8 +28,9 @@ if test $ac_cv_type_EContactPhotoType = yes; then
 	AC_DEFINE(HAVE_PHOTO_TYPE, 1, [Defined if EContactPhotoType exists])
 fi
 
-AC_ARG_ENABLE(gnome-vfs, [  --enable-gnome-vfs      Use gnome-vfs for importing and exporting vCards [[default=no]]],
- [want_gnomevfs="$enableval"])
+AC_ARG_ENABLE(gnome-vfs,
+    AC_HELP_STRING([--enable-gnome-vfs], [Disable use of gnome-vfs for importing and exporting vCards]),
+   [want_gnomevfs="$enableval"], [want_gnomevfs="yes"])
 
 if test "$want_gnomevfs" = "yes"; then
 	PKG_CHECK_MODULES(GNOMEVFS, gnome-vfs-2.0)
@@ -38,8 +39,9 @@ if test "$want_gnomevfs" = "yes"; then
 	CONTACTS_LIBS="$CONTACTS_LIBS $GNOMEVFS_LIBS"
 fi
 
-AC_ARG_ENABLE(gconf, [  --enable-gconf          Use gconf for storing settings [[default=no]]],
- [want_gconf="$enableval"])
+AC_ARG_ENABLE(gconf,
+  AC_HELP_STRING([--enable-gconf],[Disable use gconf for storing settings]),
+ [want_gconf="$enableval"], [want_gconf="yes"])
 
 if test "$want_gconf" = "yes"; then
 	PKG_CHECK_MODULES(GCONF, gconf-2.0)
@@ -56,7 +58,7 @@ fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
 
 AC_ARG_ENABLE(platform,
-    AC_HELP_STRING([--enable-platform], [Enable platform specfic code [[default=none]),
+    AC_HELP_STRING([--enable-platform], [Enable platform specfic code [[default=none]]]),
     platform=$enable_plaftform)
 
 if test "$enable_platform" = "maemo"; then

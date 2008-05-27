@@ -1,5 +1,9 @@
 2008-05-27  Thomas Wood  <thomas@openedhand.com>
 
+	* configure.ac: Enable GConf and gnome-vfs options by default
+
+2008-05-27  Thomas Wood  <thomas@openedhand.com>
+
 	* configure.ac:
 	* data/icons/Makefile.am:
 
