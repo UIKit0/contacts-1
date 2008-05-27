@@ -208,12 +208,13 @@ contacts_delete_cb (GtkWidget *source, ContactsData *data)
 	g_list_free (widgets);
 }
 
-void
+int
 contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 {
 	gchar *vcard_string, *card;
 	gchar **vcard_array = NULL;
-	gint i = 0;
+	gint i = 0, import_count = 0;
+	GtkWidget *dialog, *main_window = data->ui->main_window;
 #ifdef HAVE_GNOMEVFS
 	int size;
 	GnomeVFSResult vfs_result;
@@ -225,26 +226,27 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 	if (g_file_get_contents (
 		filename, &vcard_string, NULL, NULL)) {
 #endif
-		vcard_array = g_strsplit (vcard_string, "END:VCARD\n", 0);
+		vcard_array = g_strsplit (vcard_string, "END:VCARD", 0);
 		while ((card = vcard_array[i++]))
 		{
 			EContact *contact = NULL;
-			gchar *str1;
+			gchar *str1, *str2;
 			/* make sure we haven't reached the end */
 			if (strlen (card) < 1)
 				continue;
 			/* END:VCARD is stripped by strsplit, so add it again here */
 			str1 = g_strconcat (card, "END:VCARD", NULL);
-			contact = e_contact_new_from_vcard (str1);
+			/* find the start of the vcard, so evolution does not complain */
+			str2 = strstr (str1, "BEGIN:VCARD");
+			contact = e_contact_new_from_vcard (str2);
 			g_free (str1);
 
 			if (contact) {
 				gint result = GTK_RESPONSE_YES;
+				import_count++;
 				if (do_confirm) {
-					GtkWidget *dialog, *main_window;
 					GList *widgets;
 					
-					main_window = data->ui->main_window;
 					dialog = gtk_message_dialog_new (
 						GTK_WINDOW (main_window),
 						0, GTK_MESSAGE_QUESTION,
@@ -299,6 +301,7 @@ contacts_import (ContactsData *data, const gchar *filename, gboolean do_confirm)
 			filename, gnome_vfs_result_to_string (vfs_result));
 	}
 #endif
+	return import_count;
 }
 
 void
@@ -308,6 +311,7 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 	GtkFileFilter *filter;
 	GtkWidget *main_window =
 		data->ui->main_window;
+	int import_count = 0;
 	GtkWidget *dialog = gtk_file_chooser_dialog_new (
 		_("Import Contact"),
 		GTK_WINDOW (main_window),
@@ -330,7 +334,7 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 		gchar *filename = gtk_file_chooser_get_filename 
 					(GTK_FILE_CHOOSER (dialog));
 		if (filename) {
-			contacts_import (data, filename, FALSE);
+			import_count = contacts_import (data, filename, FALSE);
 			g_free (filename);
 		}
 	}
@@ -338,6 +342,14 @@ contacts_import_cb (GtkWidget *source, ContactsData *data)
 	contacts_set_widgets_sensitive (widgets);
 	gtk_widget_destroy (dialog);
 	g_list_free (widgets);
+
+	dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
+					0, GTK_MESSAGE_INFO,
+					GTK_BUTTONS_OK,
+					ngettext ("Imported one contact", "Imported %d contacts", import_count),
+					import_count);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
 }
 
 void

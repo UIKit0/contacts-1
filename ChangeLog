@@ -1,5 +1,12 @@
 2008-05-27  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-callbacks-ui.c: (contacts_delete_cb):
+	* src/contacts-callbacks-ui.h:
+
+	Fix multiple contact import. Closes bug 368.
+
+2008-05-27  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-gtk.c: (create_main_window):
 	  Fix conflicting accelerators. Closes bug 339.
 
