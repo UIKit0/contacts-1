@@ -55,6 +55,15 @@ if test "$want_gconf" = "yes"; then
 fi
 AM_CONDITIONAL([HAVE_GCONF], [test "$want_gconf" = "yes"])
 
+AC_ARG_ENABLE(platform,
+    AC_HELP_STRING([--enable-platform], [Enable platform specfic code [[default=none]),
+    platform=$enable_plaftform)
+
+if test "$enable_platform" = "maemo"; then
+  INCLUDE_MAEMO_ICONS=26x26
+  AC_SUBST(INCLUDE_MAEMO_ICONS)
+fi
+
 FRONTEND="gtk"
 AC_SUBST(FRONTEND)
 AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-gtk.h"], [Main GTK+ Frontend])
