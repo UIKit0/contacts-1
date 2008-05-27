@@ -1,5 +1,10 @@
 2008-05-27  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-gtk.c: (create_main_window):
+	  Fix conflicting accelerators. Closes bug 339.
+
+2008-05-27  Thomas Wood  <thomas@openedhand.com>
+
 	* configure.ac: Enable GConf and gnome-vfs options by default
 
 2008-05-27  Thomas Wood  <thomas@openedhand.com>

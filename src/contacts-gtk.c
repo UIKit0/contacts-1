@@ -221,7 +221,7 @@ create_main_window (ContactsData *data)
 	main_menubar = gtk_menu_bar_new ();
 	gtk_box_pack_start (GTK_BOX (vbox7), main_menubar, FALSE, FALSE, 0);
 
-	contacts_menu = gtk_menu_item_new_with_mnemonic (_("_Contacts"));
+	contacts_menu = gtk_menu_item_new_with_mnemonic (_("C_ontacts"));
 	gtk_container_add (GTK_CONTAINER (main_menubar), contacts_menu);
 
 	contacts_menu_menu = gtk_menu_new ();
@@ -248,7 +248,7 @@ create_main_window (ContactsData *data)
 	contacts_quit = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
 	gtk_container_add (GTK_CONTAINER (contacts_menu_menu), contacts_quit);
 
-	contact_menu = gtk_menu_item_new_with_mnemonic (_("_Contact"));
+	contact_menu = gtk_menu_item_new_with_mnemonic (_("C_ontact"));
 	gtk_container_add (GTK_CONTAINER (main_menubar), contact_menu);
 	g_object_set (G_OBJECT (contact_menu), "no-show-all", TRUE, NULL);
 
@@ -271,7 +271,7 @@ create_main_window (ContactsData *data)
 	contact_quit = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
 	gtk_container_add (GTK_CONTAINER (contact_menu_menu), contact_quit);
 
-	edit_menu = gtk_menu_item_new_with_mnemonic (_("_Edit"));
+	edit_menu = gtk_menu_item_new_with_mnemonic (_("Ed_it"));
 	gtk_container_add (GTK_CONTAINER (main_menubar), edit_menu);
 
 	menuitem5_menu = gtk_menu_new ();
