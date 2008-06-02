@@ -678,13 +678,15 @@ contacts_is_row_visible_cb (GtkTreeModel * model, GtkTreeIter * iter,
 			gtk_tree_model_get (model, iter, CONTACT_NAME_COL,
 				&name_string, -1);
 			if (name_string) {
-				gunichar *isearch =
-				    kozo_utf8_strcasestrip (search_string);
-				if (!kozo_utf8_strstrcasestrip
-				    (name_string, isearch))
+				gchar *needle, *haystack;
+				needle = g_utf8_casefold (search_string, -1);
+				haystack = g_utf8_casefold (name_string, -1);
+				if (!strstr (haystack, needle))
 					result = FALSE;
+
+				g_free (needle);
+				g_free (haystack);
 				g_free (name_string);
-				g_free (isearch);
 			}
 		}
 	} else if ((data->ui->symbols_radiobutton)){

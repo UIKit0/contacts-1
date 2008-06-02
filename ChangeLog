@@ -1,3 +1,13 @@
+2008-06-02  Thomas Wood  <thomas@openedhand.com>
+
+	Based on patch by: Adrien Bustany <madcat@mymadcat.com>
+
+	* src/contacts-callbacks-ui.c:
+	* src/contacts-utils.c: (e_util_unicode_get_utf8):
+
+	Remove use of kozo functions and fix problems when searching on
+	non-ascii characters. Closes bug 224.
+
 2008-05-27  Thomas Wood  <thomas@openedhand.com>
 
 	Patch by: Simon Josefsson <simon@josefsson.org>
