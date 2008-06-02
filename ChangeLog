@@ -1,5 +1,12 @@
 2008-06-02  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+
+	Remove unused function. Closes bug 774.
+
+2008-06-02  Thomas Wood  <thomas@openedhand.com>
+
 	Based on patch by: Adrien Bustany <madcat@mymadcat.com>
 
 	* src/contacts-callbacks-ui.c:

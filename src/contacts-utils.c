@@ -28,19 +28,6 @@
 #include "contacts-defs.h"
 #include "contacts-main.h"
 
-/* The following functions taken from
- * http://svn.o-hand.com/repos/kozo/server/src/kozo-utf8.c
- */
- /*****************************************************************************/
-char *
-e_util_unicode_get_utf8 (const char *text, gunichar * out)
-{
-	*out = g_utf8_get_char (text);
-
-	return (G_UNLIKELY (*out == (gunichar) - 1)) ? NULL :
-	    g_utf8_next_char (text);
-}
-
 /******************************************************************************/
 
 /* List of always-available fields */

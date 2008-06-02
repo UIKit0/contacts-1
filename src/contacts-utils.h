@@ -22,13 +22,6 @@
 #include <libebook/e-book.h>
 #include "contacts-defs.h"
 
-char *e_util_unicode_get_utf8 (const char *text, gunichar * out);
-
-const char *kozo_utf8_strstrcasestrip (const char *haystack,
-				       const gunichar * needle);
-
-gunichar *kozo_utf8_strcasestrip (const char *str);
-
 const gchar **contacts_get_field_types (const gchar *attr_name);
 
 const ContactsStructuredField *contacts_get_structured_field (
