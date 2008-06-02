@@ -1,5 +1,11 @@
 2008-06-02  Thomas Wood  <thomas@openedhand.com>
 
+	* src/contacts-gtk.c: (create_main_window): Load the default contact
+	icon at startup to prevent an extra size requests when the contact is
+	loaded.
+
+2008-06-02  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-ui.c: (contacts_display_summary): Don't display blank
 	fields in the summary view.
 

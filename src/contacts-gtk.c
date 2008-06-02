@@ -394,7 +394,9 @@ create_main_window (ContactsData *data)
 	gtk_misc_set_padding (GTK_MISC (summary_name_label), 6, 0);
 	gtk_label_set_ellipsize (GTK_LABEL (summary_name_label), PANGO_ELLIPSIZE_END);
 
-	photo_image = gtk_image_new ();
+	/* load stock_person as the default icon so the image has the correct
+	 * size before a contact is loaded */
+	photo_image = gtk_image_new_from_icon_name ("stock_person", GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_end (GTK_BOX (preview_header_hbox), photo_image, FALSE, TRUE, 6);
 	gtk_misc_set_padding (GTK_MISC (photo_image), 1, 0);
 
