@@ -131,14 +131,20 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		if (!field)
 			continue;
 		
+		attr_name = e_vcard_attribute_get_name (attr);
+		/* we already have the Full Name above ... */
+		if (!strcmp (attr_name, "FN")) continue;
+
 		values = e_vcard_attribute_get_values (attr);
 		value_text =
 			contacts_string_list_as_string (values, "\n", FALSE);
 		
-		attr_name = e_vcard_attribute_get_name (attr);
-
-		/* we already have the Full Name above ... */
-		if (!strcmp (attr_name, "FN")) continue;
+		/* don't display blank fields */
+		if (!value_text || strlen (value_text) < 1)
+		{
+			g_free (value_text);
+			continue;
+		}
 
 		types = contacts_get_field_types (attr_name);
 		if (types) {
