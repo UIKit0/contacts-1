@@ -1,5 +1,12 @@
 2008-06-02  Thomas Wood  <thomas@openedhand.com>
 
+	* src/bacon-message-connection.h:
+	* src/contacts-main.c: (main):
+
+	Ensure BaconMessageConnection is freed on exit. Closes bug 139.
+
+2008-06-02  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-gtk.c: (create_main_window): Load the default contact
 	icon at startup to prevent an extra size requests when the contact is
 	loaded.

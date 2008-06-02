@@ -249,5 +249,7 @@ main (int argc, char **argv)
 	/* free various things */
 	g_free (data->ui);
 
+	bacon_message_connection_free (mc);
+
 	return 0;
 }
