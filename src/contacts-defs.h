@@ -95,6 +95,7 @@ typedef struct {
 	GtkWidget *summary_name_label;
 	GtkWidget *summary_table;
 	GtkWidget *summary_vbox;
+	GtkWidget *summary_group_label;
 } ContactsUI;
 
 typedef struct {

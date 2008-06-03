@@ -180,7 +180,9 @@ create_main_window (ContactsData *data)
 	GtkWidget *vbox3;
 	GtkWidget *summary_vbox;
 	GtkWidget *preview_header_hbox;
+	GtkWidget *preview_namegroup_vbox;
 	GtkWidget *summary_name_label;
+	GtkWidget *summary_group_label;
 	GtkWidget *photo_image;
 	GtkWidget *scrolledwindow3;
 	GtkWidget *viewport1;
@@ -385,14 +387,28 @@ create_main_window (ContactsData *data)
 	preview_header_hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (summary_vbox), preview_header_hbox, FALSE, TRUE, 0);
 
+	preview_namegroup_vbox = gtk_vbox_new (FALSE, 0);
+
 	summary_name_label = gtk_label_new (NULL);
-	gtk_box_pack_start (GTK_BOX (preview_header_hbox), summary_name_label, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (preview_namegroup_vbox), summary_name_label, TRUE, TRUE, 0);
 	GTK_WIDGET_SET_FLAGS (summary_name_label, GTK_CAN_FOCUS);
 	gtk_label_set_use_markup (GTK_LABEL (summary_name_label), TRUE);
 	gtk_label_set_selectable (GTK_LABEL (summary_name_label), TRUE);
 	gtk_misc_set_alignment (GTK_MISC (summary_name_label), 0, 0.5);
 	gtk_misc_set_padding (GTK_MISC (summary_name_label), 6, 0);
 	gtk_label_set_ellipsize (GTK_LABEL (summary_name_label), PANGO_ELLIPSIZE_END);
+
+	summary_group_label = gtk_label_new (NULL);
+	gtk_box_pack_start (GTK_BOX (preview_namegroup_vbox), summary_group_label, TRUE, TRUE, 0);
+	GTK_WIDGET_SET_FLAGS (summary_group_label, GTK_CAN_FOCUS);
+	gtk_label_set_use_markup (GTK_LABEL (summary_group_label), TRUE);
+	gtk_label_set_selectable (GTK_LABEL (summary_group_label), TRUE);
+	gtk_misc_set_alignment (GTK_MISC (summary_group_label), 0, 0.5);
+	gtk_misc_set_padding (GTK_MISC (summary_group_label), 6, 0);
+	gtk_label_set_ellipsize (GTK_LABEL (summary_group_label), PANGO_ELLIPSIZE_END);
+
+	gtk_box_pack_start (GTK_BOX (preview_header_hbox), preview_namegroup_vbox, TRUE, TRUE, 0);
+
 
 	/* load stock_person as the default icon so the image has the correct
 	 * size before a contact is loaded */
@@ -594,6 +610,7 @@ create_main_window (ContactsData *data)
 
 	ui->summary_hbuttonbox = summary_hbuttonbox;
 	ui->summary_name_label = summary_name_label;
+	ui->summary_group_label = summary_group_label;
 	ui->summary_table = summary_table;
 	ui->summary_vbox = summary_vbox;
 

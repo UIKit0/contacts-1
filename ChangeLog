@@ -1,5 +1,15 @@
 2008-06-03  Thomas Wood  <thomas@openedhand.com>
 
+	Based on patch by: Adrien Bustany <madcat@mymadcat.com>
+
+	* src/contacts-defs.h:
+	* src/contacts-gtk.c: (create_main_window):
+	* src/contacts-ui.c: (contacts_display_summary):
+
+	Fix unexpected triple-click behavior in Name/Groups display (bug 341)
+
+2008-06-03  Thomas Wood  <thomas@openedhand.com>
+
 	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
 
 	* configure.ac:

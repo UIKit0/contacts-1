@@ -57,7 +57,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	const gchar *string;
 	GtkImage *photo;
 	GList *a, *groups, *attributes;
-	gchar *name_markup, *groups_text = NULL;
+	gchar *name_markup, *groups_markup, *groups_text = NULL;
 	GValue *can_focus = g_new0 (GValue, 1);
 
 	if (!E_IS_CONTACT (contact))
@@ -76,10 +76,12 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	}
 	groups = e_contact_get (contact, E_CONTACT_CATEGORY_LIST);
 	groups_text = contacts_string_list_as_string (groups, ", ", FALSE);
-	if (groups_text)
-		name_markup = g_markup_printf_escaped ("<big><b>%s</b></big>\n<small>%s</small>", string ? string : "", groups_text);
-	else
-		name_markup = g_markup_printf_escaped ("<big><b>%s</b></big>", string ? string : "");
+	groups_markup = g_markup_printf_escaped ("<small>%s</small>", groups_text ? groups_text : "");
+	gtk_label_set_markup (GTK_LABEL(data->ui->summary_group_label),
+			      groups_markup);
+	g_free (groups_markup);
+
+	name_markup = g_markup_printf_escaped ("<big><b>%s</b></big>", string ? string : "");
 
 	gtk_label_set_markup (GTK_LABEL (widget), name_markup);
 	if (groups) {
