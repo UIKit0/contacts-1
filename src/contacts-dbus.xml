@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/">
+  <interface name="org.gnome.Contacts">
+    <method name="NewContact" />
+    <method name="ViewContact">
+      <arg name="uid" type="s" direction="in"/>
+    </method>
+    <method name="EditContact">
+      <arg name="uid" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

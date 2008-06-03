@@ -36,6 +36,8 @@
 #include "contacts-edit-pane.h"
 #include "contacts-ui.h"
 
+#include "contacts-dbus.h"
+
 void
 contacts_update_treeview (ContactsData *data)
 {
@@ -184,6 +186,8 @@ main (int argc, char **argv)
 	data->initialising = TRUE; /* initialising until contacts have been loaded for the first time */
 	bacon_message_connection_set_callback (
 		mc, (BaconMessageReceivedFunc)contacts_bacon_cb, data);
+
+	contacts_dbus_init_for_session (data);
 
 	/* Set critical errors to close application */
 	//g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);

@@ -1,3 +1,19 @@
+2008-06-03  Thomas Wood  <thomas@openedhand.com>
+
+	Patch by: Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/contacts-dbus.c:
+	* src/contacts-dbus.h:
+	* src/contacts-dbus.xml:
+	* src/contacts-main.c: (main):
+	* src/contacts-utils.c: (contacts_set_selected_contact),
+	(contacts_set_widgets_sensitive):
+	* src/contacts-utils.h:
+
+	Add a simple D-Bus interface to Contacts.
+
 2008-06-02  Thomas Wood  <thomas@openedhand.com>
 
 	* src/bacon-message-connection.h:

@@ -75,3 +75,5 @@ gboolean contacts_chooser (ContactsData *data, const gchar *title,
 GList *contacts_set_widgets_desensitive (GtkWidget *widget);
 
 void contacts_set_widgets_sensitive (GList *widgets);
+
+void contacts_window_present (ContactsData *data);

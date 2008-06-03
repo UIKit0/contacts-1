@@ -72,7 +72,23 @@ AC_DEFINE_UNQUOTED(FRONTEND_HEADER, ["contacts-gtk.h"], [Main GTK+ Frontend])
 
 AM_GCONF_SOURCE_2
 
-AC_OUTPUT([
+AC_ARG_ENABLE(dbus,
+    AC_HELP_STRING([--enable-dbus],
+    [Enable D-Bus interface [[default=yes]]]),
+    [want_dbus="$enableval"],[want_dbus=yes])
+
+if test "x$want_dbus" = "xyes"; then
+	PKG_CHECK_MODULES(DBUS, dbus-1 dbus-glib-1)
+
+	AC_DEFINE(HAVE_DBUS, 1, [Have D-Bus support])
+	AC_SUBST(DBUS_CFLAGS)
+	AC_SUBST(DBUS_LIBS)
+fi
+AM_CONDITIONAL(HAVE_DBUS, test "x$want_dbus" = "xyes")
+
+AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
+
+AC_CONFIG_FILES([
 Makefile
 data/Makefile
 data/icons/Makefile
@@ -86,3 +102,6 @@ data/icons/scalable/Makefile
 po/Makefile.in
 src/Makefile
 ])
+
+AC_OUTPUT
+

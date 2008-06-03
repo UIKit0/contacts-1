@@ -247,6 +247,7 @@ contacts_set_selected_contact (ContactsData *data, const gchar *uid)
 		if (strcmp (uid, ruid) == 0) {
 			GtkTreeSelection *selection =
 				gtk_tree_view_get_selection (treeview);
+			gtk_tree_selection_unselect_all (selection);
 			if (selection)
 				gtk_tree_selection_select_iter (
 					selection, &iter);
@@ -745,3 +746,49 @@ contacts_set_widgets_sensitive (GList *widgets)
 		gtk_widget_set_sensitive (GTK_WIDGET (w->data), TRUE);
 	}
 }
+
+gboolean
+contacts_window_get_is_visible (GtkWindow *window)
+{
+	GdkWindowState  state;
+	GdkWindow      *gdk_window;
+
+	g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
+
+	gdk_window = GTK_WIDGET (window)->window;
+	if (!gdk_window) {
+		return FALSE;
+	}
+
+	state = gdk_window_get_state (gdk_window);
+	if (state & (GDK_WINDOW_STATE_WITHDRAWN | GDK_WINDOW_STATE_ICONIFIED)) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+/* Takes care of moving the window to the current workspace. */
+void
+contacts_window_present (ContactsData *data)
+{
+	guint32 timestamp;
+	GtkWidget *window = gtk_widget_get_toplevel (data->ui->summary_vbox);
+
+	g_return_if_fail (GTK_WIDGET_TOPLEVEL (window));
+	g_return_if_fail (GTK_IS_WINDOW (window));
+
+	/* There are three cases: hidden, visible, visible on another
+	 * workspace.
+	 */
+	if (!contacts_window_get_is_visible (GTK_WINDOW (window))) {
+		/* Hide it so present brings it to the current workspace. */
+		gtk_widget_hide (GTK_WIDGET (window));
+	}
+
+	timestamp = gtk_get_current_event_time ();
+	gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), FALSE);
+	gtk_window_present_with_time (GTK_WINDOW (window), timestamp);
+}
+
