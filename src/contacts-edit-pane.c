@@ -2,6 +2,7 @@
  *  Contacts - A small libebook-based address book.
  *
  *  Authored By Chris Lord <chris@o-hand.com>
+ *              Thomas Wood <thomas@o-hand.com>
  *
  *  Copyright (c) 2005 OpenedHand Ltd - http://o-hand.com
  *
@@ -22,6 +23,7 @@
 #include <glib/gprintf.h>
 #include <gtk/gtk.h>
 #include <libebook/e-book.h>
+#include <libebook/e-name-western.h>
 
 #include "contacts-defs.h"
 #include "contacts-main.h"
@@ -225,6 +227,9 @@ contacts_type_entry_changed (GtkWidget *widget, EContactTypeChangeData *data)
 		} else
 			e_vcard_attribute_param_add_value (
 				data->param, (const char *)v->data);
+
+
+
 		g_list_foreach (v, (GFunc)g_free, NULL);
 		g_list_free (v);
 		*data->changed = TRUE;
@@ -249,6 +254,45 @@ contacts_entry_changed (GtkWidget *widget, EContactChangeData *data)
 		e_vcard_attribute_add_value (data->attr,
 					     (const gchar *)v->data);
 	}
+
+	if (!g_ascii_strcasecmp (e_vcard_attribute_get_name (data->attr), EVC_FN))
+	{
+		/* add N and X-EVOLUTION-FILE-AS attributes */
+		ENameWestern *name;
+		gchar *file_as;
+		EVCardAttribute *attr;
+		EVCard *evc = E_VCARD (data->contact);
+
+		name = e_name_western_parse ((char*)values->data);
+		
+		/* Add "N" attribute */
+		attr = e_vcard_get_attribute (evc, EVC_N);
+		if (attr)
+			e_vcard_attribute_remove_values (attr);
+		else
+		{
+			attr = e_vcard_attribute_new ("", EVC_N);
+			e_vcard_add_attribute (evc, attr);
+		}
+#define SAFESTR(x) (x) ? x : ""
+		e_vcard_attribute_add_value (attr, SAFESTR (name->last));
+		e_vcard_attribute_add_value (attr, SAFESTR (name->first));
+		e_vcard_attribute_add_value (attr, SAFESTR (name->middle));
+		e_vcard_attribute_add_value (attr, SAFESTR (name->prefix));
+		e_vcard_attribute_add_value (attr, SAFESTR (name->suffix));
+
+		/* Add file-as attribute for evolution */
+		file_as = g_strdup_printf ("%s, %s", name->last, name->first);
+		attr = e_vcard_get_attribute (evc, EVC_X_FILE_AS);
+		if (attr)
+			e_vcard_remove_attribute (evc, attr);
+		attr = e_vcard_attribute_new ("", EVC_X_FILE_AS);
+		e_vcard_add_attribute_with_value (evc, attr, file_as);
+		g_free (file_as);
+
+		g_free (name);
+	}
+
 	g_list_foreach (values, (GFunc)g_free, NULL);
 	g_list_free (values);
 	*data->changed = TRUE;
