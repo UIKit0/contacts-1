@@ -60,32 +60,41 @@ static const ContactsStructuredField contacts_sfields[] = {
 	{ NULL, 0, NULL, FALSE }
 };
 
-struct contacts_field_types_def {
-	char *field;
-	gchar **types;
+/* Translators: Home, Cell, Office, Fax and Other are types of telephone attributes */
+static const TypeTuple tel_types[] =
+{
+	{"HOME", N_("Home")},
+	{"CELL", N_("Cell")},
+	{"WORK", N_("Work")},
+	{"FAX", N_("Fax")},
+	{"OTHER", N_("Other")},
+	{NULL}
 };
 
-static const struct contacts_field_types_def contacts_field_types[] = {
-        /* TODO: can these be i18n-ized? */
-	{ "TEL", (gchar*[]){"Home", "Msg", "Work", "Pref", "Voice", "Fax",
-			    "Cell", "Video", "Pager", "BBS", "Modem", "Car",
-			    "ISDN", "PCS", NULL }},
-	{ "EMAIL", (gchar*[]){"Internet", "X400", "Pref", NULL}},
-	{ "ADR", (gchar*[]){"Dom", "Intl", "Postal", "Parcel", "Home", "Work", "Pref", NULL}},
-	{ NULL, NULL }
+/* Translators: Home, Office and Other are types of contact attributes */
+static const TypeTuple generic_types[] =
+{
+	{"HOME", N_("Home")},
+	{"WORK", N_("Work")},
+	{"OTHER", N_("Other")},
+	{NULL}
 };
 
-const gchar **
+const TypeTuple *
 contacts_get_field_types (const gchar *attr_name)
 {
 	guint i;
 
-	for (i = 0; contacts_field_types[i].field; i++) {
-		if (strcmp (contacts_field_types[i].field, attr_name) == 0)
-			return (const gchar **)contacts_field_types[i].types;
-	}
-	
-	return NULL;
+	if (!attr_name)
+		return NULL;
+
+	if (!strcmp (attr_name, "TEL"))
+		return tel_types;
+	else if (!strcmp (attr_name, "EMAIL") || !strcmp (attr_name, "ADR"))
+		return generic_types;
+	else
+		return NULL;
+
 }
 
 const ContactsStructuredField *

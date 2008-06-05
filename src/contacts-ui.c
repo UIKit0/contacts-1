@@ -124,7 +124,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		GtkWidget *name_widget, *value_widget;
 		gchar *value_text, *name_markup;
 		GList *values = NULL;
-		const gchar **types;
+		const TypeTuple *types;
 		const gchar *attr_name;
 		EVCardAttribute *attr = (EVCardAttribute *)a->data;
 		const ContactsField *field = contacts_get_contacts_field (
@@ -151,7 +151,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		types = contacts_get_field_types (attr_name);
 		if (types) {
 			gchar *types_string = NULL;
-			const gchar **valid_types;
+			const TypeTuple *valid_types;
 			GList *types_list = NULL;
 			guint i;
 
@@ -165,12 +165,12 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 					types_string = (gchar *)
 							(types_list->data)+2;
 				else if (valid_types) {
-					for (i = 0; valid_types[i]; i++) {
+					for (i = 0; valid_types[i].index; i++) {
 						if (g_ascii_strcasecmp (
 							types_list->data,
-							valid_types[i]) == 0) {
+							valid_types[i].index) == 0) {
 							types_string = (gchar *)
-								valid_types[i];
+								_(valid_types[i].value);
 							break;
 						}
 					}

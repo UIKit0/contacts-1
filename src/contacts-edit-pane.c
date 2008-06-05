@@ -207,13 +207,13 @@ contacts_type_entry_changed (GtkWidget *widget, EContactTypeChangeData *data)
 	
 	if (v) {
 		guint i;
-		const gchar **types =
+		const TypeTuple *types =
 			contacts_get_field_types (data->attr_name);
 		const gchar *type = (const gchar *)v->data;
 		gboolean custom_type = TRUE;
 		
-		for (i = 0; types[i]; i++) {
-			if (g_ascii_strcasecmp (type, types[i]) == 0)
+		for (i = 0; types[i].index; i++) {
+			if (g_ascii_strcasecmp (type, types[i].index) == 0)
 				custom_type = FALSE;
 		}
 		
@@ -302,7 +302,7 @@ static GtkWidget *
 contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 	gboolean *changed)
 {
-	const gchar **types;
+	const TypeTuple *types;
 
 	types = contacts_get_field_types (e_vcard_attribute_get_name (attr));
 	if (types) {
@@ -336,15 +336,15 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 		data->attr_name = e_vcard_attribute_get_name (attr);
 		data->changed = changed;
 		
-		for (i = 0; types[i]; i++) {
+		for (i = 0; types[i].index; i++) {
 			gtk_combo_box_append_text (
-				GTK_COMBO_BOX (combo), types[i]);
+				GTK_COMBO_BOX (combo), _(types[i].value));
 			/* Note: We use a case-insensitive search here, as
 			 * specified in the spec (as the types are predefined,
 			 * we can use non-locale-friendly strcasecmp)
 			 */
 			if (first_type) {
-				if (g_ascii_strcasecmp (types[i], first_type) == 0) {
+				if (g_ascii_strcasecmp (types[i].index, first_type) == 0) {
 					first_type = NULL;
 					gtk_combo_box_set_active (
 						GTK_COMBO_BOX (combo), i);
@@ -358,9 +358,8 @@ contacts_type_edit_widget_new (EVCardAttribute *attr, gboolean multi_line,
 				(const gchar *)(first_type+2));
 			first_type = NULL;
 		}
-		gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Other"));
 		if (first_type)
-			gtk_combo_box_set_active (GTK_COMBO_BOX (combo), i);
+			gtk_combo_box_set_active (GTK_COMBO_BOX (combo), i-1);
 		gtk_widget_show (combo);
 		if (/*(e_vcard_attribute_is_single_valued (attr)) &&*/
 		    (multi_line == FALSE))

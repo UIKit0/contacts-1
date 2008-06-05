@@ -22,7 +22,12 @@
 #include <libebook/e-book.h>
 #include "contacts-defs.h"
 
-const gchar **contacts_get_field_types (const gchar *attr_name);
+typedef struct {
+	gchar *index;
+	gchar *value;
+} TypeTuple;
+
+const TypeTuple* contacts_get_field_types (const gchar *attr_name);
 
 const ContactsStructuredField *contacts_get_structured_field (
 	const gchar *attr_name, guint field);

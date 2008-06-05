@@ -1,6 +1,17 @@
 2008-06-05  Thomas Wood  <thomas@openedhand.com>
 
 	* src/contacts-edit-pane.c: (contacts_type_entry_changed),
+	(contacts_type_edit_widget_new):
+	* src/contacts-ui.c: (contacts_display_summary):
+	* src/contacts-utils.c:
+	* src/contacts-utils.h:
+
+	Enable attribute type labels to be translatable and remove labels that
+	are probably not useful to most users. Closes bug 305.
+
+2008-06-05  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-edit-pane.c: (contacts_type_entry_changed),
 	(contacts_entry_changed):
 
 	Add N and X-EVOLUTION-FILE-AS fields to vcard. Fixes bugs 310 and 659.
