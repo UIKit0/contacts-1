@@ -150,6 +150,7 @@ typedef struct {
 	guint field;
 	const gchar *subfield_name;
 	gboolean multiline;
+	gint priority; /* 0 = hidden */
 } ContactsStructuredField;
 
 #define REQUIRED 100	/* Contacts with priority <= REQUIRED have to be shown

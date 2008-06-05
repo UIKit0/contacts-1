@@ -500,6 +500,9 @@ contacts_edit_widget_new (EContact *contact, EVCardAttribute *attr,
 			if (sfield) {
 				gchar *label_markup;
 
+				if (sfield->priority == 0)
+					continue;
+
 				label = gtk_label_new (NULL);
 				multiline = sfield->multiline;				
 				gtk_label_set_use_markup (GTK_LABEL (label),

@@ -1,4 +1,13 @@
-2008-06-05  Thomas Wood  <thos@gnome.org>
+2008-06-05  Thomas Wood  <thomas@openedhand.com>
+
+	* src/contacts-defs.h:
+	* src/contacts-edit-pane.c: (contacts_edit_widget_new):
+	* src/contacts-utils.c:
+
+	Prevent Ext and Locality fields from being displayed in the address
+	editor. Closes bug 169.
+
+2008-06-05  Thomas Wood  <thomas@openedhand.com>
 
 	Patch by: Adrien Bustany <madcat@mymadcat.com>
 
