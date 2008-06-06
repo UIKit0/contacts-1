@@ -1,5 +1,9 @@
 2008-06-06  Thomas Wood  <thomas@openedhand.com>
 
+	* POTFILES.in: Add missing files
+
+2008-06-06  Thomas Wood  <thomas@openedhand.com>
+
 	* en_GB.po: Update en_GB translation
 
 2008-06-05  Thomas Wood  <thomas@openedhand.com>
