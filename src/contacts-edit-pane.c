@@ -945,30 +945,6 @@ contacts_remove_entries (GtkWidget *entry)
 	}
 }
 
-static gboolean
-contacts_widget_is_label (GtkWidget *widget)
-{
-	if (GTK_IS_LABEL (widget))
-		return TRUE;
-	else if (GTK_IS_EXPANDER (widget))
-		return FALSE;
-	else if (GTK_IS_CONTAINER (widget)) {
-		GList *c, *children =
-			gtk_container_get_children (GTK_CONTAINER (widget));
-		
-		for (c = children; c; c = c->next) {
-			if (contacts_widget_is_label (GTK_WIDGET (c->data))) {
-				g_list_free (children);
-				return TRUE;
-			}
-		}
-		
-		g_list_free (children);
-	}
-	
-	return FALSE;
-}
-
 void
 contacts_edit_set_focus_cb (GtkWidget *button, GtkWidget *widget,
 	GtkWindow *window)

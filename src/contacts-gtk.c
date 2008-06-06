@@ -108,7 +108,7 @@ contacts_ui_update_groups_list (ContactsData *data)
 	gtk_list_store_clear (list);
 	gtk_list_store_insert_with_values (list, &dummy, 0, 0, _("All"), -1);
 	gtk_list_store_insert_with_values (list, &dummy, 1, 0, NULL, -1);
-	data->contacts_groups = g_list_sort (data->contacts_groups, groups_compare);
+	data->contacts_groups = g_list_sort (data->contacts_groups, (GCompareFunc) groups_compare);
 	g_list_foreach (data->contacts_groups, add_to_list, list);
 	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NULL, -1);
 	gtk_list_store_insert_with_values (list, &dummy, -1, 0, NO_CATEGORY_LABEL, -1);

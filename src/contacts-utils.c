@@ -88,8 +88,6 @@ static const TypeTuple generic_types[] =
 const TypeTuple *
 contacts_get_field_types (const gchar *attr_name)
 {
-	guint i;
-
 	if (!attr_name)
 		return NULL;
 
@@ -99,7 +97,6 @@ contacts_get_field_types (const gchar *attr_name)
 		return generic_types;
 	else
 		return NULL;
-
 }
 
 const ContactsStructuredField *
