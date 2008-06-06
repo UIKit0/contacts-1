@@ -82,6 +82,18 @@ start_query (EBook *book, EBookStatus status, EBookView *book_view,
 		
 		e_book_view_start (book_view);
 	} else {
+		GtkWidget *dlg;
+		dlg = gtk_message_dialog_new (
+				GTK_WINDOW (data->ui->main_window),
+				0, GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_OK,
+				_("Error starting address book"));
+		gtk_message_dialog_format_secondary_text (
+			GTK_MESSAGE_DIALOG (dlg),
+			_("Got error %d when getting book view"), status);
+		gtk_dialog_run (GTK_DIALOG (dlg));
+		gtk_widget_destroy (dlg);
+
 		g_warning("Got error %d when getting book view", status);
 	}
 }
@@ -98,7 +110,22 @@ opened_book (EBook *book, EBookStatus status, gpointer closure)
 			-1, start_query, data);
 		e_book_query_unref (query);
 	} else {
+		GtkWidget *dlg;
+		dlg = gtk_message_dialog_new (
+				GTK_WINDOW (data->ui->main_window),
+				0, GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_OK,
+				_("Error opening address book"));
+		gtk_message_dialog_format_secondary_text (
+			GTK_MESSAGE_DIALOG (dlg),
+			_("Got error %d when opening book"), status);
+		gtk_dialog_run (GTK_DIALOG (dlg));
+		gtk_widget_destroy (dlg);
+
+
 		g_warning("Got error %d when opening book", status);
+
+
 	}
 }
 
