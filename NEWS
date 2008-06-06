@@ -1,3 +1,34 @@
+Overview of Changes in 0.9 (since 0.8)
+======================================
+
+Bugs fixed:
+
+* 139: Contacts does not exit cleanly, leaves socket behind
+* 169: horrificially non-obvious choices of field names
+* 224: Search chokes on non-ascii chars
+* 275: tab key behavior inconsistent
+* 305: Available labels for email are insane
+* 306: Better location labels for us stupid Americans
+* 308: No way to view "unfiled" contacts
+* 309: Groups dropdown in main window not alpha-sorted
+* 310: Contacts does not create "file under" field, not usable in Evolution
+* 318: Do not show fields that are blank
+* 338: Possible to add duplicate groups to a contact
+* 339: Keyboard shortcut conflicts
+* 341: Unexpected triple-click behavior in Name/Groups display
+* 368: Should import concatenated vcards
+* 489: Missing field definitions in Contacts.
+* 492: Only installing 26x26 icons when building for Maemo platforms.
+* 659: New contacts do not have a N: field - my mobile reject them
+* 774: Fails to build from source under Ubuntu Hardy
+* 808: All vcards for companies are displayed as 'Unnamed'
+* 885, 42: Attributes not sorted in view mode
+* 888: Contacts segfaults when provided with incomplete options on command line
+* 890: Typos in source code
+* 893: Remove recursive function
+* 896: Simple DBus interface
+
+
 Overview of Changes in 0.8 (since 0.7)
 ======================================
 

@@ -1,5 +1,12 @@
 2008-06-06  Thomas Wood  <thomas@openedhand.com>
 
+	* NEWS:
+	* configure.ac:
+
+	Updated for 0.9 release
+
+2008-06-06  Thomas Wood  <thomas@openedhand.com>
+
 	* src/contacts-edit-pane.c: (contacts_remove_entries):
 	* src/contacts-gtk.c: (contacts_ui_update_groups_list):
 	* src/contacts-utils.c: (contacts_get_field_types):
