@@ -2,8 +2,8 @@ Source: contacts
 Section: gnome
 Priority: optional
 Maintainer: Ross Burton <ross@debian.org>
-Build-Depends: debhelper (>= 4.1.0), cdbs, intltool, libgtk2.0-dev, libebook1.2-dev (>= 1.8), libgconf2-dev
-Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 4.1.0), cdbs, intltool, libgtk2.0-dev, libebook1.2-dev (>= 1.8), libgconf2-dev, libdbus-glib-1-dev
+Standards-Version: 3.7.3
 
 Package: contacts
 Architecture: any
