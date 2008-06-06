@@ -58,9 +58,9 @@ static const ContactsStructuredField contacts_sfields[] = {
 	{ "ADR", 0, N_("PO Box"), FALSE, -1 },
 	{ "ADR", 1, N_("Ext."), TRUE, 0 },
 	{ "ADR", 2, N_("Street"), TRUE, 1 },
-	{ "ADR", 3, N_("Locality"), FALSE, 0 },
-	{ "ADR", 4, N_("Region"), FALSE, 1 },
-	{ "ADR", 5, N_("Post Code"), FALSE, 1 },
+	{ "ADR", 3, N_("City"), FALSE, 1 },
+	{ "ADR", 4, N_("Provice"), FALSE, 1 },
+	{ "ADR", 5, N_("Postal Code"), FALSE, 1 },
 	{ "ADR", 6, N_("Country"), FALSE, 1 },
 	{ NULL, 0, NULL, FALSE }
 };
