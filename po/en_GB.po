@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-05 14:54+0100\n"
+"POT-Creation-Date: 2008-06-06 11:20+0100\n"
 "PO-Revision-Date: 2008-06-05 14:59+0100\n"
 "Last-Translator: Thomas Wood <thomas@openedhand.com>\n"
 "Language-Team: \n"
@@ -15,52 +15,54 @@ msgid "Address book"
 msgstr "Address book"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-main.c:158 ../src/contacts-gtk.c:216
+#: ../src/contacts-main.c:185 ../src/contacts-gtk.c:216
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../src/contacts-callbacks-ui.c:163
+#: ../src/contacts-callbacks-ui.c:194
 msgid "Unnamed"
 msgstr "Unnamed"
 
-#: ../src/contacts-callbacks-ui.c:168
+#: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
 msgstr "Are you sure you want to delete '%s'?"
 
-#: ../src/contacts-callbacks-ui.c:172
+#: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
 msgstr "Are you sure you want to delete %d contacts?"
 
-#: ../src/contacts-callbacks-ui.c:257
+#: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
 msgstr "Would you like to import contact '%s'?"
 
-#: ../src/contacts-callbacks-ui.c:262
+#: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
 msgstr "_Show contact"
 
-#: ../src/contacts-callbacks-ui.c:263
+#: ../src/contacts-callbacks-ui.c:294
 msgid "_Import contact"
 msgstr "_Import contact"
 
-#: ../src/contacts-callbacks-ui.c:319
+#: ../src/contacts-callbacks-ui.c:350
 msgid "Import Contact"
 msgstr "Import Contact"
 
-#: ../src/contacts-callbacks-ui.c:352
-#, c-format
+#: ../src/contacts-callbacks-ui.c:383
+#, fuzzy, c-format
 msgid "Imported one contact"
-msgstr "Imported one contact"
+msgid_plural "Imported %d contacts"
+msgstr[0] "Imported one contact"
+msgstr[1] "Imported one contact"
 
-#: ../src/contacts-callbacks-ui.c:395
+#: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
 msgstr "Export Contact"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:432
+#: ../src/contacts-callbacks-ui.c:463
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
@@ -69,15 +71,15 @@ msgstr ""
 "<big><b>The file \"%s\" already exists.\n"
 "Do you want to replace it?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:438
+#: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
 msgstr "Replacing it will overwrite its contents."
 
-#: ../src/contacts-callbacks-ui.c:442
+#: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
 msgstr "_Replace"
 
-#: ../src/contacts-callbacks-ui.c:587
+#: ../src/contacts-callbacks-ui.c:618
 msgid ""
 "Contacts is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -109,11 +111,11 @@ msgstr ""
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:602
+#: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
 msgstr "translator-credits"
 
-#: ../src/contacts-callbacks-ui.c:647 ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "All"
 
@@ -144,7 +146,7 @@ msgstr "Cannot add contact: %s"
 #. * argument is the field's
 #. * name, ex. <b>Country:</b>
 #.
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:513
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
@@ -154,28 +156,44 @@ msgstr "<b>%s:</b>"
 msgid "<b>Type:</b>"
 msgstr "<b>Type:</b>"
 
-#: ../src/contacts-edit-pane.c:820
+#: ../src/contacts-edit-pane.c:823
 msgid "Change groups"
 msgstr "Change groups"
 
-#: ../src/contacts-edit-pane.c:820
+#: ../src/contacts-edit-pane.c:823
 msgid "<b>Choose groups</b>"
 msgstr "<b>Choose groups</b>"
 
-#: ../src/contacts-edit-pane.c:882
+#: ../src/contacts-edit-pane.c:885
 msgid "Add field"
 msgstr "Add field"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:884
+#: ../src/contacts-edit-pane.c:887
 msgid "<b>Choose a field</b>"
 msgstr "<b>Choose a field</b>"
 
-#: ../src/contacts-edit-pane.c:1254
+#: ../src/contacts-edit-pane.c:1257
 msgid "Edit contact"
 msgstr "Edit contact"
 
-#: ../src/contacts-main.c:160
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr ""
+
+#: ../src/contacts-main.c:93
+msgid "Got error %d when getting book view"
+msgstr "Got error %d when getting book view"
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr "Error opening address book"
+
+#: ../src/contacts-main.c:121
+msgid "Got error %d when opening book"
+msgstr "Got error %d when opening book"
+
+#: ../src/contacts-main.c:187
 msgid "- A light-weight address-book"
 msgstr "- A light-weight address-book"
 
@@ -192,58 +210,78 @@ msgid "Jabber"
 msgstr "Jabber"
 
 #: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr ""
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr ""
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr ""
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr ""
+
+#: ../src/contacts-utils.c:46
+msgid "Groupwise"
+msgstr "Groupwise"
+
+#: ../src/contacts-utils.c:47
 msgid "Address"
 msgstr "Address"
 
-#: ../src/contacts-utils.c:45
+#: ../src/contacts-utils.c:50
 msgid "Homepage"
 msgstr "Homepage"
 
-#: ../src/contacts-utils.c:53
+#: ../src/contacts-utils.c:58
 msgid "PO Box"
 msgstr "PO Box"
 
-#: ../src/contacts-utils.c:54
+#: ../src/contacts-utils.c:59
 msgid "Ext."
 msgstr "Ext."
 
-#: ../src/contacts-utils.c:55
+#: ../src/contacts-utils.c:60
 msgid "Street"
 msgstr "Street"
 
-#: ../src/contacts-utils.c:56
-msgid "Locality"
-msgstr "Locality"
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr "City"
 
-#: ../src/contacts-utils.c:57
-msgid "Region"
-msgstr "Region"
+#: ../src/contacts-utils.c:62
+msgid "Provice"
+msgstr "County"
 
-#: ../src/contacts-utils.c:58
-msgid "Post Code"
+#: ../src/contacts-utils.c:63
+msgid "Postal Code"
 msgstr "Post Code"
 
-#: ../src/contacts-utils.c:59
+#: ../src/contacts-utils.c:64
 msgid "Country"
 msgstr "Country"
 
-#: ../src/contacts-utils.c:66 ../src/contacts-utils.c:77
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Home"
 
-#: ../src/contacts-utils.c:67
+#: ../src/contacts-utils.c:72
 msgid "Cell"
 msgstr "Mobile"
 
-#: ../src/contacts-utils.c:68 ../src/contacts-utils.c:78
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Work"
 
-#: ../src/contacts-utils.c:69
+#: ../src/contacts-utils.c:74
 msgid "Fax"
 msgstr "Fax"
 
-#: ../src/contacts-utils.c:70 ../src/contacts-utils.c:79
+#: ../src/contacts-utils.c:75 ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Other"
 
@@ -251,11 +289,11 @@ msgstr "Other"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:452
+#: ../src/contacts-utils.c:457
 msgid "Open image"
 msgstr "Open image"
 
-#: ../src/contacts-utils.c:462
+#: ../src/contacts-utils.c:467
 msgid "No image"
 msgstr "No image"
 
@@ -327,3 +365,8 @@ msgstr "Edit Types"
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Make a choice:</b></span>"
 
+#~ msgid "Locality"
+#~ msgstr "Locality"
+
+#~ msgid "Region"
+#~ msgstr "Region"
