@@ -680,11 +680,16 @@ create_chooser_dialog (ContactsData *data)
 	chooser_entry = gtk_entry_new ();
 	gtk_box_pack_start (GTK_BOX (chooser_add_hbox), chooser_entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default (GTK_ENTRY (chooser_entry), TRUE);
+	g_signal_connect (chooser_entry, "changed",
+			G_CALLBACK (contacts_chooser_entry_changed_cb), data);
 
 	add_type_button = gtk_button_new_from_stock ("gtk-add");
 	gtk_box_pack_start (GTK_BOX (chooser_add_hbox), add_type_button, FALSE, FALSE, 0);
 	GTK_WIDGET_SET_FLAGS (add_type_button, GTK_CAN_DEFAULT);
 	gtk_button_set_focus_on_click (GTK_BUTTON (add_type_button), FALSE);
+	/* initially insensitive, enabled when user enters text into the entry
+	 */
+	gtk_widget_set_sensitive (add_type_button, FALSE);
 
 	scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start (GTK_BOX (vbox6), scrolledwindow5, TRUE, TRUE, 0);
@@ -734,6 +739,7 @@ create_chooser_dialog (ContactsData *data)
 				 GTK_TREE_MODEL (model));
 	g_object_unref (model);
 
+	data->ui->chooser_add_button = add_type_button;
 	data->ui->chooser_add_hbox = chooser_add_hbox;
 	data->ui->chooser_dialog = chooser_dialog;
 	data->ui->chooser_entry = chooser_entry;

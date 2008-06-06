@@ -49,6 +49,7 @@ enum {
 };
 
 typedef struct {
+	GtkWidget *chooser_add_button;
 	GtkWidget *chooser_add_hbox;
 	GtkWidget *chooser_dialog;
 	GtkWidget *chooser_entry;

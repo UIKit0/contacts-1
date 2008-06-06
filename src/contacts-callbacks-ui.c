@@ -35,29 +35,60 @@
 #include "contacts-main.h"
 
 void
+contacts_chooser_entry_changed_cb (GtkWidget *entry, ContactsData *data)
+{
+	const gchar *text;
+
+	text = gtk_entry_get_text (GTK_ENTRY (entry));
+	gtk_widget_set_sensitive (data->ui->chooser_add_button,
+			(text && strlen (text)));
+}
+
+void
 contacts_chooser_add_cb (GtkWidget *button, ContactsData *data)
 {
 	GtkWidget *treeview, *entry;
-	GtkListStore *model;
+	GtkTreeModel *model;
 	GtkTreeIter iter;
 	const gchar *text;
-	
+	gchar *found;
+	gboolean valid;
+
 	entry = data->ui->chooser_entry;
 	text = gtk_entry_get_text (GTK_ENTRY (entry));
 	
 	if (g_utf8_strlen (text, -1) <= 0)
 		return;
-	
-	treeview = data->ui->chooser_treeview;
-	model = GTK_LIST_STORE (
-		gtk_tree_view_get_model (GTK_TREE_VIEW (treeview)));
-	
-	gtk_list_store_append (model, &iter);
-	gtk_list_store_set (model, &iter, CHOOSER_TICK_COL, TRUE,
-			    CHOOSER_NAME_COL, text, -1);
-	
-	gtk_entry_set_text (GTK_ENTRY (entry), "");
 
+	treeview = data->ui->chooser_treeview;
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+
+	valid = gtk_tree_model_get_iter_first (model, &iter);
+
+	/* check if the item already exists in the list and tick it if it does
+	 */
+	while (valid)
+	{
+		gtk_tree_model_get (model, &iter, CHOOSER_NAME_COL, &found, -1);
+		if (!g_ascii_strcasecmp (found, text))
+		{
+			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+					CHOOSER_TICK_COL, TRUE, -1);
+			g_free (found);
+			gtk_entry_set_text (GTK_ENTRY (entry), "");
+			contacts_ui_update_groups_list (data);
+			return;
+		}
+		g_free (found);
+		valid = gtk_tree_model_iter_next (model, &iter);
+	}
+
+	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+			CHOOSER_TICK_COL, TRUE,
+			CHOOSER_NAME_COL, text, -1);
+
+	gtk_entry_set_text (GTK_ENTRY (entry), "");
 	contacts_ui_update_groups_list (data);
 }
 
