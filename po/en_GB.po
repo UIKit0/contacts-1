@@ -1,25 +1,27 @@
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-06 11:20+0100\n"
-"PO-Revision-Date: 2008-06-05 14:59+0100\n"
+"POT-Creation-Date: 2008-06-09 09:24+0100\n"
+"PO-Revision-Date: 2008-06-09 09:46+0100\n"
 "Last-Translator: Thomas Wood <thomas@openedhand.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Address book"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-main.c:185 ../src/contacts-gtk.c:216
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:185
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../src/contacts-callbacks-ui.c:194
+#: ../src/contacts-callbacks-ebook.c:69 ../src/contacts-callbacks-ebook.c:145
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Unnamed"
 
@@ -51,11 +53,9 @@ msgid "Import Contact"
 msgstr "Import Contact"
 
 #: ../src/contacts-callbacks-ui.c:383
-#, fuzzy, c-format
+#, c-format
 msgid "Imported one contact"
-msgid_plural "Imported %d contacts"
-msgstr[0] "Imported one contact"
-msgstr[1] "Imported one contact"
+msgstr "Imported one contact"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -146,7 +146,9 @@ msgstr "Cannot add contact: %s"
 #. * argument is the field's
 #. * name, ex. <b>Country:</b>
 #.
+#. "<b>%s:</b>\n<small>(%s)</small>",
 #: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:184 ../src/contacts-ui.c:190
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
@@ -173,129 +175,9 @@ msgstr "Add field"
 msgid "<b>Choose a field</b>"
 msgstr "<b>Choose a field</b>"
 
-#: ../src/contacts-edit-pane.c:1257
+#: ../src/contacts-edit-pane.c:1233
 msgid "Edit contact"
 msgstr "Edit contact"
-
-#: ../src/contacts-main.c:90
-msgid "Error starting address book"
-msgstr ""
-
-#: ../src/contacts-main.c:93
-msgid "Got error %d when getting book view"
-msgstr "Got error %d when getting book view"
-
-#: ../src/contacts-main.c:118
-msgid "Error opening address book"
-msgstr "Error opening address book"
-
-#: ../src/contacts-main.c:121
-msgid "Got error %d when opening book"
-msgstr "Got error %d when opening book"
-
-#: ../src/contacts-main.c:187
-msgid "- A light-weight address-book"
-msgstr "- A light-weight address-book"
-
-#: ../src/contacts-utils.c:39
-msgid "Phone"
-msgstr "Phone"
-
-#: ../src/contacts-utils.c:40
-msgid "Email"
-msgstr "Email"
-
-#: ../src/contacts-utils.c:41
-msgid "Jabber"
-msgstr "Jabber"
-
-#: ../src/contacts-utils.c:42
-msgid "MSN"
-msgstr ""
-
-#: ../src/contacts-utils.c:43
-msgid "Yahoo"
-msgstr ""
-
-#: ../src/contacts-utils.c:44
-msgid "AIM"
-msgstr ""
-
-#: ../src/contacts-utils.c:45
-msgid "ICQ"
-msgstr ""
-
-#: ../src/contacts-utils.c:46
-msgid "Groupwise"
-msgstr "Groupwise"
-
-#: ../src/contacts-utils.c:47
-msgid "Address"
-msgstr "Address"
-
-#: ../src/contacts-utils.c:50
-msgid "Homepage"
-msgstr "Homepage"
-
-#: ../src/contacts-utils.c:58
-msgid "PO Box"
-msgstr "PO Box"
-
-#: ../src/contacts-utils.c:59
-msgid "Ext."
-msgstr "Ext."
-
-#: ../src/contacts-utils.c:60
-msgid "Street"
-msgstr "Street"
-
-#: ../src/contacts-utils.c:61
-msgid "City"
-msgstr "City"
-
-#: ../src/contacts-utils.c:62
-msgid "Provice"
-msgstr "County"
-
-#: ../src/contacts-utils.c:63
-msgid "Postal Code"
-msgstr "Post Code"
-
-#: ../src/contacts-utils.c:64
-msgid "Country"
-msgstr "Country"
-
-#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
-msgid "Home"
-msgstr "Home"
-
-#: ../src/contacts-utils.c:72
-msgid "Cell"
-msgstr "Mobile"
-
-#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
-msgid "Work"
-msgstr "Work"
-
-#: ../src/contacts-utils.c:74
-msgid "Fax"
-msgstr "Fax"
-
-#: ../src/contacts-utils.c:75 ../src/contacts-utils.c:84
-msgid "Other"
-msgstr "Other"
-
-#. Get a filename
-#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
-#. * can return NULL and this would probably throw a critical Gtk error.
-#.
-#: ../src/contacts-utils.c:457
-msgid "Open image"
-msgstr "Open image"
-
-#: ../src/contacts-utils.c:467
-msgid "No image"
-msgstr "No image"
 
 #: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
@@ -364,6 +246,137 @@ msgstr "Edit Types"
 #: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Make a choice:</b></span>"
+
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr "Error starting address book"
+
+#: ../src/contacts-main.c:93
+#, c-format
+msgid "Got error %d when getting book view"
+msgstr "Got error %d when getting book view"
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr "Error opening address book"
+
+#: ../src/contacts-main.c:121
+#, c-format
+msgid "Got error %d when opening book"
+msgstr "Got error %d when opening book"
+
+#: ../src/contacts-main.c:187
+msgid "- A light-weight address-book"
+msgstr "- A light-weight address-book"
+
+#: ../src/contacts-ui.c:180 ../src/contacts-utils.c:75
+#: ../src/contacts-utils.c:84
+msgid "Other"
+msgstr "Other"
+
+#: ../src/contacts-utils.c:39
+msgid "Phone"
+msgstr "Phone"
+
+#: ../src/contacts-utils.c:40
+msgid "Email"
+msgstr "Email"
+
+#: ../src/contacts-utils.c:41
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr "MSN"
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr "Yahoo"
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr "AIM"
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr "ICQ"
+
+#: ../src/contacts-utils.c:46
+msgid "Groupwise"
+msgstr "Groupwise"
+
+#: ../src/contacts-utils.c:47
+msgid "Address"
+msgstr "Address"
+
+#: ../src/contacts-utils.c:50
+msgid "Homepage"
+msgstr "Homepage"
+
+#: ../src/contacts-utils.c:58
+msgid "PO Box"
+msgstr "PO Box"
+
+#: ../src/contacts-utils.c:59
+msgid "Ext."
+msgstr "Ext."
+
+#: ../src/contacts-utils.c:60
+msgid "Street"
+msgstr "Street"
+
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr "City"
+
+#: ../src/contacts-utils.c:62
+msgid "Province"
+msgstr "County"
+
+#: ../src/contacts-utils.c:63
+msgid "Postal Code"
+msgstr "Post Code"
+
+#: ../src/contacts-utils.c:64
+msgid "Country"
+msgstr "Country"
+
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
+msgid "Home"
+msgstr "Home"
+
+#: ../src/contacts-utils.c:72
+msgid "Cell"
+msgstr "Mobile"
+
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
+msgid "Work"
+msgstr "Work"
+
+#: ../src/contacts-utils.c:74
+msgid "Fax"
+msgstr "Fax"
+
+#. Get a filename
+#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
+#. * can return NULL and this would probably throw a critical Gtk error.
+#.
+#: ../src/contacts-utils.c:454
+msgid "Open image"
+msgstr "Open image"
+
+#: ../src/contacts-utils.c:464
+msgid "No image"
+msgstr "No image"
+
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:164
+msgid "No Group"
+msgstr "No Group"
 
 #~ msgid "Locality"
 #~ msgstr "Locality"
