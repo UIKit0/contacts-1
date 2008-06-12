@@ -1,3 +1,9 @@
+contacts (0.9-1etch1) etch; urgency=low
+
+  * New upstream release.
+
+ -- Ross Burton <ross@debian.org>  Thu, 12 Jun 2008 17:42:24 +0100
+
 contacts (0.8-1etch1) etch; urgency=low
 
   * Rebuild for Etch.
