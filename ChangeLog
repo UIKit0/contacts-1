@@ -1,3 +1,11 @@
+2008-06-23  Chris Lord  <chris@openedhand.com>
+
+	Bug #986 - make contacts a bit more resilient to eds db corruption
+
+	* src/contacts-callbacks-ebook.c: (contacts_added_cb):
+	Check that a non-NULL UID is returned by econtact_get_const, patch by
+	Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
 2008-06-06  Thomas Wood  <thomas@openedhand.com>
 
 	* NEWS:

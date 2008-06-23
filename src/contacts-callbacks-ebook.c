@@ -53,11 +53,13 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 		if (!E_IS_CONTACT (contact))
 			continue;
 
+		if (!(uid = e_contact_get_const (contact, E_CONTACT_UID)))
+			continue;
+
 		/* Check if the contact has already been added (can happen if
 		 * contact has been manually added before handling the signal)
 		 */
-		if (g_hash_table_lookup (contacts_table, e_contact_get_const (
-		    contact, E_CONTACT_UID)) != NULL)
+		if (g_hash_table_lookup (contacts_table, uid) != NULL)
 			continue;
 			
 		/* Add contact to list */
@@ -68,7 +70,6 @@ contacts_added_cb (EBookView *book_view, const GList *contacts,
 			if ((!name) || (g_utf8_strlen (name, -1) <= 0))
 				name = _("Unnamed");
 		}
-		uid = e_contact_get_const (contact, E_CONTACT_UID);
 		hash->contact = g_object_ref (contact);
 		hash->contacts_data = data;
 		g_hash_table_insert (contacts_table, (gchar *)uid, hash);
