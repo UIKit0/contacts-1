@@ -1,3 +1,9 @@
+2008-07-02  Rob Bradford  <rob@openedhand.com>
+
+	* src/contacts-main.c (main):
+	Add command line parameter for allowing you to specify the uri for
+	the client to use as the addressbook.
+
 2008-06-23  Chris Lord  <chris@openedhand.com>
 
 	Bug #986 - make contacts a bit more resilient to eds db corruption

@@ -170,10 +170,13 @@ main (int argc, char **argv)
 	GOptionContext *context;
 	static gint plug = 0;
 	GtkWidget *widget;
+	static gchar *uri = NULL;
 	
 	static GOptionEntry entries[] = {
 		{ "plug", 'p', 0, G_OPTION_ARG_INT, &plug,
 			"Socket ID of an XEmbed socket to plug into", NULL },
+		{ "uri", 'u', 0, G_OPTION_ARG_STRING, &uri,
+			"Uri to use rather than the system address book", NULL },
 		{ NULL }
 	};
 
@@ -220,10 +223,22 @@ main (int argc, char **argv)
 	//g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	/* Load the system addressbook */
-	data->book = e_book_new_system_addressbook (&error);
-	if (!data->book) {
-		g_critical ("Could not load system addressbook: %s", error->message);
-		g_error_free (error);
+	if (uri)
+	{
+		data->book = e_book_new_from_uri (uri, &error);
+		if (!data->book)
+		{
+			g_critical ("Could not load addressbook at uri %s: %s",
+				uri, error->message);
+			g_clear_error (&error);
+		}
+		g_free (uri);
+	} else {
+		data->book = e_book_new_system_addressbook (&error);
+		if (!data->book) {
+			g_critical ("Could not load system addressbook: %s", error->message);
+			g_error_free (error);
+		}
 	}
 
 	data->contacts_table = g_hash_table_new_full (g_str_hash,
