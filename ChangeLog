@@ -1,3 +1,10 @@
+2008-07-28  Rob Bradford  <rob@openedhand.com>
+
+	* src/contacts-ui.c (contacts_display_summary):
+	* src/contacts-utils.c (contacts_load_photo):
+	* src/contacts-utils.h:
+	Add support for URI based PHOTO fields.
+
 2008-07-02  Rob Bradford  <rob@openedhand.com>
 
 	* src/contacts-main.c (main):

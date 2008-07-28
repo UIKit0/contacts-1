@@ -55,7 +55,7 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 {
 	GtkWidget *widget;
 	const gchar *string;
-	GtkImage *photo;
+	GdkPixbuf *photo;
 	GList *a, *groups, *attributes;
 	gchar *name_markup, *groups_markup, *groups_text = NULL;
 	GValue *can_focus = g_new0 (GValue, 1);
@@ -94,19 +94,16 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 	/* Retrieve contact picture and resize */
 	widget = data->ui->photo_image;
 	photo = contacts_load_photo (contact);
-	if ((gtk_image_get_storage_type (photo) == GTK_IMAGE_EMPTY) ||
-	    (gtk_image_get_storage_type (photo) == GTK_IMAGE_PIXBUF))
-		gtk_image_set_from_pixbuf (GTK_IMAGE (widget),
-					  gtk_image_get_pixbuf (photo));
-	else if (gtk_image_get_storage_type 
-		 (photo) == GTK_IMAGE_ICON_NAME) {
-		const gchar *icon_name;
-		GtkIconSize size;
-		gtk_image_get_icon_name (photo, &icon_name, &size);
-		gtk_image_set_from_icon_name (GTK_IMAGE (widget), icon_name,
-					      size);
+
+	if (photo)
+	{
+		gtk_image_set_from_pixbuf (GTK_IMAGE (widget), photo);
+		g_object_unref (photo);
+	} else {
+		gtk_image_set_from_stock (GTK_IMAGE (widget),
+					  "stock-person",
+					  GTK_ICON_SIZE_DIALOG);
 	}
-	gtk_widget_destroy (GTK_WIDGET (photo));
 
 	/* Create summary (displays fields marked as REQUIRED) */
 	widget = data->ui->summary_table;

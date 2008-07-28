@@ -281,21 +281,28 @@ contact_photo_size (GdkPixbufLoader * loader, gint width, gint height,
 					     iconheight), iconheight);
 }
 
-GtkImage *
+GdkPixbuf *
 contacts_load_photo (EContact *contact)
 {
-	GtkImage *image = NULL;
+	GdkPixbuf *pixbuf = NULL;
 	EContactPhoto *photo;
-	
+	GdkPixbufLoader *loader;
+	gint iconwidth, iconheight;
+	GError *error = NULL;
+	gchar *filename = NULL;
+
 	/* Retrieve contact picture and resize */
 	photo = e_contact_get (contact, E_CONTACT_PHOTO);
+
 	if (photo) {
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
+
+		loader = gdk_pixbuf_loader_new ();
 		if (loader) {
 			g_signal_connect (G_OBJECT (loader),
 					  "size-prepared",
 					  G_CALLBACK (contact_photo_size),
 					  NULL);
+
 #if HAVE_PHOTO_TYPE
 			switch (photo->type) {
 			case E_CONTACT_PHOTO_TYPE_INLINED :
@@ -305,9 +312,31 @@ contacts_load_photo (EContact *contact)
 				break;
 			case E_CONTACT_PHOTO_TYPE_URI :
 			default :
-				g_warning ("Cannot handle URI photos yet");
+				gdk_pixbuf_loader_close (loader, NULL);
 				g_object_unref (loader);
 				loader = NULL;
+
+				gtk_icon_size_lookup (GTK_ICON_SIZE_DIALOG, 
+					&iconwidth, &iconheight);
+
+				/* Assume local */
+				filename = g_filename_from_uri (photo->data.uri, 
+						NULL, 
+						NULL);
+
+				if (!filename)
+					break;
+
+				pixbuf = gdk_pixbuf_new_from_file_at_size (
+					filename,
+					iconwidth, iconheight,
+					&error);
+
+				if (!pixbuf)
+				{
+				  g_warning (G_STRLOC ": Error loading pixbuf: %s",
+						  error->message);
+				}
 				break;
 			}
 #else
@@ -316,20 +345,16 @@ contacts_load_photo (EContact *contact)
 #endif
 			if (loader) {
 				gdk_pixbuf_loader_close (loader, NULL);
-				GdkPixbuf *pixbuf =
-				    gdk_pixbuf_loader_get_pixbuf (loader);
-				if (pixbuf) {
-					image = GTK_IMAGE (
-						gtk_image_new_from_pixbuf (
-							g_object_ref (pixbuf)));
-				}
+				pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+				/* Must ref here because we close the loader */
+				g_object_ref (pixbuf);
 				g_object_unref (loader);
 			}
 		}
 		e_contact_photo_free (photo);
 	}
-	return image ? image : GTK_IMAGE (gtk_image_new_from_icon_name 
-					("stock_person", GTK_ICON_SIZE_DIALOG));
+	return pixbuf;
 }
 
 /* This removes any vCard attributes that are just "", or have no associated

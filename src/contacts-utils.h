@@ -53,7 +53,7 @@ EContact *contacts_get_selected_contact (ContactsData *data,
 					 
 void contacts_set_selected_contact (ContactsData *data, const gchar *uid);
 
-GtkImage *contacts_load_photo (EContact *contact);
+GdkPixbuf *contacts_load_photo (EContact *contact);
 
 void contacts_clean_contact (EContact *contact);
 
