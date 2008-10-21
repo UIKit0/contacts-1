@@ -467,7 +467,8 @@ contacts_get_type_strings (GList *params)
 void
 contacts_choose_photo (GtkWidget *button, EContact *contact)
 {
-	GtkWidget *filechooser, *photo;
+	GtkWidget *filechooser, *image;
+	GdkPixbuf *pixbuf;
 	GtkFileFilter *filter;
 	gint result;
 	GList *widgets;
@@ -530,17 +531,11 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 					e_contact_set (contact, E_CONTACT_PHOTO,
 						       &new_photo);
 					g_free (*data);
-					/* Re-display contact photo */
-					gtk_container_foreach (
-						GTK_CONTAINER (button),
-						(GtkCallback)gtk_widget_destroy,
-						NULL);
-					photo = GTK_WIDGET
-						(contacts_load_photo (contact));
-					gtk_container_add (
-						GTK_CONTAINER (button),
-						photo);
-					gtk_widget_show (photo);
+					pixbuf = contacts_load_photo (contact);
+					image = gtk_image_new_from_pixbuf (pixbuf);
+					gtk_button_set_image (GTK_BUTTON (button),
+							      image);
+					g_object_unref (pixbuf);
 				}
 			}
 			g_free (filename);
@@ -548,12 +543,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 	} else if (result == NO_IMAGE) {
 		if (contact && E_IS_CONTACT (contact)) {
 			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
-			/* Re-display contact photo */
-			gtk_container_foreach (GTK_CONTAINER (button),
-				(GtkCallback)gtk_widget_destroy, NULL);
-			photo = GTK_WIDGET (contacts_load_photo (contact));
-			gtk_container_add (GTK_CONTAINER (button), photo);
-			gtk_widget_show (photo);
+			gtk_button_set_image (GTK_BUTTON (button), NULL);
 		}
 	}
 	

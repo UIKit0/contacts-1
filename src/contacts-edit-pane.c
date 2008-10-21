@@ -1037,6 +1037,8 @@ void
 contacts_edit_pane_show (ContactsData *data, gboolean new)
 {
 	GtkWidget *align, *button, *widget/*, *glabel, *gbutton*/;
+	GdkPixbuf *pixbuf;
+	GtkWidget *image;
 	EVCardAttribute *groups_attr = NULL;
 	ContactsGroupChangeData *gdata;
 	guint row, i;
@@ -1092,8 +1094,13 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 
 	/* Create contact photo button */
 	button = gtk_button_new ();
-	widget = GTK_WIDGET (contacts_load_photo (contact));
-	gtk_container_add (GTK_CONTAINER (button), widget);
+	pixbuf = contacts_load_photo (contact);
+	if (pixbuf)
+	{
+		image = gtk_image_new_from_pixbuf (pixbuf);
+		gtk_button_set_image (GTK_BUTTON (button), image);
+		g_object_unref (pixbuf);
+	}
 	gtk_widget_show (widget);
 	g_signal_connect (G_OBJECT (button), "clicked",
 			  G_CALLBACK (contacts_edit_choose_photo), data);
