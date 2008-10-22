@@ -100,9 +100,9 @@ contacts_display_summary (EContact *contact, ContactsData *data)
 		gtk_image_set_from_pixbuf (GTK_IMAGE (widget), photo);
 		g_object_unref (photo);
 	} else {
-		gtk_image_set_from_stock (GTK_IMAGE (widget),
-					  "stock-person",
-					  GTK_ICON_SIZE_DIALOG);
+		gtk_image_set_from_icon_name (GTK_IMAGE (widget),
+					      "stock_person",
+					      GTK_ICON_SIZE_DIALOG);
 	}
 
 	/* Create summary (displays fields marked as REQUIRED) */
