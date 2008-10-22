@@ -1098,9 +1098,13 @@ contacts_edit_pane_show (ContactsData *data, gboolean new)
 	if (pixbuf)
 	{
 		image = gtk_image_new_from_pixbuf (pixbuf);
-		gtk_button_set_image (GTK_BUTTON (button), image);
 		g_object_unref (pixbuf);
+	} else {
+		image = gtk_image_new_from_icon_name ("stock_person", 
+						      GTK_ICON_SIZE_DIALOG);
 	}
+	gtk_button_set_image (GTK_BUTTON (button), image);
+
 	gtk_widget_show (widget);
 	g_signal_connect (G_OBJECT (button), "clicked",
 			  G_CALLBACK (contacts_edit_choose_photo), data);

@@ -543,7 +543,9 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 	} else if (result == NO_IMAGE) {
 		if (contact && E_IS_CONTACT (contact)) {
 			e_contact_set (contact, E_CONTACT_PHOTO, NULL);
-			gtk_button_set_image (GTK_BUTTON (button), NULL);
+			image = gtk_image_new_from_icon_name ("stock_person", 
+							      GTK_ICON_SIZE_DIALOG);
+			gtk_button_set_image (GTK_BUTTON (button), image);
 		}
 	}
 	
