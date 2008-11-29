@@ -1,107 +1,131 @@
+# German translations for the Conatcts package
+# Mario Blättermann <mariobl@gnome.org>, 2008.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-05 14:51+0100\n"
-"PO-Revision-Date: 2006-11-19 23:03+0100\n"
-"Last-Translator: Jan Wenzel <scripter01@gmx.net>\n"
+"POT-Creation-Date: 2008-11-29 11:23+0100\n"
+"PO-Revision-Date: 2008-11-29 11:45+0100\n"
+"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language-Team: German <gnome-de@gnome.org>\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Adressbuch"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-main.c:158 ../src/contacts-gtk.c:216
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: ../src/contacts-callbacks-ui.c:163
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: ../src/contacts-callbacks-ui.c:168
+#: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
-msgstr "Sind Sie sicher, dass Sie \"%s\" entfernen möchten?"
+msgstr "Sind Sie sicher, dass Sie »%s« entfernen möchten?"
 
-#: ../src/contacts-callbacks-ui.c:172
-#, fuzzy, c-format
+#: ../src/contacts-callbacks-ui.c:203
+#, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "Sind Sie sicher, dass Sie diesen Kontakt entfernen möchten?"
+msgstr "Wollen Sie wirklich %d Kontakte löschen?"
 
-#: ../src/contacts-callbacks-ui.c:257
+#: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
-msgstr "Möchten Sie den Kontakt \"%s\" importieren?"
+msgstr "Möchten Sie den Kontakt »%s« importieren?"
 
-#: ../src/contacts-callbacks-ui.c:262
+#: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
 msgstr "_Zeige Kontakt"
 
-#: ../src/contacts-callbacks-ui.c:263
+#: ../src/contacts-callbacks-ui.c:294
 msgid "_Import contact"
 msgstr "_Kontakt importieren"
 
-#: ../src/contacts-callbacks-ui.c:319
+#: ../src/contacts-callbacks-ui.c:350
 msgid "Import Contact"
 msgstr "Kontakt importieren"
 
-#: ../src/contacts-callbacks-ui.c:352
-#, fuzzy, c-format
+#: ../src/contacts-callbacks-ui.c:383
+#, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "_Kontakt importieren"
-msgstr[1] "_Kontakt importieren"
+msgstr[0] "Ein Kontakt wurde importiert"
+msgstr[1] "%d Kontakte wurden importiert"
 
-#: ../src/contacts-callbacks-ui.c:395
+#: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
 msgstr "Kontakt exportieren"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:432
+#: ../src/contacts-callbacks-ui.c:463
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
 "Do you want to replace it?</b></big>"
 msgstr ""
-"<big><b>Die Datei \"%s\" existiert bereits.\n"
+"<big><b>Die Datei »%s« existiert bereits.\n"
 "Möchten Sie sie ersetzen?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:438
+#: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
 msgstr "Ersetzen wird den Inhalt überschreiben."
 
-#: ../src/contacts-callbacks-ui.c:442
+#: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
 msgstr "_Ersetzen"
 
-#: ../src/contacts-callbacks-ui.c:587
+#: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
-"any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version.\n"
 "\n"
 "Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details.\n"
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR "
+"A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
+"Contacts ist freie Software, Sie können es weitergeben und/oder\n"
+" verändern solange Sie sich an die Regeln der GNU General Public License\n"
+" halten, so wie sie von der Free Software Foundation festgelegt wurden;\n"
+" entweder in Version 2 der Lizenz oder (nach Ihrem Ermessen) in jeder "
+"folgenden Lizenz.\n"
+" \n"
+" Contacts wurde mit dem Ziel veröffentlicht, dass Sie es nützlich finden,\n"
+" jedoch OHNE JEDWEDE GARANTIE, sogar ohne eine implizite Garantie\n"
+" der VERKAUFBARKEIT oder der NUTZBARKEIT FÜR EINEN SPEZIELLEN ZWECK.\n"
+" Schauen Sie für weitere Informationen bitte in der GNU General Public "
+"License (GNU GPL) nach.\n"
+" \n"
+" Mit diesem Programm sollten Sie außerdem eine Kopie der GNU General Public "
+"License erhalten\n"
+" haben. Wenn dem nicht so ist, so schreiben Sie bitte an die\n"
+"Free Software Foundation, Inc.,\n"
+" 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA."
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:602
+#: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "Jan Wenzel"
+msgstr ""
+"Jan Wenzel\n"
+"Mario Blättermann <mariobl@gnome.org>"
 
-#: ../src/contacts-callbacks-ui.c:647 ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Alle"
 
@@ -111,161 +135,71 @@ msgstr "Sind Sie sicher, dass Sie diesen Kontakt entfernen möchten?"
 
 #: ../src/contacts-edit-pane.c:142
 msgid "Couldn't update contact"
-msgstr ""
+msgstr "Kontakt konnte nicht aktualisiert werden"
 
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr ""
+msgstr "Informationen konnten nicht aktualisiert werden, Fehlermeldung war: %s"
 
 #: ../src/contacts-edit-pane.c:182
-#, fuzzy
 msgid "Couldn't add contact"
-msgstr "Kontakt bearbeiten"
+msgstr "Kontakt konnte nicht hinzugefügt werden"
 
 #: ../src/contacts-edit-pane.c:187
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr ""
+msgstr "Kontakt kann nicht hinzugefügt werden: %s"
 
 #. Create label/button text
 #. * Translators, the first
 #. * argument is the field's
 #. * name, ex. <b>Country:</b>
 #.
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:513
-#, fuzzy, c-format
+#. "<b>%s:</b>\n<small>(%s)</small>",
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
+#, c-format
 msgid "<b>%s:</b>"
-msgstr "<b>Typ:</b>"
+msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:476
 msgid "<b>Type:</b>"
 msgstr "<b>Typ:</b>"
 
-#: ../src/contacts-edit-pane.c:820
+#: ../src/contacts-edit-pane.c:823
 msgid "Change groups"
-msgstr "Ändere Gruppen"
+msgstr "Gruppen ändern"
 
-#: ../src/contacts-edit-pane.c:820
-#, fuzzy
+#: ../src/contacts-edit-pane.c:823
 msgid "<b>Choose groups</b>"
-msgstr "<b>Wählen Sie ein Feld</b>"
+msgstr "<b>Gruppen auswählen</b>"
 
-#: ../src/contacts-edit-pane.c:882
+#: ../src/contacts-edit-pane.c:885
 msgid "Add field"
 msgstr "Feld hinzufügen"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:884
+#: ../src/contacts-edit-pane.c:887
 msgid "<b>Choose a field</b>"
 msgstr "<b>Wählen Sie ein Feld</b>"
 
-#: ../src/contacts-edit-pane.c:1254
+#: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
 msgstr "Kontakt bearbeiten"
 
-#: ../src/contacts-main.c:160
-msgid "- A light-weight address-book"
-msgstr ""
-
-#: ../src/contacts-utils.c:39
-msgid "Phone"
-msgstr ""
-
-#: ../src/contacts-utils.c:40
-msgid "Email"
-msgstr ""
-
-#: ../src/contacts-utils.c:41
-msgid "Jabber"
-msgstr ""
-
-#: ../src/contacts-utils.c:42
-#, fuzzy
-msgid "Address"
-msgstr "Adressbuch"
-
-#: ../src/contacts-utils.c:45
-#, fuzzy
-msgid "Homepage"
-msgstr "Kein Bild"
-
-#: ../src/contacts-utils.c:53
-msgid "PO Box"
-msgstr ""
-
-#: ../src/contacts-utils.c:54
-msgid "Ext."
-msgstr ""
-
-#: ../src/contacts-utils.c:55
-msgid "Street"
-msgstr ""
-
-#: ../src/contacts-utils.c:56
-msgid "Locality"
-msgstr ""
-
-#: ../src/contacts-utils.c:57
-msgid "Region"
-msgstr ""
-
-#: ../src/contacts-utils.c:58
-msgid "Post Code"
-msgstr ""
-
-#: ../src/contacts-utils.c:59
-msgid "Country"
-msgstr ""
-
-#: ../src/contacts-utils.c:66 ../src/contacts-utils.c:77
-#, fuzzy
-msgid "Home"
-msgstr "Kein Bild"
-
-#: ../src/contacts-utils.c:67
-msgid "Cell"
-msgstr ""
-
-#: ../src/contacts-utils.c:68 ../src/contacts-utils.c:78
-msgid "Work"
-msgstr ""
-
-#: ../src/contacts-utils.c:69
-msgid "Fax"
-msgstr ""
-
-#: ../src/contacts-utils.c:70 ../src/contacts-utils.c:79
-msgid "Other"
-msgstr "Andere"
-
-#. Get a filename
-#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
-#. * can return NULL and this would probably throw a critical Gtk error.
-#.
-#: ../src/contacts-utils.c:452
-msgid "Open image"
-msgstr "Öffne Bild"
-
-#: ../src/contacts-utils.c:462
-msgid "No image"
-msgstr "Kein Bild"
-
 #: ../src/contacts-gtk.c:226
-#, fuzzy
 msgid "C_ontacts"
-msgstr "Kontakte"
+msgstr "K_ontakte"
 
 #: ../src/contacts-gtk.c:243
-#, fuzzy
 msgid "_Import..."
-msgstr "_Importieren"
+msgstr "_Importieren ..."
 
 #: ../src/contacts-gtk.c:253
-#, fuzzy
 msgid "C_ontact"
-msgstr "Kontakte"
+msgstr "K_ontakt"
 
 #: ../src/contacts-gtk.c:263
 msgid "_Groups"
@@ -276,7 +210,6 @@ msgid "_Export"
 msgstr "_Exportieren"
 
 #: ../src/contacts-gtk.c:276
-#, fuzzy
 msgid "Ed_it"
 msgstr "_Bearbeiten"
 
@@ -309,22 +242,143 @@ msgid "V-Z"
 msgstr "V-Z"
 
 #: ../src/contacts-gtk.c:472
-#, fuzzy
 msgid "_Add Field"
 msgstr "_Feld hinzufügen"
 
 #: ../src/contacts-gtk.c:476
-#, fuzzy
 msgid "_Remove Field"
-msgstr "_Entferne Feld"
+msgstr "Feld entfe_rnen"
 
 #: ../src/contacts-gtk.c:659
 msgid "Edit Types"
-msgstr "Bearbeite Typen"
+msgstr "Typen bearbeiten"
 
 #: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Treffen Sie ihre Auswahl</b></span>"
+msgstr "<span><b>Treffen Sie ihre Auswahl:</b></span>"
+
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr "Fehler beim Starten des Adressbuchs"
+
+#: ../src/contacts-main.c:93
+#, c-format
+msgid "Got error %d when getting book view"
+msgstr "Fehler %d beim Erstellen der Adressbuchansicht"
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr "Fehler beim Öffnen des Adressbuchs"
+
+#: ../src/contacts-main.c:121
+#, c-format
+msgid "Got error %d when opening book"
+msgstr "Fehler %d beim Öffnen des Adressbuches"
+
+#: ../src/contacts-main.c:190
+msgid "- A light-weight address-book"
+msgstr "- ein leichtgeweichtiges Adressbuch"
+
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
+#: ../src/contacts-utils.c:84
+msgid "Other"
+msgstr "Andere"
+
+#: ../src/contacts-utils.c:39
+msgid "Phone"
+msgstr "Telefon"
+
+#: ../src/contacts-utils.c:40
+msgid "Email"
+msgstr "E-Mail"
+
+#: ../src/contacts-utils.c:41
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr "MSN"
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr "Yahoo"
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr "AIM"
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr "ICQ"
+
+#: ../src/contacts-utils.c:46
+msgid "Groupwise"
+msgstr "Groupwise"
+
+#: ../src/contacts-utils.c:47
+msgid "Address"
+msgstr "Adresse"
+
+#: ../src/contacts-utils.c:50
+msgid "Homepage"
+msgstr "Homepage"
+
+#: ../src/contacts-utils.c:58
+msgid "PO Box"
+msgstr "Postfach"
+
+#: ../src/contacts-utils.c:59
+msgid "Ext."
+msgstr "Ext."
+
+#: ../src/contacts-utils.c:60
+msgid "Street"
+msgstr "Straße"
+
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr "Stadt"
+
+#: ../src/contacts-utils.c:62
+msgid "Provice"
+msgstr "Provinz/Bundesland"
+
+#: ../src/contacts-utils.c:63
+msgid "Postal Code"
+msgstr "Postleitzahl"
+
+#: ../src/contacts-utils.c:64
+msgid "Country"
+msgstr "Land"
+
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
+msgid "Home"
+msgstr "Privat"
+
+#: ../src/contacts-utils.c:72
+msgid "Cell"
+msgstr "Mobil"
+
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
+msgid "Work"
+msgstr "Geschäftlich"
+
+#: ../src/contacts-utils.c:74
+msgid "Fax"
+msgstr "Fax"
+
+#. Get a filename
+#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
+#. * can return NULL and this would probably throw a critical Gtk error.
+#.
+#: ../src/contacts-utils.c:480
+msgid "Open image"
+msgstr "Öffne Bild"
+
+#: ../src/contacts-utils.c:490
+msgid "No image"
+msgstr "Kein Bild"
 
 #~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
 #~ msgstr "<span><big><b>Willkommen beim Adressbuch</b></big></span>"
