@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-06-09 09:24+0100\n"
-"PO-Revision-Date: 2008-06-09 09:46+0100\n"
+"PO-Revision-Date: 2009-01-18 20:35+0000\n"
 "Last-Translator: Thomas Wood <thomas@openedhand.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -113,7 +113,7 @@ msgstr ""
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "translator-credits"
+msgstr "Thomas Wood <thos@gnome.org>"
 
 #: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
