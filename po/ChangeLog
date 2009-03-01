@@ -1,3 +1,9 @@
+2009-03-01  Duarte Loreto <happyguy_pt@hotmail.com>
+
+	* pt.po: Added Portuguese translation by António Lima
+	<amrlima@gmail.com>
+	* LINGUAS: Added Portuguese (pt) to the list.
+
 2009-01-18  Thomas Wood  <thos@gnome.org>
 
 	* en_GB.po: Updated British English translation
