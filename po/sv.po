@@ -1,14 +1,14 @@
 # Swedish translation of contacts.
-# Copyright (C) 2006, 2008 Free Software Foundation
+# Copyright (C) 2006, 2008, 2009 Free Software Foundation
 # This file is distributed under the same license as the contacts package.
-# Daniel Nylander <po@danielnylander.se>, 2006, 2008.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2008, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 19:48+0200\n"
-"PO-Revision-Date: 2008-10-19 19:49+0100\n"
+"POT-Creation-Date: 2009-03-03 15:47+0100\n"
+"PO-Revision-Date: 2009-03-03 15:47+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -173,7 +173,7 @@ msgstr "Lägg till fält"
 msgid "<b>Choose a field</b>"
 msgstr "<b>Välj ett fält</b>"
 
-#: ../src/contacts-edit-pane.c:1233
+#: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
 msgstr "Redigera kontakt"
 
@@ -265,7 +265,7 @@ msgstr "Fick fel %d vid öppnade av bok"
 
 #: ../src/contacts-main.c:190
 msgid "- A light-weight address-book"
-msgstr "- En lättviktig adressbok"
+msgstr "- En resurssnål adressbok"
 
 #: ../src/contacts-ui.c:177
 #: ../src/contacts-utils.c:75
@@ -363,11 +363,11 @@ msgstr "Fax"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:479
+#: ../src/contacts-utils.c:480
 msgid "Open image"
 msgstr "Öppna bild"
 
-#: ../src/contacts-utils.c:489
+#: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Ingen bild"
 
