@@ -1,26 +1,27 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-09 09:24+0100\n"
-"PO-Revision-Date: 2009-01-18 20:35+0000\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=contacts&component=general\n"
+"POT-Creation-Date: 2009-03-19 01:45+0000\n"
+"PO-Revision-Date: 2009-03-22 17:15+0000\n"
 "Last-Translator: Thomas Wood <thomas@openedhand.com>\n"
-"Language-Team: \n"
+"Language-Team: British English <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Address book"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:185
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../src/contacts-callbacks-ebook.c:69 ../src/contacts-callbacks-ebook.c:145
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
 #: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Unnamed"
@@ -55,7 +56,9 @@ msgstr "Import Contact"
 #: ../src/contacts-callbacks-ui.c:383
 #, c-format
 msgid "Imported one contact"
-msgstr "Imported one contact"
+msgid_plural "Imported %d contacts"
+msgstr[0] "Imported one contact"
+msgstr[1] "Imported %d contacts"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -96,16 +99,16 @@ msgid ""
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
 "Contacts is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
+"the terms of the GNU General Public Licence as published by the Free "
+"Software Foundation; either version 2 of the Licence, or (at your option) "
 "any later version.\n"
 "\n"
 "Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more "
 "details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with "
+"You should have received a copy of the GNU General Public Licence along with "
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 
@@ -113,7 +116,8 @@ msgstr ""
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "Thomas Wood <thos@gnome.org>"
+msgstr "Thomas Wood <thos@gnome.org>\n"
+"Jen Ockwell <jenfraggleubuntu@gmail.com>"
 
 #: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
@@ -148,7 +152,7 @@ msgstr "Cannot add contact: %s"
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
 #: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:184 ../src/contacts-ui.c:190
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
@@ -175,7 +179,7 @@ msgstr "Add field"
 msgid "<b>Choose a field</b>"
 msgstr "<b>Choose a field</b>"
 
-#: ../src/contacts-edit-pane.c:1233
+#: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
 msgstr "Edit contact"
 
@@ -265,11 +269,11 @@ msgstr "Error opening address book"
 msgid "Got error %d when opening book"
 msgstr "Got error %d when opening book"
 
-#: ../src/contacts-main.c:187
+#: ../src/contacts-main.c:190
 msgid "- A light-weight address-book"
 msgstr "- A light-weight address-book"
 
-#: ../src/contacts-ui.c:180 ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Other"
@@ -280,7 +284,7 @@ msgstr "Phone"
 
 #: ../src/contacts-utils.c:40
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #: ../src/contacts-utils.c:41
 msgid "Jabber"
@@ -304,7 +308,7 @@ msgstr "ICQ"
 
 #: ../src/contacts-utils.c:46
 msgid "Groupwise"
-msgstr "Groupwise"
+msgstr "GroupWise"
 
 #: ../src/contacts-utils.c:47
 msgid "Address"
@@ -331,7 +335,7 @@ msgid "City"
 msgstr "City"
 
 #: ../src/contacts-utils.c:62
-msgid "Province"
+msgid "Provice"
 msgstr "County"
 
 #: ../src/contacts-utils.c:63
@@ -362,21 +366,16 @@ msgstr "Fax"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:454
+#: ../src/contacts-utils.c:480
 msgid "Open image"
 msgstr "Open image"
 
-#: ../src/contacts-utils.c:464
+#: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "No image"
 
-#. Contacts with priority <= REQUIRED have to be shown
-#. * when creating a new contact.
-#.
-#. For the image-chooser dialog
-#: ../src/contacts-defs.h:164
-msgid "No Group"
-msgstr "No Group"
+#~ msgid "No Group"
+#~ msgstr "No Group"
 
 #~ msgid "Locality"
 #~ msgstr "Locality"
