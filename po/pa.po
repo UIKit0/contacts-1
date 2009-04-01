@@ -7,12 +7,12 @@ msgstr ""
 "Project-Id-Version: contacts.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
 "cgi?product=contacts&component=general\n"
-"POT-Creation-Date: 2009-03-03 14:48+0000\n"
-"PO-Revision-Date: 2009-03-19 07:02+0000\n"
+"POT-Creation-Date: 2009-03-19 01:45+0000\n"
+"PO-Revision-Date: 2009-04-01 06:53+0000\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi/Panjabi <punjab-l10n@list.sf.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 0.3\n"
@@ -48,7 +48,7 @@ msgstr "ਕੀ ਤੁਸੀਂ '%s' ਸੰਪਰਕ ਇੰਪੋਰਟ ਕਰਨ
 
 #: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
-msgstr "ਸੰਪਰਕ ਵੇਖੋ(_S)੪"
+msgstr "ਸੰਪਰਕ ਵੇਖੋ(_S)"
 
 #: ../src/contacts-callbacks-ui.c:294
 msgid "_Import contact"
@@ -81,7 +81,7 @@ msgstr ""
 
 #: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
-msgstr ""
+msgstr "ਇਸ ਨੂੰ ਬਦਲਣ ਨਾਲ ਇਸ ਦੀ ਸਮੱਗਰੀ ਖਤਮ ਹੋ ਜਾਵੇਗੀ।"
 
 #: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
@@ -103,15 +103,26 @@ msgid ""
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
+"ਸੰਪਰਕ ਇੱਕ ਮੁਫਤ ਸਾਫਟਵੇਅਰ ਹੈ, ਜਿਸ ਨੂੰ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਈਸੈਂਸ,"
+"ਜਿਸ ਨੂੰ ਫਰੀ ਸਾਫਟਵੇਅਰ ਫਾਊਨਡੇਸ਼ਨ ਨੇ ਤਿਆਰ ਕੀਤਾ ਹੈ, ਦੇ ਵਰਜਨ ੨ ਜਾਂ ਨਵੇਂ ਦੀਆਂ"
+"ਸ਼ਰਤਾਂ (ਉਹ ਤੁਹਾਡੀ ਆਪਣੀ ਮਰਜ਼ੀ ਹੈ) ਅਧੀਨ ਵੰਡ ਅਤੇ/ਜਾਂ ਸੋਧ ਸਕਦੇ ਹੋ।\n"
+"\n"
+"ਸੰਪਰਕ ਨੂੰ ਇਹ ਮੰਨ ਕੇ ਵੰਡਿਆ ਜਾ ਰਿਹਾ ਹੈ ਕਿ ਇਹ ਫਾਇਦੇਮੰਦ ਰਹੇਗਾ,"
+"ਪਰ ਇਸ ਦੀ ਕੋਈ ਵਾਰੰਟੀ ਨਹੀਂ ਲਈ ਜਾ ਰਹੀ ਹੈ, ਕਿਸੇ ਖਾਸ ਕੰਮ ਲਈ ਅਨੁਕੂਲ ਹੋਣ ਜਾਂ"
+"ਠੀਕ ਤਰ੍ਹਾਂ ਕੰਮ ਕਰਨ ਦੀ ਵੀ ਕੋਈ ਗਾਰੰਟੀ ਨਹੀਂ ਹੈ। ਹੋਰ ਵੇਰਵੇ ਲਈ ਗਨੂ ਜਰਨਲ"
+"ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਨੂੰ ਪੜ੍ਹੋ।\n"
+"\n"
+"ਸੰਪਰਕ ਨਾਲ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀ ਨਕਲ ਪ੍ਰਾਪਤ ਕਰੋਗੇ, ਜੇਕਰ ਤੁਹਾਨੂੰ"
+"ਨਹੀਂ ਮਿਲੀ ਹੈ ਤਾਂ ਫਰੀ ਸਾਫਟਵੇਅਰ ਫਾਊਨਡੇਸ਼ਨ, ੫੧ ਫਰਾਕਲਿੰਨ ਸਟਰੀਟ, ਪੰਜਵੀਂ ਮੰਜ਼ਲ,"
+"ਬੋਸਟਨ, ਐਮ ਏ ੦੨੧੧੨-੧੩੦੧, ਅਮਰੀਕਾ ਨੂੰ ਲਿਖੋ।"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
 msgstr ""
-"ਅਮਨਪਰੀਤ ਸਿੰਘ ਆਲਮ\n"
-"Punjabi Open Source Team\n"
-"http://www.satluj.com"
+"ਅਮਨਪਰੀਤ ਸਿੰਘ ਆਲਮ <aalam@users.sf.net>\n"
+"http://www.satluj.com/"
 
 #: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
@@ -128,7 +139,7 @@ msgstr "ਸੰਪਰਕ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸ�
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr ""
+msgstr "ਜਾਣਕਾਰੀ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ, ਗਲਤੀ: %s"
 
 #: ../src/contacts-edit-pane.c:182
 msgid "Couldn't add contact"
@@ -137,7 +148,7 @@ msgstr "ਸੰਪਰਕ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"
 #: ../src/contacts-edit-pane.c:187
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr ""
+msgstr "ਸੰਪਰਕ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ: %s"
 
 #. Create label/button text
 #. * Translators, the first
@@ -154,7 +165,7 @@ msgstr "<b>%s:</b>"
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:476
 msgid "<b>Type:</b>"
-msgstr "<b>ਟਾਈਪ:</b>"
+msgstr "<b>ਕਿਸਮ</b>"
 
 #: ../src/contacts-edit-pane.c:823
 msgid "Change groups"
@@ -171,7 +182,7 @@ msgstr "ਖੇਤਰ ਸ਼ਾਮਲ"
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:887
 msgid "<b>Choose a field</b>"
-msgstr ""
+msgstr "<b>ਇੱਕ ਖੇਤਰ ਚੁਣੋ</b>"
 
 #: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
@@ -183,7 +194,7 @@ msgstr "ਸੰਪਰਕ(_o)"
 
 #: ../src/contacts-gtk.c:243
 msgid "_Import..."
-msgstr "ਇੰਪੋਰਟ(_I)..."
+msgstr "ਇੰਪੋਰਟ(_I)"
 
 #: ../src/contacts-gtk.c:253
 msgid "C_ontact"
@@ -235,7 +246,7 @@ msgstr "ਖੇਤਰ ਸ਼ਾਮਲ(_A)"
 
 #: ../src/contacts-gtk.c:476
 msgid "_Remove Field"
-msgstr ""
+msgstr "ਖੇਤਰ ਹਟਾਓ(_R)"
 
 #: ../src/contacts-gtk.c:659
 msgid "Edit Types"
@@ -243,29 +254,29 @@ msgstr "ਟਾਈਪ ਸੋਧੋ"
 
 #: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
-msgstr ""
+msgstr "<span><b>ਚੋਣ ਕਰੋ:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr ""
+msgstr "ਐਡਰੈੱਸ-ਬੁੱਕ ਨੂੰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।"
 
 #: ../src/contacts-main.c:93
 #, c-format
 msgid "Got error %d when getting book view"
-msgstr ""
+msgstr "ਬੁੱਕ ਝਲਕ ਲੈਣ ਦੌਰਾਨ ਗਲਤੀ %d ਮਿਲੀ"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr ""
+msgstr "ਐਡਰੈੱਸ ਬੁੱਕ ਖੋਲ੍ਹਣ ਦੌਰਾਨ ਗਲਤੀ"
 
 #: ../src/contacts-main.c:121
 #, c-format
 msgid "Got error %d when opening book"
-msgstr ""
+msgstr "ਬੁੱਕ ਖੋਲ੍ਹਣ ਦੌਰਾਨ %d ਗਲਤੀ ਮਿਲੀ"
 
 #: ../src/contacts-main.c:190
 msgid "- A light-weight address-book"
-msgstr ""
+msgstr "- ਇੱਕ ਹਲਕੀ ਐਡਰੈੱਸ ਬੁੱਕ"
 
 #: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
@@ -278,7 +289,7 @@ msgstr "ਫੋਨ"
 
 #: ../src/contacts-utils.c:40
 msgid "Email"
-msgstr "ਈਮੇਲ"
+msgstr "ਈ-ਮੇਲ"
 
 #: ../src/contacts-utils.c:41
 msgid "Jabber"
@@ -310,7 +321,7 @@ msgstr "ਐਡਰੈੱਸ"
 
 #: ../src/contacts-utils.c:50
 msgid "Homepage"
-msgstr "ਮੁੱਖ ਸਫ਼ਾ"
+msgstr "ਹੋਮ-ਪੇਜ਼"
 
 #: ../src/contacts-utils.c:58
 msgid "PO Box"
