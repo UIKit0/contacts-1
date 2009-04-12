@@ -1,0 +1,377 @@
+# Thai translation of contacts.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the contacts package.
+# Akom C. <knight2000@gmail.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: contacts\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=contacts&component=general\n"
+"POT-Creation-Date: 2009-04-01 01:26+0000\n"
+"PO-Revision-Date: 2009-04-12 14:21+0700\n"
+"Last-Translator: Akom C. <knight2000@gmail.com>\n"
+"Language-Team: Thai <thai-l10n@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../data/contacts.desktop.in.h:1
+msgid "Address book"
+msgstr "สมุดที่อยู่"
+
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
+msgid "Contacts"
+msgstr "ที่อยู่ติดต่อ"
+
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
+msgid "Unnamed"
+msgstr "ไม่มีชื่อ"
+
+#: ../src/contacts-callbacks-ui.c:199
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '%s'?"
+
+#: ../src/contacts-callbacks-ui.c:203
+#, c-format
+msgid "Are you sure you want to delete %d contacts?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบที่อยู่ติดต่อทั้ง %d รายการ?"
+
+#: ../src/contacts-callbacks-ui.c:288
+#, c-format
+msgid "Would you like to import contact '%s'?"
+msgstr "คุณต้องการนำเข้าที่อยู่ติดต่อ '%s' หรือไม่?"
+
+#: ../src/contacts-callbacks-ui.c:293
+msgid "_Show contact"
+msgstr "แ_สดงที่อยู่ติดต่อ"
+
+#: ../src/contacts-callbacks-ui.c:294
+msgid "_Import contact"
+msgstr "_นำเข้าที่อยู่ติดต่อ"
+
+#: ../src/contacts-callbacks-ui.c:350
+msgid "Import Contact"
+msgstr "นำเข้าที่อยู่ติดต่อ"
+
+#: ../src/contacts-callbacks-ui.c:383
+#, c-format
+msgid "Imported one contact"
+msgid_plural "Imported %d contacts"
+msgstr[0] "นำเข้าที่อยู่ติดต่อแล้ว %d รายการ"
+
+#: ../src/contacts-callbacks-ui.c:426
+msgid "Export Contact"
+msgstr "ส่งออกที่อยู่ติดต่อ"
+
+#. TODO: make it nicer for i18n
+#: ../src/contacts-callbacks-ui.c:463
+#, c-format
+msgid ""
+"<big><b>The file \"%s\" already exists.\n"
+"Do you want to replace it?</b></big>"
+msgstr ""
+"<big><b>แฟ้ม \"%s\" มีอยู่แล้ว\n"
+"คุณต้องการแทนที่หรือไม่?</b></big>"
+
+#: ../src/contacts-callbacks-ui.c:469
+msgid "Replacing it will overwrite its contents."
+msgstr "การแทนที่จะเขียนทับเนื้อหาแฟ้ม"
+
+#: ../src/contacts-callbacks-ui.c:473
+msgid "_Replace"
+msgstr "แ_ทนที่"
+
+#: ../src/contacts-callbacks-ui.c:618
+msgid ""
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
+"\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
+msgstr ""
+"โปรแกรมที่อยู่ติดต่อเป็นซอฟต์แวร์เสรี คุณสามารถแจกจ่ายต่อ และ/หรือ แก้ไขโปรแกรมได้ "
+"ภายใต้เงื่อนไขของ GNU General Public License ที่เผยแพร่โดยมูลนิธิซอฟต์แวร์เสรี "
+"ไม่ว่าจะเป็นสัญญาอนุญาตรุ่นที่ 2 หรือรุ่นถัดมา (ตามแต่คุณจะเลือก)\n"
+"\n"
+"โปรแกรมที่อยู่ติดต่อ เผยแพร่ด้วยความหวังว่าโปรแกรมจะมีประโยชน์ แต่ *ไม่มีการรับประกันใดๆ* "
+"ไม่มีแม้การรับประกัน *อรรถประโยชน์เชิงพาณิชย์* หรือ "
+"*ความเหมาะสมสำหรับวัตถุประสงค์เฉพาะกิจใดๆ*.  กรุณาอ่าน GNU General Public License "
+"เพื่อดูรายละเอียดเพิ่มเติม\n"
+"\n"
+"คุณควรจะได้รับสำเนาของ GNU General Public License มาพร้อมกับโปรแกรมที่อยู่ติดต่อ "
+"ถ้าคุณไม่ได้รับ กรุณาติดต่อไปที่ Free Software Foundation, Inc., 51 Franklin St, Fifth "
+"Floor, Boston, MA 0110-1301, USA"
+
+#. Translators: please translate this as your own name and optionally email
+#. like so: "Your Name <your@email.com>"
+#: ../src/contacts-callbacks-ui.c:633
+msgid "translator-credits"
+msgstr "อาคม โชติพันธวานนท์ <knight2000@gmail.com>"
+
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
+msgid "All"
+msgstr "ทั้งหมด"
+
+#: ../src/contacts-edit-pane.c:104
+msgid "Are you sure you want to delete this contact?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบที่อยู่ติดต่อนี้?"
+
+#: ../src/contacts-edit-pane.c:142
+msgid "Couldn't update contact"
+msgstr "ไม่สามารถปรับข้อมูลที่อยู่ติดต่อ"
+
+#: ../src/contacts-edit-pane.c:147
+#, c-format
+msgid "Information couldn't be updated, error was: %s"
+msgstr "ไม่สามารถปรับข้อมูลได้ ข้อผิดพลาดคือ: %s"
+
+#: ../src/contacts-edit-pane.c:182
+msgid "Couldn't add contact"
+msgstr "ไม่สามารถเพิ่มที่อยู่ติดต่อ"
+
+#: ../src/contacts-edit-pane.c:187
+#, c-format
+msgid "Cannot add contact: %s"
+msgstr "ไม่สามารถเพิ่มที่อยู่ติดต่อ: %s"
+
+#. Create label/button text
+#. * Translators, the first
+#. * argument is the field's
+#. * name, ex. <b>Country:</b>
+#.
+#. "<b>%s:</b>\n<small>(%s)</small>",
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
+#, c-format
+msgid "<b>%s:</b>"
+msgstr "<b>%s:</b>"
+
+#. TODO: make nicer for i18n
+#: ../src/contacts-edit-pane.c:476
+msgid "<b>Type:</b>"
+msgstr "<b>ประเภท:</b>"
+
+#: ../src/contacts-edit-pane.c:823
+msgid "Change groups"
+msgstr "เปลี่ยนกลุ่ม"
+
+#: ../src/contacts-edit-pane.c:823
+msgid "<b>Choose groups</b>"
+msgstr "<b>เลือกกลุ่ม</b>"
+
+#: ../src/contacts-edit-pane.c:885
+msgid "Add field"
+msgstr "เพิ่มเขตข้อมูล"
+
+#. TODO: make nicer for i18n
+#: ../src/contacts-edit-pane.c:887
+msgid "<b>Choose a field</b>"
+msgstr "<b>เลือกเขตข้อมูล</b>"
+
+#: ../src/contacts-edit-pane.c:1244
+msgid "Edit contact"
+msgstr "แก้ไขที่อยู่ติดต่อ"
+
+#: ../src/contacts-gtk.c:226
+msgid "C_ontacts"
+msgstr "_ที่อยู่ติดต่อ"
+
+#: ../src/contacts-gtk.c:243
+msgid "_Import..."
+msgstr "_นำเข้า..."
+
+#: ../src/contacts-gtk.c:253
+msgid "C_ontact"
+msgstr "_ที่อยู่ติดต่อ"
+
+#: ../src/contacts-gtk.c:263
+msgid "_Groups"
+msgstr "_กลุ่ม"
+
+#: ../src/contacts-gtk.c:266
+msgid "_Export"
+msgstr "_ส่งออก"
+
+#: ../src/contacts-gtk.c:276
+msgid "Ed_it"
+msgstr "แ_ก้ไข"
+
+#: ../src/contacts-gtk.c:291
+msgid "_Help"
+msgstr "_วิธีใช้"
+
+#: ../src/contacts-gtk.c:345
+msgid "_Search:"
+msgstr "_ค้นหา:"
+
+#: ../src/contacts-gtk.c:354
+msgid "0-9#"
+msgstr "0-9#"
+
+#: ../src/contacts-gtk.c:359
+msgid "A-G"
+msgstr "A-G"
+
+#: ../src/contacts-gtk.c:365
+msgid "H-N"
+msgstr "H-N"
+
+#: ../src/contacts-gtk.c:370
+msgid "O-U"
+msgstr "O-U"
+
+#: ../src/contacts-gtk.c:375
+msgid "V-Z"
+msgstr "V-Z"
+
+#: ../src/contacts-gtk.c:472
+msgid "_Add Field"
+msgstr "เ_พิ่มเขตข้อมูล"
+
+#: ../src/contacts-gtk.c:476
+msgid "_Remove Field"
+msgstr "_ลบเขตข้อมูล"
+
+#: ../src/contacts-gtk.c:659
+msgid "Edit Types"
+msgstr "แก้ไขประเภท"
+
+#: ../src/contacts-gtk.c:671
+msgid "<span><b>Make a choice:</b></span>"
+msgstr "<span><b>กรุณาเลือก:</b></span>"
+
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr "เกิดข้อผิดพลาดขณะเริ่มต้นสมุดที่อยู่"
+
+#: ../src/contacts-main.c:93
+#, c-format
+msgid "Got error %d when getting book view"
+msgstr "ได้รับข้อผิดพลาด %d ขณะนำมุมมองสมุดมาใช้"
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr "เกิดข้อผิดพลาดขณะเปิดสมุดที่อยู่"
+
+#: ../src/contacts-main.c:121
+#, c-format
+msgid "Got error %d when opening book"
+msgstr "ได้รับข้อผิดพลาด %d ขณะเปิดสมุด"
+
+#: ../src/contacts-main.c:190
+msgid "- A light-weight address-book"
+msgstr "- สมุดที่อยู่ติดต่อขนาดเบา"
+
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
+#: ../src/contacts-utils.c:84
+msgid "Other"
+msgstr "อื่นๆ"
+
+#: ../src/contacts-utils.c:39
+msgid "Phone"
+msgstr "โทรศัพท์"
+
+#: ../src/contacts-utils.c:40
+msgid "Email"
+msgstr "อีเมล"
+
+#: ../src/contacts-utils.c:41
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr "MSN"
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr "Yahoo"
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr "AIM"
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr "ICQ"
+
+#: ../src/contacts-utils.c:46
+msgid "Groupwise"
+msgstr "Groupwise"
+
+#: ../src/contacts-utils.c:47
+msgid "Address"
+msgstr "ที่อยู่"
+
+#: ../src/contacts-utils.c:50
+msgid "Homepage"
+msgstr "โฮมเพจ"
+
+#: ../src/contacts-utils.c:58
+msgid "PO Box"
+msgstr "ตู้ ป.ณ."
+
+#: ../src/contacts-utils.c:59
+msgid "Ext."
+msgstr "Ext."
+
+#: ../src/contacts-utils.c:60
+msgid "Street"
+msgstr "ถนน"
+
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr "เมือง"
+
+#: ../src/contacts-utils.c:62
+msgid "Provice"
+msgstr "จังหวัด"
+
+#: ../src/contacts-utils.c:63
+msgid "Postal Code"
+msgstr "รหัสไปรษณีย์"
+
+#: ../src/contacts-utils.c:64
+msgid "Country"
+msgstr "ประเทศ"
+
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
+msgid "Home"
+msgstr "บ้าน"
+
+#: ../src/contacts-utils.c:72
+msgid "Cell"
+msgstr "มือถือ"
+
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
+msgid "Work"
+msgstr "ที่ทำงาน"
+
+#: ../src/contacts-utils.c:74
+msgid "Fax"
+msgstr "โทรสาร"
+
+#. Get a filename
+#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
+#. * can return NULL and this would probably throw a critical Gtk error.
+#.
+#: ../src/contacts-utils.c:480
+msgid "Open image"
+msgstr "เปิดภาพ"
+
+#: ../src/contacts-utils.c:490
+msgid "No image"
+msgstr "ไม่มีภาพ"

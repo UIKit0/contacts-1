@@ -1,3 +1,8 @@
+2009-04-12  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* LINGUAS: Added 'th'.
+	* th.po: Added Thai translation by Akom C.
+
 2009-03-27  Philip Withnall  <philip@tecnocode.co.uk>
 
 	* en_GB.po: Fixed plural header.
