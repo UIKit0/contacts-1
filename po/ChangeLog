@@ -1,3 +1,8 @@
+2009-04-14  Petr Kovar  <pknbe@volny.cz>
+
+	* cs.po: Added Czech translation by Zdenek Hatas.
+	* LINGUAS: Added cs.
+
 2009-04-12  Theppitak Karoonboonyanan  <thep@linux.thai.net>
 
 	* LINGUAS: Added 'th'.
