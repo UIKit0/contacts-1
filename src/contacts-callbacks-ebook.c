@@ -199,7 +199,7 @@ contacts_sequence_complete_cb (EBookView *book_view, const GList *ids, ContactsD
 
 	model = GTK_TREE_MODEL_FILTER (data->contacts_filter);
 
-	/* If there's only one visible contact, select it */
+	/* On startup zoom to first contact */
 	if (data->initialising) {
 		GtkTreeSelection *selection =
 					gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview));
