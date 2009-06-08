@@ -112,6 +112,7 @@ typedef struct {
 	GtkListStore *contacts_liststore;
 	GtkTreeModelFilter *contacts_filter;
 	gboolean initialising;
+	gchar *uid_for_startup;
 } ContactsData;
 
 typedef struct {

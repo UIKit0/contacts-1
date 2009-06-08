@@ -204,10 +204,35 @@ contacts_sequence_complete_cb (EBookView *book_view, const GList *ids, ContactsD
 		GtkTreeSelection *selection =
 					gtk_tree_view_get_selection (GTK_TREE_VIEW (data->ui->contacts_treeview));
 		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
-						   &iter)) {
-			gtk_tree_selection_select_iter (selection, &iter);
+
+		if (!data->uid_for_startup)
+		{
+			if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
+							   &iter)) {
+				gtk_tree_selection_select_iter (selection, &iter);
+			}
+		} else {
+			if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
+							   &iter)) {
+				do {
+					gchar *uid;
+					gtk_tree_model_get (GTK_TREE_MODEL (model),
+							    &iter,
+							    CONTACT_UID_COL,
+							    &uid,
+							    -1);
+
+					if (g_str_equal (uid, data->uid_for_startup))
+					{
+						gtk_tree_selection_select_iter (selection, &iter);
+						g_free (uid);
+						break;
+					}
+					g_free (uid);
+				} while (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter));
+			}
 		}
+
 		data->initialising = FALSE;
 		gtk_tree_view_scroll_to_point (GTK_TREE_VIEW (data->ui->contacts_treeview), 0, 0);
 	}

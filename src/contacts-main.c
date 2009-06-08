@@ -171,12 +171,15 @@ main (int argc, char **argv)
 	static gint plug = 0;
 	GtkWidget *widget;
 	static gchar *uri = NULL;
+	static gchar *uid = NULL;
 	
 	static GOptionEntry entries[] = {
 		{ "plug", 'p', 0, G_OPTION_ARG_INT, &plug,
 			"Socket ID of an XEmbed socket to plug into", NULL },
 		{ "uri", 'u', 0, G_OPTION_ARG_STRING, &uri,
 			"Uri to use rather than the system address book", NULL },
+		{ "uid", 'c', 0, G_OPTION_ARG_STRING, &uid,
+			"UID of contact to select on boot", NULL },
 		{ NULL }
 	};
 
@@ -213,6 +216,7 @@ main (int argc, char **argv)
 
 	data = g_new0 (ContactsData, 1);
 	data->ui = g_new0 (ContactsUI, 1);
+	data->uid_for_startup = uid;
 	data->initialising = TRUE; /* initialising until contacts have been loaded for the first time */
 	bacon_message_connection_set_callback (
 		mc, (BaconMessageReceivedFunc)contacts_bacon_cb, data);
