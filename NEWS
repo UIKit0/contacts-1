@@ -1,3 +1,24 @@
+Overview of Changes in 0.10 (since 0.9)
+=======================================
+
+* Fixes to the avatar photo icon button handling.
+* Support URI based photos.
+* Add a --uid command line option to open on a given Contact by UID.
+* Add a --uri comamnd line option to use the specified addressbook rather than
+  the system addressbook.
+
+Bugs fixed:
+
+* 986 - "make contacts a bit more resilient to eds db corruption" patch from
+  Gilles Dartiguelongue <gdartiguelongue@comwax.com>
+
+New translations: Galician (Antón Méixome), Hungarian (Gabor Kelemen), Greek
+(Βασίλης Κοντογιάνης), Czech (Petr Kovar), Thai (Theppitak Karoonboonyanan),
+Punjabi (Amanpreet Singh Alam), Portugese (Duarte Loreto)
+Updated: French (Stéphane Raimbault), British English (Thomas Wood), Swedish
+(Daniel Nylander), Spanish (Jorge Gonzalez Gonzalez), Brazilian Portuguese
+(Michel Recondo), German (Mario Blättermann)
+
 Overview of Changes in 0.9 (since 0.8)
 ======================================
 
