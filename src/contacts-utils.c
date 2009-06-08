@@ -514,7 +514,7 @@ contacts_choose_photo (GtkWidget *button, EContact *contact)
 			if (contact) {
 				EContactPhoto new_photo;
 				guchar **data;
-				int *length;
+				gsize *length;
 #if HAVE_PHOTO_TYPE
 				new_photo.type = E_CONTACT_PHOTO_TYPE_INLINED;
 				data = &new_photo.data.inlined.data;
