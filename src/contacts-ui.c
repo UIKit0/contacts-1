@@ -1,10 +1,10 @@
 /*
  *  Contacts - A small libebook-based address book.
  *
- *  Authored By Chris Lord <chris@o-hand.com>
- *              Thomas Wood <thomas@openedhand.com>
+ *  Authored By Chris Lord <chris@linux.intel.com>
+ *              Thomas Wood <thomas@linux.intel.com>
  *
- *  Copyright (c) 2005-2006 OpenedHand Ltd - http://o-hand.com
+ *  Copyright (c) 2005-2006, 2009 Intel Corporation
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

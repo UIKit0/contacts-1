@@ -1,9 +1,9 @@
 /* 
  *  Contacts - A small libebook-based address book.
  *
- *  Authored By Chris Lord <chris@o-hand.com>
+ *  Authored By Chris Lord <chris@linux.intel.com>
  *
- *  Copyright (c) 2005, 2008 OpenedHand Ltd - http://o-hand.com
+ *  Copyright (c) 2005, 2008, 2009 Intel Corporation
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -608,10 +608,10 @@ contacts_paste_cb (GtkWindow *main_window)
 void
 contacts_about_cb (GtkWidget *parent)
 {
-	const char *authors[] = {"Chris Lord <chris@openedhand.com>",
-			    "Ross Burton <ross@openedhand.com>",
-			    "Matthew Allum <mallum@openedhand.com>",
-			    "Thomas Wood <thomas@openedhand.com>",
+	const char *authors[] = {"Chris Lord <chris@linux.intel.com>",
+			    "Ross Burton <ross@linux.intel.com>",
+			    "Matthew Allum <mallum@linux.intel.com>",
+			    "Thomas Wood <thomas@linux.intel.com>",
 			    NULL};
 	const char *license = {
 	  N_(
@@ -637,7 +637,7 @@ contacts_about_cb (GtkWidget *parent)
 		"authors", authors,
 		"logo-icon-name", "contacts",
 		"website", "http://www.pimlico-project.org/",
-		"copyright", "\302\251 2006-2008 OpenedHand Ltd",
+		"copyright", "\302\251 2005-2009 Intel Corporation",
 		"translator-credits", translator_credits,
 		"license", license,
 		"wrap-license", TRUE,

@@ -2,7 +2,7 @@
  * contacts-gtk.h
  * This file is part of contacts
  *
- * Copyright (C) 2006 - OpenedHand Ltd
+ * Copyright (C) 2006, 2009 Intel Corporation
  *
  * contacts is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
