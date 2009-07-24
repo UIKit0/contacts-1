@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=contacts&component=general\n"
-"POT-Creation-Date: 2009-04-16 18:22+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-07-22 05:50+0000\n"
 "PO-Revision-Date: 2009-05-12 13:56+0200\n"
 "Last-Translator: Βασίλης Κοντογιάνης <vasilisk@ics.forth.gr>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
@@ -20,17 +20,13 @@ msgstr ""
 msgid "Address book"
 msgstr "Βιβλίο διευθύνσεων"
 
-#: ../data/contacts.desktop.in.h:2
-#: ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216
-#: ../src/contacts-main.c:188
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Επαφές"
 
-#: ../src/contacts-callbacks-ebook.c:71
-#: ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194
-#: ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Χωρίς όνομα"
 
@@ -92,17 +88,33 @@ msgstr "_Αντικατάσταση"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Το Contacts είναι ελεύθερο λογισμικό· μπορείτε να το επαναδιενέμεται και/ή να το τροποποιήσετε υπό τους όρους GNU General Public License όπως δημοσιεύθηκαν από το ίδρυμα ελέυθερου λογισμικού· είτε την έκδοση 2 της άδειας, ή (είναι επιλογή σας) ή μεταγενέστερη έκδοση.\n"
+"Το Contacts είναι ελεύθερο λογισμικό· μπορείτε να το επαναδιενέμεται και/ή "
+"να το τροποποιήσετε υπό τους όρους GNU General Public License όπως "
+"δημοσιεύθηκαν από το ίδρυμα ελέυθερου λογισμικού· είτε την έκδοση 2 της "
+"άδειας, ή (είναι επιλογή σας) ή μεταγενέστερη έκδοση.\n"
 "\n"
-"Το Contacts διανέμεται με την ελπίδα ότι θα είναι χρήσιμο, αλλά ΧΩΡΙΣ ΚΑΜΙΑ ΕΓΓΥΗΣΗ· χωρίς καν την συνεπαγόμενη εγγύηση για ΕΜΠΟΡΕΥΣΙΜΟΤΗΤΑ ή ΚΑΤΑΛΛΗΛΟΤΗΤΑΓΙΑ ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ. Δείτε το GNU General Public License για περισσότερες λεπτομέρειεςs.\n"
+"Το Contacts διανέμεται με την ελπίδα ότι θα είναι χρήσιμο, αλλά ΧΩΡΙΣ ΚΑΜΙΑ "
+"ΕΓΓΥΗΣΗ· χωρίς καν την συνεπαγόμενη εγγύηση για ΕΜΠΟΡΕΥΣΙΜΟΤΗΤΑ ή "
+"ΚΑΤΑΛΛΗΛΟΤΗΤΑΓΙΑ ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ. Δείτε το GNU General Public License για "
+"περισσότερες λεπτομέρειεςs.\n"
 "\n"
-"Πρέπει να έχετε λάβει ένα αντίγραφο του GNU General Public License μαζί με το Contacts· αν όχι, γράψτε στο Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"Πρέπει να έχετε λάβει ένα αντίγραφο του GNU General Public License μαζί με "
+"το Contacts· αν όχι, γράψτε στο Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -114,8 +126,7 @@ msgstr ""
 "\n"
 "Για περισσότερες πληροφορίες, επισκεφθείτε την σελίδα http://www.gnome.gr/"
 
-#: ../src/contacts-callbacks-ui.c:678
-#: ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Όλα"
 
@@ -132,11 +143,11 @@ msgstr "Δε μπόρεσε να γίνει η ενημέρωση της επα�
 msgid "Information couldn't be updated, error was: %s"
 msgstr "Η πληροφορία δε μπορεί να ενημερωθεί, το σφάλμα ήταν: %s"
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
 msgstr "Δε μπόρεσε να προστεθεί η επαφή"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr "Δε μπόρεσε να προστεθεί η επαφή: %s"
@@ -147,105 +158,103 @@ msgstr "Δε μπόρεσε να προστεθεί η επαφή: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:181
-#: ../src/contacts-ui.c:187
+#: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>Τύπος:</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "Αλλαγή ομάδων"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>Επιλογή ομάδων</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "Προσθήκη πεδίου"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>Επιλογή πεδίου</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "Επεξεργασία επαφής"
 
-#: ../src/contacts-gtk.c:226
+#: ../src/contacts-gtk.c:228
 msgid "C_ontacts"
 msgstr "Ε_παφές"
 
-#: ../src/contacts-gtk.c:243
+#: ../src/contacts-gtk.c:245
 msgid "_Import..."
 msgstr "_Εισαγωγή..."
 
-#: ../src/contacts-gtk.c:253
+#: ../src/contacts-gtk.c:255
 msgid "C_ontact"
 msgstr "Ε_παφή"
 
-#: ../src/contacts-gtk.c:263
+#: ../src/contacts-gtk.c:265
 msgid "_Groups"
 msgstr "_Ομάδες"
 
-#: ../src/contacts-gtk.c:266
+#: ../src/contacts-gtk.c:268
 msgid "_Export"
 msgstr "_Εξαγωγή"
 
-#: ../src/contacts-gtk.c:276
+#: ../src/contacts-gtk.c:278
 msgid "Ed_it"
 msgstr "Ε_πεξεργασία"
 
-#: ../src/contacts-gtk.c:291
+#: ../src/contacts-gtk.c:293
 msgid "_Help"
 msgstr "_Βοήθεια"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:347
 msgid "_Search:"
 msgstr "_Αναζήτηση:"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:356
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:361
 msgid "A-G"
 msgstr "Α-Ζ"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:367
 msgid "H-N"
 msgstr "Η-Μ"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:372
 msgid "O-U"
 msgstr "Ν-Σ"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:377
 msgid "V-Z"
 msgstr "Τ-Ω"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:474
 msgid "_Add Field"
 msgstr "_Προσθήκη πεδίου"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:478
 msgid "_Remove Field"
 msgstr "_Διαγραφή πεδίου"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:661
 msgid "Edit Types"
 msgstr "Επεξεργασία τύπων"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:673
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Κάντε μία επιλογή:</b></span>"
 
@@ -267,12 +276,11 @@ msgstr "Σφάλμα ανοίγματος του βιβλίου διευθύνσ
 msgid "Got error %d when opening book"
 msgstr "Σφάλμα %d κατά το άνοιγμα του βιβλίου"
 
-#: ../src/contacts-main.c:190
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr "- Ένα απλό βιβλίο διευθύνσεων"
 
-#: ../src/contacts-ui.c:177
-#: ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Άλλο"
@@ -334,7 +342,8 @@ msgid "City"
 msgstr "Πόλη"
 
 #: ../src/contacts-utils.c:62
-msgid "Provice"
+#, fuzzy
+msgid "Province"
 msgstr "Επαρχία"
 
 #: ../src/contacts-utils.c:63
@@ -345,8 +354,7 @@ msgstr "Ταχυδρομικός κώδικας"
 msgid "Country"
 msgstr "Χώρα"
 
-#: ../src/contacts-utils.c:71
-#: ../src/contacts-utils.c:82
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Οικία"
 
@@ -354,8 +362,7 @@ msgstr "Οικία"
 msgid "Cell"
 msgstr "Κινητό"
 
-#: ../src/contacts-utils.c:73
-#: ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Δουλειά"
 
@@ -374,4 +381,3 @@ msgstr "Άνοιγμα εικόνας"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Καμία εικόνα"
-

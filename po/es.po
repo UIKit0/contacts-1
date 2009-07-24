@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contact 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 17:49+0000\n"
+"POT-Creation-Date: 2009-07-22 09:17+0000\n"
 "PO-Revision-Date: 2008-10-20 00:51+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -21,7 +21,7 @@ msgid "Address book"
 msgstr "Libreta de direcciones"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Contactos"
 
@@ -183,7 +183,7 @@ msgstr "Añadir campo"
 msgid "<b>Choose a field</b>"
 msgstr "<b>Escoger un campo</b>"
 
-#: ../src/contacts-edit-pane.c:1233
+#: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
 msgstr "Editar contacto"
 
@@ -273,7 +273,7 @@ msgstr "Error al abrir la libreta de direcciones"
 msgid "Got error %d when opening book"
 msgstr "Se obtuvo el error %d al abrir la libreta"
 
-#: ../src/contacts-main.c:190
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr "- Una libreta de direcciones ligera"
 
@@ -370,11 +370,11 @@ msgstr "Fax"
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:479
+#: ../src/contacts-utils.c:480
 msgid "Open image"
 msgstr "Abrir imagen"
 
-#: ../src/contacts-utils.c:489
+#: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Sin imagen"
 

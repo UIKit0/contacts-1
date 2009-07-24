@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contacts trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-05 14:51+0100\n"
+"POT-Creation-Date: 2009-07-22 05:50+0000\n"
 "PO-Revision-Date: 2007-01-26 16:23+0200\n"
 "Last-Translator: Yavor Doganov <yavor@doganov.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -21,54 +21,55 @@ msgid "Address book"
 msgstr "Адресна книга"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-main.c:158 ../src/contacts-gtk.c:216
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Контакти"
 
-#: ../src/contacts-callbacks-ui.c:163
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr ""
 
-#: ../src/contacts-callbacks-ui.c:168
+#: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
 msgstr "Сигурни ли сте, че искате да изтриете „%s“?"
 
-#: ../src/contacts-callbacks-ui.c:172
+#: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
 msgstr "Сигурни ли сте, че искате да изтриете %d контакта?"
 
-#: ../src/contacts-callbacks-ui.c:257
+#: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
 msgstr "Искате ли да внесете контакта „%s“?"
 
-#: ../src/contacts-callbacks-ui.c:262
+#: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
 msgstr "_Показване на контакт"
 
-#: ../src/contacts-callbacks-ui.c:263
+#: ../src/contacts-callbacks-ui.c:294
 msgid "_Import contact"
 msgstr "_Внасяне на контакт"
 
-#: ../src/contacts-callbacks-ui.c:319
+#: ../src/contacts-callbacks-ui.c:350
 msgid "Import Contact"
 msgstr "Внасяне на контакт"
 
-#: ../src/contacts-callbacks-ui.c:352
+#: ../src/contacts-callbacks-ui.c:383
 #, fuzzy, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
 msgstr[0] "_Внасяне на контакт"
 msgstr[1] "_Внасяне на контакт"
 
-#: ../src/contacts-callbacks-ui.c:395
+#: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
 msgstr "Изнасяне на контакт"
 
 #. TODO: make it nicer for i18n
-#: ../src/contacts-callbacks-ui.c:432
+#: ../src/contacts-callbacks-ui.c:463
 #, c-format
 msgid ""
 "<big><b>The file \"%s\" already exists.\n"
@@ -77,15 +78,15 @@ msgstr ""
 "<big><b>Файлът „%s“ вече съществува.\n"
 "Искате ли да го замените?</b></big>"
 
-#: ../src/contacts-callbacks-ui.c:438
+#: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
 msgstr "Замяната ще презапише съдържанието му."
 
-#: ../src/contacts-callbacks-ui.c:442
+#: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
 msgstr "_Замяна"
 
-#: ../src/contacts-callbacks-ui.c:587
+#: ../src/contacts-callbacks-ui.c:618
 msgid ""
 "Contacts is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -104,7 +105,7 @@ msgstr ""
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
-#: ../src/contacts-callbacks-ui.c:602
+#: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
 msgstr ""
 "Явор Доганов <yavor@doganov.org>\n"
@@ -113,7 +114,7 @@ msgstr ""
 "Научете повече за нас на http://gnome.cult.bg\n"
 "Докладвайте за грешки на http://gnome.cult.bg/bugs"
 
-#: ../src/contacts-callbacks-ui.c:647 ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr ""
 
@@ -130,12 +131,12 @@ msgstr ""
 msgid "Information couldn't be updated, error was: %s"
 msgstr ""
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 #, fuzzy
 msgid "Couldn't add contact"
 msgstr "Редактиране на контакт"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr ""
@@ -145,40 +146,137 @@ msgstr ""
 #. * argument is the field's
 #. * name, ex. <b>Country:</b>
 #.
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:513
+#. "<b>%s:</b>\n<small>(%s)</small>",
+#: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, fuzzy, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>Вид:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>Вид:</b>"
 
-#: ../src/contacts-edit-pane.c:820
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "Смяна на групи"
 
-#: ../src/contacts-edit-pane.c:820
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>Избор на групи</b>"
 
-#: ../src/contacts-edit-pane.c:882
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "Добавяне на поле"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:884
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>Избор на поле</b>"
 
-#: ../src/contacts-edit-pane.c:1254
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "Редактиране на контакт"
 
-#: ../src/contacts-main.c:160
+#: ../src/contacts-gtk.c:228
+#, fuzzy
+msgid "C_ontacts"
+msgstr "Контакти"
+
+#: ../src/contacts-gtk.c:245
+#, fuzzy
+msgid "_Import..."
+msgstr "_Внасяне"
+
+#: ../src/contacts-gtk.c:255
+#, fuzzy
+msgid "C_ontact"
+msgstr "Контакти"
+
+#: ../src/contacts-gtk.c:265
+msgid "_Groups"
+msgstr "_Групи"
+
+#: ../src/contacts-gtk.c:268
+msgid "_Export"
+msgstr "_Изнасяне"
+
+#: ../src/contacts-gtk.c:278
+#, fuzzy
+msgid "Ed_it"
+msgstr "Р_едактиране"
+
+#: ../src/contacts-gtk.c:293
+msgid "_Help"
+msgstr "Помо_щ"
+
+#: ../src/contacts-gtk.c:347
+msgid "_Search:"
+msgstr "_Търсене:"
+
+#: ../src/contacts-gtk.c:356
+msgid "0-9#"
+msgstr "0-9#"
+
+#: ../src/contacts-gtk.c:361
+msgid "A-G"
+msgstr "A-G"
+
+#: ../src/contacts-gtk.c:367
+msgid "H-N"
+msgstr "H-N"
+
+#: ../src/contacts-gtk.c:372
+msgid "O-U"
+msgstr "O-U"
+
+#: ../src/contacts-gtk.c:377
+msgid "V-Z"
+msgstr "V-Z"
+
+#: ../src/contacts-gtk.c:474
+msgid "_Add Field"
+msgstr "_Добавяне на поле"
+
+#: ../src/contacts-gtk.c:478
+msgid "_Remove Field"
+msgstr "_Премахване на поле"
+
+#: ../src/contacts-gtk.c:661
+msgid "Edit Types"
+msgstr "Редактиране на видове"
+
+#: ../src/contacts-gtk.c:673
+msgid "<span><b>Make a choice:</b></span>"
+msgstr "<span><b>Направете избор:</b></span>"
+
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr ""
+
+#: ../src/contacts-main.c:93
+#, c-format
+msgid "Got error %d when getting book view"
+msgstr ""
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr ""
+
+#: ../src/contacts-main.c:121
+#, c-format
+msgid "Got error %d when opening book"
+msgstr ""
+
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr ""
+
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
+#: ../src/contacts-utils.c:84
+msgid "Other"
+msgstr "Друг"
 
 #: ../src/contacts-utils.c:39
 msgid "Phone"
@@ -193,145 +291,98 @@ msgid "Jabber"
 msgstr ""
 
 #: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr ""
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr ""
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr ""
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr ""
+
+#: ../src/contacts-utils.c:46
+#, fuzzy
+msgid "Groupwise"
+msgstr "_Групи"
+
+#: ../src/contacts-utils.c:47
 msgid "Address"
 msgstr "Адрес"
 
-#: ../src/contacts-utils.c:45
+#: ../src/contacts-utils.c:50
 msgid "Homepage"
 msgstr "Страница в Интернет"
 
-#: ../src/contacts-utils.c:53
+#: ../src/contacts-utils.c:58
 msgid "PO Box"
 msgstr "Пощ. кутия"
 
-#: ../src/contacts-utils.c:54
+#: ../src/contacts-utils.c:59
 msgid "Ext."
 msgstr "Вътр. номер"
 
-#: ../src/contacts-utils.c:55
+#: ../src/contacts-utils.c:60
 msgid "Street"
 msgstr "Улица"
 
-#: ../src/contacts-utils.c:56
-msgid "Locality"
-msgstr "Местност"
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr ""
 
-#: ../src/contacts-utils.c:57
-msgid "Region"
-msgstr "Област"
+#: ../src/contacts-utils.c:62
+#, fuzzy
+msgid "Province"
+msgstr "Телефон"
 
-#: ../src/contacts-utils.c:58
-msgid "Post Code"
+#: ../src/contacts-utils.c:63
+#, fuzzy
+msgid "Postal Code"
 msgstr "Пощ. код"
 
-#: ../src/contacts-utils.c:59
+#: ../src/contacts-utils.c:64
 msgid "Country"
 msgstr "Страна"
 
-#: ../src/contacts-utils.c:66 ../src/contacts-utils.c:77
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 #, fuzzy
 msgid "Home"
 msgstr "Страница в Интернет"
 
-#: ../src/contacts-utils.c:67
+#: ../src/contacts-utils.c:72
 msgid "Cell"
 msgstr ""
 
-#: ../src/contacts-utils.c:68 ../src/contacts-utils.c:78
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr ""
 
-#: ../src/contacts-utils.c:69
+#: ../src/contacts-utils.c:74
 msgid "Fax"
 msgstr ""
-
-#: ../src/contacts-utils.c:70 ../src/contacts-utils.c:79
-msgid "Other"
-msgstr "Друг"
 
 #. Get a filename
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
 #. * can return NULL and this would probably throw a critical Gtk error.
 #.
-#: ../src/contacts-utils.c:452
+#: ../src/contacts-utils.c:480
 msgid "Open image"
 msgstr "Отваряне на изображение"
 
-#: ../src/contacts-utils.c:462
+#: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Без изображение"
 
-#: ../src/contacts-gtk.c:226
-#, fuzzy
-msgid "C_ontacts"
-msgstr "Контакти"
+#~ msgid "Locality"
+#~ msgstr "Местност"
 
-#: ../src/contacts-gtk.c:243
-#, fuzzy
-msgid "_Import..."
-msgstr "_Внасяне"
-
-#: ../src/contacts-gtk.c:253
-#, fuzzy
-msgid "C_ontact"
-msgstr "Контакти"
-
-#: ../src/contacts-gtk.c:263
-msgid "_Groups"
-msgstr "_Групи"
-
-#: ../src/contacts-gtk.c:266
-msgid "_Export"
-msgstr "_Изнасяне"
-
-#: ../src/contacts-gtk.c:276
-#, fuzzy
-msgid "Ed_it"
-msgstr "Р_едактиране"
-
-#: ../src/contacts-gtk.c:291
-msgid "_Help"
-msgstr "Помо_щ"
-
-#: ../src/contacts-gtk.c:345
-msgid "_Search:"
-msgstr "_Търсене:"
-
-#: ../src/contacts-gtk.c:354
-msgid "0-9#"
-msgstr "0-9#"
-
-#: ../src/contacts-gtk.c:359
-msgid "A-G"
-msgstr "A-G"
-
-#: ../src/contacts-gtk.c:365
-msgid "H-N"
-msgstr "H-N"
-
-#: ../src/contacts-gtk.c:370
-msgid "O-U"
-msgstr "O-U"
-
-#: ../src/contacts-gtk.c:375
-msgid "V-Z"
-msgstr "V-Z"
-
-#: ../src/contacts-gtk.c:472
-msgid "_Add Field"
-msgstr "_Добавяне на поле"
-
-#: ../src/contacts-gtk.c:476
-msgid "_Remove Field"
-msgstr "_Премахване на поле"
-
-#: ../src/contacts-gtk.c:659
-msgid "Edit Types"
-msgstr "Редактиране на видове"
-
-#: ../src/contacts-gtk.c:671
-msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Направете избор:</b></span>"
+#~ msgid "Region"
+#~ msgstr "Област"
 
 #~ msgid "Unknown"
 #~ msgstr "Непознат"

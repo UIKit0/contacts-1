@@ -10,32 +10,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-15 09:17+0000\n"
-"PO-Revision-Date: 2009-07-20 16:26-0800\n"
-"Last-Translator: GLSJPN_Yukari <yukarix.yamashita@intel.com>\n"
+"POT-Creation-Date: 2009-07-22 09:17+0000\n"
+"PO-Revision-Date: 2008-06-06 22:04+0200\n"
+"Last-Translator: Stéphane Raimbault <stephane.raimbault@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Poedit-Language: French\n"
-"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Carnet d'adresses"
 
-#: ../data/contacts.desktop.in.h:2
-#: ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216
-#: ../src/contacts-main.c:191
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../src/contacts-callbacks-ebook.c:71
-#: ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194
-#: ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Sans nom"
 
@@ -64,18 +58,18 @@ msgstr "_Importer le contact"
 
 #: ../src/contacts-callbacks-ui.c:350
 msgid "Import Contact"
-msgstr "Importer le contact"
+msgstr "Importation d'un contact"
 
 #: ../src/contacts-callbacks-ui.c:383
 #, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "Un contact importé"
+msgstr[0] "Importer un contact"
 msgstr[1] "Importer %d contacts"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
-msgstr "Exporter le contact"
+msgstr "Exportation d'un contact"
 
 #. TODO: make it nicer for i18n
 #: ../src/contacts-callbacks-ui.c:463
@@ -84,7 +78,7 @@ msgid ""
 "<big><b>The file \"%s\" already exists.\n"
 "Do you want to replace it?</b></big>"
 msgstr ""
-"<big><b>Le fichier \"%s\" existe déjà.\n"
+"<big><b>Le fichier « %s » existe déjà.\n"
 "Souhaitez-vous le remplacer ?</b></big>"
 
 #: ../src/contacts-callbacks-ui.c:469
@@ -97,17 +91,34 @@ msgstr "_Remplacer"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Contacts est un logiciel libre, vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU publiée par la Free Software Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).\n"
+"Contacts est un logiciel libre, vous pouvez le redistribuer et/ou le "
+"modifier selon les termes de la Licence Publique Générale GNU publiée par la "
+"Free Software Foundation (version 2 ou bien toute autre version ultérieure "
+"choisie par vous).\n"
 "\n"
-"Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, ni explicite ni implicite, y compris les garanties de COMMERCIALISATION ou D\"APAPTATION DANS UN BUT SPECIFIQUE. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.\n"
+"Ce programme est distribué car potentiellement utile, mais SANS AUCUNE "
+"GARANTIE, ni explicite ni implicite, y compris les garanties de "
+"commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la "
+"Licence Publique Générale GNU pour plus de détails.\n"
 "\n"
-"Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis. "
+"Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même "
+"temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software "
+"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-"
+"Unis. "
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -118,8 +129,7 @@ msgstr ""
 "Olivier Lê Thanh Duong <olivier@lethanh.be>\n"
 "Stéphane Raimbault <stephane.raimbault@gmail.com>"
 
-#: ../src/contacts-callbacks-ui.c:678
-#: ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Tous"
 
@@ -151,10 +161,8 @@ msgstr "Impossible d'ajouter le contact %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:181
-#: ../src/contacts-ui.c:187
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s :</b>"
@@ -166,7 +174,7 @@ msgstr "<b>Type :</b>"
 
 #: ../src/contacts-edit-pane.c:823
 msgid "Change groups"
-msgstr "Changer les groupes"
+msgstr "Édition des groupes"
 
 #: ../src/contacts-edit-pane.c:823
 msgid "<b>Choose groups</b>"
@@ -211,7 +219,7 @@ msgstr "É_dition"
 
 #: ../src/contacts-gtk.c:291
 msgid "_Help"
-msgstr "_Aide"
+msgstr "Aid_e"
 
 #: ../src/contacts-gtk.c:345
 msgid "_Search:"
@@ -243,7 +251,7 @@ msgstr "_Ajouter un champ"
 
 #: ../src/contacts-gtk.c:476
 msgid "_Remove Field"
-msgstr "_Supprimer un champ"
+msgstr "_Supprimer le champ"
 
 #: ../src/contacts-gtk.c:659
 msgid "Edit Types"
@@ -273,10 +281,9 @@ msgstr "Obtention de l'erreur %d à l'ouverture du carnet d'adresses"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
-msgstr "- Un carnet d'adresses lèger"
+msgstr "- Un carnet d'adresses rapide"
 
-#: ../src/contacts-ui.c:177
-#: ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Autre"
@@ -319,7 +326,7 @@ msgstr "Adresse"
 
 #: ../src/contacts-utils.c:50
 msgid "Homepage"
-msgstr "Page d'accueil"
+msgstr "Site web"
 
 #: ../src/contacts-utils.c:58
 msgid "PO Box"
@@ -349,8 +356,7 @@ msgstr "Code postal"
 msgid "Country"
 msgstr "Pays"
 
-#: ../src/contacts-utils.c:71
-#: ../src/contacts-utils.c:82
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Maison"
 
@@ -358,8 +364,7 @@ msgstr "Maison"
 msgid "Cell"
 msgstr "Mobile"
 
-#: ../src/contacts-utils.c:73
-#: ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Travail"
 
@@ -378,4 +383,3 @@ msgstr "Ouverture d'une image"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Aucune image"
-

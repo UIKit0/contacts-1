@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts.HEAD\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=contacts&component=general\n"
-"POT-Creation-Date: 2009-05-13 01:34+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-07-22 09:17+0000\n"
 "PO-Revision-Date: 2009-05-20 16:20+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
@@ -22,7 +22,7 @@ msgid "Address book"
 msgstr "Címjegyzék"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Kapcsolatok"
 
@@ -103,11 +103,18 @@ msgid ""
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"A Kapcsolatok szabad szoftver, terjesztheti és/vagy módosíthatja a Free Software Foundation által kiadott GNU General Public License második (vagy bármely későbbi) változatában foglaltak alapján.\n"
+"A Kapcsolatok szabad szoftver, terjesztheti és/vagy módosíthatja a Free "
+"Software Foundation által kiadott GNU General Public License második (vagy "
+"bármely későbbi) változatában foglaltak alapján.\n"
 "\n"
-"A Kapcsolatok programot abban a reményben terjesztjük, hogy hasznos lesz, de nem vállalunk SEMMIFÉLE GARANCIÁT, még olyan értelemben sem, hogy a program alkalmas-e a KÖZREADÁSRA vagy EGY BIZONYOS FELADAT ELVÉGZÉSÉRE. További részletekért tanulmányozza a GNU GPL licencet.\n"
+"A Kapcsolatok programot abban a reményben terjesztjük, hogy hasznos lesz, de "
+"nem vállalunk SEMMIFÉLE GARANCIÁT, még olyan értelemben sem, hogy a program "
+"alkalmas-e a KÖZREADÁSRA vagy EGY BIZONYOS FELADAT ELVÉGZÉSÉRE. További "
+"részletekért tanulmányozza a GNU GPL licencet.\n"
 "\n"
-"A Kapcsolatok programhoz a GNU General Public License egy példánya is jár, ha nem kapta meg, írjon a Free Software Foundation Inc.-nek. Levélcímük: 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA."
+"A Kapcsolatok programhoz a GNU General Public License egy példánya is jár, "
+"ha nem kapta meg, írjon a Free Software Foundation Inc.-nek. Levélcímük: 51 "
+"Franklin St, Fifth Floor, Boston, MA 02110-1301, USA."
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -265,7 +272,7 @@ msgstr "Hiba a címjegyzék megnyitása közben"
 msgid "Got error %d when opening book"
 msgstr "A következő hiba történt a címjegyzék megnyitásakor: %d"
 
-#: ../src/contacts-main.c:190
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr "– Egy egyszerű címjegyzék"
 
@@ -369,4 +376,3 @@ msgstr "Kép megnyitása"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Nincs kép"
-

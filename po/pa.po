@@ -5,9 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts.HEAD\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
-"cgi?product=contacts&component=general\n"
-"POT-Creation-Date: 2009-03-19 01:45+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-07-22 05:50+0000\n"
 "PO-Revision-Date: 2009-04-01 06:53+0000\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi/Panjabi <punjab-l10n@list.sf.net>\n"
@@ -22,7 +21,7 @@ msgid "Address book"
 msgstr "ਐਡਰੈੱਸ-ਬੁੱਕ"
 
 #: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:188
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "ਸੰਪਰਕ"
 
@@ -103,18 +102,17 @@ msgid ""
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"ਸੰਪਰਕ ਇੱਕ ਮੁਫਤ ਸਾਫਟਵੇਅਰ ਹੈ, ਜਿਸ ਨੂੰ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਈਸੈਂਸ,"
-"ਜਿਸ ਨੂੰ ਫਰੀ ਸਾਫਟਵੇਅਰ ਫਾਊਨਡੇਸ਼ਨ ਨੇ ਤਿਆਰ ਕੀਤਾ ਹੈ, ਦੇ ਵਰਜਨ ੨ ਜਾਂ ਨਵੇਂ ਦੀਆਂ"
-"ਸ਼ਰਤਾਂ (ਉਹ ਤੁਹਾਡੀ ਆਪਣੀ ਮਰਜ਼ੀ ਹੈ) ਅਧੀਨ ਵੰਡ ਅਤੇ/ਜਾਂ ਸੋਧ ਸਕਦੇ ਹੋ।\n"
+"ਸੰਪਰਕ ਇੱਕ ਮੁਫਤ ਸਾਫਟਵੇਅਰ ਹੈ, ਜਿਸ ਨੂੰ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਈਸੈਂਸ,ਜਿਸ ਨੂੰ ਫਰੀ ਸਾਫਟਵੇਅਰ "
+"ਫਾਊਨਡੇਸ਼ਨ ਨੇ ਤਿਆਰ ਕੀਤਾ ਹੈ, ਦੇ ਵਰਜਨ ੨ ਜਾਂ ਨਵੇਂ ਦੀਆਂਸ਼ਰਤਾਂ (ਉਹ ਤੁਹਾਡੀ ਆਪਣੀ ਮਰਜ਼ੀ ਹੈ) ਅਧੀਨ ਵੰਡ "
+"ਅਤੇ/ਜਾਂ ਸੋਧ ਸਕਦੇ ਹੋ।\n"
 "\n"
-"ਸੰਪਰਕ ਨੂੰ ਇਹ ਮੰਨ ਕੇ ਵੰਡਿਆ ਜਾ ਰਿਹਾ ਹੈ ਕਿ ਇਹ ਫਾਇਦੇਮੰਦ ਰਹੇਗਾ,"
-"ਪਰ ਇਸ ਦੀ ਕੋਈ ਵਾਰੰਟੀ ਨਹੀਂ ਲਈ ਜਾ ਰਹੀ ਹੈ, ਕਿਸੇ ਖਾਸ ਕੰਮ ਲਈ ਅਨੁਕੂਲ ਹੋਣ ਜਾਂ"
-"ਠੀਕ ਤਰ੍ਹਾਂ ਕੰਮ ਕਰਨ ਦੀ ਵੀ ਕੋਈ ਗਾਰੰਟੀ ਨਹੀਂ ਹੈ। ਹੋਰ ਵੇਰਵੇ ਲਈ ਗਨੂ ਜਰਨਲ"
-"ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਨੂੰ ਪੜ੍ਹੋ।\n"
+"ਸੰਪਰਕ ਨੂੰ ਇਹ ਮੰਨ ਕੇ ਵੰਡਿਆ ਜਾ ਰਿਹਾ ਹੈ ਕਿ ਇਹ ਫਾਇਦੇਮੰਦ ਰਹੇਗਾ,ਪਰ ਇਸ ਦੀ ਕੋਈ ਵਾਰੰਟੀ ਨਹੀਂ ਲਈ ਜਾ "
+"ਰਹੀ ਹੈ, ਕਿਸੇ ਖਾਸ ਕੰਮ ਲਈ ਅਨੁਕੂਲ ਹੋਣ ਜਾਂਠੀਕ ਤਰ੍ਹਾਂ ਕੰਮ ਕਰਨ ਦੀ ਵੀ ਕੋਈ ਗਾਰੰਟੀ ਨਹੀਂ ਹੈ। ਹੋਰ ਵੇਰਵੇ "
+"ਲਈ ਗਨੂ ਜਰਨਲਪਬਲਿਕ ਲਾਇਸੈਂਸ ਨੂੰ ਪੜ੍ਹੋ।\n"
 "\n"
-"ਸੰਪਰਕ ਨਾਲ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀ ਨਕਲ ਪ੍ਰਾਪਤ ਕਰੋਗੇ, ਜੇਕਰ ਤੁਹਾਨੂੰ"
-"ਨਹੀਂ ਮਿਲੀ ਹੈ ਤਾਂ ਫਰੀ ਸਾਫਟਵੇਅਰ ਫਾਊਨਡੇਸ਼ਨ, ੫੧ ਫਰਾਕਲਿੰਨ ਸਟਰੀਟ, ਪੰਜਵੀਂ ਮੰਜ਼ਲ,"
-"ਬੋਸਟਨ, ਐਮ ਏ ੦੨੧੧੨-੧੩੦੧, ਅਮਰੀਕਾ ਨੂੰ ਲਿਖੋ।"
+"ਸੰਪਰਕ ਨਾਲ ਤੁਸੀਂ ਗਨੂ ਜਰਨਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀ ਨਕਲ ਪ੍ਰਾਪਤ ਕਰੋਗੇ, ਜੇਕਰ ਤੁਹਾਨੂੰਨਹੀਂ ਮਿਲੀ ਹੈ ਤਾਂ ਫਰੀ "
+"ਸਾਫਟਵੇਅਰ ਫਾਊਨਡੇਸ਼ਨ, ੫੧ ਫਰਾਕਲਿੰਨ ਸਟਰੀਟ, ਪੰਜਵੀਂ ਮੰਜ਼ਲ,ਬੋਸਟਨ, ਐਮ ਏ ੦੨੧੧੨-੧੩੦੧, ਅਮਰੀਕਾ ਨੂੰ "
+"ਲਿਖੋ।"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -141,11 +139,11 @@ msgstr "ਸੰਪਰਕ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸ�
 msgid "Information couldn't be updated, error was: %s"
 msgstr "ਜਾਣਕਾਰੀ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ, ਗਲਤੀ: %s"
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
 msgstr "ਸੰਪਰਕ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr "ਸੰਪਰਕ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ: %s"
@@ -156,103 +154,103 @@ msgstr "ਸੰਪਰਕ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕ�
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>ਕਿਸਮ</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "ਗਰੁੱਪ ਬਦਲੋ"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>ਗਰੁੱਪ ਚੁਣੋ</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "ਖੇਤਰ ਸ਼ਾਮਲ"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>ਇੱਕ ਖੇਤਰ ਚੁਣੋ</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "ਸੰਪਰਕ ਸੋਧ"
 
-#: ../src/contacts-gtk.c:226
+#: ../src/contacts-gtk.c:228
 msgid "C_ontacts"
 msgstr "ਸੰਪਰਕ(_o)"
 
-#: ../src/contacts-gtk.c:243
+#: ../src/contacts-gtk.c:245
 msgid "_Import..."
 msgstr "ਇੰਪੋਰਟ(_I)"
 
-#: ../src/contacts-gtk.c:253
+#: ../src/contacts-gtk.c:255
 msgid "C_ontact"
 msgstr "ਸੰਪਰਕ(_o)"
 
-#: ../src/contacts-gtk.c:263
+#: ../src/contacts-gtk.c:265
 msgid "_Groups"
 msgstr "ਗਰੁੱਪ(_G)"
 
-#: ../src/contacts-gtk.c:266
+#: ../src/contacts-gtk.c:268
 msgid "_Export"
 msgstr "ਐਕਸਪੋਰਟ(_E)"
 
-#: ../src/contacts-gtk.c:276
+#: ../src/contacts-gtk.c:278
 msgid "Ed_it"
 msgstr "ਸੋਧ(_i)"
 
-#: ../src/contacts-gtk.c:291
+#: ../src/contacts-gtk.c:293
 msgid "_Help"
 msgstr "ਮੱਦਦ(_H)"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:347
 msgid "_Search:"
 msgstr "ਖੋਜ(_S):"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:356
 msgid "0-9#"
 msgstr "੦-੯#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:361
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:367
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:372
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:377
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:474
 msgid "_Add Field"
 msgstr "ਖੇਤਰ ਸ਼ਾਮਲ(_A)"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:478
 msgid "_Remove Field"
 msgstr "ਖੇਤਰ ਹਟਾਓ(_R)"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:661
 msgid "Edit Types"
 msgstr "ਟਾਈਪ ਸੋਧੋ"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:673
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>ਚੋਣ ਕਰੋ:</b></span>"
 
@@ -274,7 +272,7 @@ msgstr "ਐਡਰੈੱਸ ਬੁੱਕ ਖੋਲ੍ਹਣ ਦੌਰਾਨ ਗ�
 msgid "Got error %d when opening book"
 msgstr "ਬੁੱਕ ਖੋਲ੍ਹਣ ਦੌਰਾਨ %d ਗਲਤੀ ਮਿਲੀ"
 
-#: ../src/contacts-main.c:190
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr "- ਇੱਕ ਹਲਕੀ ਐਡਰੈੱਸ ਬੁੱਕ"
 
@@ -340,7 +338,8 @@ msgid "City"
 msgstr "ਸ਼ਹਿਰ"
 
 #: ../src/contacts-utils.c:62
-msgid "Provice"
+#, fuzzy
+msgid "Province"
 msgstr "ਖਿੱਤਾ"
 
 #: ../src/contacts-utils.c:63
@@ -378,4 +377,3 @@ msgstr "ਚਿੱਤਰ ਖੋਲ੍ਹੋ"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "ਕੋਈ ਚਿੱਤਰ ਨਹੀਂ"
-

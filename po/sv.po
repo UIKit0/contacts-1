@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-03 15:47+0100\n"
+"POT-Creation-Date: 2009-07-22 09:17+0000\n"
 "PO-Revision-Date: 2009-03-03 15:47+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -20,17 +20,13 @@ msgstr ""
 msgid "Address book"
 msgstr "Adressbok"
 
-#: ../data/contacts.desktop.in.h:2
-#: ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216
-#: ../src/contacts-main.c:188
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Kontakter"
 
-#: ../src/contacts-callbacks-ebook.c:71
-#: ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194
-#: ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Namnlös"
 
@@ -92,17 +88,32 @@ msgstr "_Ersätt"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Kontakter är fri programvara. Du kan distribuera det och/eller modifiera det under villkoren i GNU General Public License, publicerad av Free Software Foundation, antingen version 2 eller (om du så vill) någon senare version.\n"
+"Kontakter är fri programvara. Du kan distribuera det och/eller modifiera det "
+"under villkoren i GNU General Public License, publicerad av Free Software "
+"Foundation, antingen version 2 eller (om du så vill) någon senare version.\n"
 "\n"
-"Kontakter distribueras i hopp om att det ska vara användbart, men UTAN NÅGON SOM HELST GARANTI, även utan underförstådd garanti om SÄLJBARHET eller LÄMPLIGHET FÖR NÅGOT SPECIELLT ÄNDAMÅL. Se GNU General Public License för ytterligare information.\n"
+"Kontakter distribueras i hopp om att det ska vara användbart, men UTAN NÅGON "
+"SOM HELST GARANTI, även utan underförstådd garanti om SÄLJBARHET eller "
+"LÄMPLIGHET FÖR NÅGOT SPECIELLT ÄNDAMÅL. Se GNU General Public License för "
+"ytterligare information.\n"
 "\n"
-"Du bör ha fått en kopia av GNU General Public License tillsammans med Kontakter. Om inte, skriv till Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"Du bör ha fått en kopia av GNU General Public License tillsammans med "
+"Kontakter. Om inte, skriv till Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -110,8 +121,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Daniel Nylander <po@danielnylander.se>"
 
-#: ../src/contacts-callbacks-ui.c:678
-#: ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Alla"
 
@@ -143,10 +153,8 @@ msgstr "Kan inte lägga till kontakt: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:181
-#: ../src/contacts-ui.c:187
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
@@ -263,12 +271,11 @@ msgstr "Fel vid öppnade av adressboken"
 msgid "Got error %d when opening book"
 msgstr "Fick fel %d vid öppnade av bok"
 
-#: ../src/contacts-main.c:190
+#: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
 msgstr "- En resurssnål adressbok"
 
-#: ../src/contacts-ui.c:177
-#: ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Övrig"
@@ -341,8 +348,7 @@ msgstr "Postnummer"
 msgid "Country"
 msgstr "Land"
 
-#: ../src/contacts-utils.c:71
-#: ../src/contacts-utils.c:82
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Hem"
 
@@ -350,8 +356,7 @@ msgstr "Hem"
 msgid "Cell"
 msgstr "Mobil"
 
-#: ../src/contacts-utils.c:73
-#: ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Arbete"
 
@@ -373,14 +378,18 @@ msgstr "Ingen bild"
 
 #~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
 #~ msgstr "<span><big><b>Välkommen till Kontakter</b></big></span>"
+
 #~ msgid "_Contact"
 #~ msgstr "_Kontakt"
+
 #~ msgid "_Contacts"
 #~ msgstr "_Kontakter"
+
 #~ msgid "Unknown"
 #~ msgstr "Okänd"
+
 #~ msgid "Locality"
 #~ msgstr "Lokalitet"
+
 #~ msgid "Region"
 #~ msgstr "Län"
-

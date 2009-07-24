@@ -8,32 +8,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-15 09:17+0000\n"
-"PO-Revision-Date: 2009-07-20 16:32-0800\n"
-"Last-Translator: GLSJPN_Yukari <yukarix.yamashita@intel.com>\n"
+"POT-Creation-Date: 2009-07-22 09:17+0000\n"
+"PO-Revision-Date: 2008-11-03 14:57+0000\n"
+"Last-Translator: Michel Recondo <mrecondo@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipsga.org.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Poedit-Language: Portuguese\n"
-"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Catálogo de endereços"
 
-#: ../data/contacts.desktop.in.h:2
-#: ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216
-#: ../src/contacts-main.c:191
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Contatos"
 
-#: ../src/contacts-callbacks-ebook.c:71
-#: ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194
-#: ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Sem nome"
 
@@ -95,17 +89,33 @@ msgstr "_Substituir"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Foobar é software livre; você pode redistribuí-lo e/ou modificá-lo sob os termos da Licença Pública Geral GNU (GNU General Public License), conforme publicada pela Free Software Foundation; tanto a versão 2 da Licença como (a seu critério) qualquer versão mais nova.\n"
+"Foobar é software livre; você pode redistribuí-lo e/ou modificá-lo sob os "
+"termos da Licença Pública Geral GNU (GNU General Public License), conforme "
+"publicada pela Free Software Foundation; tanto a versão 2 da Licença como (a "
+"seu critério) qualquer versão mais nova.\n"
 "\n"
-"Foobar é distribuído na expectativa de ser útil, mas SEM QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO ou de ADEQUAÇÃO A QUALQUER PROPÓSITO EM PARTICULAR. Consulte a Licença Pública Geral GNU para obter mais detalhes.\n"
+"Foobar é distribuído na expectativa de ser útil, mas SEM QUALQUER GARANTIA; "
+"sem mesmo a garantia implícita de COMERCIALIZAÇÃO ou de ADEQUAÇÃO A QUALQUER "
+"PROPÓSITO EM PARTICULAR. Consulte a Licença Pública Geral GNU para obter "
+"mais detalhes.\n"
 "\n"
-"Você deve ter recebido uma cópia da Licença Pública Geral GNU junto com Foobar; caso contrário, escreva para a Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA."
+"Você deve ter recebido uma cópia da Licença Pública Geral GNU junto com "
+"Foobar; caso contrário, escreva para a Free Software Foundation, Inc., 51 "
+"Franklin St, Fifth Floor, Boston, MA 02110-1301 USA."
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -115,8 +125,7 @@ msgstr ""
 "Leonardo Ferreira Fontenelle <leonardof@gnome.org>\n"
 "Michel Recondo <mrecondo@gmail.com>"
 
-#: ../src/contacts-callbacks-ui.c:678
-#: ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Todos"
 
@@ -148,10 +157,8 @@ msgstr "Não foi possível adicionar o contato: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:181
-#: ../src/contacts-ui.c:187
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
@@ -272,8 +279,7 @@ msgstr "Erro %d ao abrir o catálogo"
 msgid "- A light-weight address-book"
 msgstr "- Um catálogo de endereços leve"
 
-#: ../src/contacts-ui.c:177
-#: ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Outro"
@@ -346,8 +352,7 @@ msgstr "CEP"
 msgid "Country"
 msgstr "País"
 
-#: ../src/contacts-utils.c:71
-#: ../src/contacts-utils.c:82
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Casa"
 
@@ -355,8 +360,7 @@ msgstr "Casa"
 msgid "Cell"
 msgstr "Celular"
 
-#: ../src/contacts-utils.c:73
-#: ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Comercial"
 
@@ -378,12 +382,15 @@ msgstr "Sem imagem"
 
 #~ msgid "Unknown"
 #~ msgstr "Desconhecido"
+
 #~ msgid "Locality"
 #~ msgstr "Cidade"
+
 #~ msgid "Region"
 #~ msgstr "Estado"
+
 #~ msgid "_Contacts"
 #~ msgstr "_Contatos"
+
 #~ msgid "_Contact"
 #~ msgstr "_Contato"
-
