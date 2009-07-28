@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-15 09:17+0000\n"
+"POT-Creation-Date: 2009-07-22 05:50+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Loïc Dufresne de Virel <loic.dufresne.de.virel@intel.com>\n"
+"Last-Translator: GLSKOR_SunKim <sunx.kim@intel.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -125,11 +125,11 @@ msgstr "연락처를 업데이트할 수 없음"
 msgid "Information couldn't be updated, error was: %s"
 msgstr "정보를 업데이트할 수 없습니다. 오류 원인: %s"
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
 msgstr "연락처를 추가할 수 없음"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr "연락처를 추가할 수 없음: %s"
@@ -140,8 +140,8 @@ msgstr "연락처를 추가할 수 없음: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
+#: ../src/contacts-edit-pane.c:403
+#: ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181
 #: ../src/contacts-ui.c:187
 #, c-format
@@ -149,96 +149,96 @@ msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>유형:</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "그룹 교체"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>그룹 교체</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "필드 추가"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>필드 선택</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "연락처 편집"
 
-#: ../src/contacts-gtk.c:226
+#: ../src/contacts-gtk.c:228
 msgid "C_ontacts"
 msgstr "연락처(_O)"
 
-#: ../src/contacts-gtk.c:243
+#: ../src/contacts-gtk.c:245
 msgid "_Import..."
 msgstr "가져오기(_I)..."
 
-#: ../src/contacts-gtk.c:253
+#: ../src/contacts-gtk.c:255
 msgid "C_ontact"
 msgstr "연락처(_O)"
 
-#: ../src/contacts-gtk.c:263
+#: ../src/contacts-gtk.c:265
 msgid "_Groups"
 msgstr "그룹(_G)"
 
-#: ../src/contacts-gtk.c:266
+#: ../src/contacts-gtk.c:268
 msgid "_Export"
 msgstr "내보내기(_E)"
 
-#: ../src/contacts-gtk.c:276
+#: ../src/contacts-gtk.c:278
 msgid "Ed_it"
 msgstr "편집(_I)"
 
-#: ../src/contacts-gtk.c:291
+#: ../src/contacts-gtk.c:293
 msgid "_Help"
 msgstr "도움말(_H)"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:347
 msgid "_Search:"
 msgstr "검색(_S):"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:356
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:361
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:367
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:372
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:377
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:474
 msgid "_Add Field"
 msgstr "필드 추가(_A)"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:478
 msgid "_Remove Field"
 msgstr "필드 제거(_R)"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:661
 msgid "Edit Types"
 msgstr "유형 편집"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:673
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>선택 하십시오:</b></span>"
 
@@ -327,8 +327,8 @@ msgid "City"
 msgstr "도시"
 
 #: ../src/contacts-utils.c:62
-msgid "Provice"
-msgstr "행정 구역"
+msgid "Province"
+msgstr "주"
 
 #: ../src/contacts-utils.c:63
 msgid "Postal Code"

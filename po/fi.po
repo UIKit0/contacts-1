@@ -3,30 +3,36 @@
 # This file is distributed under the same license as the Contacts package.
 # Kalle Vahlman <zuh@iki.fi>, 2006.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 09:17+0000\n"
-"PO-Revision-Date: 2006-11-19 21:26+0200\n"
-"Last-Translator: Kalle Vahlman <zuh@iki.fi>\n"
+"POT-Creation-Date: 2009-07-22 05:50+0000\n"
+"PO-Revision-Date: 2009-07-27 12:42-0800\n"
+"Last-Translator: GLS <tomas.galicia@intel.com>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n!=1;\n"
+"X-Poedit-Language: Finnish\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
 msgstr "Osoitekirja"
 
-#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
+#: ../data/contacts.desktop.in.h:2
+#: ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216
+#: ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71
+#: ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194
+#: ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Nimetön"
 
@@ -58,11 +64,11 @@ msgid "Import Contact"
 msgstr "Tuo Yhteystieto"
 
 #: ../src/contacts-callbacks-ui.c:383
-#, fuzzy, c-format
+#, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "_Tuo yhteystieto"
-msgstr[1] "_Tuo yhteystieto"
+msgstr[0] "Tuotiin yksi yhteystieto"
+msgstr[1] "Tuotiin %d yhteystietoa"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -88,28 +94,28 @@ msgstr "Ko_rvaa"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
-"any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with "
-"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
-"St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
+"Yhteystiedot on vapaa ohjelma: tätä ohjelmaa saa levittää edelleen ja muuttaa Free Software Foundationin julkaiseman GNU General Public Licensen (GPL-lisenssi) version 2 tai (valinnan mukaan) myöhemmän version ehtojen mukaisesti. \n"
+"\n"
+"Tätä ohjelmaa levitetään siinä toivossa, että se olisi hyödyllinen mutta ilman mitään takuuta; edes hiljaista takuuta kaupallisesti hyväksyttävästä laadusta tai soveltuvuudesta tiettyyn tarkoitukseen. Katso GPL-lisenssistä lisää yksityiskohtia.\n"
+"\n"
+"Yhteystiedot-ohjelman mukana pitäisi tulla kopio GPL-lisenssistä. Jos näin ei ole, kirjoita osoitteeseen Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA."
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "Kalle Vahlman <zuh@iki.fi>"
+msgstr ""
+"Kalle Vahlman <zuh@iki.fi>\n"
+"Omar Antila <oantila@ptiglobal.com>"
 
-#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678
+#: ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Kaikki"
 
@@ -119,22 +125,21 @@ msgstr "Oletko varma että haluat poistaa tämän yhteystiedon?"
 
 #: ../src/contacts-edit-pane.c:142
 msgid "Couldn't update contact"
-msgstr ""
+msgstr "Yhteystietoa ei voitu päivittää"
 
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr ""
+msgstr "Tietoja ei voitu päivittää. Virhe: %s"
 
-#: ../src/contacts-edit-pane.c:182
-#, fuzzy
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
-msgstr "Muokkaa yhteystietoa"
+msgstr "Ei voitu lisätä yhteystietoa"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr ""
+msgstr "Seuravaa yhteystietoa ei voitu lisätä: %s"
 
 #. Create label/button text
 #. * Translators, the first
@@ -142,133 +147,132 @@ msgstr ""
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
-#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
-#, fuzzy, c-format
+#: ../src/contacts-edit-pane.c:403
+#: ../src/contacts-edit-pane.c:518
+#: ../src/contacts-ui.c:181
+#: ../src/contacts-ui.c:187
+#, c-format
 msgid "<b>%s:</b>"
-msgstr "<b>Tyyppi:</b>"
+msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>Tyyppi:</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "Vaihda ryhmiä"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>Valitse ryhmät</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "Lisää kenttä"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>Valitse kenttä</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "Muokkaa yhteystietoa"
 
-#: ../src/contacts-gtk.c:226
-#, fuzzy
+#: ../src/contacts-gtk.c:228
 msgid "C_ontacts"
-msgstr "Yhteystiedot"
+msgstr "_Yhteystiedot"
 
-#: ../src/contacts-gtk.c:243
-#, fuzzy
+#: ../src/contacts-gtk.c:245
 msgid "_Import..."
 msgstr "_Tuo"
 
-#: ../src/contacts-gtk.c:253
-#, fuzzy
+#: ../src/contacts-gtk.c:255
 msgid "C_ontact"
-msgstr "Yhteystiedot"
+msgstr "_Yhteystiedot"
 
-#: ../src/contacts-gtk.c:263
+#: ../src/contacts-gtk.c:265
 msgid "_Groups"
 msgstr "_Ryhmät"
 
-#: ../src/contacts-gtk.c:266
+#: ../src/contacts-gtk.c:268
 msgid "_Export"
 msgstr "_Vie"
 
-#: ../src/contacts-gtk.c:276
-#, fuzzy
+#: ../src/contacts-gtk.c:278
 msgid "Ed_it"
 msgstr "_Muokkaa"
 
-#: ../src/contacts-gtk.c:291
+#: ../src/contacts-gtk.c:293
 msgid "_Help"
 msgstr "O_hje"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:347
 msgid "_Search:"
 msgstr "_Etsi:"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:356
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:361
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:367
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:372
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:377
 msgid "V-Z"
-msgstr "V-Z"
+msgstr "V-Ö"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:474
 msgid "_Add Field"
 msgstr "_Lisää kenttä"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:478
 msgid "_Remove Field"
 msgstr "_Poista kenttä"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:661
 msgid "Edit Types"
 msgstr "Muokkaa tyyppejä"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:673
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Valitse:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr ""
+msgstr "Virhe osoitekirjaa avatessa"
 
 #: ../src/contacts-main.c:93
 #, c-format
 msgid "Got error %d when getting book view"
-msgstr ""
+msgstr "Tapahtui seuraava virhe kirjanäkymää saataessa: %d"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr ""
+msgstr "Virhe osoitekirjaa avatessa"
 
 #: ../src/contacts-main.c:121
 #, c-format
 msgid "Got error %d when opening book"
-msgstr ""
+msgstr "Tapahtui seuraava virhe luetteloa avatessa: %d"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
-msgstr ""
+msgstr "- Kevyt osoitekirja"
 
-#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177
+#: ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Muu"
@@ -283,28 +287,27 @@ msgstr "Sähköposti"
 
 #: ../src/contacts-utils.c:41
 msgid "Jabber"
-msgstr ""
+msgstr "Jabber"
 
 #: ../src/contacts-utils.c:42
 msgid "MSN"
-msgstr ""
+msgstr "MSN"
 
 #: ../src/contacts-utils.c:43
 msgid "Yahoo"
-msgstr ""
+msgstr "Yahoo"
 
 #: ../src/contacts-utils.c:44
 msgid "AIM"
-msgstr ""
+msgstr "AIM"
 
 #: ../src/contacts-utils.c:45
 msgid "ICQ"
-msgstr ""
+msgstr "ICQ"
 
 #: ../src/contacts-utils.c:46
-#, fuzzy
 msgid "Groupwise"
-msgstr "_Ryhmät"
+msgstr "Groupwise"
 
 #: ../src/contacts-utils.c:47
 msgid "Address"
@@ -316,11 +319,11 @@ msgstr "Kotisivu"
 
 #: ../src/contacts-utils.c:58
 msgid "PO Box"
-msgstr ""
+msgstr "Postilokero"
 
 #: ../src/contacts-utils.c:59
 msgid "Ext."
-msgstr ""
+msgstr "Alanumero"
 
 #: ../src/contacts-utils.c:60
 msgid "Street"
@@ -328,14 +331,13 @@ msgstr "Katuosoite"
 
 #: ../src/contacts-utils.c:61
 msgid "City"
-msgstr ""
+msgstr "Kaupunki"
 
 #: ../src/contacts-utils.c:62
-msgid "Provice"
-msgstr ""
+msgid "Province"
+msgstr "Maakunta"
 
 #: ../src/contacts-utils.c:63
-#, fuzzy
 msgid "Postal Code"
 msgstr "Postinumero"
 
@@ -343,22 +345,23 @@ msgstr "Postinumero"
 msgid "Country"
 msgstr "Maa"
 
-#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
-#, fuzzy
+#: ../src/contacts-utils.c:71
+#: ../src/contacts-utils.c:82
 msgid "Home"
-msgstr "Kotisivu"
+msgstr "Koti"
 
 #: ../src/contacts-utils.c:72
 msgid "Cell"
-msgstr ""
+msgstr "GSM"
 
-#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73
+#: ../src/contacts-utils.c:83
 msgid "Work"
-msgstr ""
+msgstr "Työ"
 
 #: ../src/contacts-utils.c:74
 msgid "Fax"
-msgstr ""
+msgstr "Faksi"
 
 #. Get a filename
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
@@ -374,27 +377,20 @@ msgstr "Ei kuvaa"
 
 #~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
 #~ msgstr "<span><big><b>Tervetuloa</b></big></span>"
-
 #~ msgid "_Contact"
 #~ msgstr "_Yhteystieto"
-
 #~ msgid "_Contacts"
 #~ msgstr "_Yhteystiedot"
-
 #~ msgid "Unknown"
 #~ msgstr "Tuntematon"
-
 #~ msgid "Region"
 #~ msgstr "Alue"
-
 #~ msgid "_Close"
 #~ msgstr "_Sulje"
-
 #~ msgid "_Delete"
 #~ msgstr "_Poista"
-
 #~ msgid "_New"
 #~ msgstr "_Uusi"
-
 #~ msgid "_Open"
 #~ msgstr "_Avaa"
+
