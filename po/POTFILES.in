@@ -6,3 +6,4 @@ src/contacts-gtk.c
 src/contacts-main.c
 src/contacts-ui.c
 src/contacts-utils.c
+src/contacts-defs.h
