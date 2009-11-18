@@ -155,6 +155,7 @@ contacts_edit_ok_cb (GtkWidget *button, ContactsData *data)
 		}
 	}
 
+        data->changed = FALSE; 
 	contacts_edit_pane_hide (data);
 }
 
@@ -196,7 +197,8 @@ contacts_edit_ok_new_cb (GtkWidget *button, ContactsData *data)
 			}
 		}
 	}
-
+ 
+        data->changed = FALSE;
 	contacts_edit_pane_hide (data);
 }
 
