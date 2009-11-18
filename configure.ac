@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(contacts, 0.11, http://www.pimlico-project.org/)
+AC_INIT(contacts, 0.12, http://www.pimlico-project.org/)
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR(src/contacts-main.c)
 AM_CONFIG_HEADER(src/config.h)
