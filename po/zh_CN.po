@@ -1,17 +1,21 @@
+# Simplified Chinese translation to contacts.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the contacts package.
+# Zhang Qiang <qiang.z.zhang@intel.com>, 2009.
+# Aron Xu <happyaron.xu@gmail.com>, 2009.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 05:50+0000\n"
-"PO-Revision-Date: 2009-07-28 17:05+0800\n"
-"Last-Translator: Zhang Qiang <qiang.z.zhang@intel.com>\n"
-"Language-Team: zh_CN\n"
+"POT-Creation-Date: 2009-11-24 20:05+0800\n"
+"PO-Revision-Date: 2009-11-24 20:11+0800\n"
+"Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Chinese\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"Plural-Forms: nplurals=2; plural=n!=1;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
@@ -30,17 +34,17 @@ msgstr "无名"
 #: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
-msgstr "您确定要删除这个 '%s' 联系人？"
+msgstr "您确定要删除“%s”？"
 
 #: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "您确定要删除这些 %d 联系人？"
+msgstr "您确定要删除 %d 位联系人？"
 
 #: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
-msgstr "您希望导入'%s'联系人吗？"
+msgstr "您希望导入“%s”联系人吗？"
 
 #: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
@@ -58,8 +62,7 @@ msgstr "导入联系人"
 #, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "已导入一个联系人"
-msgstr[1] "已导入 %d 联系人"
+msgstr[0] "已导入 %d 个联系人"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -77,7 +80,7 @@ msgstr ""
 
 #: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
-msgstr "替换将覆写其内容。"
+msgstr "替换将覆盖其内容。"
 
 #: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
@@ -115,7 +118,8 @@ msgstr ""
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "Zhang Qiang <qiang.z.zhang@intel.com>"
+msgstr "Zhang Qiang <qiang.z.zhang@intel.com>\n"
+"Aron Xu <happyaron.xu@gmail.com>"
 
 #: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
@@ -136,12 +140,12 @@ msgstr "信息无法更新，错误是：%s"
 
 #: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
-msgstr "无法新增联系人"
+msgstr "无法添加联系人"
 
 #: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr "无法新增 %s "
+msgstr "无法添加：%s "
 
 #. Create label/button text
 #. * Translators, the first
@@ -181,77 +185,77 @@ msgstr "<b>选择字段：</b>"
 msgid "Edit contact"
 msgstr "编辑联系人清单"
 
-#: ../src/contacts-gtk.c:228
+#: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
 msgstr "联系(_O)"
 
-#: ../src/contacts-gtk.c:245
+#: ../src/contacts-gtk.c:243
 msgid "_Import..."
 msgstr "导入联系人(_I)"
 
-#: ../src/contacts-gtk.c:255
+#: ../src/contacts-gtk.c:253
 msgid "C_ontact"
 msgstr "联系(_O)"
 
-#: ../src/contacts-gtk.c:265
+#: ../src/contacts-gtk.c:263
 msgid "_Groups"
 msgstr "群组(_G)"
 
-#: ../src/contacts-gtk.c:268
+#: ../src/contacts-gtk.c:266
 msgid "_Export"
 msgstr "导出(_E)"
 
-#: ../src/contacts-gtk.c:278
+#: ../src/contacts-gtk.c:276
 msgid "Ed_it"
 msgstr "编辑(_I)"
 
-#: ../src/contacts-gtk.c:293
+#: ../src/contacts-gtk.c:291
 msgid "_Help"
 msgstr "帮助(_H)"
 
-#: ../src/contacts-gtk.c:347
+#: ../src/contacts-gtk.c:345
 msgid "_Search:"
 msgstr "搜索(_S)："
 
-#: ../src/contacts-gtk.c:356
+#: ../src/contacts-gtk.c:354
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:361
+#: ../src/contacts-gtk.c:359
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:367
+#: ../src/contacts-gtk.c:365
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:372
+#: ../src/contacts-gtk.c:370
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:377
+#: ../src/contacts-gtk.c:375
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:474
+#: ../src/contacts-gtk.c:472
 msgid "_Add Field"
-msgstr "新增字段(_A)"
+msgstr "添加字段(_A)"
 
-#: ../src/contacts-gtk.c:478
+#: ../src/contacts-gtk.c:476
 msgid "_Remove Field"
 msgstr "删除字段(_R)"
 
-#: ../src/contacts-gtk.c:661
+#: ../src/contacts-gtk.c:659
 msgid "Edit Types"
 msgstr "编辑分割区"
 
-#: ../src/contacts-gtk.c:673
+#: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>作出选择：</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr "开启联系人清单时发生错误"
+msgstr "启动联系簿时发生错误"
 
 #: ../src/contacts-main.c:93
 #, c-format
@@ -260,7 +264,7 @@ msgstr "查看联系簿时发生 %d 错误"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr "开启联系人清单时发生错误"
+msgstr "开启联系簿时发生错误"
 
 #: ../src/contacts-main.c:121
 #, c-format
@@ -310,7 +314,7 @@ msgstr "Groupwise"
 
 #: ../src/contacts-utils.c:47
 msgid "Address"
-msgstr "位址"
+msgstr "地址"
 
 #: ../src/contacts-utils.c:50
 msgid "Homepage"
@@ -371,3 +375,11 @@ msgstr "打开图像"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "无图像"
+
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "未分组"
