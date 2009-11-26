@@ -313,6 +313,7 @@ create_main_window (ContactsData *data)
 	groups_combobox = gtk_combo_box_new ();
 	GtkListStore *ls = gtk_list_store_new (1, G_TYPE_STRING);
 	GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (groups_combobox),
 	    groups_combo_seperator_func, NULL, NULL);
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (groups_combobox), renderer, TRUE);
