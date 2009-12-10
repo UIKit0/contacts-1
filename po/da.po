@@ -4,14 +4,12 @@
 # Kristian Poul Herkild <kristian@herkild.dk>, 2006.
 # Joe Hansen <joedalton2@yahoo.dk>, 2009.
 #
-# Husk fejlrapport "Provice" -> "Province"
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts - trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-07 20:10+0100\n"
-"PO-Revision-Date: 2009-06-05 16:07+0200\n"
+"POT-Creation-Date: 2009-12-10 23:36+0100\n"
+"PO-Revision-Date: 2009-12-07 16:07+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -348,9 +346,7 @@ msgstr "Vej"
 msgid "City"
 msgstr "By"
 
-# engelsk fejl her province?
 #: ../src/contacts-utils.c:62
-#, fuzzy
 msgid "Province"
 msgstr "Provins"
 
@@ -395,6 +391,5 @@ msgstr "Intet billede"
 #.
 #. For the image-chooser dialog
 #: ../src/contacts-defs.h:165
-#, fuzzy
 msgid "No Group"
-msgstr "_Grupper"
+msgstr "Ingen gruppe"
