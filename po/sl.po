@@ -1,8 +1,13 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the contacts package.
+#
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Contacts\n"
+"Project-Id-Version: contacts\n"
 "Report-Msgid-Bugs-To: http://bugzilla.openedhand.com/enter_bug.cgi?product=Contacts&component=General\n"
-"POT-Creation-Date: 2009-09-16 12:29+0000\n"
+"POT-Creation-Date: 2010-01-10 10:16+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -40,7 +45,7 @@ msgstr "Ali ste prepričani, da želite izbrisati '%s'?"
 #: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "Ali ste prepričani, da želite izbrisati %d stikov ?"
+msgstr "Ali ste prepričani, da želite izbrisati %d stikov?"
 
 #: ../src/contacts-callbacks-ui.c:288
 #, c-format
@@ -49,7 +54,7 @@ msgstr "Ali želite uvoziti stik '%s'?"
 
 #: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
-msgstr "_Prikaži stik"
+msgstr "_Pokaži stik"
 
 #: ../src/contacts-callbacks-ui.c:294
 msgid "_Import contact"
@@ -84,7 +89,7 @@ msgstr ""
 
 #: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
-msgstr "Ob zamenjavi bo prepisana njena vsebina."
+msgstr "Ob zamenjavi datoteke bo prepisana tudi vsebina."
 
 #: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
@@ -98,7 +103,7 @@ msgid ""
 "\n"
 "You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Stiki je prosto programje; lahko ga redistribuirate in/ali spreminjate pod pogoji GNU General Public Licence kot je objavljena s Free Software Foundation; ali različico 2 Licence ali (na vašo željo) katerakoli kasnejša različica.\n"
+"Program Stiki je prosta programska oprema; program lahko širite in/ali spreminjate pod pogoji Splošnega javnega dovoljenja kot je objavljena s Free Software Foundation; ali različico 2 Licence ali (na vašo željo) katerakoli kasnejša različica.\n"
 "\n"
 "Stiki so distribuirani v upanju da bodo uporabni, toda BREZ KAKRŠNIHKOLI ZAGOTOVIL; tudi brez impliciranih zagotovila za PRODAJO ali PRIMERNOST ZA DOLOČEN NAMEN. Oglejte si GNU General Public Licence za več podrobnosti.\n"
 "\n"
@@ -126,16 +131,16 @@ msgstr "Ni mogoče posodobiti stika"
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr "Podatki ne morejo biti posodobljene, napaka je bila: %s"
+msgstr "Podatkov ni mogoče posodobiti; napaka je bila: %s"
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
 msgstr "Ni mogoče dodati stika"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr "Ni mogoče dodatni stika: %s"
+msgstr "Ni mogoče dodati stika: %s"
 
 #. Create label/button text
 #. * Translators, the first
@@ -143,8 +148,8 @@ msgstr "Ni mogoče dodatni stika: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401
-#: ../src/contacts-edit-pane.c:516
+#: ../src/contacts-edit-pane.c:403
+#: ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181
 #: ../src/contacts-ui.c:187
 #, c-format
@@ -152,28 +157,28 @@ msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>Vrsta:</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "Spremeni skupine"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
-msgstr "<b>Izberite skupine</b>"
+msgstr "<b>Izbor skupin</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "Dodaj polje"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
-msgstr "<b>Izberite polje</b>"
+msgstr "<b>Izbor polja</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "Urejanje stikov"
 
@@ -187,7 +192,7 @@ msgstr "_Uvozi ..."
 
 #: ../src/contacts-gtk.c:253
 msgid "C_ontact"
-msgstr "S_tiki"
+msgstr "S_tik"
 
 #: ../src/contacts-gtk.c:263
 msgid "_Groups"
@@ -205,49 +210,49 @@ msgstr "Ure_di"
 msgid "_Help"
 msgstr "_Pomoč"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:346
 msgid "_Search:"
 msgstr "I_skanje:"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:355
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:360
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:366
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:371
 msgid "O-U"
-msgstr "H-N"
+msgstr "O-U"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:376
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:473
 msgid "_Add Field"
 msgstr "_Dodaj polje"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:477
 msgid "_Remove Field"
 msgstr "_Odstrani polje"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:660
 msgid "Edit Types"
 msgstr "Urejanje zvrsti"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:672
 msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Izberite:</b></span>"
+msgstr "<span><b>Izbor:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr "Napaka med zaganjanjem adresarja"
+msgstr "Napaka med zaganjanjem imenika"
 
 #: ../src/contacts-main.c:93
 #, c-format
@@ -256,7 +261,7 @@ msgstr "Med pridobivanjem pogleda knjige je prišlo do napake %d"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr "Napaka med odpiranjem odresarja"
+msgstr "Napaka med odpiranjem imenika"
 
 #: ../src/contacts-main.c:121
 #, c-format
@@ -265,7 +270,7 @@ msgstr "Prišlo je do napake %d med odpiranjem knjige"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
-msgstr "Lahek adresar"
+msgstr "- Enostavni imenik"
 
 #: ../src/contacts-ui.c:177
 #: ../src/contacts-utils.c:75
@@ -279,7 +284,7 @@ msgstr "Telefon"
 
 #: ../src/contacts-utils.c:40
 msgid "Email"
-msgstr "Email"
+msgstr "e-Pošta"
 
 #: ../src/contacts-utils.c:41
 msgid "Jabber"
@@ -311,7 +316,7 @@ msgstr "Naslov"
 
 #: ../src/contacts-utils.c:50
 msgid "Homepage"
-msgstr "Domača stran"
+msgstr "Spletna stran"
 
 #: ../src/contacts-utils.c:58
 msgid "PO Box"
@@ -319,7 +324,7 @@ msgstr "Poštni predal"
 
 #: ../src/contacts-utils.c:59
 msgid "Ext."
-msgstr "Ext."
+msgstr "Številka"
 
 #: ../src/contacts-utils.c:60
 msgid "Street"
@@ -331,7 +336,7 @@ msgstr "Mesto"
 
 #: ../src/contacts-utils.c:62
 msgid "Province"
-msgstr "Pokrajina"
+msgstr "Provinca"
 
 #: ../src/contacts-utils.c:63
 msgid "Postal Code"
@@ -344,11 +349,11 @@ msgstr "Država"
 #: ../src/contacts-utils.c:71
 #: ../src/contacts-utils.c:82
 msgid "Home"
-msgstr "Dom"
+msgstr "Doma"
 
 #: ../src/contacts-utils.c:72
 msgid "Cell"
-msgstr "Mobitel"
+msgstr "Mobilni telefon"
 
 #: ../src/contacts-utils.c:73
 #: ../src/contacts-utils.c:83
@@ -369,5 +374,13 @@ msgstr "Odpri sliko"
 
 #: ../src/contacts-utils.c:490
 msgid "No image"
-msgstr "Ni slike"
+msgstr "Brez slike"
+
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Ni skupine"
 
