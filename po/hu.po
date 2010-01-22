@@ -2,17 +2,16 @@
 # Copyright 2009. Free Software Foundation, Inc.
 # This file is distributed under the same license as the contacts package.
 #
-# Gabor Kelemen <kelemeng at gnome dot hu>, 2009.
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2009, 2010.
 # Gergely Szarka <gszarka at invitel dot hu>, 2009.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-15 01:46+0200\n"
-"PO-Revision-Date: 2009-08-15 01:48+0200\n"
+"POT-Creation-Date: 2010-01-22 01:28+0100\n"
+"PO-Revision-Date: 2010-01-22 01:28+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
-"Language-Team: Hungarian <gnome at gnome dot hu>\n"
+"Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -141,11 +140,11 @@ msgstr "Kapcsolat frissítése sikertelen"
 msgid "Information couldn't be updated, error was: %s"
 msgstr "Frissítés sikertelen a következő hiba miatt: %s"
 
-#: ../src/contacts-edit-pane.c:182
+#: ../src/contacts-edit-pane.c:183
 msgid "Couldn't add contact"
 msgstr "Kapcsolat hozzáadása sikertelen"
 
-#: ../src/contacts-edit-pane.c:187
+#: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr "Következő kapcsolat hozzáadása sikertelen: %s"
@@ -156,35 +155,35 @@ msgstr "Következő kapcsolat hozzáadása sikertelen: %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:476
+#: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
 msgstr "<b>Típus:</b>"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
 msgstr "Csoportok módosítása"
 
-#: ../src/contacts-edit-pane.c:823
+#: ../src/contacts-edit-pane.c:825
 msgid "<b>Choose groups</b>"
 msgstr "<b>Válasszon csoportokat</b>"
 
-#: ../src/contacts-edit-pane.c:885
+#: ../src/contacts-edit-pane.c:887
 msgid "Add field"
 msgstr "Mező hozzáadása"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:889
 msgid "<b>Choose a field</b>"
 msgstr "<b>Válasszon mezőt</b>"
 
-#: ../src/contacts-edit-pane.c:1244
+#: ../src/contacts-edit-pane.c:1246
 msgid "Edit contact"
 msgstr "Kapcsolat szerkesztése"
 
@@ -216,43 +215,43 @@ msgstr "S_zerkesztés"
 msgid "_Help"
 msgstr "_Súgó"
 
-#: ../src/contacts-gtk.c:345
+#: ../src/contacts-gtk.c:346
 msgid "_Search:"
 msgstr "Ke_resés:"
 
-#: ../src/contacts-gtk.c:354
+#: ../src/contacts-gtk.c:355
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:359
+#: ../src/contacts-gtk.c:360
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:365
+#: ../src/contacts-gtk.c:366
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:370
+#: ../src/contacts-gtk.c:371
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:375
+#: ../src/contacts-gtk.c:376
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:472
+#: ../src/contacts-gtk.c:473
 msgid "_Add Field"
 msgstr "Mező _hozzáadása"
 
-#: ../src/contacts-gtk.c:476
+#: ../src/contacts-gtk.c:477
 msgid "_Remove Field"
 msgstr "Mező _eltávolítása"
 
-#: ../src/contacts-gtk.c:659
+#: ../src/contacts-gtk.c:660
 msgid "Edit Types"
 msgstr "Típusok szerkesztése"
 
-#: ../src/contacts-gtk.c:671
+#: ../src/contacts-gtk.c:672
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Válasszon:</b></span>"
 
@@ -379,3 +378,10 @@ msgstr "Kép megnyitása"
 msgid "No image"
 msgstr "Nincs kép"
 
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Nincs csoport"
