@@ -9,8 +9,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 05:50+0000\n"
+"Report-Msgid-Bugs-To: http://bugzilla.openedhand.com/enter_bug.cgi?"
+"product=Contacts&component=General\n"
+"POT-Creation-Date: 2009-11-09 18:57+0000\n"
 "PO-Revision-Date: 2009-07-27 09:53-0800\n"
 "Last-Translator: Loïc Dufresne de Virel <loic.dufresne.de.virel@intel.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
@@ -23,34 +24,30 @@ msgstr ""
 msgid "Address book"
 msgstr "Carnet d'adresses"
 
-#: ../data/contacts.desktop.in.h:2
-#: ../src/contacts-edit-pane.c:86
-#: ../src/contacts-gtk.c:216
-#: ../src/contacts-main.c:191
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../src/contacts-callbacks-ebook.c:71
-#: ../src/contacts-callbacks-ebook.c:146
-#: ../src/contacts-callbacks-ui.c:194
-#: ../src/contacts-ui.c:75
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
 msgid "Unnamed"
 msgstr "Sans nom"
 
 #: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
-msgstr "Êtes-vous sûr de vouloir supprimer « %s » ?"
+msgstr "Êtes-vous sûr de vouloir supprimer « %s » ?"
 
 #: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "Êtes-vous sûr de vouloir supprimer %d contacts ?"
+msgstr "Êtes-vous sûr de vouloir supprimer %d contacts ?"
 
 #: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
-msgstr "Voulez vous importer le contact « %s » ?"
+msgstr "Voulez vous importer le contact « %s » ?"
 
 #: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
@@ -83,7 +80,7 @@ msgid ""
 "Do you want to replace it?</b></big>"
 msgstr ""
 "<big><b>Le fichier « %s » existe déjà.\n"
-"Souhaitez-vous le remplacer ?</b></big>"
+"Souhaitez-vous le remplacer ?</b></big>"
 
 #: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
@@ -95,17 +92,34 @@ msgstr "_Remplacer"
 
 #: ../src/contacts-callbacks-ui.c:618
 msgid ""
-"Contacts is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
 "\n"
-"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 0110-1301, USA"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
-"Contacts est un logiciel libre, vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU publiée par la Free Software Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).\n"
+"Contacts est un logiciel libre, vous pouvez le redistribuer et/ou le "
+"modifier selon les termes de la Licence Publique Générale GNU publiée par la "
+"Free Software Foundation (version 2 ou bien toute autre version ultérieure "
+"choisie par vous).\n"
 "\n"
-"Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.\n"
+"Ce programme est distribué car potentiellement utile, mais SANS AUCUNE "
+"GARANTIE, ni explicite ni implicite, y compris les garanties de "
+"commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la "
+"Licence Publique Générale GNU pour plus de détails.\n"
 "\n"
-"Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis. "
+"Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même "
+"temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software "
+"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-"
+"Unis. "
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -116,14 +130,13 @@ msgstr ""
 "Olivier Lê Thanh Duong <olivier@lethanh.be>\n"
 "Stéphane Raimbault <stephane.raimbault@gmail.com>"
 
-#: ../src/contacts-callbacks-ui.c:678
-#: ../src/contacts-gtk.c:109
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
 msgstr "Tous"
 
 #: ../src/contacts-edit-pane.c:104
 msgid "Are you sure you want to delete this contact?"
-msgstr "Êtes vous sûr de vouloir supprimer ce contact ?"
+msgstr "Êtes vous sûr de vouloir supprimer ce contact ?"
 
 #: ../src/contacts-edit-pane.c:142
 msgid "Couldn't update contact"
@@ -132,13 +145,13 @@ msgstr "Impossible de mettre le contact à jour"
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr "L'information n'a pas pu être mise à jour, l'erreur était : %s"
+msgstr "L'information n'a pas pu être mise à jour, l'erreur était : %s"
 
-#: ../src/contacts-edit-pane.c:183
+#: ../src/contacts-edit-pane.c:182
 msgid "Couldn't add contact"
 msgstr "Impossible d'ajouter le contact"
 
-#: ../src/contacts-edit-pane.c:188
+#: ../src/contacts-edit-pane.c:187
 #, c-format
 msgid "Cannot add contact: %s"
 msgstr "Impossible d'ajouter le contact %s"
@@ -149,105 +162,103 @@ msgstr "Impossible d'ajouter le contact %s"
 #. * name, ex. <b>Country:</b>
 #.
 #. "<b>%s:</b>\n<small>(%s)</small>",
-#: ../src/contacts-edit-pane.c:403
-#: ../src/contacts-edit-pane.c:518
-#: ../src/contacts-ui.c:181
-#: ../src/contacts-ui.c:187
+#: ../src/contacts-edit-pane.c:401 ../src/contacts-edit-pane.c:516
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
 #, c-format
 msgid "<b>%s:</b>"
 msgstr "<b>%s :</b>"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:478
+#: ../src/contacts-edit-pane.c:476
 msgid "<b>Type:</b>"
 msgstr "<b>Type :</b>"
 
-#: ../src/contacts-edit-pane.c:825
+#: ../src/contacts-edit-pane.c:823
 msgid "Change groups"
 msgstr "Édition des groupes"
 
-#: ../src/contacts-edit-pane.c:825
+#: ../src/contacts-edit-pane.c:823
 msgid "<b>Choose groups</b>"
 msgstr "<b>Sélectionner les groupes</b>"
 
-#: ../src/contacts-edit-pane.c:887
+#: ../src/contacts-edit-pane.c:885
 msgid "Add field"
 msgstr "Ajout d'un champ"
 
 #. TODO: make nicer for i18n
-#: ../src/contacts-edit-pane.c:889
+#: ../src/contacts-edit-pane.c:887
 msgid "<b>Choose a field</b>"
 msgstr "<b>Choisissez un champ</b>"
 
-#: ../src/contacts-edit-pane.c:1246
+#: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
 msgstr "Modification d'un contact"
 
-#: ../src/contacts-gtk.c:228
+#: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
 msgstr "C_ontacts"
 
-#: ../src/contacts-gtk.c:245
+#: ../src/contacts-gtk.c:243
 msgid "_Import..."
 msgstr "_Importer..."
 
-#: ../src/contacts-gtk.c:255
+#: ../src/contacts-gtk.c:253
 msgid "C_ontact"
 msgstr "C_ontact"
 
-#: ../src/contacts-gtk.c:265
+#: ../src/contacts-gtk.c:263
 msgid "_Groups"
 msgstr "_Groupes"
 
-#: ../src/contacts-gtk.c:268
+#: ../src/contacts-gtk.c:266
 msgid "_Export"
 msgstr "_Exporter"
 
-#: ../src/contacts-gtk.c:278
+#: ../src/contacts-gtk.c:276
 msgid "Ed_it"
 msgstr "É_dition"
 
-#: ../src/contacts-gtk.c:293
+#: ../src/contacts-gtk.c:291
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ../src/contacts-gtk.c:347
+#: ../src/contacts-gtk.c:345
 msgid "_Search:"
 msgstr "_Rechercher :"
 
-#: ../src/contacts-gtk.c:356
+#: ../src/contacts-gtk.c:354
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:361
+#: ../src/contacts-gtk.c:359
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:367
+#: ../src/contacts-gtk.c:365
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:372
+#: ../src/contacts-gtk.c:370
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:377
+#: ../src/contacts-gtk.c:375
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:474
+#: ../src/contacts-gtk.c:472
 msgid "_Add Field"
 msgstr "_Ajouter un champ"
 
-#: ../src/contacts-gtk.c:478
+#: ../src/contacts-gtk.c:476
 msgid "_Remove Field"
 msgstr "_Supprimer le champ"
 
-#: ../src/contacts-gtk.c:661
+#: ../src/contacts-gtk.c:659
 msgid "Edit Types"
 msgstr "Modification des types"
 
-#: ../src/contacts-gtk.c:673
+#: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Faites un choix :</b></span>"
 
@@ -273,8 +284,7 @@ msgstr "Obtention de l'erreur %d à l'ouverture du carnet d'adresses"
 msgid "- A light-weight address-book"
 msgstr "- Un carnet d'adresses rapide"
 
-#: ../src/contacts-ui.c:177
-#: ../src/contacts-utils.c:75
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
 msgid "Other"
 msgstr "Autre"
@@ -347,8 +357,7 @@ msgstr "Code postal"
 msgid "Country"
 msgstr "Pays"
 
-#: ../src/contacts-utils.c:71
-#: ../src/contacts-utils.c:82
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
 msgid "Home"
 msgstr "Maison"
 
@@ -356,8 +365,7 @@ msgstr "Maison"
 msgid "Cell"
 msgstr "Mobile"
 
-#: ../src/contacts-utils.c:73
-#: ../src/contacts-utils.c:83
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
 msgstr "Travail"
 
@@ -377,3 +385,10 @@ msgstr "Ouverture d'une image"
 msgid "No image"
 msgstr "Aucune image"
 
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Aucun groupe"
