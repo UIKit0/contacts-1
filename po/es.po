@@ -1,16 +1,14 @@
 # Traducción al castellano de contacts
 # Copyright (C) 2007 Free Software Foundation
 # This file is distributed under the same license as the contacts package.
-#
-# Jorge González <jorgegonz@svn.gnome.org>, 2008.
-# Jorge González <jorgegonz@svn.gnome.org>, 2009.
+# Jorge González <jorgegonz@svn.gnome.org>, 2008, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: Contact 0.5\n"
 "Report-Msgid-Bugs-To: http://bugzilla.openedhand.com/enter_bug.cgi?"
 "product=Contacts&component=General\n"
-"POT-Creation-Date: 2009-11-09 18:57+0000\n"
-"PO-Revision-Date: 2009-11-13 18:38+0100\n"
+"POT-Creation-Date: 2009-11-17 19:24+0000\n"
+"PO-Revision-Date: 2010-03-17 19:27+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,17 +34,17 @@ msgstr "Sin nombre"
 #: ../src/contacts-callbacks-ui.c:199
 #, c-format
 msgid "Are you sure you want to delete '%s'?"
-msgstr "¿Estás seguro de querer borrar '%s'?"
+msgstr "¿Está seguro de querer eliminar '%s'?"
 
 #: ../src/contacts-callbacks-ui.c:203
 #, c-format
 msgid "Are you sure you want to delete %d contacts?"
-msgstr "¿Estás seguro de querer borrar los contactos %d?"
+msgstr "¿Está seguro de querer eliminar los contactos %d?"
 
 #: ../src/contacts-callbacks-ui.c:288
 #, c-format
 msgid "Would you like to import contact '%s'?"
-msgstr "¿Quieres importar el contacto '%s'?"
+msgstr "¿Quiere importar el contacto '%s'?"
 
 #: ../src/contacts-callbacks-ui.c:293
 msgid "_Show contact"
@@ -78,12 +76,12 @@ msgid ""
 "<big><b>The file \"%s\" already exists.\n"
 "Do you want to replace it?</b></big>"
 msgstr ""
-"<big><b>El archivo \"%s\" ya existe.\n"
-"¿Quieres reemplazarlo?</b></big>"
+"<big><b>El archivo «%s» ya existe.\n"
+"¿Quiere reemplazarlo?</b></big>"
 
 #: ../src/contacts-callbacks-ui.c:469
 msgid "Replacing it will overwrite its contents."
-msgstr "Reemplazarlo va a sobreescribir su contenido."
+msgstr "Reemplazarlo sobreescribirá su contenido."
 
 #: ../src/contacts-callbacks-ui.c:473
 msgid "_Replace"
@@ -124,7 +122,7 @@ msgstr ""
 #. like so: "Your Name <your@email.com>"
 #: ../src/contacts-callbacks-ui.c:633
 msgid "translator-credits"
-msgstr "Moisés Baca"
+msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2007-2010"
 
 #: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
 msgid "All"
@@ -132,20 +130,20 @@ msgstr "Todos"
 
 #: ../src/contacts-edit-pane.c:104
 msgid "Are you sure you want to delete this contact?"
-msgstr "¿Estás seguro de querer borrar este contacto?"
+msgstr "¿Está seguro de querer eliminar este contacto?"
 
 #: ../src/contacts-edit-pane.c:142
 msgid "Couldn't update contact"
-msgstr "No se ha podido actualizar el contacto"
+msgstr "No se pudo actualizar el contacto"
 
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr "No se ha podido actualizar la información. Error: %s"
+msgstr "No se pudo actualizar la información, el error fue: %s"
 
 #: ../src/contacts-edit-pane.c:182
 msgid "Couldn't add contact"
-msgstr "No se ha podido añadir el contacto"
+msgstr "No se pudo añadir el contacto"
 
 #: ../src/contacts-edit-pane.c:187
 #, c-format
@@ -175,7 +173,7 @@ msgstr "Cambiar grupos"
 
 #: ../src/contacts-edit-pane.c:823
 msgid "<b>Choose groups</b>"
-msgstr "<b>Selecciona grupos</b>"
+msgstr "<b>Seleccionar grupos</b>"
 
 #: ../src/contacts-edit-pane.c:885
 msgid "Add field"
@@ -184,7 +182,7 @@ msgstr "Añadir campo"
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:887
 msgid "<b>Choose a field</b>"
-msgstr "<b>Selecciona un campo</b>"
+msgstr "<b>Seleccionar un campo</b>"
 
 #: ../src/contacts-edit-pane.c:1244
 msgid "Edit contact"
@@ -216,7 +214,7 @@ msgstr "Ed_itar"
 
 #: ../src/contacts-gtk.c:291
 msgid "_Help"
-msgstr "_Ayuda"
+msgstr "Ay_uda"
 
 #: ../src/contacts-gtk.c:345
 msgid "_Search:"
@@ -248,7 +246,7 @@ msgstr "_Añadir campo"
 
 #: ../src/contacts-gtk.c:476
 msgid "_Remove Field"
-msgstr "_Borrar campo"
+msgstr "_Quitar campo"
 
 #: ../src/contacts-gtk.c:659
 msgid "Edit Types"
@@ -256,7 +254,7 @@ msgstr "Editar tipos"
 
 #: ../src/contacts-gtk.c:671
 msgid "<span><b>Make a choice:</b></span>"
-msgstr "<span><b>Elige uno:</b></span>"
+msgstr "<span><b>Escojer uno:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
@@ -265,7 +263,7 @@ msgstr "Error al iniciar la libreta de direcciones"
 #: ../src/contacts-main.c:93
 #, c-format
 msgid "Got error %d when getting book view"
-msgstr "Error %d al obtener la vista de la libreta"
+msgstr "Se obtuvo el error %d al obtener la vista de la libreta"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
@@ -274,7 +272,7 @@ msgstr "Error al abrir la libreta de direcciones"
 #: ../src/contacts-main.c:121
 #, c-format
 msgid "Got error %d when opening book"
-msgstr "Error %d al abrir la libreta"
+msgstr "Se obtuvo el error %d al abrir la libreta"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
@@ -386,7 +384,6 @@ msgstr "Sin imagen"
 #.
 #. For the image-chooser dialog
 #: ../src/contacts-defs.h:165
-#| msgid "_Groups"
 msgid "No Group"
 msgstr "Sin grupo"
 
