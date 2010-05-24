@@ -1,20 +1,21 @@
 # Portuguese translation of contacts
 # Copyright © 2009 contacts
 # This file is distributed under the same license as the contacts package.
-# António Lima <amrlima@gmail.com>, 2009.
-#
+# António Lima <amrlima@gmail.com>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 05:50+0000\n"
-"PO-Revision-Date: 2009-02-16 21:47-0100\n"
+"POT-Creation-Date: 2010-05-24 23:51+0100\n"
+"PO-Revision-Date: 2010-05-13 22:35+0000\n"
 "Last-Translator: António Lima <amrlima@gmail.com>\n"
-"Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
+"Language-Team: gnome_pt@yahoogroups.com\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.5.2\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
@@ -186,71 +187,71 @@ msgstr "<b>Escolher um campo</b>"
 msgid "Edit contact"
 msgstr "Editar contacto"
 
-#: ../src/contacts-gtk.c:228
+#: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
 msgstr "C_ontactos"
 
-#: ../src/contacts-gtk.c:245
+#: ../src/contacts-gtk.c:243
 msgid "_Import..."
 msgstr "_Importar..."
 
-#: ../src/contacts-gtk.c:255
+#: ../src/contacts-gtk.c:253
 msgid "C_ontact"
 msgstr "C_ontacto"
 
-#: ../src/contacts-gtk.c:265
+#: ../src/contacts-gtk.c:263
 msgid "_Groups"
 msgstr "_Grupos"
 
-#: ../src/contacts-gtk.c:268
+#: ../src/contacts-gtk.c:266
 msgid "_Export"
 msgstr "_Exportar"
 
-#: ../src/contacts-gtk.c:278
+#: ../src/contacts-gtk.c:276
 msgid "Ed_it"
 msgstr "Ed_itar"
 
-#: ../src/contacts-gtk.c:293
+#: ../src/contacts-gtk.c:291
 msgid "_Help"
 msgstr "_Ajuda"
 
-#: ../src/contacts-gtk.c:347
+#: ../src/contacts-gtk.c:346
 msgid "_Search:"
 msgstr "_Procurar:"
 
-#: ../src/contacts-gtk.c:356
+#: ../src/contacts-gtk.c:355
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:361
+#: ../src/contacts-gtk.c:360
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:367
+#: ../src/contacts-gtk.c:366
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:372
+#: ../src/contacts-gtk.c:371
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:377
+#: ../src/contacts-gtk.c:376
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:474
+#: ../src/contacts-gtk.c:473
 msgid "_Add Field"
 msgstr "_Adicionar Campo"
 
-#: ../src/contacts-gtk.c:478
+#: ../src/contacts-gtk.c:477
 msgid "_Remove Field"
 msgstr "_Remover Campo"
 
-#: ../src/contacts-gtk.c:661
+#: ../src/contacts-gtk.c:660
 msgid "Edit Types"
 msgstr "Editar Tipos"
 
-#: ../src/contacts-gtk.c:673
+#: ../src/contacts-gtk.c:672
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Escolha:</b></span>"
 
@@ -338,7 +339,6 @@ msgid "City"
 msgstr "Cidade"
 
 #: ../src/contacts-utils.c:62
-#, fuzzy
 msgid "Province"
 msgstr "Província"
 
@@ -377,3 +377,11 @@ msgstr "Abrir imagem"
 #: ../src/contacts-utils.c:490
 msgid "No image"
 msgstr "Nenhuma imagem"
+
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Nenhum Grupo"
