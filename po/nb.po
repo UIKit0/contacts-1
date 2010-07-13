@@ -5,14 +5,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contacts\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 05:50+0000\n"
-"PO-Revision-Date: 2007-11-15 12:46+0100\n"
-"Last-Translator: Espen Stefansen <espens@svn.gnome.org>\n"
+"Report-Msgid-Bugs-To:\n"
+"POT-Creation-Date: 2010-07-13 13:53+0200\n"
+"PO-Revision-Date: 2010-07-13 13:55+0200\n"
+"Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
+"Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
@@ -56,11 +58,11 @@ msgid "Import Contact"
 msgstr "Importer kontakt"
 
 #: ../src/contacts-callbacks-ui.c:383
-#, fuzzy, c-format
+#, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "_Importer kontakt"
-msgstr[1] "_Importer kontakt"
+msgstr[0] "Importerte en kontakt"
+msgstr[1] "Importerte %d kontakter"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -153,9 +155,9 @@ msgstr "Kan ikke legge til kontakt: %s"
 #. "<b>%s:</b>\n<small>(%s)</small>",
 #: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b>"
-msgstr "<b>Type:</b>"
+msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:478
@@ -183,98 +185,95 @@ msgstr "<b>Velg et felt</b>"
 msgid "Edit contact"
 msgstr "Rediger kontakt"
 
-#: ../src/contacts-gtk.c:228
-#, fuzzy
+#: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
-msgstr "Kontakter"
+msgstr "K_ontakter"
 
-#: ../src/contacts-gtk.c:245
+#: ../src/contacts-gtk.c:243
 msgid "_Import..."
 msgstr "_Importer ..."
 
-#: ../src/contacts-gtk.c:255
-#, fuzzy
+#: ../src/contacts-gtk.c:253
 msgid "C_ontact"
-msgstr "Kontakter"
+msgstr "K_ontakt"
 
-#: ../src/contacts-gtk.c:265
+#: ../src/contacts-gtk.c:263
 msgid "_Groups"
 msgstr "_Grupper"
 
-#: ../src/contacts-gtk.c:268
+#: ../src/contacts-gtk.c:266
 msgid "_Export"
 msgstr "_Eksporter"
 
-#: ../src/contacts-gtk.c:278
-#, fuzzy
+#: ../src/contacts-gtk.c:276
 msgid "Ed_it"
-msgstr "_Rediger"
+msgstr "Red_iger"
 
-#: ../src/contacts-gtk.c:293
+#: ../src/contacts-gtk.c:291
 msgid "_Help"
 msgstr "_Hjelp"
 
-#: ../src/contacts-gtk.c:347
+#: ../src/contacts-gtk.c:346
 msgid "_Search:"
 msgstr "_Søk:"
 
-#: ../src/contacts-gtk.c:356
+#: ../src/contacts-gtk.c:355
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:361
+#: ../src/contacts-gtk.c:360
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:367
+#: ../src/contacts-gtk.c:366
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:372
+#: ../src/contacts-gtk.c:371
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:377
+#: ../src/contacts-gtk.c:376
 msgid "V-Z"
 msgstr "V-Å"
 
-#: ../src/contacts-gtk.c:474
+#: ../src/contacts-gtk.c:473
 msgid "_Add Field"
 msgstr "_Legg til felt"
 
-#: ../src/contacts-gtk.c:478
+#: ../src/contacts-gtk.c:477
 msgid "_Remove Field"
 msgstr "_Fjern felt"
 
-#: ../src/contacts-gtk.c:661
+#: ../src/contacts-gtk.c:660
 msgid "Edit Types"
 msgstr "Endre typer"
 
-#: ../src/contacts-gtk.c:673
+#: ../src/contacts-gtk.c:672
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Ta et valg:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr ""
+msgstr "Feil ved start av adressebok"
 
 #: ../src/contacts-main.c:93
 #, c-format
 msgid "Got error %d when getting book view"
-msgstr ""
+msgstr "Fikk feil %d ved henting av bokvisning"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr ""
+msgstr "Feil under åpning av adressebok"
 
 #: ../src/contacts-main.c:121
 #, c-format
 msgid "Got error %d when opening book"
-msgstr ""
+msgstr "Fikk feil %d ved åpning av bok"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
-msgstr ""
+msgstr "- En enkel adressebok"
 
 #: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
@@ -295,24 +294,23 @@ msgstr "Jabber"
 
 #: ../src/contacts-utils.c:42
 msgid "MSN"
-msgstr ""
+msgstr "MSN"
 
 #: ../src/contacts-utils.c:43
 msgid "Yahoo"
-msgstr ""
+msgstr "Yahoo"
 
 #: ../src/contacts-utils.c:44
 msgid "AIM"
-msgstr ""
+msgstr "AIM"
 
 #: ../src/contacts-utils.c:45
 msgid "ICQ"
-msgstr ""
+msgstr "ICQ"
 
 #: ../src/contacts-utils.c:46
-#, fuzzy
 msgid "Groupwise"
-msgstr "_Grupper"
+msgstr "Groupwise"
 
 #: ../src/contacts-utils.c:47
 msgid "Address"
@@ -336,15 +334,13 @@ msgstr "Gate"
 
 #: ../src/contacts-utils.c:61
 msgid "City"
-msgstr ""
+msgstr "By"
 
 #: ../src/contacts-utils.c:62
-#, fuzzy
 msgid "Province"
-msgstr "Telefon"
+msgstr "Provins"
 
 #: ../src/contacts-utils.c:63
-#, fuzzy
 msgid "Postal Code"
 msgstr "Postnummer"
 
@@ -353,21 +349,20 @@ msgid "Country"
 msgstr "Land"
 
 #: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
-#, fuzzy
 msgid "Home"
-msgstr "Hjemmeside"
+msgstr "Hjem"
 
 #: ../src/contacts-utils.c:72
 msgid "Cell"
-msgstr ""
+msgstr "Mobil"
 
 #: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
-msgstr ""
+msgstr "Arbeid"
 
 #: ../src/contacts-utils.c:74
 msgid "Fax"
-msgstr ""
+msgstr "Faks"
 
 #. Get a filename
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
@@ -381,20 +376,10 @@ msgstr "Åpne bilde"
 msgid "No image"
 msgstr "Ikke bilde"
 
-#~ msgid "Unknown"
-#~ msgstr "Ukjent"
-
-#~ msgid "Locality"
-#~ msgstr "Lokalitet"
-
-#~ msgid "Region"
-#~ msgstr "Region"
-
-#~ msgid "_Contacts"
-#~ msgstr "_Kontakter"
-
-#~ msgid "_Contact"
-#~ msgstr "_Kontakt"
-
-#~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
-#~ msgstr "<span><big><b>Velkommen til adresseboken</b></big></span>"
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Ingen gruppe"
