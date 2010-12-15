@@ -11,4 +11,4 @@ DISTCLEANFILES = $(INTLTOOL_BUILT)
 MAINTAINERCLEANFILES = aclocal.m4 compile config.guess config.sub configure depcomp $(INTLTOOL_BUILT:=.in) install-sh ltmain.sh mkinstalldirs Makefile.in missing
 
 snapshot:
-        $(MAKE) dist distdir=$(PACKAGE)-snap`date +"%Y%m%d"`
+	$(MAKE) dist distdir=$(PACKAGE)-snap`date +"%Y%m%d"`
