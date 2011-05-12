@@ -1,19 +1,25 @@
+# translation of contacts.master.ru.po to Russian
 # Translation of Contacts in the Russian languge.
 # Copyright (C) 2006, Opened Hand ltd.
 # This file is distributed under the same license as the Contacts package.
-# Alexander Bokovoy <ab@samba.org>, 2007
 #
+# Alexander Bokovoy <ab@samba.org>, 2007.
+# Yuri Kozlov <yuray@komyakino.ru>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: Contacts\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 05:50+0000\n"
-"PO-Revision-Date: 2007-02-02 12:21-0400\n"
-"Last-Translator: Alexander Bokovoy <ab@samba.org>\n"
-"Language-Team: Russian <RU@li.org>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.openedhand.com/enter_bug.cgi?"
+"product=Contacts&keywords=I18N+L10N&component=General\n"
+"POT-Creation-Date: 2011-04-18 13:58+0000\n"
+"PO-Revision-Date: 2010-03-22 19:08+0300\n"
+"Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
+"Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: ../data/contacts.desktop.in.h:1
 msgid "Address book"
@@ -57,11 +63,12 @@ msgid "Import Contact"
 msgstr "Импортировать контакт"
 
 #: ../src/contacts-callbacks-ui.c:383
-#, fuzzy, c-format
+#, c-format
 msgid "Imported one contact"
 msgid_plural "Imported %d contacts"
-msgstr[0] "_Импортировать контакт"
-msgstr[1] "_Импортировать контакт"
+msgstr[0] "Импортирован %d контакт"
+msgstr[1] "Импортировано %d контакта"
+msgstr[2] "Импортировано %d контактов"
 
 #: ../src/contacts-callbacks-ui.c:426
 msgid "Export Contact"
@@ -101,6 +108,18 @@ msgid ""
 "Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "St, Fifth Floor, Boston, MA 0110-1301, USA"
 msgstr ""
+"Contacts — свободное программное обеспечение; вы можете распространять его и/"
+"или изменять на условиях 2-й или более поздней (на ваше усмотрение) версии "
+"лицензии GNU General Public License, опубликованной Фондом Свободного "
+"Программного Обеспечения (Free Software Foundation).\n"
+"\n"
+"Contacts распространяется с надеждой, что он будет полезен, но БЕЗ КАКОЙ "
+"ЛИБО ГАРАНТИИ, даже без подразумеваемой гарантии ГОДНОСТИ или СООТВЕТСТВИИ "
+"КОНКРЕТНОЙ ЦЕЛИ. Условия смотрите в лицензии GNU General Public License.\n"
+"\n"
+"Вы должны были получить копию лицензии GNU GPL вместе с Contacts; если это "
+"не так, напишите по адресу Free Software Foundation, Inc., 51 Franklin St, "
+"Fifth Floor, Boston, MA 0110-1301, USA"
 
 #. Translators: please translate this as your own name and optionally email
 #. like so: "Your Name <your@email.com>"
@@ -118,22 +137,21 @@ msgstr "Вы действительно хотите удалить этот к�
 
 #: ../src/contacts-edit-pane.c:142
 msgid "Couldn't update contact"
-msgstr ""
+msgstr "Не удалось обновить контакт"
 
 #: ../src/contacts-edit-pane.c:147
 #, c-format
 msgid "Information couldn't be updated, error was: %s"
-msgstr ""
+msgstr "Не удалось обновить информацию, сообщение об ошибке: %s"
 
 #: ../src/contacts-edit-pane.c:183
-#, fuzzy
 msgid "Couldn't add contact"
-msgstr "Изменить контакт"
+msgstr "Не удалось добавить контакт"
 
 #: ../src/contacts-edit-pane.c:188
 #, c-format
 msgid "Cannot add contact: %s"
-msgstr ""
+msgstr "Не удалось добавить контакт: %s"
 
 #. Create label/button text
 #. * Translators, the first
@@ -143,14 +161,14 @@ msgstr ""
 #. "<b>%s:</b>\n<small>(%s)</small>",
 #: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
 #: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b>"
-msgstr "<b>Тип  :</b>"
+msgstr "<b>%s:</b>"
 
 #. TODO: make nicer for i18n
 #: ../src/contacts-edit-pane.c:478
 msgid "<b>Type:</b>"
-msgstr "<b>Тип  :</b>"
+msgstr "<b>Тип:</b>"
 
 #: ../src/contacts-edit-pane.c:825
 msgid "Change groups"
@@ -173,99 +191,95 @@ msgstr "<b>Выбрать поле</b>"
 msgid "Edit contact"
 msgstr "Изменить контакт"
 
-#: ../src/contacts-gtk.c:228
-#, fuzzy
+#: ../src/contacts-gtk.c:226
 msgid "C_ontacts"
-msgstr "Контакты"
+msgstr "_Контакты"
 
-#: ../src/contacts-gtk.c:245
-#, fuzzy
+#: ../src/contacts-gtk.c:243
 msgid "_Import..."
-msgstr "_Импорт"
+msgstr "_Импорт..."
 
-#: ../src/contacts-gtk.c:255
-#, fuzzy
+#: ../src/contacts-gtk.c:253
 msgid "C_ontact"
-msgstr "Контакты"
+msgstr "_Контакт"
 
-#: ../src/contacts-gtk.c:265
+#: ../src/contacts-gtk.c:263
 msgid "_Groups"
 msgstr "_Группы"
 
-#: ../src/contacts-gtk.c:268
+#: ../src/contacts-gtk.c:266
 msgid "_Export"
 msgstr "_Экспорт"
 
-#: ../src/contacts-gtk.c:278
-#, fuzzy
+#: ../src/contacts-gtk.c:276
 msgid "Ed_it"
 msgstr "_Правка"
 
-#: ../src/contacts-gtk.c:293
+#: ../src/contacts-gtk.c:291
 msgid "_Help"
 msgstr "_Справка"
 
-#: ../src/contacts-gtk.c:347
+#: ../src/contacts-gtk.c:346
 msgid "_Search:"
-msgstr "_Поиск :"
+msgstr "_Поиск:"
 
-#: ../src/contacts-gtk.c:356
+#: ../src/contacts-gtk.c:355
 msgid "0-9#"
 msgstr "0-9#"
 
-#: ../src/contacts-gtk.c:361
+#: ../src/contacts-gtk.c:360
 msgid "A-G"
 msgstr "A-G"
 
-#: ../src/contacts-gtk.c:367
+#: ../src/contacts-gtk.c:366
 msgid "H-N"
 msgstr "H-N"
 
-#: ../src/contacts-gtk.c:372
+#: ../src/contacts-gtk.c:371
 msgid "O-U"
 msgstr "O-U"
 
-#: ../src/contacts-gtk.c:377
+#: ../src/contacts-gtk.c:376
 msgid "V-Z"
 msgstr "V-Z"
 
-#: ../src/contacts-gtk.c:474
+#: ../src/contacts-gtk.c:473
 msgid "_Add Field"
 msgstr "_Добавить поле"
 
-#: ../src/contacts-gtk.c:478
+#: ../src/contacts-gtk.c:477
 msgid "_Remove Field"
 msgstr "_Удалить поле"
 
-#: ../src/contacts-gtk.c:661
+#: ../src/contacts-gtk.c:660
 msgid "Edit Types"
 msgstr "Настроить типы"
 
-#: ../src/contacts-gtk.c:673
+#: ../src/contacts-gtk.c:672
 msgid "<span><b>Make a choice:</b></span>"
 msgstr "<span><b>Ваш выбор:</b></span>"
 
 #: ../src/contacts-main.c:90
 msgid "Error starting address book"
-msgstr ""
+msgstr "Ошибка запуска адресной книги"
 
 #: ../src/contacts-main.c:93
 #, c-format
 msgid "Got error %d when getting book view"
-msgstr ""
+msgstr "При выводе окна книги получена ошибка %d"
 
 #: ../src/contacts-main.c:118
 msgid "Error opening address book"
-msgstr ""
+msgstr "Ошибка открытия адресной книги"
 
 #: ../src/contacts-main.c:121
 #, c-format
 msgid "Got error %d when opening book"
-msgstr ""
+msgstr "При открытии книги получена ошибка %d"
 
 #: ../src/contacts-main.c:193
 msgid "- A light-weight address-book"
-msgstr ""
+msgstr "- Простая адресная книга"
 
 #: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
 #: ../src/contacts-utils.c:84
@@ -282,28 +296,27 @@ msgstr "E-mail"
 
 #: ../src/contacts-utils.c:41
 msgid "Jabber"
-msgstr ""
+msgstr "Jabber"
 
 #: ../src/contacts-utils.c:42
 msgid "MSN"
-msgstr ""
+msgstr "MSN"
 
 #: ../src/contacts-utils.c:43
 msgid "Yahoo"
-msgstr ""
+msgstr "Yahoo"
 
 #: ../src/contacts-utils.c:44
 msgid "AIM"
-msgstr ""
+msgstr "AIM"
 
 #: ../src/contacts-utils.c:45
 msgid "ICQ"
-msgstr ""
+msgstr "ICQ"
 
 #: ../src/contacts-utils.c:46
-#, fuzzy
 msgid "Groupwise"
-msgstr "_Группы"
+msgstr "Groupwise"
 
 #: ../src/contacts-utils.c:47
 msgid "Address"
@@ -327,38 +340,35 @@ msgstr "Улица"
 
 #: ../src/contacts-utils.c:61
 msgid "City"
-msgstr ""
+msgstr "Город"
 
 #: ../src/contacts-utils.c:62
-#, fuzzy
 msgid "Province"
-msgstr "Телефон"
+msgstr "Область"
 
 #: ../src/contacts-utils.c:63
-#, fuzzy
 msgid "Postal Code"
-msgstr "Индекс"
+msgstr "Почтовый индекс"
 
 #: ../src/contacts-utils.c:64
 msgid "Country"
 msgstr "Страна"
 
 #: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
-#, fuzzy
 msgid "Home"
 msgstr "Домашняя страница"
 
 #: ../src/contacts-utils.c:72
 msgid "Cell"
-msgstr ""
+msgstr "Мобильный"
 
 #: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
 msgid "Work"
-msgstr ""
+msgstr "Рабочий"
 
 #: ../src/contacts-utils.c:74
 msgid "Fax"
-msgstr ""
+msgstr "Факс"
 
 #. Get a filename
 #. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
@@ -372,32 +382,10 @@ msgstr "Открыть изображение"
 msgid "No image"
 msgstr "Нет изображения"
 
-#~ msgid "<span><big><b>Welcome to Contacts</b></big></span>"
-#~ msgstr "<span><big><b>Добро пожаловать в Контакты</b></big></span>"
-
-#~ msgid "_Contact"
-#~ msgstr "_Контакт"
-
-#~ msgid "_Contacts"
-#~ msgstr "_Контакты"
-
-#~ msgid "Unknown"
-#~ msgstr "Неизвестно"
-
-#~ msgid "Locality"
-#~ msgstr "Город"
-
-#~ msgid "Region"
-#~ msgstr "Регион"
-
-#~ msgid "_Delete"
-#~ msgstr "_Supprimer"
-
-#~ msgid "_New"
-#~ msgstr "_Nouveau"
-
-#~ msgid "_Open"
-#~ msgstr "_Ouvrir"
-
-#~ msgid "_Delete contact"
-#~ msgstr "_Supprimer le contact"
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Нет группы"
