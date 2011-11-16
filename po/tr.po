@@ -1,0 +1,390 @@
+# Turkish translation for contacts.
+# Copyright (C) 2011 contacts's COPYRIGHT HOLDER
+# This file is distributed under the same license as the contacts package.
+#
+# Muhammet Kara <muhammet.k@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: contacts master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.openedhand.com/enter_bug.cgi?"
+"product=Contacts&keywords=I18N+L10N&component=General\n"
+"POT-Creation-Date: 2011-05-12 15:10+0000\n"
+"PO-Revision-Date: 2011-11-16 11:37+0200\n"
+"Last-Translator: Muhammet Kara <muhammet.k@gmail.com>\n"
+"Language-Team: Turkish <gnome-turk@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: tr\n"
+"X-Generator: Lokalize 1.2\n"
+
+#: ../data/contacts.desktop.in.h:1
+msgid "Address book"
+msgstr "Adres defteri"
+
+#: ../data/contacts.desktop.in.h:2 ../src/contacts-edit-pane.c:86
+#: ../src/contacts-gtk.c:216 ../src/contacts-main.c:191
+msgid "Contacts"
+msgstr "Bağlantılar"
+
+#: ../src/contacts-callbacks-ebook.c:71 ../src/contacts-callbacks-ebook.c:146
+#: ../src/contacts-callbacks-ui.c:194 ../src/contacts-ui.c:75
+msgid "Unnamed"
+msgstr "Adsız"
+
+#: ../src/contacts-callbacks-ui.c:199
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "'%s'i silmek istediğinizden emin misiniz?"
+
+#: ../src/contacts-callbacks-ui.c:203
+#, c-format
+msgid "Are you sure you want to delete %d contacts?"
+msgstr "%d bağlantıyı silmek istediğinizden emin misiniz?"
+
+#: ../src/contacts-callbacks-ui.c:288
+#, c-format
+msgid "Would you like to import contact '%s'?"
+msgstr "'%s' bağlantısını içe aktarmak ister misiniz?"
+
+#: ../src/contacts-callbacks-ui.c:293
+msgid "_Show contact"
+msgstr "_Bağlantıyı göster"
+
+#: ../src/contacts-callbacks-ui.c:294
+msgid "_Import contact"
+msgstr "Bağlantıyı _içe aktar"
+
+#: ../src/contacts-callbacks-ui.c:350
+msgid "Import Contact"
+msgstr "Bağlantıyı İçe Aktar"
+
+#: ../src/contacts-callbacks-ui.c:383
+#, c-format
+msgid "Imported one contact"
+msgid_plural "Imported %d contacts"
+msgstr[0] "%d bağlantı içe aktarıldı"
+
+#: ../src/contacts-callbacks-ui.c:426
+msgid "Export Contact"
+msgstr "Bağlantıyı Dışa Aktar"
+
+#. TODO: make it nicer for i18n
+#: ../src/contacts-callbacks-ui.c:463
+#, c-format
+msgid ""
+"<big><b>The file \"%s\" already exists.\n"
+"Do you want to replace it?</b></big>"
+msgstr ""
+"<big><b>\"%s\" dosyası zaten var.\n"
+"Değiştirmek ister misiniz?</b></big>"
+
+#: ../src/contacts-callbacks-ui.c:469
+msgid "Replacing it will overwrite its contents."
+msgstr "Değiştirmek, bu dosyanın içeriğinin üzerine yazacaktır."
+
+#: ../src/contacts-callbacks-ui.c:473
+msgid "_Replace"
+msgstr "_Değiştir"
+
+#: ../src/contacts-callbacks-ui.c:618
+msgid ""
+"Contacts is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
+"\n"
+"Contacts is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"Contacts; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"St, Fifth Floor, Boston, MA 0110-1301, USA"
+msgstr ""
+"Contacts özgür yazılımdır; Özgür Yazılım Vakfı tarafından yayınlandığı "
+"haliyle "
+"GNU Genel Kamu Lisansı (sürüm 2 veya -isterseniz- daha yeni bir sürüm) "
+"şartları altında yeniden dağıtabilir ve/veya uyarlayabilirsiniz.\n"
+"\n"
+"Contacts kullanışlı olması ümidiyle dağıtılır, fakat üstü kapalı da olsa "
+"TİCARETE UYGUNLUK veya ÖZEL AMAÇ İÇİN UYGUNLUK dahil, HİÇ BİR "
+"GARANTİSİ "
+"YOKTUR. Ayrıntılar için GNU Genel Kamu Lisansına bakınız.\n"
+"\n"
+"Contacts ile birlikte GNU Genel Kamu Lisansı'nın bir kopyasını almış "
+"olmalısınız. Eğer almadıysanız, \"Free Software Foundation, Inc., 51 "
+"Franklin Street, Fifth Floor, Boston, MA 0110-1301, USA\" adresine "
+"bildiriniz."
+
+#. Translators: please translate this as your own name and optionally email
+#. like so: "Your Name <your@email.com>"
+#: ../src/contacts-callbacks-ui.c:633
+msgid "translator-credits"
+msgstr "Muhammet Kara <muhammet.k@gmail.com>"
+
+#: ../src/contacts-callbacks-ui.c:678 ../src/contacts-gtk.c:109
+msgid "All"
+msgstr "Tümü"
+
+#: ../src/contacts-edit-pane.c:104
+msgid "Are you sure you want to delete this contact?"
+msgstr "Bu bağlantıyı silmek istediğinizden emin misiniz?"
+
+#: ../src/contacts-edit-pane.c:142
+msgid "Couldn't update contact"
+msgstr "Bağlantı güncellenemedi"
+
+#: ../src/contacts-edit-pane.c:147
+#, c-format
+msgid "Information couldn't be updated, error was: %s"
+msgstr "Bilgi güncellenemedi, oluşan hata: %s"
+
+#: ../src/contacts-edit-pane.c:183
+msgid "Couldn't add contact"
+msgstr "Bağlantı eklenemedi"
+
+#: ../src/contacts-edit-pane.c:188
+#, c-format
+msgid "Cannot add contact: %s"
+msgstr "Bağlantı eklenemiyor: %s"
+
+#. Create label/button text
+#. * Translators, the first
+#. * argument is the field's
+#. * name, ex. <b>Country:</b>
+#.
+#. "<b>%s:</b>\n<small>(%s)</small>",
+#: ../src/contacts-edit-pane.c:403 ../src/contacts-edit-pane.c:518
+#: ../src/contacts-ui.c:181 ../src/contacts-ui.c:187
+#, c-format
+msgid "<b>%s:</b>"
+msgstr "<b>%s:</b>"
+
+#. TODO: make nicer for i18n
+#: ../src/contacts-edit-pane.c:478
+msgid "<b>Type:</b>"
+msgstr "<b>Tür:</b>"
+
+#: ../src/contacts-edit-pane.c:825
+msgid "Change groups"
+msgstr "Grupları değiştir"
+
+#: ../src/contacts-edit-pane.c:825
+msgid "<b>Choose groups</b>"
+msgstr "<b>Grupları seçin</b>"
+
+#: ../src/contacts-edit-pane.c:887
+msgid "Add field"
+msgstr "Alan ekle"
+
+#. TODO: make nicer for i18n
+#: ../src/contacts-edit-pane.c:889
+msgid "<b>Choose a field</b>"
+msgstr "<b>Bir alan seçin</b>"
+
+#: ../src/contacts-edit-pane.c:1246
+msgid "Edit contact"
+msgstr "Bağlantıyı düzenle"
+
+#: ../src/contacts-gtk.c:226
+msgid "C_ontacts"
+msgstr "B_ağlantılar"
+
+#: ../src/contacts-gtk.c:243
+msgid "_Import..."
+msgstr "_İçe Aktar..."
+
+#: ../src/contacts-gtk.c:253
+msgid "C_ontact"
+msgstr "B_ağlantı"
+
+#: ../src/contacts-gtk.c:263
+msgid "_Groups"
+msgstr "_Gruplar"
+
+#: ../src/contacts-gtk.c:266
+msgid "_Export"
+msgstr "_Dışa Aktar"
+
+#: ../src/contacts-gtk.c:276
+msgid "Ed_it"
+msgstr "_Düzenle"
+
+#: ../src/contacts-gtk.c:291
+msgid "_Help"
+msgstr "_Yardım"
+
+#: ../src/contacts-gtk.c:346
+msgid "_Search:"
+msgstr "_Ara:"
+
+#: ../src/contacts-gtk.c:355
+msgid "0-9#"
+msgstr "0-9#"
+
+#: ../src/contacts-gtk.c:360
+msgid "A-G"
+msgstr "A-G"
+
+#: ../src/contacts-gtk.c:366
+msgid "H-N"
+msgstr "H-N"
+
+#: ../src/contacts-gtk.c:371
+msgid "O-U"
+msgstr "O-U"
+
+#: ../src/contacts-gtk.c:376
+msgid "V-Z"
+msgstr "V-Z"
+
+#: ../src/contacts-gtk.c:473
+msgid "_Add Field"
+msgstr "_Alan Ekle"
+
+#: ../src/contacts-gtk.c:477
+msgid "_Remove Field"
+msgstr "_Alan Kaldır"
+
+#: ../src/contacts-gtk.c:660
+msgid "Edit Types"
+msgstr "Türleri Düzenle"
+
+#: ../src/contacts-gtk.c:672
+msgid "<span><b>Make a choice:</b></span>"
+msgstr "<span><b>Bir seçim yapın:</b></span>"
+
+#: ../src/contacts-main.c:90
+msgid "Error starting address book"
+msgstr "Adres defteri başlatılırken hata oluştu"
+
+#: ../src/contacts-main.c:93
+#, c-format
+msgid "Got error %d when getting book view"
+msgstr ""
+
+#: ../src/contacts-main.c:118
+msgid "Error opening address book"
+msgstr "Adres defteri açılırken hata oluştu"
+
+#: ../src/contacts-main.c:121
+#, c-format
+msgid "Got error %d when opening book"
+msgstr ""
+
+#: ../src/contacts-main.c:193
+msgid "- A light-weight address-book"
+msgstr "- Sade bir adres defteri"
+
+#: ../src/contacts-ui.c:177 ../src/contacts-utils.c:75
+#: ../src/contacts-utils.c:84
+msgid "Other"
+msgstr "Diğer"
+
+#: ../src/contacts-utils.c:39
+msgid "Phone"
+msgstr "Telefon"
+
+#: ../src/contacts-utils.c:40
+msgid "Email"
+msgstr "E-posta"
+
+#: ../src/contacts-utils.c:41
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/contacts-utils.c:42
+msgid "MSN"
+msgstr "MSN"
+
+#: ../src/contacts-utils.c:43
+msgid "Yahoo"
+msgstr "Yahoo"
+
+#: ../src/contacts-utils.c:44
+msgid "AIM"
+msgstr "AIM"
+
+#: ../src/contacts-utils.c:45
+msgid "ICQ"
+msgstr "ICQ"
+
+#: ../src/contacts-utils.c:46
+msgid "Groupwise"
+msgstr "Gruba Göre"
+
+#: ../src/contacts-utils.c:47
+msgid "Address"
+msgstr "Adres"
+
+#: ../src/contacts-utils.c:50
+msgid "Homepage"
+msgstr "Ev Sayfası"
+
+#: ../src/contacts-utils.c:58
+msgid "PO Box"
+msgstr "Posta Kutusu"
+
+#: ../src/contacts-utils.c:59
+msgid "Ext."
+msgstr ""
+
+#: ../src/contacts-utils.c:60
+msgid "Street"
+msgstr "Cadde"
+
+#: ../src/contacts-utils.c:61
+msgid "City"
+msgstr "Şehir"
+
+#: ../src/contacts-utils.c:62
+msgid "Province"
+msgstr "Vilayet"
+
+#: ../src/contacts-utils.c:63
+msgid "Postal Code"
+msgstr "Posta Kodu"
+
+#: ../src/contacts-utils.c:64
+msgid "Country"
+msgstr "Ülke"
+
+#: ../src/contacts-utils.c:71 ../src/contacts-utils.c:82
+msgid "Home"
+msgstr "Ev"
+
+#: ../src/contacts-utils.c:72
+msgid "Cell"
+msgstr "Cep"
+
+#: ../src/contacts-utils.c:73 ../src/contacts-utils.c:83
+msgid "Work"
+msgstr "İş"
+
+#: ../src/contacts-utils.c:74
+msgid "Fax"
+msgstr "Belgegeçer"
+
+#. Get a filename
+#. Note: I don't use the GTK_WINDOW cast as gtk_widget_get_ancestor
+#. * can return NULL and this would probably throw a critical Gtk error.
+#.
+#: ../src/contacts-utils.c:480
+msgid "Open image"
+msgstr ""
+
+#: ../src/contacts-utils.c:490
+msgid "No image"
+msgstr "Resim yok"
+
+#. Contacts with priority <= REQUIRED have to be shown
+#. * when creating a new contact.
+#.
+#. For the image-chooser dialog
+#: ../src/contacts-defs.h:165
+msgid "No Group"
+msgstr "Grup Yok"
+
